@@ -1,0 +1,13 @@
+# JetBrains IDE
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env.local
+.env.*.local
+
+# Logs
+*.log
