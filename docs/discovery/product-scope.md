@@ -429,7 +429,7 @@ The expected technical direction is:
 
 - Symfony 7.4 LTS for the backend and domain logic;
 - PostgreSQL for persistent data;
-- Next.js for the public and professional web interfaces;
+- Angular with TypeScript for the public and professional web interfaces;
 - Docker for reproducible local and server environments;
 - automated CI through GitHub Actions;
 - deployment to a controlled VPS.
@@ -511,4 +511,4 @@ A proposed capability belongs to the product only when:
 4. it has been prioritised in the project backlog;
 5. its implementation and verification are traceable.
 
-Last reviewed: 15 July 2026.
+Last reviewed: 19 July 2026.
