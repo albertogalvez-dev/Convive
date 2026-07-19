@@ -3,10 +3,15 @@
 - **Status:** Accepted
 - **Date:** 17 July 2026
 - **Related issue:** [#1](https://github.com/albertogalvez-dev/Convive/issues/1)
+- **Depends on:** [ADR-0001](0001-use-a-monorepository.md)
 
 ## Context
 
 Convive requires a backend that manages reports, bullying cases, users, educational organisations, notifications, evidence and audit records.
+
+PHP with Symfony is an explicit technical constraint selected for Convive. This
+ADR therefore decides how the Symfony backend will be structured; it does not
+compare Symfony with other backend frameworks.
 
 These areas are related but have different responsibilities and rules. The backend must preserve those boundaries while supporting transactions, authorisation, traceability and secure handling of sensitive information.
 
@@ -145,7 +150,11 @@ This structure will be introduced only where the code requires it. Empty layers 
 
 ## Persistence and transactions
 
-The initial modular monolith will use one PostgreSQL database.
+The initial modular monolith will use one primary relational database.
+
+PostgreSQL is the planned database engine, but its selection, integration
+through Doctrine and migration strategy belong to the persistence decision in
+ADR-0007.
 
 Each module will logically own its data even though the tables share the same database.
 

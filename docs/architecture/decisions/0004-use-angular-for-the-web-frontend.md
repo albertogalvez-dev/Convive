@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 19 July 2026
 - **Related issue:** [#1](https://github.com/albertogalvez-dev/Convive/issues/1)
-- **Depends on:** [ADR-0003](0003-use-a-separate-web-frontend.md)
+- **Depends on:** [ADR-0001](0001-use-a-monorepository.md), [ADR-0003](0003-use-a-separate-web-frontend.md)
 
 ## Context
 
@@ -257,13 +257,8 @@ Browser
     |
     v
 Reverse proxy
-    |
-    +-- /       -> Angular static assets
-    |
-    +-- /api    -> Symfony
-                       |
-                       v
-                   PostgreSQL
+|-- /     -> Angular static assets
+`-- /api  -> Symfony -> Primary database
 ```
 
 Node.js will be required for frontend development, dependency installation,
@@ -409,7 +404,7 @@ This decision does not select:
 
 This decision does not permit:
 
-- direct PostgreSQL access from Angular;
+- direct database access from Angular;
 - authoritative business rules in Angular;
 - trusting Angular route guards as authorisation;
 - storing sensitive authentication credentials in local storage;

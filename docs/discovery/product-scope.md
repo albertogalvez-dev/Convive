@@ -425,17 +425,25 @@ The project should include:
 
 ## Initial technical direction
 
-The expected technical direction is:
+PHP with Symfony is an explicit technical constraint selected for Convive rather
+than a backend framework choice that remains open in the architecture ADRs.
+
+The technical direction is:
 
 - Symfony 7.4 LTS for the backend and domain logic;
-- PostgreSQL for persistent data;
-- Angular with TypeScript for the public and professional web interfaces;
-- Docker for reproducible local and server environments;
+- PostgreSQL for persistent data, pending ADR-0007;
+- Angular with TypeScript for the public and professional web interfaces, as
+  selected in
+  [ADR-0004](../architecture/decisions/0004-use-angular-for-the-web-frontend.md);
+- Docker Compose for reproducible local and server environments, as selected in
+  [ADR-0005](../architecture/decisions/0005-use-docker-compose-for-reproducible-environments.md);
 - automated CI through GitHub Actions;
 - deployment to a controlled VPS.
 
-This direction remains subject to an Architecture Decision Record before
-implementation is considered final.
+A significant choice is considered architecturally selected when it is an
+explicit project constraint or is supported by its relevant accepted ADR. Exact
+dependency and image versions will be pinned when the applications and
+environments are initialised.
 
 ## Public demonstration environment
 

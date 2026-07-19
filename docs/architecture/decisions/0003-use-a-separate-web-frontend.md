@@ -3,6 +3,7 @@
 - **Status:** Accepted
 - **Date:** 17 July 2026
 - **Related issue:** [#1](https://github.com/albertogalvez-dev/Convive/issues/1)
+- **Depends on:** [ADR-0001](0001-use-a-monorepository.md), [ADR-0002](0002-use-a-modular-monolith-for-the-backend.md)
 
 ## Context
 
@@ -35,7 +36,7 @@ Those decisions will be documented separately.
 - Maintain a clear boundary between presentation and domain logic.
 - Keep authoritative business rules and permissions inside Symfony.
 - Support independent frontend testing and development.
-- Prevent direct browser access to PostgreSQL.
+- Prevent direct browser access to the database.
 - Allow the backend interface to support future authorised clients when needed.
 - Keep the public and professional experiences visually consistent.
 - Avoid unnecessary duplication between multiple frontend applications.
@@ -147,7 +148,7 @@ avoid unnecessary cross-origin communication.
 The reverse proxy, container structure and deployment configuration will be
 documented separately.
 
-PostgreSQL and internal application services must not be exposed directly to
+The database and internal application services must not be exposed directly to
 the public network.
 
 ## Frontend responsibilities
@@ -185,7 +186,7 @@ Symfony is responsible for:
 
 ## Boundary rules
 
-- The frontend must not connect directly to PostgreSQL.
+- The frontend must not connect directly to the database.
 - The frontend must not become the authoritative source of permissions.
 - Hiding an interface element is not an authorisation control.
 - Symfony must validate every protected operation.
@@ -227,7 +228,7 @@ This decision does not permit:
 - independent business rules in the frontend;
 - storing sensitive credentials in browser local storage;
 - trusting client-side validation;
-- exposing Symfony or PostgreSQL directly to the public network;
+- exposing Symfony or the database directly to the public network;
 - creating separate public and professional frontend applications without a
   demonstrated requirement;
 - implementing a second authoritative backend inside the frontend application;
