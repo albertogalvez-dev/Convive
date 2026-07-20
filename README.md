@@ -13,11 +13,14 @@ Convive separates an initial student report from an internal case. A report does
 
 ## Project status
 
-Convive is currently in the discovery and requirements analysis phase. The application is not yet ready for use in a real school environment.
+Convive is currently in initial architecture design. Product discovery and the
+initial regulatory analysis are documented, while application implementation
+has not started. The application is not ready for use in a real school
+environment.
 
 ## License
 
-This project will be released under the MIT License.
+This project is released under the MIT License. See [LICENSE](LICENSE).
 
 ## Acknowledgements
 

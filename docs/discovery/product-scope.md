@@ -437,6 +437,8 @@ The technical direction is:
   [ADR-0004](../architecture/decisions/0004-use-angular-for-the-web-frontend.md);
 - Docker Compose for reproducible local and server environments, as selected in
   [ADR-0005](../architecture/decisions/0005-use-docker-compose-for-reproducible-environments.md);
+- a resource-oriented JSON HTTP API with an OpenAPI contract, as selected in
+  [ADR-0006](../architecture/decisions/0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md);
 - automated CI through GitHub Actions;
 - deployment to a controlled VPS.
 
@@ -519,4 +521,4 @@ A proposed capability belongs to the product only when:
 4. it has been prioritised in the project backlog;
 5. its implementation and verification are traceable.
 
-Last reviewed: 19 July 2026.
+Last reviewed: 20 July 2026.

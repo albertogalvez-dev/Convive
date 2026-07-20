@@ -55,7 +55,8 @@ structure without creating a second domain backend.
 - Suitability for dashboards and long-running authenticated workflows.
 - Ability to deploy the frontend as static production assets.
 - No mandatory Node.js server in production.
-- Compatibility with same-origin, cookie-based authentication.
+- Compatibility with the same-origin authentication strategy selected
+  separately.
 - Long-term maintenance from a stable project.
 - Good documentation and development tooling.
 - Support for accessible and responsive interfaces.

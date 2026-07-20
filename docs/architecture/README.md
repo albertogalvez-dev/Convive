@@ -23,6 +23,12 @@ The frontend never accesses the database directly. All protected operations pass
 
 ## Backend interface
 
-Symfony will expose an HTTP interface under the `/api` path.
+Symfony will expose a resource-oriented HTTP API under the `/api/v1` path, as
+selected in
+[ADR-0006](decisions/0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md).
 
-The exact API style, media types, HTTP method conventions and contract format will be selected in a separate ADR. Symfony remains responsible for validating every request and authorising every protected operation.
+The interface uses JSON success representations, Problem Details error
+representations and an OpenAPI contract. Explicit Symfony controllers and
+transport DTOs keep the external contract separate from domain and persistence
+models. Symfony remains responsible for validating every request and authorising
+every protected operation.
