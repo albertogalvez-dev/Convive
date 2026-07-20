@@ -431,7 +431,9 @@ than a backend framework choice that remains open in the architecture ADRs.
 The technical direction is:
 
 - Symfony 7.4 LTS for the backend and domain logic;
-- PostgreSQL for persistent data, pending ADR-0007;
+- PostgreSQL with Doctrine ORM, DBAL and Migrations for relational persistence,
+  as selected in
+  [ADR-0007](../architecture/decisions/0007-use-postgresql-and-doctrine-for-persistence.md);
 - Angular with TypeScript for the public and professional web interfaces, as
   selected in
   [ADR-0004](../architecture/decisions/0004-use-angular-for-the-web-frontend.md);

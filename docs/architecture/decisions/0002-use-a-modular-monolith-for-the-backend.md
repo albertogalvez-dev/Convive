@@ -125,6 +125,12 @@ A module may contain:
 - `Infrastructure` for persistence and external technical integrations;
 - `Presentation` for HTTP entry points and input/output mapping.
 
+As selected in ADR-0007, persisted domain entities may contain declarative
+Doctrine mapping attributes and, where an association requires it, Doctrine
+collection types as controlled technical coupling. Persistence operations,
+queries, transaction management, proxy behaviour and lazy-loading decisions
+remain outside domain rules and inside `Infrastructure`.
+
 A possible initial structure is:
 
 - `src/Reporting/Domain`;
@@ -152,15 +158,16 @@ This structure will be introduced only where the code requires it. Empty layers 
 
 The initial modular monolith will use one primary relational database.
 
-PostgreSQL is the planned database engine, but its selection, integration
-through Doctrine and migration strategy belong to the persistence decision in
-ADR-0007.
+PostgreSQL, Doctrine ORM and DBAL, and Doctrine Migrations are selected in
+[ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md).
 
 Each module will logically own its data even though the tables share the same database.
 
 A shared relational database allows the backend persistence layer to use transactions for operations that must succeed or fail together. This is particularly valuable when a report is assessed, a case is created and an audit event must be recorded consistently.
 
-Using one database does not permit unrestricted access between modules. Persistence access must continue to respect module responsibilities.
+Using one database does not permit direct reads or writes across module
+boundaries. Persistence access and cross-module projections must continue to
+respect explicit module responsibilities.
 
 ## Background processing
 

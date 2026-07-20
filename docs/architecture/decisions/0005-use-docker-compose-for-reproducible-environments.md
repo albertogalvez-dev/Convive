@@ -11,7 +11,7 @@ Convive will contain:
 
 - an Angular web frontend;
 - a Symfony backend;
-- one primary relational database, currently planned as PostgreSQL;
+- one primary PostgreSQL relational database, as selected in ADR-0007;
 - infrastructure required to connect and operate those components.
 
 Development takes place primarily on Windows, while continuous integration will
@@ -130,9 +130,10 @@ The common model will initially contain three logical services:
 - `api` for the Symfony backend;
 - `database` for the primary relational database.
 
-PostgreSQL is the planned implementation of `database`, but ADR-0007 owns the
-selection of PostgreSQL, Doctrine and the migration strategy. ADR-0005 does not
-make that persistence decision.
+[ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md) selects
+PostgreSQL as the implementation of `database` and owns the Doctrine and
+migration strategy. ADR-0005 continues to own only its environment
+orchestration.
 
 Additional services will only be introduced when a confirmed requirement
 justifies them.

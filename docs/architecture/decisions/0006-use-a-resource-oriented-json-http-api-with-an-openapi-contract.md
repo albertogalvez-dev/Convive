@@ -69,8 +69,10 @@ security decision.
 Define HTTP routes explicitly in each backend module.
 
 Controllers map requests to transport DTOs, validate them and delegate to
-application use cases. Application and domain code remain independent from HTTP,
-Symfony request objects and persistence entities.
+application use cases. Application and domain behaviour remain independent from
+HTTP, Symfony request objects and persistence operations. Domain entities may
+carry the controlled Doctrine mapping metadata described in ADR-0007, but those
+entities are never transport DTOs.
 
 Use Symfony's request mapping, Validator and Serializer components together with
 NelmioApiDocBundle and OpenAPI attributes.
@@ -362,8 +364,9 @@ PHP and TypeScript identifiers will follow their ecosystem conventions.
 
 Database naming is a separate persistence concern.
 
-ADR-0007 will select the database engine, ORM, mapping and migration strategy,
-including the proposed `snake_case` convention for relational identifiers.
+[ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md) selects
+PostgreSQL, Doctrine ORM and DBAL, Doctrine Migrations, and the `snake_case`
+convention for relational identifiers.
 
 The selected persistence adapter must translate between persistence and
 application naming explicitly where required.
@@ -396,7 +399,9 @@ perspective.
 Angular must not assume that identifiers are sequential numbers or derive
 permissions, ordering or meaning from their format.
 
-The internal identifier strategy will be selected with the persistence model.
+ADR-0007 selects UUIDv7 as the default internal identifier for aggregate roots
+and domain entities that require stable pre-persistence or cross-module
+identity. Anonymous endpoints do not expose those internal identifiers.
 
 A report's public tracking reference and access secret are separate security and
 product concepts. They must not be treated as ordinary database identifiers.
@@ -716,7 +721,9 @@ sensitive workflows rather than simple database CRUD.
 
 Explicit Symfony controllers and transport DTOs make each security and
 application boundary visible. They align with the modular-monolith structure and
-allow domain rules to remain independent from HTTP and persistence.
+allow domain rules to remain independent from HTTP and persistence behaviour.
+The controlled mapping metadata permitted by ADR-0007 does not change that
+separation.
 
 API Platform with dedicated resource DTOs would be a valid alternative and
 would reduce some repetitive code. However, its additional state-provider and

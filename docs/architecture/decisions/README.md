@@ -50,3 +50,4 @@ later records from silently selecting the same concern again.
 | [ADR-0004](0004-use-angular-for-the-web-frontend.md) | Use Angular for the web frontend | Frontend framework and initial rendering model | Accepted |
 | [ADR-0005](0005-use-docker-compose-for-reproducible-environments.md) | Use Docker Compose for reproducible environments | Environment orchestration | Accepted |
 | [ADR-0006](0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md) | Use a resource-oriented JSON HTTP API with an OpenAPI contract | HTTP API style, representations, method conventions and contract generation | Accepted |
+| [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md) | Use PostgreSQL and Doctrine for relational persistence | Database engine, persistence toolkit, identifiers, relational conventions and migration strategy | Accepted |

@@ -8,7 +8,10 @@ It explains the main system components, how they communicate and the reasons beh
 
 - **Web application:** the screens and forms used by reporters and school professionals. It will be built with Angular and TypeScript.
 - **Backend API:** the business rules, permissions and secure access to data. It will be built with Symfony.
-- **Database:** the persistent structured information managed by the backend. PostgreSQL is the planned database, subject to its persistence ADR.
+- **Database:** PostgreSQL stores the structured information managed by the
+  backend. Doctrine ORM and DBAL provide persistence access, and Doctrine
+  Migrations versions schema changes, as selected in
+  [ADR-0007](decisions/0007-use-postgresql-and-doctrine-for-persistence.md).
 - **Environment:** Docker Compose will provide reproducible development, testing and single-VPS deployment environments.
 
 ## Basic communication flow
@@ -16,7 +19,8 @@ It explains the main system components, how they communicate and the reasons beh
 1. A user interacts with the Angular web application.
 2. Angular sends an HTTPS request to the Symfony backend interface.
 3. Symfony validates the request and applies the business and security rules.
-4. Symfony reads or modifies information in the planned PostgreSQL database through its persistence layer.
+4. Symfony reads or modifies information in PostgreSQL through module-owned
+   Doctrine persistence adapters.
 5. Symfony returns a response that Angular presents to the user.
 
 The frontend never accesses the database directly. All protected operations pass through the Symfony backend.
