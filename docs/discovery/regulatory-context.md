@@ -76,16 +76,24 @@ Relevant principles include:
 The law gives educational environments a specific responsibility for
 prevention, detection and response.
 
+These provisions support accessible, secure and confidential communication and
+protection for people who report possible violence. The cited law does not by
+itself establish a general obligation for Convive to accept reports without a
+stated identity.
+
 Official source:
 
 https://www.boe.es/buscar/act.php?id=BOE-A-2021-9347
 
-### Product consequences
+### Product interpretation
 
 Convive should:
 
 - provide an accessible reporting channel;
-- permit reports without forcing the reporter to identify themselves;
+- permit reports without forcing the reporter to identify themselves as a
+  product decision supporting accessibility, data minimisation and reporter
+  protection, subject to validation by the responsible organisation and its
+  Data Protection Officer;
 - protect the reporter's identity and contact information;
 - restrict sensitive case data according to professional roles;
 - maintain a traceable record of relevant decisions and actions;
@@ -94,6 +102,23 @@ Convive should:
   unrelated users;
 - clearly communicate that submitting a report does not itself determine that
   bullying has occurred.
+
+### Data-protection framework
+
+Regulation (EU) 2016/679 (GDPR) and Spanish Organic Law 3/2018 (LOPDGDD) form the
+general data-protection framework for Convive. Information submitted through a
+report may remain personal data even when the reporter does not state their
+identity, and may include special-category data or information relating to
+alleged offences.
+
+Official sources:
+
+- https://eur-lex.europa.eu/eli/reg/2016/679/oj
+- https://www.boe.es/buscar/act.php?id=BOE-A-2018-16673
+
+The software design can support privacy and security obligations, but the
+controller must still determine the lawful basis, purposes, recipients,
+retention and safeguards for a particular deployment.
 
 ## Andalusia regulatory framework
 
@@ -216,8 +241,10 @@ https://www.educacionfpydeportes.gob.es/prensa/actualidad/2026/04/20260415-proto
 
 ### Status inside Convive
 
-As of 15 July 2026, this source is treated as a national reference framework,
-not as a replacement for the applicable Andalusian protocol.
+As of 15 July 2026, the cited Ministry source presents an open framework subject
+to discussion and enrichment. Convive therefore treats it as a provisional
+national reference, not as a final binding rule or a replacement for the
+applicable Andalusian protocol.
 
 Its time targets may be represented as configurable recommendations, but the
 interface must not label them as binding Andalusian legal deadlines unless a
@@ -290,11 +317,17 @@ to establish, among other matters:
 
 - the data controller and any data processor;
 - the applicable lawful basis;
+- the purposes, data inventory and analysis of special-category and
+  offence-related information;
 - processor agreements where required;
+- the processor and subprocessor register;
 - the involvement of the relevant Data Protection Officer;
-- the retention policy;
+- a retention and deletion schedule covering live data, exports and backups;
+- the transparency information and procedure for exercising data-protection
+  rights;
 - incident response procedures;
-- whether a Data Protection Impact Assessment is required.
+- a documented Data Protection Impact Assessment screening outcome and, where
+  the risk requires it, the completed assessment and mitigation plan.
 
 These matters are deployment requirements and cannot be resolved solely by the
 software repository.
@@ -341,7 +374,8 @@ deployment:
 - the definitive legal and operational status of the 2026 national framework;
 - the exact data retention period for each category of information;
 - the controller and processor roles for each deployment model;
-- whether a Data Protection Impact Assessment is mandatory;
+- the documented Data Protection Impact Assessment screening outcome and any
+  resulting assessment;
 - the conditions for an official Séneca or PASEN/iPasen integration;
 - the exact external notification procedures used by a specific school;
 - the hosting and security requirements imposed by the competent authority.
@@ -358,4 +392,4 @@ This document must be reviewed:
 - before integrating with an institutional system;
 - before processing real student data.
 
-Last reviewed: 15 July 2026.
+Last reviewed: 21 July 2026.

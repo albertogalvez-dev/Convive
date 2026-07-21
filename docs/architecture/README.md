@@ -6,9 +6,10 @@ It explains the main system components, how they communicate and the reasons beh
 
 ## Architecture diagram
 
-The [initial system architecture diagram](diagrams/initial-system-architecture.md) shows the
-browser applications, same-origin web boundary, Symfony API, PostgreSQL and the
-initial Docker Compose and single-VPS topology.
+The [initial system architecture diagram](diagrams/initial-system-architecture.md)
+summarises the logical request flow between the application's users, Angular,
+Symfony and PostgreSQL. Its accompanying text records the development routing
+and initial Docker Compose and single-VPS deployment context.
 
 ## Main components
 
@@ -42,7 +43,8 @@ capability limited to that report and returns it in a protected cookie.
 Professional sessions and anonymous capabilities use separate authenticator
 and route boundaries. Every protected operation accepts only its declared
 access context and remains subject to backend authorisation. The complete
-mechanism, expiry, CSRF and browser-storage rules are defined in
+access mechanism, expiry, CSRF constraints and required integration verification
+are defined in
 [ADR-0008](decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
 
 ## Backend interface

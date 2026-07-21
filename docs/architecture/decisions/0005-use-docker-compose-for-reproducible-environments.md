@@ -191,6 +191,22 @@ The development environment may be started with this cross-platform command:
 docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml up --build
 ```
 
+#### Development request routing
+
+Browser code will use the same relative API base path in every environment:
+`/api/v1`.
+
+During development, Angular's development server will proxy `/api/**` requests
+to the Compose `api` service. The browser therefore interacts with the Angular
+development origin only; the internal Symfony service name and port are not
+part of the browser contract. This preserves the same-origin cookie and XSRF
+model without introducing credentialed CORS for local development.
+
+The exact internal target and port will be recorded in the Angular proxy and
+Compose configuration when the applications are initialised. A documented
+host-execution fallback may use a different internal target, but it must preserve
+the browser-facing relative path and same-origin behaviour.
+
 ### Production configuration
 
 `compose.production.yaml` may provide or override:
@@ -227,6 +243,12 @@ behaviour:
 
 The production architecture will not introduce a permanent Node.js application
 server. This preserves the rendering and runtime decision made in ADR-0004.
+
+The production public entry point must apply these routing rules in order:
+
+1. `/api/v1/**` reaches Symfony and is never handled by the frontend fallback;
+2. known static assets are served directly;
+3. other frontend routes fall back to Angular's `index.html`.
 
 ## Local performance fallback
 
@@ -267,10 +289,13 @@ In production:
 - the database must not expose a public host port;
 - internal application services must not be published unnecessarily;
 - only the required public entry point should be externally reachable;
-- HTTPS must terminate at the public entry point.
+- HTTPS must terminate at the public entry point;
+- request-body, duration, concurrency and edge rate limits must be enforced
+  before requests or uploads reach PHP where appropriate.
 
 The public reverse-proxy technology and final network topology belong to the
-deployment ADR.
+deployment ADR. That later choice owns concrete limit values and tooling, but it
+must preserve these routing and pre-application protection requirements.
 
 Startup order does not prove service readiness. Stateful dependencies should
 provide meaningful health checks, and applications must handle temporary
@@ -403,3 +428,5 @@ migration path.
 - [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
 - [Docker build best practices](https://docs.docker.com/build/building/best-practices/)
 - [Docker Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/)
+- [Angular development proxy](https://angular.dev/tools/cli/serve#proxying-to-a-backend-server)
+- [Symfony Rate Limiter](https://symfony.com/doc/7.4/rate_limiter.html)

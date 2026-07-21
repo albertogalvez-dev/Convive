@@ -128,19 +128,20 @@ The public reporting experience and the professional workspace will belong to
 the same frontend application. They will use separate routes, layouts and
 permission-aware interfaces where required.
 
-The frontend and Symfony will communicate through an explicit HTTP interface.
-The interface style, data format and contract strategy will be selected in a
-separate ADR.
+The frontend and Symfony will communicate through the resource-oriented JSON
+HTTP API and OpenAPI contract selected in
+[ADR-0006](0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md).
 
-The frontend technology and rendering approach will also be selected in a
-separate ADR.
+The Angular and client-rendering decision is defined in
+[ADR-0004](0004-use-angular-for-the-web-frontend.md).
 
 ## Production boundary
 
 Both applications should initially be exposed through the same public origin:
 
 - `/` routes to the web frontend;
-- `/api` routes to Symfony.
+- `/api` is reserved for Symfony, with the initial version exposed under
+  `/api/v1` as selected in ADR-0006.
 
 Using the same public origin should simplify browser security configuration and
 avoid unnecessary cross-origin communication.

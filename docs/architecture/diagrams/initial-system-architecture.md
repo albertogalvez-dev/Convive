@@ -1,7 +1,8 @@
 # Initial system architecture
 
-This diagram shows the initial request path and the main technical boundaries of
-Convive before application implementation begins.
+This diagram shows Convive's initial logical request path before application
+implementation begins. Deployment and browser-routing details are recorded
+below without turning this component view into a deployment diagram.
 
 ```mermaid
 flowchart TB
@@ -47,7 +48,10 @@ flowchart TB
 Docker Compose coordinates the application environment. The initial production
 target is one controlled VPS serving the compiled Angular assets and running
 Symfony and PostgreSQL. Development may use Angular's development tooling
-without changing the logical boundaries shown above.
+without changing the logical boundaries shown above. In development, Angular's
+server proxies the relative `/api/**` path to Symfony so the browser retains the
+same-origin contract. In production, `/api/v1/**` reaches Symfony before the SPA
+fallback, while other frontend routes may fall back to `index.html`.
 
 The particular reverse proxy, TLS implementation, backups, monitoring, email
 provider and asynchronous infrastructure remain intentionally deferred.

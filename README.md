@@ -13,10 +13,17 @@ Convive separates an initial student report from an internal case. A report does
 
 ## Project status
 
-Convive is currently in initial architecture design. Product discovery and the
-initial regulatory analysis are documented, while application implementation
-has not started. The application is not ready for use in a real school
-environment.
+Convive's initial product scope, regulatory context and system architecture are
+documented. Application implementation has not started, and the application is
+not ready for use in a real school environment.
+
+## Documentation
+
+- [Product scope](docs/discovery/product-scope.md)
+- [Regulatory context](docs/discovery/regulatory-context.md)
+- [Architecture overview](docs/architecture/README.md)
+- [Architecture decision records](docs/architecture/decisions/README.md)
+- [Brand assets and usage](docs/brand/README.md)
 
 ## License
 

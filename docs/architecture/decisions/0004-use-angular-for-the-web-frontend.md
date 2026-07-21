@@ -248,8 +248,9 @@ Angular will initially operate as a client-rendered single-page application.
 Its production build will generate static frontend assets served by the public
 web server or reverse proxy.
 
-Symfony will remain the only authoritative backend and will be exposed through
-the `/api` path.
+Symfony will remain the only authoritative backend. `/api` is reserved for the
+backend interface, whose initial version is exposed under `/api/v1` as selected
+in ADR-0006.
 
 The initial production request flow will be:
 
@@ -258,9 +259,15 @@ Browser
     |
     v
 Reverse proxy
-|-- /     -> Angular static assets
-`-- /api  -> Symfony -> Primary database
+|-- /api/v1/**  -> Symfony -> Primary database
+`-- /           -> Angular static assets and SPA routes
 ```
+
+Routing to `/api/v1/**` must take precedence over the frontend fallback. Known
+static assets are served directly, while other frontend routes fall back to
+Angular's `index.html` so that client-side routes survive direct navigation and
+browser refreshes. The selected public-entry-point technology will implement
+these rules without changing them.
 
 Node.js will be required for frontend development, dependency installation,
 testing and production builds. A permanent Node.js application server will not
@@ -489,6 +496,12 @@ be a complete and maintainable application rather than a disposable prototype.
 - Apply supported dependency updates through reviewed changes.
 - Document unfamiliar Angular concepts as they are introduced.
 - Verify accessibility manually as well as automatically.
+- Render untrusted report content as text and prohibit unreviewed use of
+  `bypassSecurityTrust*`, direct DOM sinks or equivalent sanitisation bypasses.
+- Require a reviewed Content Security Policy and Trusted Types policy before a
+  deployment processes real report content.
+- Serve untrusted attachments with safe content types and download behaviour so
+  they cannot execute in the authenticated application origin.
 
 ## Review triggers
 
@@ -513,6 +526,8 @@ migration path.
 - Angular routing: https://angular.dev/guide/routing
 - Angular forms: https://angular.dev/guide/forms
 - Angular HTTP client: https://angular.dev/guide/http
+- Angular security: https://angular.dev/best-practices/security
+- Angular deployment: https://angular.dev/tools/cli/deployment
 - Angular testing: https://angular.dev/guide/testing
 - Next.js App Router: https://nextjs.org/docs/app
 - Nuxt rendering modes: https://nuxt.com/docs/3.x/guide/concepts/rendering

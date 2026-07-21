@@ -79,6 +79,13 @@ Students are the primary audience of the public reporting experience.
 
 A reporter does not need a staff account.
 
+Convive uses **anonymous reporting** in the product sense that a reporter is not
+required to state their identity or create an account. It is not a promise that
+the submitted information is anonymous under data-protection law. Free text,
+named people, attachments and metadata, optional email, network identifiers and
+security cookies may identify or single out a person. The public notice must
+explain these limits and the parties that may process each category of data.
+
 ### Authorised school professional
 
 Depending on the organisation, this may include:
@@ -107,7 +114,7 @@ situation.
 
 A report:
 
-- may be anonymous;
+- may be submitted without a stated reporter identity;
 - may contain incomplete information;
 - may include optional evidence;
 - has not yet been professionally assessed;
@@ -157,6 +164,10 @@ The public reporting experience must allow a person to:
 The interface must clearly explain:
 
 - what anonymity means;
+- that identity is not required but absolute technical anonymity is not
+  guaranteed;
+- how optional email, attachment metadata and necessary security processing can
+  affect identifiability;
 - which information should not be included unnecessarily;
 - what the platform can and cannot do;
 - what to do in an immediate emergency;
@@ -167,7 +178,8 @@ The interface must clearly explain:
 Anonymous access will use:
 
 - a public report reference;
-- a separate, high-entropy access secret.
+- a separate access secret containing at least 128 bits of cryptographically
+  secure random entropy.
 
 The access secret will:
 
@@ -383,7 +395,10 @@ The product must apply:
 - data minimisation;
 - privacy by design and by default;
 - optional reporter identification;
+- a truthful explanation of identity-optional reporting and its technical
+  limits;
 - separation of optional contact information;
+- removal or isolation of unnecessary identifying attachment metadata;
 - fictional data in public environments;
 - configurable retention policies;
 - deletion or anonymisation procedures where applicable;
