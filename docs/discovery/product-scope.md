@@ -79,6 +79,13 @@ Students are the primary audience of the public reporting experience.
 
 A reporter does not need a staff account.
 
+Convive uses **anonymous reporting** in the product sense that a reporter is not
+required to state their identity or create an account. It is not a promise that
+the submitted information is anonymous under data-protection law. Free text,
+named people, attachments and metadata, optional email, network identifiers and
+security cookies may identify or single out a person. The public notice must
+explain these limits and the parties that may process each category of data.
+
 ### Authorised school professional
 
 Depending on the organisation, this may include:
@@ -107,7 +114,7 @@ situation.
 
 A report:
 
-- may be anonymous;
+- may be submitted without a stated reporter identity;
 - may contain incomplete information;
 - may include optional evidence;
 - has not yet been professionally assessed;
@@ -157,6 +164,10 @@ The public reporting experience must allow a person to:
 The interface must clearly explain:
 
 - what anonymity means;
+- that identity is not required but absolute technical anonymity is not
+  guaranteed;
+- how optional email, attachment metadata and necessary security processing can
+  affect identifiability;
 - which information should not be included unnecessarily;
 - what the platform can and cannot do;
 - what to do in an immediate emergency;
@@ -167,14 +178,21 @@ The interface must clearly explain:
 Anonymous access will use:
 
 - a public report reference;
-- a separate, high-entropy access secret.
+- a separate access secret containing at least 128 bits of cryptographically
+  secure random entropy.
 
 The access secret will:
 
 - be shown to the reporter after submission;
 - not be sent in notification emails;
 - be stored only through a secure one-way representation;
-- be required to access the private follow-up area.
+- be required to enter the private follow-up area.
+
+After the reference and secret are verified, the backend issues a
+short-lived opaque capability in a protected cookie. That capability is limited
+to the permitted follow-up operations for one report and is not a professional
+account or a second Symfony session. The detailed boundary is selected in
+[ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
 
 Losing the secret may mean losing anonymous access during the initial release.
 
@@ -377,7 +395,10 @@ The product must apply:
 - data minimisation;
 - privacy by design and by default;
 - optional reporter identification;
+- a truthful explanation of identity-optional reporting and its technical
+  limits;
 - separation of optional contact information;
+- removal or isolation of unnecessary identifying attachment metadata;
 - fictional data in public environments;
 - configurable retention policies;
 - deletion or anonymisation procedures where applicable;
@@ -425,17 +446,32 @@ The project should include:
 
 ## Initial technical direction
 
-The expected technical direction is:
+PHP with Symfony is an explicit technical constraint selected for Convive rather
+than a backend framework choice that remains open in the architecture ADRs.
+
+The technical direction is:
 
 - Symfony 7.4 LTS for the backend and domain logic;
-- PostgreSQL for persistent data;
-- Next.js for the public and professional web interfaces;
-- Docker for reproducible local and server environments;
+- PostgreSQL with Doctrine ORM, DBAL and Migrations for relational persistence,
+  as selected in
+  [ADR-0007](../architecture/decisions/0007-use-postgresql-and-doctrine-for-persistence.md);
+- Angular with TypeScript for the public and professional web interfaces, as
+  selected in
+  [ADR-0004](../architecture/decisions/0004-use-angular-for-the-web-frontend.md);
+- Docker Compose for reproducible local and server environments, as selected in
+  [ADR-0005](../architecture/decisions/0005-use-docker-compose-for-reproducible-environments.md);
+- a resource-oriented JSON HTTP API with an OpenAPI contract, as selected in
+  [ADR-0006](../architecture/decisions/0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md);
+- PostgreSQL-backed Symfony sessions for professionals and short-lived opaque,
+  report-scoped capabilities for anonymous follow-up, as selected in
+  [ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md);
 - automated CI through GitHub Actions;
 - deployment to a controlled VPS.
 
-This direction remains subject to an Architecture Decision Record before
-implementation is considered final.
+A significant choice is considered architecturally selected when it is an
+explicit project constraint or is supported by its relevant accepted ADR. Exact
+dependency and image versions will be pinned when the applications and
+environments are initialised.
 
 ## Public demonstration environment
 
@@ -511,4 +547,4 @@ A proposed capability belongs to the product only when:
 4. it has been prioritised in the project backlog;
 5. its implementation and verification are traceable.
 
-Last reviewed: 15 July 2026.
+Last reviewed: 21 July 2026.
