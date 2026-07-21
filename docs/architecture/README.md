@@ -25,6 +25,20 @@ It explains the main system components, how they communicate and the reasons beh
 
 The frontend never accesses the database directly. All protected operations pass through the Symfony backend.
 
+## Access boundaries
+
+Professional users authenticate through stateful Symfony sessions stored in
+PostgreSQL. Anonymous reporters do not receive professional accounts or a
+second framework session. After the reporter proves possession of a report's
+public reference and access secret, Symfony issues a short-lived opaque
+capability limited to that report and returns it in a protected cookie.
+
+Professional sessions and anonymous capabilities use separate authenticator
+and route boundaries. Every protected operation accepts only its declared
+access context and remains subject to backend authorisation. The complete
+mechanism, expiry, CSRF and browser-storage rules are defined in
+[ADR-0008](decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
+
 ## Backend interface
 
 Symfony will expose a resource-oriented HTTP API under the `/api/v1` path, as

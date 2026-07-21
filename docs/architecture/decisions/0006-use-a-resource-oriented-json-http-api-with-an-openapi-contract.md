@@ -43,8 +43,9 @@ A decision is required on:
 - contract documentation and verification;
 - compatibility and versioning.
 
-Authentication and session mechanics are deliberately deferred to their own
-security decision.
+Authentication and session mechanics are owned by
+[ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+and remain outside this API-style decision.
 
 ## Decision drivers
 
@@ -620,7 +621,8 @@ Cross-origin access must not be enabled broadly without a confirmed client and a
 reviewed security configuration.
 
 Authentication, secure cookies, CSRF, session expiry and anonymous tracking
-credentials belong to the authentication ADR.
+credentials are defined in
+[ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
 
 ## Request correlation
 
@@ -661,6 +663,11 @@ The contract will describe:
 - security requirements;
 - file uploads;
 - examples where useful.
+
+In accordance with ADR-0008, the contract will represent the professional
+session cookie and anonymous capability cookie as separate cookie security
+schemes and apply only the expected scheme to each protected operation. It will
+also document the required XSRF header for applicable state-changing requests.
 
 The Symfony routes, controller metadata and transport DTOs will be the
 implementation source used to generate the contract.

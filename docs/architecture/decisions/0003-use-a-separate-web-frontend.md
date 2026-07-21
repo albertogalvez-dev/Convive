@@ -203,22 +203,21 @@ Symfony is responsible for:
 
 ## Authentication implications
 
-Selecting a separate frontend does not select a specific authentication
-mechanism.
+Selecting a separate frontend did not itself select an authentication
+mechanism. [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+now defines the previously deferred boundary:
 
-A later ADR must define:
+- professionals use stateful server-side Symfony sessions;
+- anonymous follow-up uses a short-lived opaque capability limited to one
+  report rather than a professional account or second framework session;
+- protected cookies, CSRF, expiry and browser-storage rules are explicit;
+- public, anonymous follow-up and professional operations use separate request
+  and authenticator boundaries.
 
-- session or token strategy;
-- secure cookie configuration;
-- CSRF protection;
-- authentication expiry;
-- anonymous tracking access;
-- professional authentication;
-- request forwarding where required;
-- separation between public and authenticated operations.
-
-The selected mechanism must keep Symfony responsible for authoritative
-authentication and authorisation decisions.
+The selected mechanism keeps Symfony responsible for authoritative
+authentication and authorisation decisions. It preserves the same-origin
+frontend/backend boundary selected by this ADR; production reverse-proxy
+implementation remains a separate deployment concern.
 
 ## Explicit exclusions
 

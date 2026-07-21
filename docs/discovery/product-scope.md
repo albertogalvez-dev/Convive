@@ -174,7 +174,13 @@ The access secret will:
 - be shown to the reporter after submission;
 - not be sent in notification emails;
 - be stored only through a secure one-way representation;
-- be required to access the private follow-up area.
+- be required to enter the private follow-up area.
+
+After the reference and secret are verified, the backend issues a
+short-lived opaque capability in a protected cookie. That capability is limited
+to the permitted follow-up operations for one report and is not a professional
+account or a second Symfony session. The detailed boundary is selected in
+[ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
 
 Losing the secret may mean losing anonymous access during the initial release.
 
@@ -441,6 +447,9 @@ The technical direction is:
   [ADR-0005](../architecture/decisions/0005-use-docker-compose-for-reproducible-environments.md);
 - a resource-oriented JSON HTTP API with an OpenAPI contract, as selected in
   [ADR-0006](../architecture/decisions/0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md);
+- PostgreSQL-backed Symfony sessions for professionals and short-lived opaque,
+  report-scoped capabilities for anonymous follow-up, as selected in
+  [ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md);
 - automated CI through GitHub Actions;
 - deployment to a controlled VPS.
 
@@ -523,4 +532,4 @@ A proposed capability belongs to the product only when:
 4. it has been prioritised in the project backlog;
 5. its implementation and verification are traceable.
 
-Last reviewed: 20 July 2026.
+Last reviewed: 21 July 2026.

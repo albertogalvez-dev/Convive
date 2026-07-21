@@ -344,7 +344,8 @@ expiry and safe request metadata.
 Interceptors must not hide security behaviour or contain domain business rules.
 
 The API style, JSON conventions, error format, versioning and contract strategy
-will be defined in a separate ADR.
+are defined in
+[ADR-0006](0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md).
 
 ## Authentication boundary
 
@@ -353,9 +354,15 @@ routes that the interface already knows are unavailable. They are not security
 controls.
 
 Symfony must authorise every protected request independently. Authentication
-credentials or sensitive tokens must not be stored in browser local storage.
+credentials, professional session identifiers, anonymous capability handles
+and report access secrets must not be stored in browser `localStorage` or
+`sessionStorage`.
 
-The authentication and session mechanism will be defined in a separate ADR.
+[ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+defines stateful Symfony sessions for professionals and a distinct short-lived,
+report-scoped opaque cookie capability for anonymous follow-up. Angular route
+guards and interceptors do not replace either backend authenticator or backend
+authorisation.
 
 ## Rendering decision
 
