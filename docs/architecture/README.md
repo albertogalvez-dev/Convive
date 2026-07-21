@@ -4,6 +4,12 @@ This directory documents the technical architecture of Convive.
 
 It explains the main system components, how they communicate and the reasons behind the most important technical decisions.
 
+## Architecture diagram
+
+The [initial system architecture diagram](diagrams/initial-system-architecture.md) shows the
+browser applications, same-origin web boundary, Symfony API, PostgreSQL and the
+initial Docker Compose and single-VPS topology.
+
 ## Main components
 
 - **Web application:** the screens and forms used by reporters and school professionals. It will be built with Angular and TypeScript.
