@@ -1,0 +1,15 @@
+<svg
+  width="64"
+  height="64"
+  viewBox="0 0 64 64"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="title"
+>
+  <title id="title">Convive</title>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#F7FAFD" stroke="#172B57" stroke-width="4"/>
+  <path d="M10 19L19 36L28 19" stroke="#239DD1" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36 19L45 36L54 19" stroke="#239DD1" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M17 44C21 49 26 52 32 52C38 52 43 49 47 44" stroke="#172B57" stroke-width="4" stroke-linecap="round"/>
+</svg>
