@@ -14,8 +14,9 @@ Convive separates an initial student report from an internal case. A report does
 ## Project status
 
 Convive's initial product scope, regulatory context and system architecture are
-documented. Application implementation has not started, and the application is
-not ready for use in a real school environment.
+documented. Implementation of the initial walking skeleton is in progress, with
+Symfony and Angular application foundations under development. The application
+is not ready for use in a real school environment.
 
 ## Documentation
 

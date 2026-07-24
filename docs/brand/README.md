@@ -25,12 +25,13 @@ Available variants:
 - `convive-logo-monochrome.svg`: single-colour logo when colour reproduction is unavailable.
 - `convive-logo-reversed.svg`: light logo for dark navy backgrounds.
 - `convive-logo-reversed.png`: portable preview for dark backgrounds.
+- `convive-mark.svg`: compact product mark for favicons and other small digital uses.
 
 The SVG files are the editable source assets. Use the PNG files only when the target application cannot work reliably with SVG.
 
 Keep clear space around the logo equal to at least one quarter of its total height. Do not place text, borders, or other marks inside this area.
 
-For digital use, do not display the full logo below 180 px wide. At smaller sizes, the connection curve may lose clarity. A dedicated compact mark may be designed later if the product requires one.
+For digital use, do not display the full logo below 180 px wide. At smaller sizes, use the dedicated compact mark so that the two connected sides remain legible.
 
 Do not:
 
