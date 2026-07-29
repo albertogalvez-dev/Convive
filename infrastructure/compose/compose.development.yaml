@@ -1,0 +1,20 @@
+services:
+  api:
+    environment:
+      DATABASE_URL: "postgresql://convive:convive-development-only@database:5432/convive?serverVersion=18.4&charset=utf8"
+    volumes:
+      - ../../apps/api:/app
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  database:
+    environment:
+      POSTGRES_DB: convive
+      POSTGRES_USER: convive
+      POSTGRES_PASSWORD: convive-development-only
+    ports:
+      - "127.0.0.1:5432:5432"
+
+networks:
+  backend:
+    internal: false
