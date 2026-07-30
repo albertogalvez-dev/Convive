@@ -1,0 +1,129 @@
+name: Continuous integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: apps/api
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: "postgresql://convive:convive-development-only@127.0.0.1:5432/convive?serverVersion=18.4&charset=utf8"
+
+    services:
+      database:
+        image: postgres:18.4-bookworm
+        env:
+          POSTGRES_DB: convive_test
+          POSTGRES_USER: convive
+          POSTGRES_PASSWORD: convive-development-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready --username=convive --dbname=convive_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          extensions: pdo_pgsql, sodium
+          coverage: none
+          tools: composer:2.10.2
+
+      - name: Validate Composer configuration
+        run: composer validate --strict
+
+      - name: Install backend dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Audit backend dependencies
+        run: composer audit --locked --no-interaction
+
+      - name: Lint Symfony configuration
+        run: |
+          php bin/console lint:yaml config
+          php bin/console lint:container
+
+      - name: Apply database migrations
+        run: php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+      - name: Validate Doctrine schema
+        run: php bin/console doctrine:schema:validate
+
+      - name: Run backend tests
+        run: php bin/phpunit
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Check frontend formatting
+        run: npm exec prettier -- --check "src/**/*.{ts,html,scss}" "*.{json,md}"
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
+
+      - name: Run frontend tests
+        run: npm test -- --watch=false
+
+      - name: Build frontend
+        run: npm run build
+
+  infrastructure:
+    name: Infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Validate Docker Compose configuration
+        run: >
+          docker compose
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          config --quiet
