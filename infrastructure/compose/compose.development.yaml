@@ -1,4 +1,11 @@
 services:
+  web:
+    volumes:
+      - ../../apps/web:/app
+      - web-node-modules:/app/node_modules
+    ports:
+      - "127.0.0.1:4200:4200"
+
   api:
     environment:
       DATABASE_URL: "postgresql://convive:convive-development-only@database:5432/convive?serverVersion=18.4&charset=utf8"
@@ -15,6 +22,11 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
 
+volumes:
+  web-node-modules:
+
 networks:
+  frontend:
+    internal: false
   backend:
     internal: false
