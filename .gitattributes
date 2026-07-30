@@ -1,6 +1,12 @@
 * text=auto
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.dockerignore text eol=lf
 
 # Source code and documentation
+Dockerfile text eol=lf
+.env text eol=lf
+*.lock text eol=lf
 *.md text eol=lf
 *.php text eol=lf
 *.ts text eol=lf
