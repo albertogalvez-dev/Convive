@@ -1,31 +1,71 @@
 # Convive
 
-An open-source web application for secure student reporting and internal school case management.
+Convive is an open-source web application for secure student reporting and internal school case management.
 
 ## Overview
 
 Convive addresses two connected problems:
 
-1. Students may avoid reporting possible bullying situations because of fear, retaliation, or lack of trust in existing channels.
-2. School staff need a secure and traceable way to assess reports, document decisions, manage actions, and follow up on internal cases.
+1. Students may avoid reporting possible bullying situations because of fear, retaliation or lack of trust in existing channels.
+2. School staff need a secure and traceable way to assess reports, document decisions, manage actions and follow up on internal cases.
 
-Convive separates an initial student report from an internal case. A report does not automatically become a confirmed bullying case. It must first be reviewed by the responsible school staff.
+Convive separates an initial report from an internal case. A report does not automatically become a confirmed bullying case. It must first be reviewed by authorised school staff.
+
+The initial product is designed for development and demonstration with fictional data. It is not ready to process real student, family, professional or school information.
 
 ## Project status
 
-The initial application walking skeleton is operational.
+Convive is under active development.
 
-The current development environment runs:
+The current implementation provides:
 
 - an Angular 22 web application;
-- a Symfony 7.4 API on PHP 8.5;
-- PostgreSQL 18.4 with Doctrine;
-- the complete stack through Docker Compose;
+- a Symfony 7.4 API running on PHP 8.5;
+- PostgreSQL 18.4 with Doctrine ORM, DBAL and Migrations;
+- Docker Compose development infrastructure;
+- a versioned API namespace under `/api/v1`;
+- an operational frontend-to-backend health-check flow;
+- the initial `Organisations` and `Reporting` domain model;
+- persistence for organisations and anonymous reports;
+- Doctrine migrations and fictional development fixtures;
+- domain, HTTP and PostgreSQL integration tests;
 - automated backend, frontend and infrastructure checks through GitHub Actions.
 
-The Angular application currently requests `GET /api/v1/health` through its development proxy and renders the response returned by Symfony.
+The Angular walking skeleton currently requests `GET /api/v1/health` through its development proxy and renders the response returned by Symfony.
 
-Convive is under active development and is not ready for use in a real school environment. Development and demonstrations must use fictional data only.
+The first reporting data model stores the minimum information required to receive an anonymous report securely. The public reporting form, organisation-specific public links, anonymous follow-up and professional case-management workflows remain under development.
+
+Development and demonstrations must use fictional data only.
+
+## Architecture
+
+Convive is organised as a monorepository containing:
+
+```text
+apps/
+├── api/     Symfony backend
+└── web/     Angular frontend
+
+docs/
+├── architecture/
+├── brand/
+└── discovery/
+
+infrastructure/
+└── compose/
+```
+
+The backend follows a modular-monolith architecture. Each module owns its domain and persistence boundaries while sharing one Symfony application and one PostgreSQL database.
+
+The initial backend modules are:
+
+- `Organisations`: educational organisations that can receive reports;
+- `Reporting`: anonymous report intake and persistence;
+- `Shared`: cross-cutting technical presentation infrastructure.
+
+The frontend communicates with Symfony through a resource-oriented JSON HTTP API under `/api/v1`. It never accesses PostgreSQL directly.
+
+The reasoning behind the principal technical decisions is recorded in the project’s architecture decision records.
 
 ## Requirements
 
@@ -37,17 +77,47 @@ The canonical development environment requires:
 
 PhpStorm is the primary development IDE, but it is not required to run the application.
 
-The application runtimes and dependencies execute inside containers. PHP, Composer, Node.js and PostgreSQL do not need to be installed directly on the host.
+PHP, Composer, Node.js and PostgreSQL do not need to be installed directly on the host. Application runtimes and dependencies execute inside containers.
+
+## Clone the repository
+
+```bash
+git clone https://github.com/albertogalvez-dev/Convive.git
+cd Convive
+```
+
+## Prepare backend dependencies
+
+The Symfony source directory is mounted into the development container. On the first run after cloning the repository, install its locked Composer dependencies through Docker:
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  run --rm --build --no-deps api composer install \
+  --prefer-dist \
+  --no-interaction \
+  --no-progress
+```
+
+This command builds the API development image, installs the exact dependency
+versions recorded in `composer.lock` and creates the ignored
+`apps/api/vendor` directory without requiring PHP or Composer on the host.
+
+Run it again whenever `composer.lock` changes or `apps/api/vendor` is removed.
 
 ## Start the development environment
 
 From the repository root, start the common and development Compose configurations together:
 
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml up --build
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  up --build
 ```
 
-In PhpStorm, the same environment can be started with a Docker Compose run configuration that uses these files in this order:
+In PhpStorm, the same environment can be started with a Docker Compose run configuration using these files in this order:
 
 1. `infrastructure/compose/compose.yaml`
 2. `infrastructure/compose/compose.development.yaml`
@@ -57,6 +127,32 @@ The environment starts three services:
 - `web`: Angular development server with automatic reload;
 - `api`: Symfony development server;
 - `database`: PostgreSQL.
+
+## Apply database migrations
+
+With the services running, apply the committed Doctrine migrations:
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console doctrine:migrations:migrate --no-interaction
+```
+
+## Load fictional development data
+
+The development fixture creates a fictional educational organisation for local testing.
+
+Loading fixtures purges the existing development data. Do not run this command against a database containing information that must be preserved.
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console doctrine:fixtures:load --no-interaction
+```
+
+All fixtures must remain fictional.
 
 ## Local addresses
 
@@ -78,72 +174,205 @@ This confirms the complete development request path:
 Browser -> Angular -> development proxy -> Symfony -> Angular
 ```
 
-PostgreSQL readiness and the Doctrine connection are verified separately.
+PostgreSQL readiness, migrations and Doctrine schema validity are verified separately.
 
-## Stop the development environment
+## Prepare the test database
 
-Stop the running Compose process with `Ctrl+C`, or use the Stop action in PhpStorm.
+The PostgreSQL integration tests use a separate `convive_test` database.
 
-To remove the development containers and networks while preserving the database volume:
+Create it if it does not already exist:
 
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml down
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console doctrine:database:create \
+  --env=test \
+  --if-not-exists
+```
+
+Apply the migrations to the test database:
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console doctrine:migrations:migrate \
+  --env=test \
+  --no-interaction
 ```
 
 ## Verification
 
-Verify that Doctrine can connect to PostgreSQL:
+### Validate Composer configuration
 
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec api php bin/console doctrine:migrations:status --no-interaction
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api composer validate --strict
 ```
 
-Execute the backend tests:
+### Audit backend dependencies
 
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec api php bin/phpunit
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api composer audit --locked
 ```
 
-Execute the frontend tests:
+### Validate Symfony configuration
 
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec web npm test -- --watch=false
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console lint:yaml config --parse-tags
 ```
 
-Check frontend formatting:
-
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec web npm exec prettier -- --check "src/**/*.{ts,html,scss}" "*.{json,md}"
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console lint:container
 ```
 
-Create the Angular production build:
+### Validate the Doctrine schema
 
 ```bash
-docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec web npm run build
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/console doctrine:schema:validate
+```
+
+### Execute backend tests
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api php bin/phpunit
+```
+
+Some HTTP tests intentionally send unsupported requests. Symfony may log the expected exception while PHPUnit still reports a successful test run.
+
+### Check frontend formatting
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec web npm exec prettier -- \
+  --check "src/**/*.{ts,html,scss}" "*.{json,md}"
+```
+
+### Audit production frontend dependencies
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec web npm audit --omit=dev
+```
+
+### Execute frontend tests
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec web npm test -- --watch=false
+```
+
+### Create the Angular production build
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec web npm run build
+```
+
+### Validate Docker Compose
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  config --quiet
 ```
 
 GitHub Actions repeats the backend, frontend and infrastructure checks for every pull request and for changes pushed to `main`.
 
+## Stop the development environment
+
+Stop the foreground Compose process with `Ctrl+C`, or use the Stop action in PhpStorm.
+
+To remove the development containers and networks while preserving the PostgreSQL volume:
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  down
+```
+
+Removing the named database volume permanently deletes the local development database and should only be done intentionally.
+
 ## Development data and secrets
 
-The committed development database credentials are fictional and must never be reused in production.
+The committed development database credentials are fictional and intended only for the local Docker environment. They must never be reused in production.
 
 Do not commit:
 
-- real personal or school data;
+- real personal, student, family, professional or school data;
 - production credentials;
 - private keys;
-- `.env.local` or environment-specific local override files.
+- access secrets or session identifiers;
+- `.env.local` files;
+- environment-specific local overrides;
+- generated dependency or build directories.
+
+Anonymous report identifiers, future access secrets and organisation public identifiers serve different purposes. Internal UUIDs are not authentication credentials and must not be used as public access secrets.
 
 The public demonstration and all development environments must use fictional data until the necessary legal, privacy, security and operational conditions for real use have been formally validated.
 
 ## Documentation
 
+- [Problem statement](docs/discovery/problem-statement.md)
 - [Product scope](docs/discovery/product-scope.md)
 - [Regulatory context](docs/discovery/regulatory-context.md)
 - [Architecture overview](docs/architecture/README.md)
+- [Initial system architecture](docs/architecture/diagrams/initial-system-architecture.md)
+- [Initial data model](docs/architecture/diagrams/data-model.md)
+- [DBML data-model source](docs/architecture/data-model.dbml)
 - [Architecture decision records](docs/architecture/decisions/README.md)
 - [Brand assets and usage](docs/brand/README.md)
+
+The Doctrine mappings and committed migrations are authoritative for the executable database schema. Diagrams and DBML provide reviewed documentation of that model.
+
+## Contributing
+
+Convive is currently being developed through focused GitHub issues, short-lived branches and reviewed pull requests.
+
+Each change should:
+
+- have a clear and limited scope;
+- preserve the documented architectural boundaries;
+- include relevant tests;
+- update documentation when it changes a contract or decision;
+- pass the required GitHub Actions checks;
+- avoid real or sensitive data.
+
+A dedicated contribution guide and repository templates are planned as part of the project’s professionalisation work.
+
+## Security
+
+Convive is not ready for deployment with real personal data.
+
+Security concerns should not be disclosed through public issues when doing so would expose an exploitable vulnerability. A formal vulnerability-reporting policy will be added before the project accepts external security reports or any real-data deployment.
 
 ## License
 
