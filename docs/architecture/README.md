@@ -20,13 +20,17 @@ authoritative sources remain the Doctrine mappings and the committed migrations.
 
 ## Main components
 
-- **Web application:** the screens and forms used by reporters and school professionals. It will be built with Angular and TypeScript.
-- **Backend API:** the business rules, permissions and secure access to data. It will be built with Symfony.
+- **Web application:** the screens and forms used by reporters and school
+  professionals, built with Angular and TypeScript.
+- **Backend API:** the business rules, permissions and secure access to data,
+  implemented with Symfony.
 - **Database:** PostgreSQL stores the structured information managed by the
   backend. Doctrine ORM and DBAL provide persistence access, and Doctrine
   Migrations versions schema changes, as selected in
   [ADR-0007](decisions/0007-use-postgresql-and-doctrine-for-persistence.md).
-- **Environment:** Docker Compose will provide reproducible development, testing and single-VPS deployment environments.
+- **Environment:** Docker Compose provides the reproducible development and
+  testing environment and is the selected foundation for the future single-VPS
+  deployment environment.
 
 ## Basic communication flow
 
@@ -53,6 +57,23 @@ access context and remains subject to backend authorisation. The complete
 access mechanism, expiry, CSRF constraints and required integration verification
 are defined in
 [ADR-0008](decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
+
+## Public organisation routing
+
+Each organisation will have a dedicated public reporting identifier, separate
+from its internal UUID. That identifier routes a reporter to the organisation's
+public reporting channel and may be distributed through a stable link, QR code
+or readable manual-entry fallback.
+
+The public identifier is not authentication, proof of organisation membership
+or an anonymous report follow-up credential. The initial product does not
+require a shared or rotating centre access code and will not publish a complete
+organisation directory. Abuse prevention remains an explicit API and
+operational responsibility.
+
+The routing decision, identifier boundary and deferred implementation details
+are defined in
+[ADR-0009](decisions/0009-use-public-organisation-reporting-links.md).
 
 ## Backend interface
 

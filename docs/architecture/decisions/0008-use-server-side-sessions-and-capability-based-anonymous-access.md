@@ -607,7 +607,9 @@ Automated tests will use fictional accounts, organisations and reports.
 This decision does not define:
 
 - the complete role and permission matrix;
-- a shared or rotating centre code for access to public report submission;
+- organisation routing and shared or rotating centre codes for public report
+  submission, now owned by
+  [ADR-0009](0009-use-public-organisation-reporting-links.md);
 - the complete anti-automation and abuse-prevention policy for the public
   reporting channel;
 - the account, membership, session or capability-record table schema;
