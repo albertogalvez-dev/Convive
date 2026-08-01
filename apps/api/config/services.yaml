@@ -19,5 +19,6 @@ services:
     App\:
         resource: '../src/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Bind domain repository ports to their Doctrine adapters
+    App\Organisations\Domain\OrganisationRepository: '@App\Organisations\Infrastructure\DoctrineOrganisationRepository'
+    App\Reporting\Domain\ReportRepository: '@App\Reporting\Infrastructure\DoctrineReportRepository'

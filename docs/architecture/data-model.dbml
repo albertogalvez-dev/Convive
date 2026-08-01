@@ -1,0 +1,27 @@
+// Convive — data model
+//
+// This file is derived, human-readable documentation of the first domain schema.
+// The authoritative sources are the Doctrine mappings and the committed
+// migrations (see apps/api/migrations). Render at https://dbdiagram.io.
+
+Table organisations {
+  id uuid [pk]
+  name varchar(255) [not null]
+}
+
+Table reports {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  organisation_id uuid [not null]
+  situation_description text [not null]
+  situation_context varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
+  status varchar(20) [not null, note: 'received (initial status)']
+  public_reference varchar(32) [not null, unique, note: 'non-sequential public tracking reference']
+  access_secret_hash varchar(255) [not null, note: 'one-way hash of the access secret; the secret is never stored']
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+
+  indexes {
+    organisation_id
+  }
+}
+
+Ref: reports.organisation_id > organisations.id

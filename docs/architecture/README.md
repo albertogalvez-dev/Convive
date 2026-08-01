@@ -11,6 +11,13 @@ summarises the logical request flow between the application's users, Angular,
 Symfony and PostgreSQL. Its accompanying text records the development routing
 and initial Docker Compose and single-VPS deployment context.
 
+## Data model
+
+The [data model diagram](diagrams/data-model.md) shows the entity–relationship
+view of the first domain schema (`organisations` and `reports`). Its
+human-readable schema source is [`data-model.dbml`](data-model.dbml). The
+authoritative sources remain the Doctrine mappings and the committed migrations.
+
 ## Main components
 
 - **Web application:** the screens and forms used by reporters and school professionals. It will be built with Angular and TypeScript.
