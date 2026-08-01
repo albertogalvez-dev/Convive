@@ -150,7 +150,8 @@ This separation is a fundamental product rule.
 
 The public reporting experience must allow a person to:
 
-- select the relevant educational centre;
+- reach the relevant educational centre through its dedicated public reporting
+  link, with a practical manual-entry fallback;
 - describe the situation in accessible language;
 - indicate whether the situation is in-person, digital, mixed or unknown;
 - provide approximate dates or recurrence information;
@@ -160,6 +161,14 @@ The public reporting experience must allow a person to:
 - choose whether to provide an email address;
 - receive a private tracking reference and access secret;
 - consult the report status and authorised responses later.
+
+The initial organisation-routing mechanism uses a stable public reporting link
+with a dedicated public identifier, as selected in
+[ADR-0009](../architecture/decisions/0009-use-public-organisation-reporting-links.md).
+The identifier routes the report to the correct organisation but is not
+authentication, proof of membership or a report follow-up secret. The initial
+slice does not require a public organisation directory or a mandatory rotating
+centre access code.
 
 The interface must clearly explain:
 
@@ -465,6 +474,9 @@ The technical direction is:
 - PostgreSQL-backed Symfony sessions for professionals and short-lived opaque,
   report-scoped capabilities for anonymous follow-up, as selected in
   [ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md);
+- stable public organisation reporting links without mandatory shared access
+  codes, as selected in
+  [ADR-0009](../architecture/decisions/0009-use-public-organisation-reporting-links.md);
 - automated CI through GitHub Actions;
 - deployment to a controlled VPS.
 
@@ -547,4 +559,4 @@ A proposed capability belongs to the product only when:
 4. it has been prioritised in the project backlog;
 5. its implementation and verification are traceable.
 
-Last reviewed: 21 July 2026.
+Last reviewed: 1 August 2026.
