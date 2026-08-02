@@ -10,6 +10,7 @@ use App\Organisations\Infrastructure\DoctrineOrganisationRepository;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportStatus;
 use App\Reporting\Domain\SituationContext;
+use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Infrastructure\DoctrineReportRepository;
 use App\Tests\Shared\Infrastructure\Persistence\PostgreSqlTestCase;
 use Symfony\Component\Uid\Uuid;
@@ -36,9 +37,13 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
         $organisation = $this->createOrganisation();
         $this->organisationRepository->save($organisation);
 
+        $description = SituationDescription::fromString(
+            'A student is receiving threatening messages.',
+        );
+
         $creationResult = Report::create(
             $organisation,
-            'A student is receiving threatening messages.',
+            $description,
             SituationContext::Digital,
         );
         $report = $creationResult->report;
@@ -60,15 +65,19 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
             $organisation->id()->toRfc4122(),
             $persistedReport->organisation()->id()->toRfc4122(),
         );
-        self::assertSame(
-            'A student is receiving threatening messages.',
-            $persistedReport->situationDescription(),
+        self::assertTrue(
+            $description->equals(
+                $persistedReport->situationDescription(),
+            ),
         );
         self::assertSame(
             SituationContext::Digital,
             $persistedReport->situationContext(),
         );
-        self::assertSame(ReportStatus::Received, $persistedReport->status());
+        self::assertSame(
+            ReportStatus::Received,
+            $persistedReport->status(),
+        );
         self::assertSame(
             $report->publicReference(),
             $persistedReport->publicReference(),
@@ -91,7 +100,9 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
 
         $creationResult = Report::create(
             $organisation,
-            'A situation has been observed during break time.',
+            SituationDescription::fromString(
+                'A situation has been observed during break time.',
+            ),
             SituationContext::InPerson,
         );
         $this->reportRepository->save($creationResult->report);
@@ -105,7 +116,9 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
                     WHERE public_reference = :publicReference
                     SQL,
                 [
-                    'publicReference' => $creationResult->report->publicReference(),
+                    'publicReference' => $creationResult
+                        ->report
+                        ->publicReference(),
                 ],
             );
 
