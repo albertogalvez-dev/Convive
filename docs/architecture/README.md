@@ -60,10 +60,20 @@ are defined in
 
 ## Public organisation routing
 
-Each organisation will have a dedicated public reporting identifier, separate
-from its internal UUID. That identifier routes a reporter to the organisation's
-public reporting channel and may be distributed through a stable link, QR code
-or readable manual-entry fallback.
+Each organisation has a dedicated persisted public reporting identifier,
+separate from its internal UUID. The identifier uses the `ORG_` prefix followed
+by 16 random Crockford Base32 characters, providing 80 random bits in a
+20-character canonical representation.
+
+Input parsing is case-insensitive and normalises the common `O`/`0` and
+`I`/`L`/`1` ambiguities. Invalid lengths, prefixes, symbols, whitespace and
+Unicode homoglyphs are rejected. PostgreSQL enforces uniqueness and Doctrine
+can resolve an organisation through the canonical public identifier.
+
+This identifier will route a reporter to the organisation's public reporting
+channel and may be distributed through a stable link, QR code or readable
+manual-entry fallback. The public route and Angular reporting journey remain
+under development.
 
 The public identifier is not authentication, proof of organisation membership
 or an anonymous report follow-up credential. The initial product does not
@@ -71,8 +81,7 @@ require a shared or rotating centre access code and will not publish a complete
 organisation directory. Abuse prevention remains an explicit API and
 operational responsibility.
 
-The routing decision, identifier boundary and deferred implementation details
-are defined in
+The routing decision and identifier boundary are defined in
 [ADR-0009](decisions/0009-use-public-organisation-reporting-links.md).
 
 ## Backend interface

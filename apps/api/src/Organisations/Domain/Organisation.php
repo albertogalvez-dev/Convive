@@ -18,10 +18,22 @@ class Organisation
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
-    public function __construct(Uuid $id, string $name)
-    {
+    #[ORM\Column(
+        name: 'public_reporting_identifier',
+        type: 'string',
+        length: PublicReportingIdentifier::LENGTH,
+        unique: true,
+    )]
+    private string $publicReportingIdentifier;
+
+    public function __construct(
+        Uuid $id,
+        string $name,
+        PublicReportingIdentifier $publicReportingIdentifier,
+    ) {
         $this->id = $id;
         $this->name = $name;
+        $this->publicReportingIdentifier = $publicReportingIdentifier->toString();
     }
 
     public function id(): Uuid
@@ -32,5 +44,12 @@ class Organisation
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function publicReportingIdentifier(): PublicReportingIdentifier
+    {
+        return PublicReportingIdentifier::fromString(
+            $this->publicReportingIdentifier,
+        );
     }
 }

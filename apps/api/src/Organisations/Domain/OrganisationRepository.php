@@ -11,4 +11,8 @@ interface OrganisationRepository
     public function save(Organisation $organisation): void;
 
     public function findById(Uuid $id): ?Organisation;
+
+    public function findByPublicReportingIdentifier(
+        PublicReportingIdentifier $identifier,
+    ): ?Organisation;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Reporting\Domain;
 
 use App\Organisations\Domain\Organisation;
+use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportStatus;
 use App\Reporting\Domain\SituationContext;
@@ -88,6 +89,9 @@ final class ReportTest extends TestCase
         return new Organisation(
             Uuid::fromString('0192a5c0-1111-7000-8000-000000000001'),
             'IES Valle Sereno',
+            PublicReportingIdentifier::fromString(
+                'ORG_7M4K9T2W6N8Q3R5X',
+            ),
         );
     }
 }
