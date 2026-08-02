@@ -9,6 +9,8 @@ use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportStatus;
 use App\Reporting\Domain\SituationContext;
+use App\Reporting\Domain\SituationDescription;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV7;
@@ -18,10 +20,13 @@ final class ReportTest extends TestCase
     public function testItCreatesAReportWithTheRequiredInitialState(): void
     {
         $organisation = $this->createOrganisation();
+        $description = SituationDescription::fromString(
+            'A student is being excluded repeatedly during break time.',
+        );
 
         $creationResult = Report::create(
             $organisation,
-            'A student is being excluded repeatedly during break time.',
+            $description,
             SituationContext::InPerson,
         );
 
@@ -29,11 +34,15 @@ final class ReportTest extends TestCase
 
         self::assertInstanceOf(UuidV7::class, $report->id());
         self::assertSame($organisation, $report->organisation());
-        self::assertSame(
-            'A student is being excluded repeatedly during break time.',
-            $report->situationDescription(),
+        self::assertTrue(
+            $description->equals(
+                $report->situationDescription(),
+            ),
         );
-        self::assertSame(SituationContext::InPerson, $report->situationContext());
+        self::assertSame(
+            SituationContext::InPerson,
+            $report->situationContext(),
+        );
         self::assertSame(ReportStatus::Received, $report->status());
     }
 
@@ -41,7 +50,9 @@ final class ReportTest extends TestCase
     {
         $creationResult = Report::create(
             $this->createOrganisation(),
-            'Threatening messages have been received through a group chat.',
+            SituationDescription::fromString(
+                'Threatening messages have been received through a group chat.',
+            ),
             SituationContext::Digital,
         );
 
@@ -67,19 +78,24 @@ final class ReportTest extends TestCase
 
     public function testItRecordsTheCreationTimeInUtc(): void
     {
-        $utc = new \DateTimeZone('UTC');
-        $beforeCreation = new \DateTimeImmutable('now', $utc);
+        $beforeCreation = DateTimeImmutable::createFromTimestamp(
+            microtime(true),
+        );
 
         $creationResult = Report::create(
             $this->createOrganisation(),
-            'The situation may be happening both at school and online.',
+            SituationDescription::fromString(
+                'The situation may be happening both at school and online.',
+            ),
             SituationContext::Mixed,
         );
 
-        $afterCreation = new \DateTimeImmutable('now', $utc);
+        $afterCreation = DateTimeImmutable::createFromTimestamp(
+            microtime(true),
+        );
         $createdAt = $creationResult->report->createdAt();
 
-        self::assertSame('UTC', $createdAt->getTimezone()->getName());
+        self::assertSame('+00:00', $createdAt->format('P'));
         self::assertGreaterThanOrEqual($beforeCreation, $createdAt);
         self::assertLessThanOrEqual($afterCreation, $createdAt);
     }

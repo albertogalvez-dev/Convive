@@ -1,0 +1,147 @@
+openapi: 3.1.0
+info:
+  title: 'Convive API'
+  description: 'Public and professional HTTP API for the Convive school coexistence platform.'
+  version: 0.1.0
+paths:
+  '/api/v1/public/organisations/{publicReportingIdentifier}/reports':
+    post:
+      tags:
+        - 'Public reporting'
+      summary: 'Submit an anonymous report'
+      description: 'Creates an anonymous report for the selected organisation. The access secret is returned only once and must be stored securely by the reporter.'
+      operationId: submitAnonymousReport
+      parameters:
+        -
+          name: publicReportingIdentifier
+          in: path
+          description: 'Public identifier of the organisation receiving the report.'
+          required: true
+          schema:
+            type: string
+            pattern: '^ORG_[0-9A-HJKMNP-TV-Z]{16}$'
+            example: ORG_EZ8E3G9CR2F7VGDF
+      requestBody:
+        description: 'Anonymous report information.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAnonymousReportRequest'
+      responses:
+        '201':
+          description: 'The anonymous report was created successfully.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnonymousReportSubmissionResponse'
+        '400':
+          description: 'The request body contains malformed JSON.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: 'The reporting organisation does not exist.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '415':
+          description: 'The request content type is not application/json.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: 'The submitted report information is invalid.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security: []
+  /api/v1/health:
+    get:
+      operationId: get_api_v1_health
+      responses:
+        default:
+          description: ''
+components:
+  schemas:
+    AnonymousReportSubmissionResponse:
+      required:
+        - publicReference
+        - accessSecret
+        - status
+        - createdAt
+      properties:
+        publicReference:
+          description: 'Public reference used to identify the submitted report.'
+          type: string
+          example: 0123456789ABCDEF0123
+        accessSecret:
+          description: 'Secret shown once and required for future private access to the report.'
+          type: string
+        status:
+          type: string
+          example: received
+          enum:
+            - received
+        createdAt:
+          type: string
+          format: date-time
+      type: object
+      additionalProperties: false
+    ProblemDetails:
+      required:
+        - type
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          maximum: 599
+          minimum: 400
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            required:
+              - field
+              - message
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+            type: object
+            additionalProperties: false
+      type: object
+      additionalProperties: false
+    SubmitAnonymousReportRequest:
+      required:
+        - situationDescription
+        - situationContext
+      properties:
+        situationDescription:
+          type: string
+          maxLength: 5000
+        situationContext:
+          type: string
+          enum:
+            - in_person
+            - digital
+            - mixed
+            - unknown
+      type: object
+tags:
+  -
+    name: 'Public reporting'
+    description: 'Public reporting'

@@ -1,0 +1,74 @@
+nelmio_api_doc:
+    documentation:
+        openapi: 3.1.0
+        info:
+            title: Convive API
+            description: Public and professional HTTP API for the Convive school coexistence platform.
+            version: 0.1.0
+
+        components:
+            schemas:
+                AnonymousReportSubmissionResponse:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - publicReference
+                        - accessSecret
+                        - status
+                        - createdAt
+                    properties:
+                        publicReference:
+                            type: string
+                            description: Public reference used to identify the submitted report.
+                            example: 0123456789ABCDEF0123
+                        accessSecret:
+                            type: string
+                            description: Secret shown once and required for future private access to the report.
+                        status:
+                            type: string
+                            enum:
+                                - received
+                            example: received
+                        createdAt:
+                            type: string
+                            format: date-time
+
+                ProblemDetails:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - type
+                        - title
+                        - status
+                        - detail
+                    properties:
+                        type:
+                            type: string
+                            format: uri-reference
+                        title:
+                            type: string
+                        status:
+                            type: integer
+                            minimum: 400
+                            maximum: 599
+                        detail:
+                            type: string
+                        errors:
+                            type: array
+                            items:
+                                type: object
+                                additionalProperties: false
+                                required:
+                                    - field
+                                    - message
+                                properties:
+                                    field:
+                                        type: string
+                                    message:
+                                        type: string
+
+    type_info: true
+
+    areas:
+        path_patterns:
+            - ^/api/v1

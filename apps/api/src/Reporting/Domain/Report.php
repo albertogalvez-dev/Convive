@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Reporting\Domain;
 
 use App\Organisations\Domain\Organisation;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Random\RandomException;
+use RuntimeException;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
@@ -17,39 +21,51 @@ class Report
     private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Organisation::class)]
-    #[ORM\JoinColumn(name: 'organisation_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(
+        name: 'organisation_id',
+        referencedColumnName: 'id',
+        nullable: false,
+    )]
     private Organisation $organisation;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: Types::TEXT)]
     private string $situationDescription;
 
-    #[ORM\Column(type: 'string', length: 20, enumType: SituationContext::class)]
+    #[ORM\Column(
+        type: Types::STRING,
+        length: 20,
+        enumType: SituationContext::class,
+    )]
     private SituationContext $situationContext;
 
-    #[ORM\Column(type: 'string', length: 20, enumType: ReportStatus::class)]
+    #[ORM\Column(
+        type: Types::STRING,
+        length: 20,
+        enumType: ReportStatus::class,
+    )]
     private ReportStatus $status;
 
-    #[ORM\Column(type: 'string', length: 32, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 32, unique: true)]
     private string $publicReference;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $accessSecretHash;
 
-    #[ORM\Column(type: 'datetimetz_immutable')]
-    private \DateTimeImmutable $createdAt;
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private DateTimeImmutable $createdAt;
 
     private function __construct(
         Uuid $id,
         Organisation $organisation,
-        string $situationDescription,
+        SituationDescription $situationDescription,
         SituationContext $situationContext,
         string $publicReference,
         string $accessSecretHash,
-        \DateTimeImmutable $createdAt,
+        DateTimeImmutable $createdAt,
     ) {
         $this->id = $id;
         $this->organisation = $organisation;
-        $this->situationDescription = $situationDescription;
+        $this->situationDescription = $situationDescription->toString();
         $this->situationContext = $situationContext;
         $this->status = ReportStatus::Received;
         $this->publicReference = $publicReference;
@@ -59,11 +75,22 @@ class Report
 
     public static function create(
         Organisation $organisation,
-        string $situationDescription,
+        SituationDescription $situationDescription,
         SituationContext $situationContext,
     ): ReportCreationResult {
-        $publicReference = strtoupper(bin2hex(random_bytes(10)));
-        $plainAccessSecret = bin2hex(random_bytes(32));
+        try {
+            $publicReferenceBytes = random_bytes(10);
+            $plainAccessSecretBytes = random_bytes(32);
+        } catch (RandomException $exception) {
+            throw new RuntimeException(
+                'Unable to generate secure report credentials.',
+                previous: $exception,
+            );
+        }
+
+        $publicReference = bin2hex($publicReferenceBytes);
+        $publicReference = strtoupper($publicReference);
+        $plainAccessSecret = bin2hex($plainAccessSecretBytes);
 
         $report = new self(
             Uuid::v7(),
@@ -72,15 +99,21 @@ class Report
             $situationContext,
             $publicReference,
             hash('sha256', $plainAccessSecret),
-            new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+            DateTimeImmutable::createFromTimestamp(microtime(true)),
         );
 
-        return new ReportCreationResult($report, $plainAccessSecret);
+        return new ReportCreationResult(
+            $report,
+            $plainAccessSecret,
+        );
     }
 
     public function verifyAccessSecret(string $plainAccessSecret): bool
     {
-        return hash_equals($this->accessSecretHash, hash('sha256', $plainAccessSecret));
+        return hash_equals(
+            $this->accessSecretHash,
+            hash('sha256', $plainAccessSecret),
+        );
     }
 
     public function id(): Uuid
@@ -93,9 +126,11 @@ class Report
         return $this->organisation;
     }
 
-    public function situationDescription(): string
+    public function situationDescription(): SituationDescription
     {
-        return $this->situationDescription;
+        return SituationDescription::fromString(
+            $this->situationDescription,
+        );
     }
 
     public function situationContext(): SituationContext
@@ -113,7 +148,7 @@ class Report
         return $this->publicReference;
     }
 
-    public function createdAt(): \DateTimeImmutable
+    public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }

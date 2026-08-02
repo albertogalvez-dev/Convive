@@ -68,6 +68,12 @@ jobs:
           php bin/console lint:yaml config
           php bin/console lint:container
 
+      - name: Verify OpenAPI contract is up to date
+        run: |
+          php bin/console nelmio:apidoc:dump --format=yaml > /tmp/openapi.yaml
+          sed -i '${/^$/d;}' /tmp/openapi.yaml
+          diff --unified ../../docs/api/openapi.yaml /tmp/openapi.yaml
+
       - name: Apply database migrations
         run: php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
