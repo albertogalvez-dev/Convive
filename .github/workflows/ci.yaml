@@ -115,7 +115,7 @@ jobs:
   infrastructure:
     name: Infrastructure
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
@@ -127,3 +127,62 @@ jobs:
           -f infrastructure/compose/compose.yaml
           -f infrastructure/compose/compose.development.yaml
           config --quiet
+
+      - name: Bootstrap backend dependencies through Docker Compose
+        run: >
+          docker compose
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          run --rm --build --no-deps api composer install
+          --prefer-dist
+          --no-interaction
+          --no-progress
+
+      - name: Start the development stack
+        run: >
+          docker compose
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          up --detach --build
+
+      - name: Verify the Symfony health endpoint
+        run: >
+          curl
+          --fail
+          --silent
+          --show-error
+          --retry 30
+          --retry-delay 2
+          --retry-connrefused
+          --retry-all-errors
+          http://127.0.0.1:8000/api/v1/health
+          | grep --fixed-strings '{"status":"ok"}'
+
+      - name: Verify the Angular development proxy
+        run: >
+          curl
+          --fail
+          --silent
+          --show-error
+          --retry 30
+          --retry-delay 2
+          --retry-connrefused
+          --retry-all-errors
+          http://127.0.0.1:4200/api/v1/health
+          | grep --fixed-strings '{"status":"ok"}'
+
+      - name: Display Docker Compose logs on failure
+        if: failure()
+        run: >
+          docker compose
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          logs --no-color
+
+      - name: Remove the CI development stack
+        if: always()
+        run: >
+          docker compose
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          down --volumes --remove-orphans
