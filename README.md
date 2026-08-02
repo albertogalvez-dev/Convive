@@ -27,13 +27,19 @@ The current implementation provides:
 - an operational frontend-to-backend health-check flow;
 - the initial `Organisations` and `Reporting` domain model;
 - persistence for organisations and anonymous reports;
+- persisted public reporting identifiers and repository resolution for
+  organisations;
 - Doctrine migrations and fictional development fixtures;
 - domain, HTTP and PostgreSQL integration tests;
 - automated backend, frontend and infrastructure checks through GitHub Actions.
 
 The Angular walking skeleton currently requests `GET /api/v1/health` through its development proxy and renders the response returned by Symfony.
 
-The first reporting data model stores the minimum information required to receive an anonymous report securely. The public reporting form, organisation-specific public links, anonymous follow-up and professional case-management workflows remain under development.
+The first reporting data model stores the minimum information required to
+receive an anonymous report securely. Organisations now have persisted public
+reporting identifiers that can be resolved independently from their internal
+UUIDs. The public reporting route, Angular form, anonymous follow-up and
+professional case-management workflows remain under development.
 
 Development and demonstrations must use fictional data only.
 
@@ -335,7 +341,10 @@ Do not commit:
 - environment-specific local overrides;
 - generated dependency or build directories.
 
-Anonymous report identifiers, future access secrets and organisation public identifiers serve different purposes. Internal UUIDs are not authentication credentials and must not be used as public access secrets.
+Anonymous report references, report access secrets and organisation public
+reporting identifiers serve different purposes. Internal UUIDs are not
+authentication credentials and must not be exposed as public routing
+identifiers or used as access secrets.
 
 The public demonstration and all development environments must use fictional data until the necessary legal, privacy, security and operational conditions for real use have been formally validated.
 

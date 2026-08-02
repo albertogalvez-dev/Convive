@@ -6,13 +6,15 @@ namespace App\Organisations\Infrastructure;
 
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\OrganisationRepository;
+use App\Organisations\Domain\PublicReportingIdentifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Uuid;
 
 final class DoctrineOrganisationRepository implements OrganisationRepository
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function save(Organisation $organisation): void
@@ -24,5 +26,19 @@ final class DoctrineOrganisationRepository implements OrganisationRepository
     public function findById(Uuid $id): ?Organisation
     {
         return $this->entityManager->find(Organisation::class, $id);
+    }
+
+    public function findByPublicReportingIdentifier(
+        PublicReportingIdentifier $identifier,
+    ): ?Organisation {
+        $organisation = $this->entityManager
+            ->getRepository(Organisation::class)
+            ->findOneBy([
+                'publicReportingIdentifier' => $identifier->toString(),
+            ]);
+
+        return $organisation instanceof Organisation
+            ? $organisation
+            : null;
     }
 }

@@ -2,7 +2,7 @@
 
 Entity–relationship view of Convive's first domain schema (`organisations` and
 `reports`). GitHub renders this diagram from its Mermaid source. It is kept in
-sync with the Doctrine mappings, the committed migration and
+sync with the Doctrine mappings, the committed migrations and
 [`data-model.dbml`](../data-model.dbml).
 
 ```mermaid
@@ -11,6 +11,7 @@ erDiagram
     organisations {
         uuid id PK
         varchar name
+        varchar public_reporting_identifier UK "ORG_ + 16 Crockford Base32 characters"
     }
     reports {
         uuid id PK "UUIDv7, application-generated"

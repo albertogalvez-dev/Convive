@@ -139,10 +139,10 @@ The link will contain a dedicated public reporting identifier. This identifier:
 - is not the report follow-up access secret;
 - can have an explicit activation, revocation and rotation lifecycle.
 
-The exact identifier format, alphabet and length will be selected during
-implementation. Manual-entry usability must be considered, but guess resistance
-must not be presented as an access-control boundary because the identifier is
-public.
+The identifier format, alphabet and length are selected during implementation
+and recorded in the implementation note below. Manual-entry usability must be
+considered, but guess resistance must not be presented as an access-control
+boundary because the identifier is public.
 
 The initial product slice will not require a mandatory shared or rotating
 centre access code.
@@ -189,17 +189,38 @@ public identifier remaining unknown.
 - QR material becomes operational configuration that must remain accurate.
 - Anyone with the public link can reach the reporting form.
 - Abuse controls must be implemented and monitored independently.
-- Manual entry may require usability testing before fixing the identifier
-  format.
+- Manual-entry usability requires testing and may justify a future format
+  revision.
+
+## Implementation note — 2 August 2026
+
+The first persisted public organisation reporting identifier has been
+implemented as the `ORG_` prefix followed by 16 random Crockford Base32
+characters. The canonical representation is therefore 20 characters long and
+contains 80 random bits.
+
+Identifiers are generated with a cryptographically secure random source.
+Parsing is case-insensitive and normalises `O` to `0` and `I` or `L` to `1`.
+Other invalid characters, incorrect lengths, whitespace and Unicode homoglyphs
+are rejected.
+
+The identifier is represented by a domain value object, persisted separately
+from the internal organisation UUID and protected by a PostgreSQL unique
+constraint. The organisation repository can resolve an organisation through
+the canonical public identifier.
+
+The migration backfills existing organisations before applying the `NOT NULL`
+and uniqueness constraints. This resolves the previously deferred identifier
+format, alphabet and length. Public URL structure, activation, rotation and
+revocation remain deferred.
 
 ## Deferred decisions
 
 This ADR does not define:
 
-- the exact public identifier format or length;
 - the final public URL structure;
 - QR-code generation or poster design;
-- identifier rotation and redirect grace periods;
+- identifier activation, rotation and redirect grace periods;
 - a public organisation directory;
 - the complete rate-limiting policy;
 - CAPTCHA or another anti-automation provider;

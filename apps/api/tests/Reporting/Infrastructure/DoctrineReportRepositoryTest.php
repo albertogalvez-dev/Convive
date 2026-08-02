@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Reporting\Infrastructure;
 
 use App\Organisations\Domain\Organisation;
+use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Organisations\Infrastructure\DoctrineOrganisationRepository;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportStatus;
@@ -32,10 +33,7 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
 
     public function testItSavesAndFindsAReportByPublicReference(): void
     {
-        $organisation = new Organisation(
-            Uuid::v7(),
-            'IES Horizonte',
-        );
+        $organisation = $this->createOrganisation();
         $this->organisationRepository->save($organisation);
 
         $creationResult = Report::create(
@@ -88,10 +86,7 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
 
     public function testItStoresOnlyAOneWayRepresentationOfTheAccessSecret(): void
     {
-        $organisation = new Organisation(
-            Uuid::v7(),
-            'IES Horizonte',
-        );
+        $organisation = $this->createOrganisation();
         $this->organisationRepository->save($organisation);
 
         $creationResult = Report::create(
@@ -132,5 +127,14 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
         );
 
         self::assertNull($report);
+    }
+
+    private function createOrganisation(): Organisation
+    {
+        return new Organisation(
+            Uuid::v7(),
+            'IES Horizonte',
+            PublicReportingIdentifier::generate(),
+        );
     }
 }
