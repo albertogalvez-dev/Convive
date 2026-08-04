@@ -192,7 +192,12 @@ public identifier remaining unknown.
 - Manual-entry usability requires testing and may justify a future format
   revision.
 
-## Implementation note — 2 August 2026
+## Implementation notes
+
+These notes record how the accepted decision was implemented. They do not
+change the decision itself.
+
+### Public reporting identifier — 2 August 2026
 
 The first persisted public organisation reporting identifier has been
 implemented as the `ORG_` prefix followed by 16 random Crockford Base32
@@ -211,23 +216,46 @@ the canonical public identifier.
 
 The migration backfills existing organisations before applying the `NOT NULL`
 and uniqueness constraints. This resolves the previously deferred identifier
-format, alphabet and length. Public URL structure, activation, rotation and
-revocation remain deferred.
+format, alphabet and length. Identifier activation, rotation and revocation
+remain deferred.
+
+### Public report submission endpoint — 2 August 2026
+
+The public reporting entry point is implemented as a single resource-oriented
+operation that addresses the organisation through its public reporting
+identifier:
+
+```text
+POST /api/v1/public/organisations/{publicReportingIdentifier}/reports
+```
+
+The organisation is resolved from the path, so the request body cannot override
+the routing decision by supplying an internal identifier.
+
+A successful submission returns `201 Created` with the report's public
+reference, its one-time access secret, the initial status and the creation
+instant. The access secret is returned only in this response and is never
+stored in readable form.
+
+Failures use RFC 9457 Problem Details with `application/problem+json`: `400` for
+malformed JSON, `404` when the reporting organisation does not exist, `415` for
+an unsupported content type and `422` for invalid report information.
+
+This resolves the previously deferred public URL structure and the
+report-submission request and response representations. The complete contract
+is generated into [`docs/api/openapi.yaml`](../../api/openapi.yaml) and
+continuous integration fails on drift.
 
 ## Deferred decisions
 
 This ADR does not define:
 
-- the final public URL structure;
 - QR-code generation or poster design;
 - identifier activation, rotation and redirect grace periods;
 - a public organisation directory;
 - the complete rate-limiting policy;
 - CAPTCHA or another anti-automation provider;
-- report-submission request and response representations;
 - the report follow-up capability-cookie lifecycle.
-
-These concerns require separate implementation or decision issues.
 
 ## Review triggers
 

@@ -1,8 +1,11 @@
 # Initial system architecture
 
-This diagram shows Convive's initial logical request path before application
-implementation begins. Deployment and browser-routing details are recorded
-below without turning this component view into a deployment diagram.
+This diagram shows Convive's logical request path at container level. The
+boundaries it represents remain accurate as implementation progresses: the
+backend already exposes the health check and the public anonymous report
+submission endpoint, while the Angular reporting journey is still under
+development. Deployment and browser-routing details are recorded below without
+turning this component view into a deployment diagram.
 
 ```mermaid
 flowchart TB
@@ -65,3 +68,4 @@ provider and asynchronous infrastructure remain intentionally deferred.
 - [ADR-0006: Use a resource-oriented JSON HTTP API with an OpenAPI contract](../decisions/0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md)
 - [ADR-0007: Use PostgreSQL and Doctrine for persistence](../decisions/0007-use-postgresql-and-doctrine-for-persistence.md)
 - [ADR-0008: Use server-side sessions and capability-based anonymous access](../decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+- [ADR-0009: Use public organisation reporting links](../decisions/0009-use-public-organisation-reporting-links.md)

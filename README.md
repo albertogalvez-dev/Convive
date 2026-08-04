@@ -29,6 +29,9 @@ The current implementation provides:
 - persistence for organisations and anonymous reports;
 - persisted public reporting identifiers and repository resolution for
   organisations;
+- a public anonymous report submission endpoint with RFC 9457 Problem Details
+  error handling;
+- a generated OpenAPI 3.1 contract with continuous-integration drift detection;
 - Doctrine migrations and fictional development fixtures;
 - domain, HTTP and PostgreSQL integration tests;
 - automated backend, frontend and infrastructure checks through GitHub Actions.
@@ -36,10 +39,14 @@ The current implementation provides:
 The Angular walking skeleton currently requests `GET /api/v1/health` through its development proxy and renders the response returned by Symfony.
 
 The first reporting data model stores the minimum information required to
-receive an anonymous report securely. Organisations now have persisted public
+receive an anonymous report securely. Organisations have persisted public
 reporting identifiers that can be resolved independently from their internal
-UUIDs. The public reporting route, Angular form, anonymous follow-up and
-professional case-management workflows remain under development.
+UUIDs, and the backend already accepts anonymous report submissions through the
+public API described below.
+
+The Angular reporting journey, anonymous follow-up and professional
+case-management workflows remain under development. The Angular application is
+still the walking skeleton and does not yet provide a reporting form.
 
 Development and demonstrations must use fictional data only.
 
@@ -181,6 +188,27 @@ Browser -> Angular -> development proxy -> Symfony -> Angular
 ```
 
 PostgreSQL readiness, migrations and Doctrine schema validity are verified separately.
+
+## Public reporting API
+
+The backend exposes the public anonymous report submission endpoint:
+
+```text
+POST /api/v1/public/organisations/{publicReportingIdentifier}/reports
+```
+
+The organisation is addressed through its public reporting identifier rather
+than its internal UUID, as decided in
+[ADR-0009](docs/architecture/decisions/0009-use-public-organisation-reporting-links.md).
+
+A successful submission returns `201 Created` with the report's public reference
+and its access secret. The access secret is returned only once and is never
+stored in readable form, so the reporter must save it to consult the report
+later. Errors use RFC 9457 Problem Details.
+
+The complete contract is described in
+[`docs/api/openapi.yaml`](docs/api/openapi.yaml). Continuous integration
+regenerates the contract and fails on drift.
 
 ## Prepare the test database
 
@@ -357,6 +385,7 @@ The public demonstration and all development environments must use fictional dat
 - [Initial system architecture](docs/architecture/diagrams/initial-system-architecture.md)
 - [Initial data model](docs/architecture/diagrams/data-model.md)
 - [DBML data-model source](docs/architecture/data-model.dbml)
+- [OpenAPI contract](docs/api/openapi.yaml)
 - [Architecture decision records](docs/architecture/decisions/README.md)
 - [Brand assets and usage](docs/brand/README.md)
 

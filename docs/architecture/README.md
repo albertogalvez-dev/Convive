@@ -70,10 +70,10 @@ Input parsing is case-insensitive and normalises the common `O`/`0` and
 Unicode homoglyphs are rejected. PostgreSQL enforces uniqueness and Doctrine
 can resolve an organisation through the canonical public identifier.
 
-This identifier will route a reporter to the organisation's public reporting
-channel and may be distributed through a stable link, QR code or readable
-manual-entry fallback. The public route and Angular reporting journey remain
-under development.
+The backend already accepts anonymous report submissions addressed by this
+identifier. The identifier may be distributed through a stable link, QR code or
+readable manual-entry fallback; QR generation, poster design and the Angular
+reporting journey remain under development.
 
 The public identifier is not authentication, proof of organisation membership
 or an anonymous report follow-up credential. The initial product does not
@@ -86,7 +86,7 @@ The routing decision and identifier boundary are defined in
 
 ## Backend interface
 
-Symfony will expose a resource-oriented HTTP API under the `/api/v1` path, as
+Symfony exposes a resource-oriented HTTP API under the `/api/v1` path, as
 selected in
 [ADR-0006](decisions/0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md).
 
@@ -95,3 +95,15 @@ representations and an OpenAPI contract. Explicit Symfony controllers and
 transport DTOs keep the external contract separate from domain and persistence
 models. Symfony remains responsible for validating every request and authorising
 every protected operation.
+
+The implemented operations are a service health check and the public anonymous
+report submission endpoint:
+
+```text
+POST /api/v1/public/organisations/{publicReportingIdentifier}/reports
+```
+
+A successful submission returns `201 Created` with the report's public reference
+and a one-time access secret. The generated contract is committed at
+[`docs/api/openapi.yaml`](../api/openapi.yaml) and continuous integration fails
+when the implementation and the contract drift apart.
