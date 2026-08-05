@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Presentation\Http;
 
+use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrganisationNotFound;
+use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
 use App\Reporting\Presentation\Http\ReportingOrganisationNotFoundHttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,22 +39,12 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
 
         $exception = $event->getThrowable();
 
-        if ($exception instanceof ReportingOrganisationNotFound) {
-            $event->setResponse(
-                $this->createResponse(
-                    'urn:convive:problem:reporting-organisation-not-found',
-                    'Reporting organisation not found',
-                    Response::HTTP_NOT_FOUND,
-                    'The requested reporting organisation was not found.',
-                ),
-            );
-
-            return;
-        }
-
         if (
-            $exception
-            instanceof ReportingOrganisationNotFoundHttpException
+            $exception instanceof ReportingOrganisationNotFound
+            || $exception instanceof PublicReportingOrganisationNotFound
+            || $exception instanceof ReportingOrganisationNotFoundHttpException
+            || $exception
+                instanceof PublicReportingOrganisationNotFoundHttpException
         ) {
             $event->setResponse(
                 $this->createResponse(
