@@ -4,6 +4,42 @@ info:
   description: 'Public and professional HTTP API for the Convive school coexistence platform.'
   version: 0.1.0
 paths:
+  '/api/v1/public/organisations/{publicReportingIdentifier}':
+    get:
+      tags:
+        - 'Public reporting'
+      summary: 'Get the public reporting profile for an organisation'
+      description: 'Returns the organisation name displayed before the anonymous reporting form.'
+      operationId: getPublicReportingProfile
+      parameters:
+        -
+          name: publicReportingIdentifier
+          in: path
+          description: 'Canonical public reporting identifier of the organisation.'
+          required: true
+          schema:
+            type: string
+            pattern: '^ORG_[0-9A-HJKMNP-TV-Z]{16}$'
+            example: ORG_EZ8E3G9CR2F7VGDF
+      responses:
+        '200':
+          description: 'The public reporting profile.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - name
+                properties:
+                  name: { type: string, example: 'IES Valle Sereno' }
+                type: object
+                additionalProperties: false
+        '404':
+          description: 'The public reporting identifier is invalid or the organisation was not found.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security: []
   '/api/v1/public/organisations/{publicReportingIdentifier}/reports':
     post:
       tags:

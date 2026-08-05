@@ -198,15 +198,22 @@ PostgreSQL readiness, migrations and Doctrine schema validity are verified separ
 
 ## Public reporting API
 
-The backend exposes the public anonymous report submission endpoint:
+The backend exposes two public reporting operations:
 
 ```text
+GET  /api/v1/public/organisations/{publicReportingIdentifier}
 POST /api/v1/public/organisations/{publicReportingIdentifier}/reports
 ```
 
 The organisation is addressed through its public reporting identifier rather
 than its internal UUID, as decided in
 [ADR-0009](docs/architecture/decisions/0009-use-public-organisation-reporting-links.md).
+
+The profile operation lets the reporting journey validate the public link and
+display the organisation name before accepting any report content. A successful
+response contains only that public name. Malformed and unknown identifiers share
+the same `404 Not Found` representation so the endpoint does not disclose
+internal organisation data.
 
 A successful submission returns `201 Created` with the report's public reference
 and its access secret. The access secret is returned only once and is never

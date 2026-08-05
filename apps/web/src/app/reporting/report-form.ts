@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -7,7 +7,18 @@ import { ReportHeader } from './report-header';
 import { ReportHelp } from './report-help';
 import { ReportResult } from './report-result';
 import { ReportSending } from './report-sending';
-import { ReportingService, ReportSubmissionResponse, SituationContext } from './reporting.service';
+import {
+  PublicReportingProfile,
+  ReportingService,
+  ReportSubmissionResponse,
+  SituationContext,
+} from './reporting.service';
+
+type ReportingProfileState =
+  | { status: 'loading' }
+  | { status: 'ready'; profile: PublicReportingProfile }
+  | { status: 'invalid' }
+  | { status: 'unavailable' };
 
 @Component({
   selector: 'app-report-form',
@@ -18,8 +29,10 @@ import { ReportingService, ReportSubmissionResponse, SituationContext } from './
 })
 export class ReportForm {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly reporting = inject(ReportingService);
   private readonly route = inject(ActivatedRoute);
+  private profileLoadingTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly publicReportingIdentifier =
     this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '';
@@ -37,6 +50,15 @@ export class ReportForm {
   protected readonly showHelp = signal(false);
   protected readonly result = signal<ReportSubmissionResponse | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly showProfileLoading = signal(false);
+  protected readonly profileState = signal<ReportingProfileState>({
+    status: 'loading',
+  });
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.clearProfileLoadingTimer());
+    this.resolvePublicReportingProfile();
+  }
 
   protected continue(): void {
     const description = this.form.controls.situationDescription;
@@ -118,7 +140,15 @@ export class ReportForm {
     }
   }
 
+  protected retryProfileResolution(): void {
+    this.resolvePublicReportingProfile();
+  }
+
   protected submit(): void {
+    if (this.profileState().status !== 'ready') {
+      return;
+    }
+
     if (this.submitting()) {
       return;
     }
@@ -147,6 +177,46 @@ export class ReportForm {
           this.submitting.set(false);
         },
       });
+  }
+
+  private resolvePublicReportingProfile(): void {
+    this.profileState.set({ status: 'loading' });
+    this.scheduleProfileLoading();
+
+    this.reporting.getPublicReportingProfile(this.publicReportingIdentifier).subscribe({
+      next: (profile) => {
+        this.hideProfileLoading();
+        this.profileState.set({
+          status: 'ready',
+          profile,
+        });
+      },
+      error: (error: unknown) => {
+        this.hideProfileLoading();
+        this.profileState.set({
+          status:
+            error instanceof HttpErrorResponse && error.status === 404 ? 'invalid' : 'unavailable',
+        });
+      },
+    });
+  }
+
+  private scheduleProfileLoading(): void {
+    this.clearProfileLoadingTimer();
+    this.showProfileLoading.set(false);
+    this.profileLoadingTimer = setTimeout(() => this.showProfileLoading.set(true), 250);
+  }
+
+  private hideProfileLoading(): void {
+    this.clearProfileLoadingTimer();
+    this.showProfileLoading.set(false);
+  }
+
+  private clearProfileLoadingTimer(): void {
+    if (this.profileLoadingTimer !== null) {
+      clearTimeout(this.profileLoadingTimer);
+      this.profileLoadingTimer = null;
+    }
   }
 
   private describeError(error: unknown): string {
