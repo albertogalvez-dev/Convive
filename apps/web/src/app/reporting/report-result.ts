@@ -20,7 +20,6 @@ export class ReportResult {
     }
 
     event.preventDefault();
-    event.returnValue = '';
   }
 
   protected async copyAccessSecret(): Promise<void> {
