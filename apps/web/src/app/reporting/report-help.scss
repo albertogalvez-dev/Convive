@@ -1,0 +1,54 @@
+.backdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  padding: 1rem;
+  background: rgb(23 43 87 / 45%);
+  place-items: center;
+}
+
+.dialog {
+  position: relative;
+  width: min(100%, 32rem);
+  padding: 2rem;
+  color: #172b57;
+  background: #fff;
+  border-radius: 0.9rem;
+  box-shadow: 0 1.5rem 4rem rgb(23 43 87 / 20%);
+}
+
+h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+}
+
+ol {
+  display: grid;
+  gap: 0.85rem;
+  padding-left: 1.25rem;
+}
+
+p {
+  margin: 1.5rem 0 0;
+  color: #52647e;
+  line-height: 1.55;
+}
+
+.close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  color: #52647e;
+  font:
+    1.5rem Arial,
+    sans-serif;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.close:focus-visible {
+  outline: 3px solid rgb(35 157 209 / 30%);
+}

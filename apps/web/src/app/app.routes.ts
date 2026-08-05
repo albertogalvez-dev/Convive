@@ -1,3 +1,10 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { ReportForm } from './reporting/report-form';
+
+export const routes: Routes = [
+  {
+    path: 'r/:publicReportingIdentifier',
+    component: ReportForm,
+  },
+];
