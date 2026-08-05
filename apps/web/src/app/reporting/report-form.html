@@ -1,0 +1,142 @@
+<main class="report-page" [class.completed]="result()">
+  <section class="report-flow" aria-labelledby="step-title">
+    <app-report-header
+      [currentStep]="currentStep()"
+      [totalSteps]="3"
+      [showProgress]="!result()"
+      (helpRequested)="showHelp.set(true)"
+      (stepRequested)="navigateToStep($event)"
+    />
+
+    @if (showHelp()) {
+      <app-report-help (closed)="showHelp.set(false)" />
+    }
+
+    @if (result(); as submitted) {
+      <app-report-result [submitted]="submitted" />
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (currentStep() === 1) {
+          <div class="step">
+            <h1 id="step-title">¿Qué ha ocurrido?</h1>
+
+            <label class="visually-hidden" for="situationDescription">¿Qué ha ocurrido?</label>
+            <textarea
+              id="situationDescription"
+              formControlName="situationDescription"
+              rows="10"
+              maxlength="5000"
+              placeholder="Escribe aquí…"
+              [attr.aria-describedby]="
+                form.controls.situationDescription.touched &&
+                form.controls.situationDescription.invalid
+                  ? 'description-counter description-error'
+                  : 'description-counter'
+              "
+            ></textarea>
+
+            <div class="field-meta">
+              @if (
+                form.controls.situationDescription.touched &&
+                form.controls.situationDescription.invalid
+              ) {
+                <p id="description-error" class="error" role="alert">
+                  Escribe qué ha ocurrido para continuar.
+                </p>
+              }
+              <span id="description-counter">
+                {{ form.controls.situationDescription.value.length }} / 5000
+              </span>
+            </div>
+
+            <div class="actions actions-end">
+              <button type="button" class="primary" (click)="continue()">
+                Continuar <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        } @else if (currentStep() === 2) {
+          <div class="step">
+            <h1 id="step-title">¿Dónde ocurrió?</h1>
+
+            <fieldset
+              class="context-options"
+              [attr.aria-describedby]="
+                form.controls.situationContext.touched && form.controls.situationContext.invalid
+                  ? 'context-error'
+                  : null
+              "
+            >
+              <legend class="visually-hidden">¿Dónde ocurrió?</legend>
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="isContextSelected('in_person')"
+                  (change)="toggleContext('in_person')"
+                />
+                <span>En persona</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="isContextSelected('digital')"
+                  (change)="toggleContext('digital')"
+                />
+                <span>Online</span>
+              </label>
+              <label class="unknown-option">
+                <input
+                  type="checkbox"
+                  [checked]="isContextSelected('unknown')"
+                  (change)="toggleContext('unknown')"
+                />
+                <span>Prefiero no decirlo</span>
+              </label>
+            </fieldset>
+
+            @if (form.controls.situationContext.touched && form.controls.situationContext.invalid) {
+              <p id="context-error" class="error" role="alert">
+                Selecciona una opción para continuar.
+              </p>
+            }
+
+            <div class="actions">
+              <button type="button" class="secondary" (click)="goBack()">Atrás</button>
+              <button type="button" class="primary" (click)="continueFromContext()">
+                Continuar <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="step review-step">
+            @if (submitting()) {
+              <app-report-sending />
+            } @else {
+              <h1 id="step-title">Revisa antes de enviar</h1>
+
+              <dl class="review-details">
+                <div>
+                  <dt>Qué ha ocurrido</dt>
+                  <dd>{{ form.controls.situationDescription.value }}</dd>
+                </div>
+                <div>
+                  <dt>Dónde ocurrió</dt>
+                  <dd>{{ contextSummary() }}</dd>
+                </div>
+              </dl>
+
+              @if (errorMessage(); as message) {
+                <p class="error submission-error" role="alert">{{ message }}</p>
+              }
+
+              <div class="actions">
+                <button type="button" class="secondary" (click)="goBack()">Atrás</button>
+                <button type="submit" class="primary">Enviar</button>
+              </div>
+            }
+          </div>
+        }
+      </form>
+    }
+  </section>
+</main>

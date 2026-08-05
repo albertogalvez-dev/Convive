@@ -1,0 +1,105 @@
+:host {
+  display: block;
+}
+
+.sending {
+  display: grid;
+  justify-items: center;
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.orbit {
+  position: relative;
+  display: grid;
+  width: 6rem;
+  height: 6rem;
+  margin-bottom: 1.75rem;
+  border: 1px solid #cfe8f3;
+  border-radius: 50%;
+  place-items: center;
+}
+
+.shield {
+  display: grid;
+  width: 3.6rem;
+  height: 3.6rem;
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: #239dd1;
+  border-radius: 50%;
+  place-items: center;
+  box-shadow: 0 0.65rem 1.75rem rgb(35 157 209 / 22%);
+}
+
+.eyebrow {
+  margin: 0 0 0.4rem;
+  color: #1689b9;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+h1 {
+  max-width: 34rem;
+  margin: 0 0 0.75rem;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0;
+  color: #63738d;
+}
+
+.activity {
+  display: flex;
+  gap: 0.5rem;
+  margin: 2rem 0 0.85rem;
+}
+
+.activity span {
+  width: 0.45rem;
+  height: 0.45rem;
+  background: #239dd1;
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.activity span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.activity span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.live {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+@keyframes pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-0.3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity span {
+    animation: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  h1 {
+    font-size: 1.7rem;
+  }
+}

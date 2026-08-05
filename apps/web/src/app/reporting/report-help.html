@@ -1,0 +1,22 @@
+<div class="backdrop" (click)="closed.emit()">
+  <section
+    #dialog
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="help-title"
+    tabindex="-1"
+    (click)="$event.stopPropagation()"
+  >
+    <button type="button" class="close" aria-label="Cerrar" (click)="closed.emit()">×</button>
+    <h2 id="help-title">Antes de empezar</h2>
+    <ol>
+      <li>Describe la situación. No necesitas decir quién eres.</li>
+      <li>Indica dónde ocurrió y comprueba la información.</li>
+      <li>Envía la comunicación y guarda tus datos de acceso.</li>
+    </ol>
+    <p>
+      Al finalizar recibirás una referencia y un secreto de acceso. Guárdalos en un lugar seguro.
+    </p>
+  </section>
+</div>

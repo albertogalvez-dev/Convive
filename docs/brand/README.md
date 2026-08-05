@@ -44,13 +44,13 @@ Do not:
 
 ## Colour palette
 
-| Role | Name | Hex | Intended use |
-| --- | --- | --- | --- |
-| Primary | Convive Navy | `#172B57` | Headings, primary text, dark backgrounds |
-| Accent | Voice Blue | `#239DD1` | Highlighted `v` letters, connection gesture, accents |
-| Background | Soft Background | `#F7FAFD` | Light sections and presentation backgrounds |
-| Neutral | Supporting Grey | `#53647D` | Secondary text |
-| Neutral | White | `#FFFFFF` | Main backgrounds and reversed content |
+| Role       | Name            | Hex       | Intended use                                         |
+| ---------- | --------------- | --------- | ---------------------------------------------------- |
+| Primary    | Convive Navy    | `#172B57` | Headings, primary text, dark backgrounds             |
+| Accent     | Voice Blue      | `#239DD1` | Highlighted `v` letters, connection gesture, accents |
+| Background | Soft Background | `#F7FAFD` | Light sections and presentation backgrounds          |
+| Neutral    | Supporting Grey | `#53647D` | Secondary text                                       |
+| Neutral    | White           | `#FFFFFF` | Main backgrounds and reversed content                |
 
 Voice Blue is an accent colour. It must not be used for normal-sized text on white because that combination does not meet WCAG 2.2 AA contrast requirements. Convive Navy and Supporting Grey can be used for normal text on white.
 
@@ -95,3 +95,58 @@ The visual summary is available as an editable SVG and a portable PNG:
 - `assets/convive-brand-board.png`
 
 The SVG is the source. The PNG is a generated preview for GitHub, presentations, and sharing.
+
+## Product interface foundations
+
+The anonymous reporting flow establishes the first approved product-interface direction. These foundations should be reused across public and professional journeys, while allowing each journey to have its own information architecture.
+
+### Interface principles
+
+- Lead with the task. Avoid marketing, onboarding and explanatory content inside operational journeys.
+- Use short, literal Spanish copy. Explain consequences before asking for an important action.
+- Keep layouts calm and spacious, but do not fill empty space with decorative content.
+- Give every screen one clear primary purpose and avoid competing calls to action.
+- Keep anonymous reporting, anonymous follow-up and professional case management as separate interfaces connected by explicit actions.
+
+### Visual language
+
+- Use Convive Navy (`#172B57`) for headings, primary actions and high-emphasis interface elements.
+- Use Voice Blue (`#239DD1`) for progress, completion and restrained accents, never as normal-sized text on white.
+- Use white surfaces over very light cool backgrounds, with subtle blue-grey borders and low-opacity shadows.
+- Prefer rounded rectangles with moderate radii. Current reporting surfaces use approximately `0.65rem` for controls and `1rem` for major containers.
+- Use generous, consistent spacing and align content to a clear shared column. Related labels, values and actions must remain visually grouped.
+- Use icons to support familiar actions such as copy or completion, always with an accessible text label.
+
+### Typography and hierarchy
+
+- The current web interface uses Arial with Helvetica and sans-serif fallbacks while the final product typeface remains open.
+- Headings use Convive Navy, compact line heights and strong weight.
+- Utility actions and progress labels at the same hierarchy level must use matching font sizes.
+- Body and supporting text use Supporting Grey or another tested accessible neutral.
+- Avoid oversized headings on mobile and prevent glyph clipping by using explicit, comfortable line heights.
+
+### Forms and journeys
+
+- Break demanding public tasks into a small number of understandable steps.
+- Show the current step on every relevant viewport and keep progress visually continuous.
+- Use large input targets, visible labels, clear focus states and errors next to the affected action or field.
+- Selection rules must be reflected both visually and semantically; mutually exclusive options cannot appear selected together.
+- Review screens should present only information the person can verify before submitting.
+
+### Completion and sensitive credentials
+
+- Treat the submission result as a final receipt, not another form step.
+- Keep the public reference visually available but secondary to the access secret.
+- Explain that the secret cannot be recovered before displaying the copy action.
+- Keep the secret out of URLs and browser storage. A browser leave warning is only a secondary safeguard and is not reliable on all mobile lifecycle events.
+- Confirmation, anonymous follow-up and adding further information are distinct views. Future actions may link from the receipt to follow-up, but the receipt must not embed the case interface.
+
+### Accessibility and motion
+
+- Meet WCAG 2.2 AA contrast and keyboard requirements.
+- Never use colour or an icon as the only carrier of meaning.
+- Provide visible focus indicators and accessible names for icon-only controls.
+- Announce asynchronous status changes without unexpectedly moving focus.
+- Respect reduced-motion preferences and provide controls for any prolonged automatic animation.
+
+These foundations document the approved direction, not a complete design system. Repeated values should move into shared design tokens and reusable components when a second product journey proves that abstraction useful.

@@ -1,0 +1,186 @@
+:host {
+  display: block;
+  color: #172b57;
+}
+
+.result {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d8e2ed;
+  border-radius: 1rem;
+  box-shadow: 0 1.25rem 3rem rgb(23 43 87 / 8%);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.75rem 2rem;
+  background: #fff;
+}
+
+.heading span {
+  display: grid;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: #239dd1;
+  border-radius: 50%;
+  place-items: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.perforation {
+  height: 1px;
+  background: repeating-linear-gradient(90deg, #cbd7e4 0 0.55rem, transparent 0.55rem 1rem);
+}
+
+.access {
+  padding: 2rem;
+}
+
+.access-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.access-title h2,
+.reference {
+  margin: 0;
+}
+
+.access-title h2 {
+  font-size: 1.25rem;
+}
+
+.reference {
+  display: flex;
+  gap: 0.5rem;
+  color: #63738d;
+  font-size: 0.8rem;
+}
+
+.reference code {
+  color: #172b57;
+  font-weight: 700;
+}
+
+.secret-label {
+  color: #63738d;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  margin: 0 0 1.5rem;
+  color: #713708;
+  background: #fff7ed;
+  border: 1px solid #efc58f;
+  border-left: 4px solid #c96912;
+  border-radius: 0.65rem;
+}
+
+.warning > span {
+  display: grid;
+  flex: 0 0 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.05rem;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  place-items: center;
+}
+
+.warning p {
+  margin: 0;
+}
+
+.warning strong {
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.secret-row {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.secret-row code {
+  display: block;
+  padding: 1rem;
+  padding-right: 4rem;
+  overflow-wrap: anywhere;
+  background: #f7f9fc;
+  border: 1px solid #a9cfe1;
+  border-radius: 0.65rem;
+}
+
+button {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  display: grid;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+  color: #fff;
+  background: #172b57;
+  border: 1px solid #172b57;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+  place-items: center;
+}
+
+button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+button:focus-visible {
+  outline: 3px solid rgb(35 157 209 / 30%);
+  outline-offset: 2px;
+}
+
+.copy-status {
+  min-height: 1.25rem;
+  margin: 0.5rem 0 0;
+  color: #28714d;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 40rem) {
+  .heading,
+  .access {
+    padding: 1.25rem;
+  }
+
+  h1 {
+    font-size: 1.65rem;
+  }
+
+  .access-title {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}

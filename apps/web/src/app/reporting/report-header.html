@@ -1,0 +1,33 @@
+<header>
+  <img src="/convive-logo.svg" alt="Convive" width="180" height="59" />
+  @if (showProgress()) {
+    <div class="header-actions">
+      <button class="help" type="button" (click)="helpRequested.emit()">Cómo funciona</button>
+      <span class="desktop-label" aria-live="polite">
+        Paso {{ currentStep() }} de {{ totalSteps() }}
+      </span>
+    </div>
+  }
+</header>
+
+@if (showProgress()) {
+  <div class="progress">
+    <span class="progress-label mobile-label" aria-live="polite">
+      Paso {{ currentStep() }} de {{ totalSteps() }}
+    </span>
+    <ol aria-label="Progreso de la comunicación">
+      @for (step of steps(); track step) {
+        <li>
+          <button
+            type="button"
+            [class.reached]="step <= currentStep()"
+            [disabled]="step >= currentStep()"
+            [attr.aria-current]="step === currentStep() ? 'step' : null"
+            [attr.aria-label]="'Ir al paso ' + step"
+            (click)="stepRequested.emit(step)"
+          ></button>
+        </li>
+      }
+    </ol>
+  </div>
+}

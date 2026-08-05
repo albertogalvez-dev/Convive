@@ -1,0 +1,285 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: #fff;
+}
+
+.report-page {
+  min-height: 100dvh;
+  padding: 0 2rem 3rem;
+}
+
+.report-page.completed {
+  padding-bottom: 0;
+  background:
+    radial-gradient(circle at 8% 90%, rgb(35 157 209 / 9%), transparent 24rem),
+    radial-gradient(circle at 94% 12%, rgb(23 43 87 / 7%), transparent 26rem), #f7f9fc;
+}
+
+.report-flow {
+  width: min(100%, 72rem);
+  margin: auto;
+}
+
+form,
+app-report-result {
+  display: block;
+  width: min(100%, 48rem);
+  margin: auto;
+}
+
+.completed app-report-result {
+  display: grid;
+  width: min(100%, 60rem);
+  min-height: calc(100dvh - 5rem);
+  padding: 3rem 0;
+  align-items: start;
+}
+
+.step {
+  min-height: 37rem;
+}
+
+.step,
+app-report-result {
+  padding-top: 4rem;
+}
+
+h1 {
+  margin: 0 0 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+textarea {
+  width: 100%;
+  height: 18rem;
+  padding: 1.15rem 1.2rem;
+  color: #172b57;
+  font: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  background: #fbfcfe;
+  border: 1px solid #b6c4d5;
+  border-radius: 0.75rem;
+}
+
+textarea::placeholder {
+  color: #7f8da1;
+}
+
+textarea:focus {
+  background: #fff;
+  border-color: #239dd1;
+  outline: 0;
+  box-shadow: 0 0 0 4px rgb(35 157 209 / 14%);
+}
+
+.field-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 1.5rem;
+  margin-top: 0.55rem;
+  color: #718097;
+  font-size: 0.76rem;
+}
+
+#description-counter {
+  margin-left: auto;
+}
+
+.context-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.context-options label {
+  position: relative;
+  cursor: pointer;
+}
+
+.context-options input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.context-options span {
+  display: flex;
+  align-items: center;
+  min-height: 4rem;
+  padding: 0 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #fbfcfe;
+  border: 1px solid #c8d3df;
+  border-radius: 0.7rem;
+}
+
+.context-options input:focus-visible + span,
+button:focus-visible {
+  outline: 3px solid rgb(35 157 209 / 30%);
+  outline-offset: 2px;
+}
+
+.context-options input:checked + span {
+  color: #fff;
+  background: #172b57;
+  border-color: #172b57;
+}
+
+.unknown-option {
+  grid-column: 1 / -1;
+}
+
+.error {
+  margin: 0.65rem 0 0;
+  color: #a5233d;
+  font-size: 0.85rem;
+}
+
+.submission-error {
+  padding: 0.8rem 1rem;
+  background: #fff0f3;
+  border-radius: 0.55rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.actions-end {
+  justify-content: flex-end;
+}
+
+button {
+  min-height: 3.25rem;
+  padding: 0.8rem 1.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #fff;
+  background: #172b57;
+  border: 1px solid #172b57;
+}
+
+.secondary {
+  color: #172b57;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.review-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.review-details div {
+  padding: 1rem;
+  background: #fbfcfe;
+  border: 1px solid #d7e0ea;
+  border-radius: 0.7rem;
+}
+
+.review-details dt {
+  color: #718097;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.review-details dd {
+  margin: 0.4rem 0 0;
+  overflow-wrap: anywhere;
+  font-family: Consolas, monospace;
+  font-weight: 700;
+}
+
+.review-details dd {
+  max-height: 12rem;
+  overflow: auto;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 48rem) {
+  .report-page {
+    padding: 0 1rem 2rem;
+  }
+
+  .step,
+  app-report-result {
+    min-height: 0;
+    padding-top: 2.5rem;
+  }
+
+  .completed app-report-result {
+    min-height: calc(100dvh - 4.25rem);
+    padding: 1.5rem 0;
+  }
+
+  h1 {
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    line-height: 1.25;
+  }
+
+  textarea {
+    height: 17rem;
+  }
+
+  .actions {
+    margin-top: 1.5rem;
+  }
+
+  .actions-end .primary {
+    width: 100%;
+  }
+
+  .context-options {
+    grid-template-columns: 1fr;
+  }
+
+  .context-options {
+    gap: 0.65rem;
+  }
+
+  .context-options span {
+    min-height: 3.5rem;
+  }
+}
