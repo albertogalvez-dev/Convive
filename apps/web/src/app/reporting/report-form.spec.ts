@@ -7,6 +7,9 @@ import { vi } from 'vitest';
 import { ReportForm } from './report-form';
 
 describe('ReportForm', () => {
+  const organisationIdentifier = 'ORG_6H3K8M5R2W9T4Q7X';
+  const organisationEndpoint = `/api/v1/public/organisations/${organisationIdentifier}`;
+
   let fixture: ComponentFixture<ReportForm>;
   let page: HTMLElement;
   let httpTesting: HttpTestingController;
@@ -30,7 +33,7 @@ describe('ReportForm', () => {
           useValue: {
             snapshot: {
               paramMap: convertToParamMap({
-                publicReportingIdentifier: 'ORG_TEST',
+                publicReportingIdentifier: organisationIdentifier,
               }),
             },
           },
@@ -38,10 +41,6 @@ describe('ReportForm', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ReportForm);
-    fixture.detectChanges();
-
-    page = fixture.nativeElement as HTMLElement;
     httpTesting = TestBed.inject(HttpTestingController);
   });
 
@@ -49,7 +48,88 @@ describe('ReportForm', () => {
     httpTesting.verify();
   });
 
+  it('should resolve the organisation before displaying the form', () => {
+    createForm();
+
+    expect(page.querySelector('form')).toBeNull();
+    expect(page.querySelector('[role="status"]')).toBeNull();
+
+    resolveOrganisation();
+
+    expect(page.textContent).toContain('IES Valle Sereno');
+    expect(page.querySelector('form')).not.toBeNull();
+  });
+
+  it('should show the invalid-link state when the organisation cannot be found', () => {
+    createForm();
+
+    httpTesting.expectOne(organisationEndpoint).flush(
+      {
+        type: 'urn:convive:problem:reporting-organisation-not-found',
+        title: 'Reporting organisation not found',
+        status: 404,
+        detail: 'Internal information that must not be displayed.',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Enlace no válido');
+    expect(page.textContent).toContain('No podemos abrir este formulario');
+    expect(page.textContent).not.toContain('Internal information');
+    expect(page.querySelector('form')).toBeNull();
+  });
+
+  it('should display the loading form only when profile resolution takes longer', () => {
+    vi.useFakeTimers();
+
+    try {
+      createForm();
+
+      vi.advanceTimersByTime(249);
+      fixture.detectChanges();
+      expect(page.querySelector('form')).toBeNull();
+
+      vi.advanceTimersByTime(1);
+      fixture.detectChanges();
+
+      const formWhileLoading = page.querySelector('form');
+
+      expect(formWhileLoading?.classList.contains('form-loading')).toBe(true);
+      expect((formWhileLoading?.querySelector('textarea') as HTMLTextAreaElement).disabled).toBe(
+        true,
+      );
+      expect(page.querySelector('[role="status"]')?.textContent).toContain(
+        'Preparando el formulario',
+      );
+
+      resolveOrganisation();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should allow retrying when the organisation profile is temporarily unavailable', () => {
+    createForm();
+
+    httpTesting
+      .expectOne(organisationEndpoint)
+      .error(new ProgressEvent('error'), { status: 0, statusText: 'Network Error' });
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('No podemos cargar el formulario');
+
+    page.querySelector<HTMLButtonElement>('.unavailable-status button')?.click();
+    fixture.detectChanges();
+    resolveOrganisation();
+
+    expect(page.textContent).toContain('IES Valle Sereno');
+    expect(page.querySelector('#situationDescription')).not.toBeNull();
+  });
+
   it('should reject a description containing only whitespace', () => {
+    startValidForm();
+
     expect(page.querySelector('#situationDescription')?.getAttribute('aria-describedby')).toBe(
       'description-counter',
     );
@@ -67,6 +147,8 @@ describe('ReportForm', () => {
   });
 
   it('should continue when the description contains text', () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
 
@@ -75,6 +157,8 @@ describe('ReportForm', () => {
   });
 
   it('should associate the context error with its option group', () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
 
@@ -89,6 +173,8 @@ describe('ReportForm', () => {
   });
 
   it('should submit the report and display the access credentials', async () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
 
@@ -99,7 +185,7 @@ describe('ReportForm', () => {
 
     submitReport();
 
-    const request = httpTesting.expectOne('/api/v1/public/organisations/ORG_TEST/reports');
+    const request = httpTesting.expectOne(`${organisationEndpoint}/reports`);
 
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({
@@ -161,6 +247,8 @@ describe('ReportForm', () => {
   });
 
   it('should display a safe error when the reporting link is not valid', () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
 
@@ -168,7 +256,7 @@ describe('ReportForm', () => {
     continueToNextStep();
     submitReport();
 
-    const request = httpTesting.expectOne('/api/v1/public/organisations/ORG_TEST/reports');
+    const request = httpTesting.expectOne(`${organisationEndpoint}/reports`);
 
     request.flush(
       {
@@ -193,6 +281,8 @@ describe('ReportForm', () => {
   });
 
   it('should display a safe error when the server rejects the report information', () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
 
@@ -200,7 +290,7 @@ describe('ReportForm', () => {
     continueToNextStep();
     submitReport();
 
-    const request = httpTesting.expectOne('/api/v1/public/organisations/ORG_TEST/reports');
+    const request = httpTesting.expectOne(`${organisationEndpoint}/reports`);
 
     request.flush(
       {
@@ -227,6 +317,8 @@ describe('ReportForm', () => {
   });
 
   it('should submit in-person and online contexts as mixed', () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió en el centro y continuó en internet.');
     continueToNextStep();
 
@@ -238,7 +330,7 @@ describe('ReportForm', () => {
 
     submitReport();
 
-    const request = httpTesting.expectOne('/api/v1/public/organisations/ORG_TEST/reports');
+    const request = httpTesting.expectOne(`${organisationEndpoint}/reports`);
 
     expect(request.request.body).toEqual({
       situationDescription: 'Una situación ocurrió en el centro y continuó en internet.',
@@ -260,6 +352,8 @@ describe('ReportForm', () => {
   });
 
   it('should keep the unknown context exclusive', () => {
+    startValidForm();
+
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
 
@@ -279,6 +373,8 @@ describe('ReportForm', () => {
   });
 
   it('should manage focus and keyboard interaction in the help dialog', () => {
+    startValidForm();
+
     const helpButton = page.querySelector<HTMLButtonElement>('button.help');
 
     if (!helpButton) {
@@ -306,6 +402,27 @@ describe('ReportForm', () => {
     expect(page.querySelector('[role="dialog"]')).toBeNull();
     expect(document.activeElement).toBe(helpButton);
   });
+
+  function createForm(): void {
+    fixture = TestBed.createComponent(ReportForm);
+    fixture.detectChanges();
+
+    page = fixture.nativeElement as HTMLElement;
+  }
+
+  function resolveOrganisation(name = 'IES Valle Sereno'): void {
+    const request = httpTesting.expectOne(organisationEndpoint);
+
+    expect(request.request.method).toBe('GET');
+
+    request.flush({ name });
+    fixture.detectChanges();
+  }
+
+  function startValidForm(): void {
+    createForm();
+    resolveOrganisation();
+  }
 
   function writeDescription(value: string): void {
     const textarea = page.querySelector<HTMLTextAreaElement>('#situationDescription');

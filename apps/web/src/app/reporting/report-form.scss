@@ -22,10 +22,84 @@
 }
 
 form,
-app-report-result {
+app-report-result,
+.profile-status {
   display: block;
   width: min(100%, 48rem);
   margin: auto;
+}
+
+.organisation-context {
+  display: grid;
+  gap: 0.2rem;
+  width: min(100%, 48rem);
+  min-height: 2.75rem;
+  margin: 0 auto;
+}
+
+.organisation-label {
+  color: #718097;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.organisation-name {
+  margin: 0;
+  color: #172b57;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.organisation-name-placeholder {
+  width: 10rem;
+  height: 1.2rem;
+  background: #e8eef5;
+  border-radius: 0.3rem;
+}
+
+.form-loading-field {
+  position: relative;
+}
+
+.form-loading-field textarea,
+.form-loading-controls {
+  opacity: 0.55;
+}
+
+.form-loading-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.65rem 0.9rem;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  color: #53647d;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgb(255 255 255 / 92%);
+  border: 1px solid #d5e0eb;
+  border-radius: 999px;
+  box-shadow: 0 0.4rem 1.2rem rgb(23 43 87 / 8%);
+}
+
+.form-loading-status span {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #c6d5e3;
+  border-top-color: #239dd1;
+  border-radius: 50%;
+  animation: form-loading-spin 0.8s linear infinite;
+}
+
+@keyframes form-loading-spin {
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 .completed app-report-result {
@@ -36,6 +110,12 @@ app-report-result {
   align-items: start;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .form-loading-status span {
+    animation: none;
+  }
+}
+
 .step {
   min-height: 37rem;
 }
@@ -43,6 +123,92 @@ app-report-result {
 .step,
 app-report-result {
   padding-top: 4rem;
+}
+
+.profile-status-card {
+  width: min(100%, 44rem);
+  min-height: auto;
+  padding: 2.5rem;
+  margin-top: 4rem;
+  background: #fff;
+  border: 1px solid #d7e0ea;
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2.5rem rgb(23 43 87 / 7%);
+}
+
+.profile-status-label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0 0 0.75rem;
+  color: #35718f;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.profile-status-label svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
+}
+
+.profile-status-card h1 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.profile-status-message {
+  max-width: 38rem;
+  margin: 0;
+  color: #40516c;
+  line-height: 1.6;
+}
+
+.profile-status-help {
+  padding-top: 1rem;
+  margin: 1.5rem 0 0;
+  color: #66758b;
+  font-size: 0.85rem;
+  border-top: 1px solid #e3e9f0;
+}
+
+.profile-status-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.profile-status-header .profile-status-label {
+  margin-bottom: 0;
+}
+
+.retry-action {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  min-height: auto;
+  padding: 0.4rem 0.65rem;
+  color: #172b57;
+  font-size: 0.8rem;
+  background: #f6f9fc;
+  border: 1px solid #c9d6e3;
+  border-radius: 999px;
+}
+
+.retry-action svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 h1 {
@@ -211,16 +377,10 @@ button {
 
 .review-details dd {
   margin: 0.4rem 0 0;
-  overflow-wrap: anywhere;
-  font-family: Consolas, monospace;
-  font-weight: 700;
-}
-
-.review-details dd {
   max-height: 12rem;
   overflow: auto;
+  overflow-wrap: anywhere;
   font-family: inherit;
-  font-weight: 400;
   line-height: 1.55;
   white-space: pre-wrap;
 }
@@ -253,6 +413,11 @@ button {
     padding: 1.5rem 0;
   }
 
+  .profile-status-card {
+    padding: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
   h1 {
     margin-bottom: 1.5rem;
     font-size: 2rem;
@@ -273,9 +438,6 @@ button {
 
   .context-options {
     grid-template-columns: 1fr;
-  }
-
-  .context-options {
     gap: 0.65rem;
   }
 

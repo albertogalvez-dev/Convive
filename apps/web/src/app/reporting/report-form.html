@@ -1,142 +1,245 @@
 <main class="report-page" [class.completed]="result()">
-  <section class="report-flow" aria-labelledby="step-title">
+  <section class="report-flow">
     <app-report-header
       [currentStep]="currentStep()"
       [totalSteps]="3"
-      [showProgress]="!result()"
+      [showProgress]="(profileState().status === 'ready' || showProfileLoading()) && !result()"
       (helpRequested)="showHelp.set(true)"
       (stepRequested)="navigateToStep($event)"
     />
 
-    @if (showHelp()) {
-      <app-report-help (closed)="showHelp.set(false)" />
-    }
-
-    @if (result(); as submitted) {
-      <app-report-result [submitted]="submitted" />
-    } @else {
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        @if (currentStep() === 1) {
-          <div class="step">
-            <h1 id="step-title">¿Qué ha ocurrido?</h1>
-
-            <label class="visually-hidden" for="situationDescription">¿Qué ha ocurrido?</label>
-            <textarea
-              id="situationDescription"
-              formControlName="situationDescription"
-              rows="10"
-              maxlength="5000"
-              placeholder="Escribe aquí…"
-              [attr.aria-describedby]="
-                form.controls.situationDescription.touched &&
-                form.controls.situationDescription.invalid
-                  ? 'description-counter description-error'
-                  : 'description-counter'
-              "
-            ></textarea>
-
-            <div class="field-meta">
-              @if (
-                form.controls.situationDescription.touched &&
-                form.controls.situationDescription.invalid
-              ) {
-                <p id="description-error" class="error" role="alert">
-                  Escribe qué ha ocurrido para continuar.
-                </p>
-              }
-              <span id="description-counter">
-                {{ form.controls.situationDescription.value.length }} / 5000
-              </span>
+    @if (profileState(); as state) {
+      @switch (state.status) {
+        @case ('loading') {
+          @if (showProfileLoading()) {
+            <div class="organisation-context" aria-busy="true">
+              <span class="organisation-label">Centro</span>
+              <span class="organisation-name-placeholder" aria-hidden="true"></span>
             </div>
 
-            <div class="actions actions-end">
-              <button type="button" class="primary" (click)="continue()">
-                Continuar <span aria-hidden="true">→</span>
-              </button>
-            </div>
-          </div>
-        } @else if (currentStep() === 2) {
-          <div class="step">
-            <h1 id="step-title">¿Dónde ocurrió?</h1>
-
-            <fieldset
-              class="context-options"
-              [attr.aria-describedby]="
-                form.controls.situationContext.touched && form.controls.situationContext.invalid
-                  ? 'context-error'
-                  : null
-              "
-            >
-              <legend class="visually-hidden">¿Dónde ocurrió?</legend>
-              <label>
-                <input
-                  type="checkbox"
-                  [checked]="isContextSelected('in_person')"
-                  (change)="toggleContext('in_person')"
-                />
-                <span>En persona</span>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  [checked]="isContextSelected('digital')"
-                  (change)="toggleContext('digital')"
-                />
-                <span>Online</span>
-              </label>
-              <label class="unknown-option">
-                <input
-                  type="checkbox"
-                  [checked]="isContextSelected('unknown')"
-                  (change)="toggleContext('unknown')"
-                />
-                <span>Prefiero no decirlo</span>
-              </label>
-            </fieldset>
-
-            @if (form.controls.situationContext.touched && form.controls.situationContext.invalid) {
-              <p id="context-error" class="error" role="alert">
-                Selecciona una opción para continuar.
-              </p>
-            }
-
-            <div class="actions">
-              <button type="button" class="secondary" (click)="goBack()">Atrás</button>
-              <button type="button" class="primary" (click)="continueFromContext()">
-                Continuar <span aria-hidden="true">→</span>
-              </button>
-            </div>
-          </div>
-        } @else {
-          <div class="step review-step">
-            @if (submitting()) {
-              <app-report-sending />
-            } @else {
-              <h1 id="step-title">Revisa antes de enviar</h1>
-
-              <dl class="review-details">
-                <div>
-                  <dt>Qué ha ocurrido</dt>
-                  <dd>{{ form.controls.situationDescription.value }}</dd>
+            <form class="form-loading" aria-busy="true">
+              <div class="step">
+                <h1>¿Qué ha ocurrido?</h1>
+                <div class="form-loading-field">
+                  <textarea
+                    rows="10"
+                    placeholder="Escribe aquí…"
+                    disabled
+                    aria-hidden="true"
+                  ></textarea>
+                  <p class="form-loading-status" role="status">
+                    <span aria-hidden="true"></span>
+                    Preparando el formulario
+                  </p>
                 </div>
-                <div>
-                  <dt>Dónde ocurrió</dt>
-                  <dd>{{ contextSummary() }}</dd>
+                <div class="form-loading-controls" aria-hidden="true">
+                  <div class="field-meta"><span>0 / 5000</span></div>
+                  <div class="actions actions-end">
+                    <button type="button" class="primary" disabled>
+                      Continuar <span aria-hidden="true">→</span>
+                    </button>
+                  </div>
                 </div>
-              </dl>
-
-              @if (errorMessage(); as message) {
-                <p class="error submission-error" role="alert">{{ message }}</p>
-              }
-
-              <div class="actions">
-                <button type="button" class="secondary" (click)="goBack()">Atrás</button>
-                <button type="submit" class="primary">Enviar</button>
               </div>
-            }
+            </form>
+          }
+        }
+        @case ('invalid') {
+          <div
+            class="profile-status profile-status-card invalid-status step"
+            aria-labelledby="profile-error-title"
+          >
+            <p class="profile-status-label">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9.5 14.5 14.5 9.5" />
+                <path d="m7.5 16.5-1 1a3.54 3.54 0 0 1-5-5l3-3a3.54 3.54 0 0 1 5 0" />
+                <path d="m16.5 7.5 1-1a3.54 3.54 0 0 1 5 5l-3 3a3.54 3.54 0 0 1-5 0" />
+              </svg>
+              Enlace no válido
+            </p>
+            <h1 id="profile-error-title">No podemos abrir este formulario</h1>
+            <p class="profile-status-message">
+              Vuelve a escanear el código QR del centro y comprueba que el enlace esté completo.
+            </p>
+            <p class="profile-status-help">
+              Si vuelve a ocurrir, avisa al centro para que revise el código.
+            </p>
           </div>
         }
-      </form>
+        @case ('unavailable') {
+          <div
+            class="profile-status profile-status-card unavailable-status step"
+            aria-labelledby="profile-error-title"
+          >
+            <div class="profile-status-header">
+              <p class="profile-status-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4.9 9.5a11.4 11.4 0 0 1 14.2 0" />
+                  <path d="M8.5 13a6.2 6.2 0 0 1 7 0" />
+                  <path d="M12 17h.01" />
+                  <path d="m3 3 18 18" />
+                </svg>
+                Problema de conexión
+              </p>
+              <button type="button" class="retry-action" (click)="retryProfileResolution()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 11a8.1 8.1 0 1 0 .2 3" />
+                  <path d="M20 5v6h-6" />
+                </svg>
+                Reintentar
+              </button>
+            </div>
+            <h1 id="profile-error-title">No podemos cargar el formulario</h1>
+            <p class="profile-status-message">
+              Comprueba tu conexión o inténtalo de nuevo en unos segundos.
+            </p>
+          </div>
+        }
+        @case ('ready') {
+          @if (!result()) {
+            <div class="organisation-context">
+              <span class="organisation-label">Centro</span>
+              <p class="organisation-name">{{ state.profile.name }}</p>
+            </div>
+          }
+
+          @if (showHelp()) {
+            <app-report-help (closed)="showHelp.set(false)" />
+          }
+
+          @if (result(); as submitted) {
+            <app-report-result [submitted]="submitted" />
+          } @else {
+            <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+              @if (currentStep() === 1) {
+                <div class="step">
+                  <h1 id="step-title">¿Qué ha ocurrido?</h1>
+
+                  <label class="visually-hidden" for="situationDescription"
+                    >¿Qué ha ocurrido?</label
+                  >
+                  <textarea
+                    id="situationDescription"
+                    formControlName="situationDescription"
+                    rows="10"
+                    maxlength="5000"
+                    placeholder="Escribe aquí…"
+                    [attr.aria-describedby]="
+                      form.controls.situationDescription.touched &&
+                      form.controls.situationDescription.invalid
+                        ? 'description-counter description-error'
+                        : 'description-counter'
+                    "
+                  ></textarea>
+
+                  <div class="field-meta">
+                    @if (
+                      form.controls.situationDescription.touched &&
+                      form.controls.situationDescription.invalid
+                    ) {
+                      <p id="description-error" class="error" role="alert">
+                        Escribe qué ha ocurrido para continuar.
+                      </p>
+                    }
+                    <span id="description-counter">
+                      {{ form.controls.situationDescription.value.length }} / 5000
+                    </span>
+                  </div>
+
+                  <div class="actions actions-end">
+                    <button type="button" class="primary" (click)="continue()">
+                      Continuar <span aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              } @else if (currentStep() === 2) {
+                <div class="step">
+                  <h1 id="step-title">¿Dónde ocurrió?</h1>
+
+                  <fieldset
+                    class="context-options"
+                    [attr.aria-describedby]="
+                      form.controls.situationContext.touched &&
+                      form.controls.situationContext.invalid
+                        ? 'context-error'
+                        : null
+                    "
+                  >
+                    <legend class="visually-hidden">¿Dónde ocurrió?</legend>
+                    <label>
+                      <input
+                        type="checkbox"
+                        [checked]="isContextSelected('in_person')"
+                        (change)="toggleContext('in_person')"
+                      />
+                      <span>En persona</span>
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        [checked]="isContextSelected('digital')"
+                        (change)="toggleContext('digital')"
+                      />
+                      <span>Online</span>
+                    </label>
+                    <label class="unknown-option">
+                      <input
+                        type="checkbox"
+                        [checked]="isContextSelected('unknown')"
+                        (change)="toggleContext('unknown')"
+                      />
+                      <span>Prefiero no decirlo</span>
+                    </label>
+                  </fieldset>
+
+                  @if (
+                    form.controls.situationContext.touched && form.controls.situationContext.invalid
+                  ) {
+                    <p id="context-error" class="error" role="alert">
+                      Selecciona una opción para continuar.
+                    </p>
+                  }
+
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="goBack()">Atrás</button>
+                    <button type="button" class="primary" (click)="continueFromContext()">
+                      Continuar <span aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <div class="step review-step">
+                  @if (submitting()) {
+                    <app-report-sending />
+                  } @else {
+                    <h1 id="step-title">Revisa antes de enviar</h1>
+
+                    <dl class="review-details">
+                      <div>
+                        <dt>Qué ha ocurrido</dt>
+                        <dd>{{ form.controls.situationDescription.value }}</dd>
+                      </div>
+                      <div>
+                        <dt>Dónde ocurrió</dt>
+                        <dd>{{ contextSummary() }}</dd>
+                      </div>
+                    </dl>
+
+                    @if (errorMessage(); as message) {
+                      <p class="error submission-error" role="alert">{{ message }}</p>
+                    }
+
+                    <div class="actions">
+                      <button type="button" class="secondary" (click)="goBack()">Atrás</button>
+                      <button type="submit" class="primary">Enviar</button>
+                    </div>
+                  }
+                </div>
+              }
+            </form>
+          }
+        }
+      }
     }
   </section>
 </main>

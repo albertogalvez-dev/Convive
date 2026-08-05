@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 
 export type SituationContext = 'in_person' | 'digital' | 'mixed' | 'unknown';
 
+export interface PublicReportingProfile {
+  name: string;
+}
+
 export interface SubmitReportRequest {
   situationDescription: string;
   situationContext: SituationContext;
@@ -20,13 +24,23 @@ export interface ReportSubmissionResponse {
 export class ReportingService {
   private readonly http = inject(HttpClient);
 
+  getPublicReportingProfile(publicReportingIdentifier: string): Observable<PublicReportingProfile> {
+    return this.http.get<PublicReportingProfile>(
+      this.organisationEndpoint(publicReportingIdentifier),
+    );
+  }
+
   submitReport(
     publicReportingIdentifier: string,
     request: SubmitReportRequest,
   ): Observable<ReportSubmissionResponse> {
     return this.http.post<ReportSubmissionResponse>(
-      `/api/v1/public/organisations/${encodeURIComponent(publicReportingIdentifier)}/reports`,
+      `${this.organisationEndpoint(publicReportingIdentifier)}/reports`,
       request,
     );
+  }
+
+  private organisationEndpoint(publicReportingIdentifier: string): string {
+    return `/api/v1/public/organisations/${encodeURIComponent(publicReportingIdentifier)}`;
   }
 }
