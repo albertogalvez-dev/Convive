@@ -197,11 +197,15 @@ The access secret will:
 - be stored only through a secure one-way representation;
 - be required to enter the private follow-up area.
 
-After the reference and secret are verified, the backend issues a
-short-lived opaque capability in a protected cookie. That capability is limited
-to the permitted follow-up operations for one report and is not a professional
-account or a second Symfony session. The detailed boundary is selected in
-[ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md).
+After the access secret is verified, the backend issues a short-lived opaque
+capability in a protected cookie. The public reference remains a non-secret
+receipt and support identifier and is not required for access. The capability
+is limited to the permitted follow-up operations for one report and is not a
+professional account or a second Symfony session. The detailed boundary is
+selected in
+[ADR-0008](../architecture/decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+as amended by
+[ADR-0010](../architecture/decisions/0010-use-a-single-secret-for-anonymous-report-access.md).
 
 Losing the secret may mean losing anonymous access during the initial release.
 
@@ -229,8 +233,8 @@ Emails must not contain:
 The email address must be stored separately from ordinary report content and
 must not be visible to professionals who do not need it.
 
-A reporter who does not provide an email can still use the tracking reference
-and secret to check for updates manually.
+A reporter who does not provide an email can still use the access secret to
+check for updates manually. The tracking reference does not grant access.
 
 ### 4. Report triage
 
