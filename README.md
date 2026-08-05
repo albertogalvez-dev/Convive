@@ -31,12 +31,17 @@ The current implementation provides:
   organisations;
 - a public anonymous report submission endpoint with RFC 9457 Problem Details
   error handling;
+- an accessible, mobile-friendly Angular reporting journey reached through an
+  organisation's public reporting identifier;
 - a generated OpenAPI 3.1 contract with continuous-integration drift detection;
 - Doctrine migrations and fictional development fixtures;
 - domain, HTTP and PostgreSQL integration tests;
 - automated backend, frontend and infrastructure checks through GitHub Actions.
 
-The Angular walking skeleton currently requests `GET /api/v1/health` through its development proxy and renders the response returned by Symfony.
+The Angular root walking skeleton requests `GET /api/v1/health` through its
+development proxy. The public route `/r/{publicReportingIdentifier}` provides
+the anonymous reporting journey and submits reports through the same-origin API
+proxy.
 
 The first reporting data model stores the minimum information required to
 receive an anonymous report securely. Organisations have persisted public
@@ -44,9 +49,11 @@ reporting identifiers that can be resolved independently from their internal
 UUIDs, and the backend already accepts anonymous report submissions through the
 public API described below.
 
-The Angular reporting journey, anonymous follow-up and professional
-case-management workflows remain under development. The Angular application is
-still the walking skeleton and does not yet provide a reporting form.
+Anonymous follow-up and professional case-management workflows remain under
+development. The current reporting journey covers the basic text submission,
+situation context, review, safe error handling and one-time presentation of the
+returned access credentials. Attachments, optional email and follow-up are not
+implemented yet.
 
 Development and demonstrations must use fictional data only.
 

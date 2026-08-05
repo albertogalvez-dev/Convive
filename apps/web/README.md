@@ -4,7 +4,8 @@ Angular frontend for Convive's public reporting and professional case-management
 
 ## Current status
 
-The frontend is part of Convive's operational application walking skeleton.
+The frontend contains Convive's operational walking skeleton and the first
+public reporting journey.
 
 It currently:
 
@@ -14,10 +15,16 @@ It currently:
 - requests `GET /api/v1/health` through `HttpClient`;
 - sends relative `/api/**` requests through the development proxy;
 - renders the health response returned by Symfony;
+- exposes `/r/:publicReportingIdentifier` for anonymous report submission;
+- guides the reporter through description, context and review steps;
+- displays the returned reference and one-time access secret without persisting
+  either credential in browser storage or the URL;
+- handles expected public API errors without exposing internal details;
 - uses Vitest for frontend tests;
 - produces static assets through the Angular production build.
 
-This is a technical foundation, not the final product interface.
+Anonymous follow-up, attachments, optional email and professional case
+management are not implemented yet.
 
 ## Canonical development environment
 
@@ -83,6 +90,10 @@ The current test suite verifies:
 - creation of the root Angular component;
 - rendering of the Convive application name;
 - the relative health request and rendered API status.
+- the reporting journey, API request and response states;
+- context-selection rules and safe public error messages;
+- credential copy behaviour and leave protection;
+- keyboard interaction and focus management in the help dialog.
 
 End-to-end browser testing is not configured yet.
 
