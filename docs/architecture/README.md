@@ -73,10 +73,10 @@ Input parsing is case-insensitive and normalises the common `O`/`0` and
 Unicode homoglyphs are rejected. PostgreSQL enforces uniqueness and Doctrine
 can resolve an organisation through the canonical public identifier.
 
-The backend already accepts anonymous report submissions addressed by this
-identifier. The identifier may be distributed through a stable link, QR code or
-readable manual-entry fallback; QR generation, poster design and the Angular
-reporting journey remain under development.
+The backend resolves the organisation's minimal public reporting profile before
+accepting anonymous report submissions addressed by this identifier. The
+identifier may be distributed through a stable link, QR code or readable
+manual-entry fallback; QR generation and poster design remain under development.
 
 The public identifier is not authentication, proof of organisation membership
 or an anonymous report follow-up credential. The initial product does not
@@ -99,12 +99,18 @@ transport DTOs keep the external contract separate from domain and persistence
 models. Symfony remains responsible for validating every request and authorising
 every protected operation.
 
-The implemented operations are a service health check and the public anonymous
-report submission endpoint:
+The implemented operations are a service health check, public organisation
+profile resolution and anonymous report submission:
 
 ```text
+GET  /api/v1/public/organisations/{publicReportingIdentifier}
 POST /api/v1/public/organisations/{publicReportingIdentifier}/reports
 ```
+
+The profile response contains only the organisation's public name. Malformed and
+unknown identifiers produce the same `404 Not Found` Problem Details response,
+allowing the Angular journey to distinguish an invalid link from a recoverable
+connectivity failure without exposing internal organisation data.
 
 A successful submission returns `201 Created` with the report's public reference
 and a one-time access secret. The generated contract is committed at
