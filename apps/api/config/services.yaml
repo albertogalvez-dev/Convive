@@ -36,3 +36,11 @@ when@prod:
         # valid when the cookie is always sent over HTTPS.
         report_access_cookie.name: '__Host-report_access'
         report_access_cookie.secure: true
+
+when@test:
+    services:
+        # In-memory handler so tests can assert on security-channel log
+        # records directly (#41), instead of parsing a log file.
+        monolog.security_test_handler:
+            class: Monolog\Handler\TestHandler
+            public: true
