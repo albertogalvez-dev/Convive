@@ -9,4 +9,6 @@ interface ReportRepository
     public function save(Report $report): void;
 
     public function findByPublicReference(string $publicReference): ?Report;
+
+    public function findByAccessSecret(ReportAccessSecret $accessSecret): ?Report;
 }

@@ -17,7 +17,7 @@ Table reports {
   situation_context varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
   status varchar(20) [not null, note: 'received (initial status)']
   public_reference varchar(32) [not null, unique, note: 'non-sequential public tracking reference']
-  access_secret_hash varchar(255) [not null, note: 'one-way hash of the access secret; the secret is never stored']
+  access_secret_hash varchar(64) [not null, unique, note: 'lowercase hexadecimal SHA-256 lookup hash of the access secret; the secret is never stored']
   created_at timestamptz [not null, note: 'immutable UTC instant']
 
   indexes {
