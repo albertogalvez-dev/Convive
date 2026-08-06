@@ -8,6 +8,7 @@ use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrgan
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
 use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
+use App\Reporting\Presentation\Http\ReportAccessCapabilityRejectedHttpException;
 use App\Reporting\Presentation\Http\ReportAccessDeniedHttpException;
 use App\Reporting\Presentation\Http\ReportingOrganisationNotFoundHttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -71,6 +72,19 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'Report access denied',
                     Response::HTTP_UNAUTHORIZED,
                     'The report access secret was not accepted.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof ReportAccessCapabilityRejectedHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:report-access-capability-denied',
+                    'Report access capability denied',
+                    Response::HTTP_UNAUTHORIZED,
+                    'The report access capability was not accepted.',
                 ),
             );
 
