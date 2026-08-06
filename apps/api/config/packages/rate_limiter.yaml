@@ -1,0 +1,10 @@
+framework:
+    rate_limiter:
+        # Dedicated verification limit for issue #23 (report-access-grants).
+        # Deliberately narrow: protects only secret verification, ahead of
+        # database lookup and capability issuance. General public-endpoint
+        # anti-abuse (submission, uploads) is tracked separately in #41.
+        report_access_verification:
+            policy: sliding_window
+            limit: 5
+            interval: '1 minute'
