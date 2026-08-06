@@ -99,6 +99,14 @@ paths:
             type: string
             pattern: '^ORG_[0-9A-HJKMNP-TV-Z]{16}$'
             example: ORG_EZ8E3G9CR2F7VGDF
+        -
+          name: Idempotency-Key
+          in: header
+          description: 'Optional client-generated key. A repeated request with the same key and identifier returns the original report reference instead of creating a duplicate. The access secret is only ever returned on the first, original response — it is never replayed.'
+          required: false
+          schema:
+            type: string
+            maxLength: 200
       requestBody:
         description: 'Anonymous report information.'
         required: true
@@ -113,6 +121,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AnonymousReportSubmissionResponse'
+        '200':
+          description: 'A request with this Idempotency-Key and identifier was already processed. The report already exists; its access secret is not included, since it was only ever returned on the original response.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdempotentReportSubmissionResponse'
         '400':
           description: 'The request body contains malformed JSON.'
           content:
@@ -133,6 +147,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '422':
           description: 'The submitted report information is invalid.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '429':
+          description: 'Too many submissions were made.'
           content:
             application/problem+json:
               schema:
@@ -190,6 +210,26 @@ components:
         accessSecret:
           description: 'Secret shown once and required for future private access to the report.'
           type: string
+        status:
+          type: string
+          example: received
+          enum:
+            - received
+        createdAt:
+          type: string
+          format: date-time
+      type: object
+      additionalProperties: false
+    IdempotentReportSubmissionResponse:
+      required:
+        - publicReference
+        - status
+        - createdAt
+      properties:
+        publicReference:
+          description: 'Public reference of the report already created by the original request.'
+          type: string
+          example: 0123456789ABCDEF0123
         status:
           type: string
           example: received

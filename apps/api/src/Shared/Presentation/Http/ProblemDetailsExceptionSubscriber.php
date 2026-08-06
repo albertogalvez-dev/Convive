@@ -11,6 +11,7 @@ use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
 use App\Reporting\Presentation\Http\ReportAccessCapabilityRejectedHttpException;
 use App\Reporting\Presentation\Http\ReportAccessDeniedHttpException;
 use App\Reporting\Presentation\Http\ReportingOrganisationNotFoundHttpException;
+use App\Shared\Infrastructure\Logging\SecurityEventLogger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,11 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterface
 {
+    public function __construct(
+        private SecurityEventLogger $securityEventLogger,
+    ) {
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -66,6 +72,9 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
             $exception instanceof ReportAccessDenied
             || $exception instanceof ReportAccessDeniedHttpException
         ) {
+            $this->securityEventLogger->reportAccessDenied(
+                $event->getRequest(),
+            );
             $event->setResponse(
                 $this->createResponse(
                     'urn:convive:problem:report-access-denied',
@@ -79,6 +88,9 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
         }
 
         if ($exception instanceof ReportAccessCapabilityRejectedHttpException) {
+            $this->securityEventLogger->reportAccessDenied(
+                $event->getRequest(),
+            );
             $event->setResponse(
                 $this->createResponse(
                     'urn:convive:problem:report-access-capability-denied',

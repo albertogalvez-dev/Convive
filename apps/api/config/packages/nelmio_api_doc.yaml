@@ -33,6 +33,27 @@ nelmio_api_doc:
                             type: string
                             format: date-time
 
+                IdempotentReportSubmissionResponse:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - publicReference
+                        - status
+                        - createdAt
+                    properties:
+                        publicReference:
+                            type: string
+                            description: Public reference of the report already created by the original request.
+                            example: 0123456789ABCDEF0123
+                        status:
+                            type: string
+                            enum:
+                                - received
+                            example: received
+                        createdAt:
+                            type: string
+                            format: date-time
+
                 ReportFollowUpStateResponse:
                     type: object
                     additionalProperties: false

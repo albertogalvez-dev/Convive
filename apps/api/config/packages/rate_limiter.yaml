@@ -8,3 +8,12 @@ framework:
             policy: sliding_window
             limit: 5
             interval: '1 minute'
+
+        # Anti-abuse limit for anonymous report submission (#41).
+        # Independent of the verification limiter above: a burst of
+        # legitimate submissions from one IP (e.g. a shared school
+        # network) shouldn't share a budget with secret verification.
+        report_submission:
+            policy: sliding_window
+            limit: 5
+            interval: '1 minute'
