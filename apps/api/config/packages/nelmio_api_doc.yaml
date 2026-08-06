@@ -67,6 +67,20 @@ nelmio_api_doc:
                                     message:
                                         type: string
 
+            securitySchemes:
+                reportAccessCookie:
+                    type: apiKey
+                    in: cookie
+                    name: report_access
+                    description: >-
+                        Opaque, short-lived capability handle scoped to
+                        exactly one report. Issued via
+                        POST /api/v1/public/report-access-grants and cleared
+                        via DELETE /api/v1/reporter/access-grant. Named
+                        report_access in development and __Host-report_access
+                        (Secure, HttpOnly, SameSite=Lax, Path=/, no Domain)
+                        in production.
+
     type_info: true
 
     areas:
