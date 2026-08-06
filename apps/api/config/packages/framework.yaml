@@ -12,6 +12,22 @@ framework:
         stateless_token_ids: ['report_access_grant_revocation']
         check_header: true
 
+    # Explicit per-environment proxy trust (#41): rate limiting keys on
+    # the resolved client IP, so an unset or wrong value here would let
+    # a forged X-Forwarded-For header defeat every rate limit. Empty by
+    # default (nothing is trusted; direct connections only), matching
+    # today's proxy-free development/test topology. Set TRUSTED_PROXIES
+    # to the real reverse proxy's address once one is introduced (#63) —
+    # never widen this to a wildcard.
+    trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+    trusted_headers:
+        [
+            'x-forwarded-for',
+            'x-forwarded-host',
+            'x-forwarded-proto',
+            'x-forwarded-port',
+        ]
+
     #esi: true
     #fragments: true
 
