@@ -40,6 +40,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  /api/v1/reporter/access-grant:
+    delete:
+      tags:
+        - 'Public reporting'
+      summary: 'Revoke the current report-access capability'
+      description: 'Revokes the capability presented through the protected cookie, if any, and clears the cookie. Idempotent: it succeeds even when no active grant is presented.'
+      operationId: revokeReportAccessGrant
+      responses:
+        '204':
+          description: 'The capability was revoked and the cookie cleared.'
+        '403':
+          description: 'The request failed CSRF validation.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
   '/api/v1/public/organisations/{publicReportingIdentifier}/reports':
     post:
       tags:
@@ -91,6 +110,36 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '422':
           description: 'The submitted report information is invalid.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security: []
+  /api/v1/public/report-access-grants:
+    post:
+      tags:
+        - 'Public reporting'
+      summary: 'Exchange an access secret for a report-scoped capability'
+      description: 'Verifies a single-use anonymous access secret and, if accepted, issues a short-lived capability bound to exactly one report through a protected cookie. Malformed, unknown and revoked secrets return the same safe failure.'
+      operationId: verifyReportAccess
+      requestBody:
+        description: 'The plain access secret shown once at submission time.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyReportAccessRequest'
+      responses:
+        '204':
+          description: 'A capability was issued and returned through a protected cookie.'
+        '401':
+          description: 'The access secret was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '429':
+          description: 'Too many verification attempts were made.'
           content:
             application/problem+json:
               schema:
@@ -177,6 +226,19 @@ components:
             - mixed
             - unknown
       type: object
+    VerifyReportAccessRequest:
+      required:
+        - accessSecret
+      properties:
+        accessSecret:
+          type: string
+      type: object
+  securitySchemes:
+    reportAccessCookie:
+      type: apiKey
+      description: 'Opaque, short-lived capability handle scoped to exactly one report. Issued via POST /api/v1/public/report-access-grants and cleared via DELETE /api/v1/reporter/access-grant. Named report_access in development and __Host-report_access (Secure, HttpOnly, SameSite=Lax, Path=/, no Domain) in production.'
+      name: report_access
+      in: cookie
 tags:
   -
     name: 'Public reporting'
