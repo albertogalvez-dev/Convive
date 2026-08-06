@@ -6,7 +6,13 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-parameters: {}
+parameters:
+    # Explicit, environment-specific report-access capability cookie
+    # configuration (issue #23). Production must never be weakened by a
+    # development default, so the values are set per environment below
+    # rather than derived from request-time detection.
+    report_access_cookie.name: 'report_access'
+    report_access_cookie.secure: false
 
 services:
     # default configuration for services in *this* file
@@ -22,3 +28,11 @@ services:
     # Bind domain repository ports to their Doctrine adapters
     App\Organisations\Domain\OrganisationRepository: '@App\Organisations\Infrastructure\DoctrineOrganisationRepository'
     App\Reporting\Domain\ReportRepository: '@App\Reporting\Infrastructure\DoctrineReportRepository'
+    App\Reporting\Domain\ReportAccessGrantRepository: '@App\Reporting\Infrastructure\DoctrineReportAccessGrantRepository'
+
+when@prod:
+    parameters:
+        # __Host- requires Secure, Path=/ and no Domain attribute; only
+        # valid when the cookie is always sent over HTTPS.
+        report_access_cookie.name: '__Host-report_access'
+        report_access_cookie.secure: true

@@ -48,7 +48,11 @@ class Report
     #[ORM\Column(type: Types::STRING, length: 32, unique: true)]
     private string $publicReference;
 
-    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[ORM\Column(
+        type: Types::STRING,
+        length: 64,
+        unique: true,
+    )]
     private string $accessSecretHash;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
@@ -80,17 +84,16 @@ class Report
     ): ReportCreationResult {
         try {
             $publicReferenceBytes = random_bytes(10);
-            $plainAccessSecretBytes = random_bytes(32);
         } catch (RandomException $exception) {
             throw new RuntimeException(
-                'Unable to generate secure report credentials.',
+                'Unable to generate a secure public report reference.',
                 previous: $exception,
             );
         }
 
         $publicReference = bin2hex($publicReferenceBytes);
         $publicReference = strtoupper($publicReference);
-        $plainAccessSecret = bin2hex($plainAccessSecretBytes);
+        $accessSecret = ReportAccessSecret::generate();
 
         $report = new self(
             Uuid::v7(),
@@ -98,13 +101,13 @@ class Report
             $situationDescription,
             $situationContext,
             $publicReference,
-            hash('sha256', $plainAccessSecret),
+            $accessSecret->lookupHash(),
             DateTimeImmutable::createFromTimestamp(microtime(true)),
         );
 
         return new ReportCreationResult(
             $report,
-            $plainAccessSecret,
+            $accessSecret->reveal(),
         );
     }
 

@@ -5,6 +5,13 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    # Stateless, session-free CSRF protection (Sec-Fetch-Site/Origin checks
+    # with a double-submit header fallback) for the cookie-authenticated
+    # report-access revocation endpoint (#23). No PHP session is required.
+    csrf_protection:
+        stateless_token_ids: ['report_access_grant_revocation']
+        check_header: true
+
     #esi: true
     #fragments: true
 

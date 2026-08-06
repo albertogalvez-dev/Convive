@@ -7,6 +7,8 @@ namespace App\Shared\Presentation\Http;
 use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrganisationNotFound;
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
+use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
+use App\Reporting\Presentation\Http\ReportAccessDeniedHttpException;
 use App\Reporting\Presentation\Http\ReportingOrganisationNotFoundHttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -54,6 +57,44 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'The requested reporting organisation was not found.',
                 ),
             );
+
+            return;
+        }
+
+        if (
+            $exception instanceof ReportAccessDenied
+            || $exception instanceof ReportAccessDeniedHttpException
+        ) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:report-access-denied',
+                    'Report access denied',
+                    Response::HTTP_UNAUTHORIZED,
+                    'The report access secret was not accepted.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof TooManyRequestsHttpException) {
+            $response = $this->createResponse(
+                'urn:convive:problem:rate-limited',
+                'Too many requests',
+                Response::HTTP_TOO_MANY_REQUESTS,
+                'Too many verification attempts. Try again later.',
+            );
+
+            $retryAfter = $exception->getHeaders()['Retry-After'] ?? null;
+
+            if ($retryAfter !== null) {
+                $response->headers->set(
+                    'Retry-After',
+                    (string) $retryAfter,
+                );
+            }
+
+            $event->setResponse($response);
 
             return;
         }

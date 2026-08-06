@@ -20,7 +20,7 @@ erDiagram
         varchar situation_context "in_person | digital | mixed | unknown"
         varchar status "received"
         varchar public_reference UK "non-sequential"
-        varchar access_secret_hash "one-way hash; secret never stored"
+        varchar access_secret_hash UK "64-char lowercase hex SHA-256; secret never stored"
         timestamptz created_at "immutable UTC"
     }
     organisations ||--o{ reports : "receives"
