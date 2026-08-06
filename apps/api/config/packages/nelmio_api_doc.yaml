@@ -33,6 +33,44 @@ nelmio_api_doc:
                             type: string
                             format: date-time
 
+                ReportFollowUpStateResponse:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - publicReference
+                        - situationDescription
+                        - situationContext
+                        - status
+                        - createdAt
+                        - followUpEntries
+                    properties:
+                        publicReference:
+                            type: string
+                            description: Public reference of the report.
+                            example: 0123456789ABCDEF0123
+                        situationDescription:
+                            type: string
+                            description: The situation description originally submitted by the reporter.
+                        situationContext:
+                            type: string
+                            enum:
+                                - in_person
+                                - digital
+                                - mixed
+                                - unknown
+                        status:
+                            type: string
+                            enum:
+                                - received
+                            example: received
+                        createdAt:
+                            type: string
+                            format: date-time
+                        followUpEntries:
+                            type: array
+                            description: Authorised follow-up entries. Always empty until follow-up messaging is delivered.
+                            items: {}
+
                 ProblemDetails:
                     type: object
                     additionalProperties: false

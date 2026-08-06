@@ -40,6 +40,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  /api/v1/reporter/report:
+    get:
+      tags:
+        - 'Public reporting'
+      summary: "Read the current reporter's report and follow-up state"
+      description: 'Returns the report resolved by the presented capability cookie: the original submission and any authorised follow-up entries. Excludes internal professional and case-management data by construction.'
+      operationId: getReportFollowUpState
+      responses:
+        '200':
+          description: 'The report follow-up state.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportFollowUpStateResponse'
+        '401':
+          description: 'The report access capability was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
   /api/v1/reporter/access-grant:
     delete:
       tags:
@@ -175,6 +198,43 @@ components:
         createdAt:
           type: string
           format: date-time
+      type: object
+      additionalProperties: false
+    ReportFollowUpStateResponse:
+      required:
+        - publicReference
+        - situationDescription
+        - situationContext
+        - status
+        - createdAt
+        - followUpEntries
+      properties:
+        publicReference:
+          description: 'Public reference of the report.'
+          type: string
+          example: 0123456789ABCDEF0123
+        situationDescription:
+          description: 'The situation description originally submitted by the reporter.'
+          type: string
+        situationContext:
+          type: string
+          enum:
+            - in_person
+            - digital
+            - mixed
+            - unknown
+        status:
+          type: string
+          example: received
+          enum:
+            - received
+        createdAt:
+          type: string
+          format: date-time
+        followUpEntries:
+          description: 'Authorised follow-up entries. Always empty until follow-up messaging is delivered.'
+          type: array
+          items: {  }
       type: object
       additionalProperties: false
     ProblemDetails:
