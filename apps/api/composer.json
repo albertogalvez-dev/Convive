@@ -26,7 +26,7 @@
         "symfony/runtime": "7.4.*",
         "symfony/security-csrf": "7.4.*",
         "symfony/serializer": "7.4.*",
-        "symfony/uid": "7.4.*",
+        "symfony/uid": "8.1.*",
         "symfony/validator": "7.4.*",
         "symfony/yaml": "7.4.*"
     },
