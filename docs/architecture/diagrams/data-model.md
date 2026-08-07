@@ -22,6 +22,22 @@ erDiagram
         varchar access_secret_hash UK "64-char lowercase hex SHA-256; secret never stored"
         timestamptz created_at "immutable UTC"
     }
+    report_access_grants {
+        uuid id PK "UUIDv7, application-generated"
+        uuid report_id FK
+        varchar capability_hash UK "64-char lowercase hex SHA-256"
+        timestamptz issued_at "immutable UTC"
+        timestamptz last_used_at "drives 15-minute idle timeout"
+        timestamptz absolute_expires_at "issued_at + 2 hours"
+        timestamptz revoked_at "nullable; set once"
+    }
+    report_follow_up_entries {
+        uuid id PK "UUIDv7, application-generated"
+        uuid report_id FK
+        varchar author_type "reporter | professional"
+        text content "bounded to 2000 characters"
+        timestamptz created_at "immutable UTC; append-only"
+    }
     professionals {
         uuid id PK "UUIDv7, application-generated"
         varchar name
@@ -37,6 +53,8 @@ erDiagram
         timestamptz revoked_at "nullable; row persists after revocation"
     }
     organisations ||--o{ reports : "receives"
+    reports ||--o{ report_access_grants : "grants access to"
+    reports ||--o{ report_follow_up_entries : "accumulates"
     professionals ||--o{ organisation_memberships : "holds"
     organisations ||--o{ organisation_memberships : "grants"
 ```
