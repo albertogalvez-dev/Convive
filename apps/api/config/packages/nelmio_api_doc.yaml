@@ -54,6 +54,26 @@ nelmio_api_doc:
                             type: string
                             format: date-time
 
+                FollowUpEntry:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - authorType
+                        - content
+                        - createdAt
+                    properties:
+                        authorType:
+                            type: string
+                            description: Who authored the entry, without identifying them.
+                            enum:
+                                - reporter
+                                - professional
+                        content:
+                            type: string
+                        createdAt:
+                            type: string
+                            format: date-time
+
                 ReportFollowUpStateResponse:
                     type: object
                     additionalProperties: false
@@ -89,8 +109,9 @@ nelmio_api_doc:
                             format: date-time
                         followUpEntries:
                             type: array
-                            description: Authorised follow-up entries. Always empty until follow-up messaging is delivered.
-                            items: {}
+                            description: Authorised follow-up entries, oldest first.
+                            items:
+                                $ref: '#/components/schemas/FollowUpEntry'
 
                 ProblemDetails:
                     type: object
