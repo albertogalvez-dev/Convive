@@ -1,0 +1,122 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Reporting\Infrastructure;
+
+use App\Organisations\Domain\Organisation;
+use App\Organisations\Domain\PublicReportingIdentifier;
+use App\Organisations\Infrastructure\DoctrineOrganisationRepository;
+use App\Reporting\Domain\FollowUpEntryContent;
+use App\Reporting\Domain\Report;
+use App\Reporting\Domain\ReportFollowUpEntry;
+use App\Reporting\Domain\SituationContext;
+use App\Reporting\Domain\SituationDescription;
+use App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository;
+use App\Reporting\Infrastructure\DoctrineReportRepository;
+use App\Tests\Shared\Infrastructure\Persistence\PostgreSqlTestCase;
+use DateTimeImmutable;
+use Symfony\Component\Uid\Uuid;
+
+final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
+{
+    private DoctrineOrganisationRepository $organisationRepository;
+    private DoctrineReportRepository $reportRepository;
+    private DoctrineReportFollowUpEntryRepository $followUpEntryRepository;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->organisationRepository = new DoctrineOrganisationRepository(
+            $this->entityManager,
+        );
+        $this->reportRepository = new DoctrineReportRepository(
+            $this->entityManager,
+        );
+        $this->followUpEntryRepository = new DoctrineReportFollowUpEntryRepository(
+            $this->entityManager,
+        );
+    }
+
+    public function testItSavesAndFindsEntriesOrderedByCreationTime(): void
+    {
+        $report = $this->createPersistedReport();
+
+        $second = ReportFollowUpEntry::addedByReporter(
+            $report,
+            FollowUpEntryContent::fromString('Second entry.'),
+            new DateTimeImmutable('2026-08-07T10:05:00+00:00'),
+        );
+        $this->followUpEntryRepository->save($second);
+
+        $first = ReportFollowUpEntry::addedByReporter(
+            $report,
+            FollowUpEntryContent::fromString('First entry.'),
+            new DateTimeImmutable('2026-08-07T10:00:00+00:00'),
+        );
+        $this->followUpEntryRepository->save($first);
+
+        $this->entityManager->clear();
+        $report = $this->reportRepository->findByPublicReference(
+            $report->publicReference(),
+        );
+
+        $entries = $this->followUpEntryRepository
+            ->findByReportOrderedByCreatedAt($report);
+
+        self::assertCount(2, $entries);
+        self::assertSame('First entry.', $entries[0]->content()->toString());
+        self::assertSame('Second entry.', $entries[1]->content()->toString());
+    }
+
+    public function testItReturnsAnEmptyListWhenThereAreNoEntries(): void
+    {
+        $report = $this->createPersistedReport();
+
+        $entries = $this->followUpEntryRepository
+            ->findByReportOrderedByCreatedAt($report);
+
+        self::assertSame([], $entries);
+    }
+
+    public function testItOnlyReturnsEntriesForTheGivenReport(): void
+    {
+        $reportA = $this->createPersistedReport();
+        $reportB = $this->createPersistedReport();
+
+        $this->followUpEntryRepository->save(
+            ReportFollowUpEntry::addedByReporter(
+                $reportA,
+                FollowUpEntryContent::fromString('Belongs to report A.'),
+                new DateTimeImmutable(),
+            ),
+        );
+
+        $entries = $this->followUpEntryRepository
+            ->findByReportOrderedByCreatedAt($reportB);
+
+        self::assertSame([], $entries);
+    }
+
+    private function createPersistedReport(): Report
+    {
+        $organisation = new Organisation(
+            Uuid::v7(),
+            'IES Horizonte',
+            PublicReportingIdentifier::generate(),
+        );
+        $this->organisationRepository->save($organisation);
+
+        $creationResult = Report::create(
+            $organisation,
+            SituationDescription::fromString(
+                'A situation has been observed during break time.',
+            ),
+            SituationContext::InPerson,
+        );
+        $this->reportRepository->save($creationResult->report);
+
+        return $creationResult->report;
+    }
+}
