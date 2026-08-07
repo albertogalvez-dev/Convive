@@ -6,6 +6,7 @@ namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Application\RevokeReportAccess\RevokeReportAccess;
 use App\Reporting\Application\RevokeReportAccess\RevokeReportAccessCommand;
+use App\Shared\Infrastructure\Logging\SecurityEventLogger;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ final readonly class RevokeReportAccessController
         private RevokeReportAccess $revokeReportAccess,
         private ReportAccessCookieFactory $cookieFactory,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private SecurityEventLogger $securityEventLogger,
     ) {
     }
 
@@ -65,6 +67,8 @@ final readonly class RevokeReportAccessController
                 new CsrfToken(self::CSRF_TOKEN_ID, $submittedToken),
             )
         ) {
+            $this->securityEventLogger->csrfDenied($request);
+
             throw new AccessDeniedHttpException(
                 'The request failed CSRF validation.',
             );

@@ -6,13 +6,13 @@ namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Application\VerifyReportAccess\VerifyReportAccess;
 use App\Reporting\Application\VerifyReportAccess\VerifyReportAccessCommand;
+use App\Shared\Presentation\Http\RateLimitEnforcer;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -21,6 +21,7 @@ final readonly class VerifyReportAccessController
     public function __construct(
         private VerifyReportAccess $verifyReportAccess,
         private ReportAccessCookieFactory $cookieFactory,
+        private RateLimitEnforcer $rateLimitEnforcer,
         #[Autowire(service: 'limiter.report_access_verification')]
         private RateLimiterFactory $verificationLimiter,
     ) {
@@ -77,15 +78,11 @@ final readonly class VerifyReportAccessController
         #[MapRequestPayload(acceptFormat: 'json')]
         VerifyReportAccessRequest $payload,
     ): Response {
-        $limit = $this->verificationLimiter
-            ->create($request->getClientIp())
-            ->consume();
-
-        if (!$limit->isAccepted()) {
-            throw new TooManyRequestsHttpException(
-                $limit->getRetryAfter()->getTimestamp() - time(),
-            );
-        }
+        $this->rateLimitEnforcer->enforce(
+            $this->verificationLimiter,
+            'report_access_verification',
+            $request,
+        );
 
         $result = ($this->verifyReportAccess)(
             new VerifyReportAccessCommand(

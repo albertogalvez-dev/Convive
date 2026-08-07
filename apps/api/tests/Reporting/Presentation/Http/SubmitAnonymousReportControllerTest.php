@@ -24,6 +24,15 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
         parent::setUp();
 
         $this->client = static::createClient();
+        // The rate limiter added in #41 is keyed by client IP; its
+        // filesystem-backed storage outlives a single PHPUnit process,
+        // so every test method needs its own address (same reasoning
+        // as VerifyReportAccessControllerTest) or this file's own
+        // tests would eventually rate-limit each other.
+        $this->client->setServerParameter(
+            'REMOTE_ADDR',
+            $this->uniqueTestClientIp(),
+        );
         $this->entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
@@ -264,6 +273,137 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
             404,
             'about:blank',
             'Not Found',
+        );
+    }
+
+    public function testARepeatedIdempotencyKeyReplaysTheOriginalReportWithoutTheSecret(): void
+    {
+        $this->client->disableReboot();
+
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'A situation was observed.',
+                'situationContext' => 'in_person',
+            ],
+            server: ['HTTP_IDEMPOTENCY_KEY' => 'retry-key-1'],
+        );
+        self::assertResponseStatusCodeSame(201);
+        $original = $this->responsePayload();
+
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'A situation was observed.',
+                'situationContext' => 'in_person',
+            ],
+            server: ['HTTP_IDEMPOTENCY_KEY' => 'retry-key-1'],
+        );
+
+        self::assertResponseStatusCodeSame(200);
+        self::assertSame(
+            'true',
+            $this->client->getResponse()->headers->get('Idempotency-Replayed'),
+        );
+
+        $replay = $this->responsePayload();
+
+        self::assertSame(
+            $original['publicReference'],
+            $replay['publicReference'],
+        );
+        self::assertArrayNotHasKey('accessSecret', $replay);
+
+        $reportCount = $this->entityManager
+            ->getRepository(Report::class)
+            ->count([]);
+
+        self::assertSame(1, $reportCount);
+    }
+
+    public function testDifferentIdempotencyKeysCreateIndependentReports(): void
+    {
+        $this->client->disableReboot();
+
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'First independent submission.',
+                'situationContext' => 'in_person',
+            ],
+            server: ['HTTP_IDEMPOTENCY_KEY' => 'key-a'],
+        );
+        self::assertResponseStatusCodeSame(201);
+        $first = $this->responsePayload();
+
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'Second independent submission.',
+                'situationContext' => 'in_person',
+            ],
+            server: ['HTTP_IDEMPOTENCY_KEY' => 'key-b'],
+        );
+        self::assertResponseStatusCodeSame(201);
+        $second = $this->responsePayload();
+
+        self::assertNotSame(
+            $first['publicReference'],
+            $second['publicReference'],
+        );
+    }
+
+    public function testItRateLimitsRepeatedSubmissions(): void
+    {
+        // Multiple requests in one test: without this, the kernel
+        // (and its Doctrine connection) resets between requests and
+        // stops seeing setUp()'s uncommitted, transaction-isolated
+        // organisation after the first request.
+        $this->client->disableReboot();
+
+        for ($attempt = 0; $attempt < 5; ++$attempt) {
+            $this->client->jsonRequest(
+                'POST',
+                $this->endpoint(),
+                [
+                    'situationDescription' => 'A situation was observed.',
+                    'situationContext' => 'in_person',
+                ],
+            );
+            self::assertResponseStatusCodeSame(201);
+        }
+
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'One submission too many.',
+                'situationContext' => 'in_person',
+            ],
+            server: ['HTTP_ACCEPT' => 'application/problem+json'],
+        );
+
+        $payload = $this->assertProblemDetails(
+            429,
+            'urn:convive:problem:rate-limited',
+            'Too many requests',
+        );
+        self::assertArrayHasKey('detail', $payload);
+        self::assertNotNull(
+            $this->client->getResponse()->headers->get('Retry-After'),
+        );
+    }
+
+    private function uniqueTestClientIp(): string
+    {
+        return sprintf(
+            '203.0.%d.%d',
+            random_int(0, 255),
+            random_int(0, 255),
         );
     }
 
