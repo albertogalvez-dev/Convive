@@ -26,3 +26,28 @@ Table reports {
 }
 
 Ref: reports.organisation_id > organisations.id
+
+Table professionals {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  name varchar(255) [not null]
+  email varchar(255) [not null, unique, note: 'normalised lowercase; authentication is out of scope until #30']
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+}
+
+Table organisation_memberships {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  professional_id uuid [not null]
+  organisation_id uuid [not null]
+  role varchar(20) [not null, note: 'triage | administrator (CHECK constraint)']
+  granted_at timestamptz [not null]
+  revoked_at timestamptz [null, note: 'one row per (professional, organisation, role) forever; revocation clears this rather than deleting the row']
+
+  indexes {
+    professional_id
+    organisation_id
+    (professional_id, organisation_id, role) [unique]
+  }
+}
+
+Ref: organisation_memberships.professional_id > professionals.id
+Ref: organisation_memberships.organisation_id > organisations.id
