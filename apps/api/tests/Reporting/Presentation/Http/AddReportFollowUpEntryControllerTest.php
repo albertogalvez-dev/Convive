@@ -157,6 +157,56 @@ final class AddReportFollowUpEntryControllerTest extends WebTestCase
         );
     }
 
+    public function testItDeniesAppendingWithAnExpiredCapability(): void
+    {
+        $creationResult = $this->persistReport();
+        $capability = ReportAccessCapability::generate();
+        $grant = ReportAccessGrant::issue(
+            $creationResult->report,
+            $capability,
+            new DateTimeImmutable('-3 hours'),
+        );
+        $this->entityManager->persist($grant);
+        $this->entityManager->flush();
+
+        $this->request($capability->reveal(), 'Attempted after expiry.');
+
+        $this->assertProblemDetails(
+            401,
+            'urn:convive:problem:report-access-capability-denied',
+            'Report access capability denied',
+        );
+
+        $this->entityManager->clear();
+        $entries = $this->entityManager
+            ->getRepository(ReportFollowUpEntry::class)
+            ->findAll();
+
+        self::assertSame([], $entries);
+    }
+
+    public function testItDeniesAppendingWithARevokedCapability(): void
+    {
+        $creationResult = $this->persistReport();
+        $capability = ReportAccessCapability::generate();
+        $grant = ReportAccessGrant::issue(
+            $creationResult->report,
+            $capability,
+            new DateTimeImmutable(),
+        );
+        $grant->revokeAt(new DateTimeImmutable());
+        $this->entityManager->persist($grant);
+        $this->entityManager->flush();
+
+        $this->request($capability->reveal(), 'Attempted after revocation.');
+
+        $this->assertProblemDetails(
+            401,
+            'urn:convive:problem:report-access-capability-denied',
+            'Report access capability denied',
+        );
+    }
+
     public function testAppendingToOneReportNeverAffectsAnother(): void
     {
         $ownReport = $this->persistReport('Own report.');
