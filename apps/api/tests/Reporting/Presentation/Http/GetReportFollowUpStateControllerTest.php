@@ -6,10 +6,12 @@ namespace App\Tests\Reporting\Presentation\Http;
 
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
+use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAccessCapability;
 use App\Reporting\Domain\ReportAccessGrant;
 use App\Reporting\Domain\ReportCreationResult;
+use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use DateTimeImmutable;
@@ -96,6 +98,49 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
         self::assertSame('received', $payload['status']);
         self::assertIsString($payload['createdAt']);
         self::assertSame([], $payload['followUpEntries']);
+    }
+
+    public function testItIncludesFollowUpEntriesOrderedOldestFirst(): void
+    {
+        $creationResult = $this->persistReport(
+            'A situation has been observed during break time.',
+        );
+        $capability = $this->issueGrant($creationResult->report);
+
+        $this->entityManager->persist(
+            ReportFollowUpEntry::addedByReporter(
+                $creationResult->report,
+                FollowUpEntryContent::fromString('Second entry.'),
+                new DateTimeImmutable('2026-08-07T10:05:00+00:00'),
+            ),
+        );
+        $this->entityManager->persist(
+            ReportFollowUpEntry::addedByReporter(
+                $creationResult->report,
+                FollowUpEntryContent::fromString('First entry.'),
+                new DateTimeImmutable('2026-08-07T10:00:00+00:00'),
+            ),
+        );
+        $this->entityManager->flush();
+
+        $this->request($capability);
+
+        self::assertResponseStatusCodeSame(200);
+        $payload = $this->responsePayload();
+
+        self::assertCount(2, $payload['followUpEntries']);
+        self::assertSame(
+            'First entry.',
+            $payload['followUpEntries'][0]['content'],
+        );
+        self::assertSame(
+            'reporter',
+            $payload['followUpEntries'][0]['authorType'],
+        );
+        self::assertSame(
+            'Second entry.',
+            $payload['followUpEntries'][1]['content'],
+        );
     }
 
     public function testItDeniesAccessWithoutACookie(): void

@@ -8,6 +8,7 @@ use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrgan
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
 use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
+use App\Reporting\Presentation\Http\InvalidFollowUpEntryHttpException;
 use App\Reporting\Presentation\Http\ReportAccessCapabilityRejectedHttpException;
 use App\Reporting\Presentation\Http\ReportAccessDeniedHttpException;
 use App\Reporting\Presentation\Http\ReportingOrganisationNotFoundHttpException;
@@ -121,6 +122,19 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
             }
 
             $event->setResponse($response);
+
+            return;
+        }
+
+        if ($exception instanceof InvalidFollowUpEntryHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:invalid-follow-up-entry',
+                    'Invalid follow-up entry',
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'The submitted follow-up entry is invalid.',
+                ),
+            );
 
             return;
         }

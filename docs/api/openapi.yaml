@@ -40,6 +40,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  /api/v1/reporter/report/follow-up-entries:
+    post:
+      tags:
+        - 'Public reporting'
+      summary: "Append a follow-up entry to the reporter's own report"
+      description: 'Adds reporter-authored text to the report resolved by the presented capability cookie. The original submission remains unchanged; entries are ordered and cannot be edited or removed.'
+      operationId: addReportFollowUpEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  maxLength: 2000
+              type: object
+      responses:
+        '201':
+          description: 'The follow-up entry was added.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowUpEntry'
+        '401':
+          description: 'The report access capability was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: 'The submitted follow-up entry is invalid.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
   /api/v1/reporter/report:
     get:
       tags:
@@ -240,6 +281,25 @@ components:
           format: date-time
       type: object
       additionalProperties: false
+    FollowUpEntry:
+      required:
+        - authorType
+        - content
+        - createdAt
+      properties:
+        authorType:
+          description: 'Who authored the entry, without identifying them.'
+          type: string
+          enum:
+            - reporter
+            - professional
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      type: object
+      additionalProperties: false
     ReportFollowUpStateResponse:
       required:
         - publicReference
@@ -272,9 +332,10 @@ components:
           type: string
           format: date-time
         followUpEntries:
-          description: 'Authorised follow-up entries. Always empty until follow-up messaging is delivered.'
+          description: 'Authorised follow-up entries, oldest first.'
           type: array
-          items: {  }
+          items:
+            $ref: '#/components/schemas/FollowUpEntry'
       type: object
       additionalProperties: false
     ProblemDetails:
@@ -310,6 +371,13 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    AddReportFollowUpEntryRequest:
+      required:
+        - content
+      properties:
+        content:
+          type: string
+      type: object
     SubmitAnonymousReportRequest:
       required:
         - situationDescription
