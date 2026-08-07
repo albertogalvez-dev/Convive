@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c50d9290fea04078c4223c766f0571e",
+    "content-hash": "52ee8666e7a00aa0c8ca3009248ae38f",
     "packages": [
         {
             "name": "doctrine/collections",
@@ -4633,33 +4633,32 @@
         },
         {
             "name": "symfony/runtime",
-            "version": "v7.4.14",
+            "version": "v8.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/runtime.git",
-                "reference": "15497f743dd714f3167cb6a56509b9d42e6417b3"
+                "reference": "b7ea1abe04561e814b3134db0f56c287cedb35cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/runtime/zipball/15497f743dd714f3167cb6a56509b9d42e6417b3",
-                "reference": "15497f743dd714f3167cb6a56509b9d42e6417b3",
+                "url": "https://api.github.com/repos/symfony/runtime/zipball/b7ea1abe04561e814b3134db0f56c287cedb35cc",
+                "reference": "b7ea1abe04561e814b3134db0f56c287cedb35cc",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0|^2.0",
-                "php": ">=8.2"
+                "php": ">=8.4.1"
             },
             "conflict": {
-                "symfony/dotenv": "<6.4",
-                "symfony/http-foundation": "<6.4"
+                "symfony/error-handler": "<7.4"
             },
             "require-dev": {
                 "composer/composer": "^2.6",
-                "symfony/console": "^6.4|^7.0|^8.0",
-                "symfony/dependency-injection": "^6.4|^7.0|^8.0",
-                "symfony/dotenv": "^6.4|^7.0|^8.0",
-                "symfony/http-foundation": "^6.4|^7.0|^8.0",
-                "symfony/http-kernel": "^6.4|^7.0|^8.0"
+                "symfony/console": "^7.4|^8.0",
+                "symfony/dependency-injection": "^7.4|^8.0",
+                "symfony/dotenv": "^7.4|^8.0",
+                "symfony/http-foundation": "^7.4|^8.0",
+                "symfony/http-kernel": "^7.4|^8.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -4694,7 +4693,7 @@
                 "runtime"
             ],
             "support": {
-                "source": "https://github.com/symfony/runtime/tree/v7.4.14"
+                "source": "https://github.com/symfony/runtime/tree/v8.1.0"
             },
             "funding": [
                 {
@@ -4714,7 +4713,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-05T06:22:21+00:00"
+            "time": "2026-05-29T05:06:50+00:00"
         },
         {
             "name": "symfony/security-core",
