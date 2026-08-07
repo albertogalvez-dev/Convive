@@ -410,22 +410,13 @@ The Doctrine mappings and committed migrations are authoritative for the executa
 
 Convive is currently being developed through focused GitHub issues, short-lived branches and reviewed pull requests.
 
-Each change should:
-
-- have a clear and limited scope;
-- preserve the documented architectural boundaries;
-- include relevant tests;
-- update documentation when it changes a contract or decision;
-- pass the required GitHub Actions checks;
-- avoid real or sensitive data.
-
-A dedicated contribution guide and repository templates are planned as part of the project’s professionalisation work.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, local verification commands and code style expectations, and the [Code of Conduct](CODE_OF_CONDUCT.md) for participation standards.
 
 ## Security
 
 Convive is not ready for deployment with real personal data.
 
-Security concerns should not be disclosed through public issues when doing so would expose an exploitable vulnerability. A formal vulnerability-reporting policy will be added before the project accepts external security reports or any real-data deployment.
+See [SECURITY.md](SECURITY.md) for the private vulnerability-reporting process. Do not disclose a security concern through a public issue.
 
 ## License
 
