@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Application\GetReportFollowUpState\GetReportFollowUpState;
+use App\Reporting\Domain\ReportFollowUpEntry;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,10 +70,27 @@ final readonly class GetReportFollowUpStateController
                 'createdAt' => $state->createdAt->format(
                     DATE_RFC3339_EXTENDED,
                 ),
-                'followUpEntries' => $state->followUpEntries,
+                'followUpEntries' => array_map(
+                    $this->serializeFollowUpEntry(...),
+                    $state->followUpEntries,
+                ),
             ],
             Response::HTTP_OK,
             ['Cache-Control' => 'no-store'],
         );
+    }
+
+    /**
+     * @return array{authorType: string, content: string, createdAt: string}
+     */
+    private function serializeFollowUpEntry(ReportFollowUpEntry $entry): array
+    {
+        return [
+            'authorType' => $entry->authorType()->value,
+            'content' => $entry->content()->toString(),
+            'createdAt' => $entry->createdAt()->format(
+                DATE_RFC3339_EXTENDED,
+            ),
+        ];
     }
 }

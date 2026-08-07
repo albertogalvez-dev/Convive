@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Reporting\Application\GetReportFollowUpState;
 
+use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportStatus;
 use App\Reporting\Domain\SituationContext;
 use DateTimeImmutable;
@@ -11,8 +12,10 @@ use DateTimeImmutable;
 final readonly class ReportFollowUpState
 {
     /**
-     * @param list<never> $followUpEntries Always empty until #25/#33 model
-     *                                      and deliver follow-up messages.
+     * @param list<ReportFollowUpEntry> $followUpEntries ordered oldest
+     *                                                    first; professional
+     *                                                    entries remain
+     *                                                    reserved for #33/#34
      */
     public function __construct(
         public string $publicReference,
