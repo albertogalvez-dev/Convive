@@ -81,6 +81,7 @@ The initial backend modules are:
 
 - `Organisations`: educational organisations that can receive reports;
 - `Reporting`: anonymous report intake and persistence;
+- `Professionals`: professional identities, organisation memberships and roles;
 - `Shared`: cross-cutting technical presentation infrastructure.
 
 The frontend communicates with Symfony through a resource-oriented JSON HTTP API under `/api/v1`. It never accesses PostgreSQL directly.
