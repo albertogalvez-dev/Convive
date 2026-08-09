@@ -33,6 +33,11 @@ final class AddReportFollowUpEntryControllerTest extends WebTestCase
         parent::setUp();
 
         $this->client = static::createClient();
+        $this->client->disableReboot();
+        $this->client->setServerParameter(
+            'REMOTE_ADDR',
+            $this->uniqueTestClientIp(),
+        );
         $this->entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
@@ -229,6 +234,75 @@ final class AddReportFollowUpEntryControllerTest extends WebTestCase
         self::assertSame([], $ownReportEntries);
     }
 
+    public function testItRejectsEntriesOnceTheReportIsAtCapacity(): void
+    {
+        $creationResult = $this->persistReport();
+        $capability = $this->issueGrant($creationResult->report);
+
+        for ($index = 0; $index < 100; ++$index) {
+            $this->entityManager->persist(
+                ReportFollowUpEntry::addedByReporter(
+                    $creationResult->report,
+                    FollowUpEntryContent::fromString(sprintf('Entry %d.', $index)),
+                    new DateTimeImmutable(),
+                ),
+            );
+        }
+        $this->entityManager->flush();
+
+        $this->request($capability, 'One entry too many.');
+
+        $payload = $this->assertProblemDetails(
+            409,
+            'urn:convive:problem:follow-up-entry-limit-reached',
+            'Follow-up entry limit reached',
+        );
+        self::assertSame(
+            'No more information can be added to this report.',
+            $payload['detail'],
+        );
+    }
+
+    public function testItRateLimitsAppendRequestsPerCapabilityAndIp(): void
+    {
+        $creationResult = $this->persistReport();
+        $capability = $this->issueGrant($creationResult->report);
+
+        for ($attempt = 0; $attempt < 10; ++$attempt) {
+            $this->request($capability, sprintf('Entry %d.', $attempt));
+            self::assertResponseStatusCodeSame(
+                201,
+                sprintf('Append attempt %d should be accepted.', $attempt + 1),
+            );
+        }
+
+        $this->request($capability, 'Rate limited entry.');
+
+        $payload = $this->assertProblemDetails(
+            429,
+            'urn:convive:problem:rate-limited',
+            'Too many requests',
+        );
+        self::assertSame('Too many requests. Try again later.', $payload['detail']);
+        self::assertResponseHasHeader('Retry-After');
+    }
+
+    public function testTheIpLimitBoundsRotatingInvalidCapabilities(): void
+    {
+        for ($attempt = 0; $attempt < 20; ++$attempt) {
+            $this->request(str_pad(dechex($attempt), 64, '0', STR_PAD_LEFT), 'Attempt.');
+            self::assertResponseStatusCodeSame(401);
+        }
+
+        $this->request(str_repeat('f', 64), 'Rate limited attempt.');
+
+        $this->assertProblemDetails(
+            429,
+            'urn:convive:problem:rate-limited',
+            'Too many requests',
+        );
+    }
+
     private function request(string $capability, string $content): void
     {
         $this->client->getCookieJar()->set(
@@ -276,6 +350,15 @@ final class AddReportFollowUpEntryControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $creationResult;
+    }
+
+    private function uniqueTestClientIp(): string
+    {
+        return sprintf(
+            '198.51.%d.%d',
+            random_int(0, 255),
+            random_int(0, 255),
+        );
     }
 
     /**

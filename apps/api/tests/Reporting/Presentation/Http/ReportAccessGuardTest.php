@@ -28,7 +28,7 @@ final class ReportAccessGuardTest extends TestCase
         $grant = ReportAccessGrant::issue(
             $report,
             $capability,
-            new DateTimeImmutable(),
+            new DateTimeImmutable('-2 minutes'),
         );
 
         $grantRepository = $this->createMock(
@@ -51,6 +51,26 @@ final class ReportAccessGuardTest extends TestCase
 
         self::assertSame($grant, $resolved);
         self::assertSame($report, $resolved?->report());
+    }
+
+    public function testItDoesNotPersistActivityForEveryValidRead(): void
+    {
+        $capability = ReportAccessCapability::generate();
+        $grant = ReportAccessGrant::issue(
+            $this->createReport(),
+            $capability,
+            new DateTimeImmutable(),
+        );
+        $grantRepository = $this->createMock(ReportAccessGrantRepository::class);
+        $grantRepository->method('findByCapability')->willReturn($grant);
+        $grantRepository->expects(self::never())->method('save');
+
+        $guard = new ReportAccessGuard($this->cookieFactory(), $grantRepository);
+
+        self::assertSame(
+            $grant,
+            $guard->resolve($this->requestWithCookie($capability->reveal())),
+        );
     }
 
     public function testItReturnsNullWhenNoCookieIsPresent(): void

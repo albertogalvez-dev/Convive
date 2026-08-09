@@ -57,6 +57,53 @@ final class RateLimitEnforcerTest extends TestCase
         $enforcer->enforce($limiterFactory, 'test_limiter', $request);
     }
 
+    public function testCredentialScopesHaveIndependentBudgets(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method('warning');
+        $limiterFactory = $this->limiterFactory(limit: 1);
+        $enforcer = new RateLimitEnforcer(new SecurityEventLogger($logger));
+        $request = Request::create(
+            '/',
+            server: ['REMOTE_ADDR' => '203.0.113.3'],
+        );
+
+        $enforcer->enforce($limiterFactory, 'test_limiter', $request, 'first');
+        $enforcer->enforce($limiterFactory, 'test_limiter', $request, 'second');
+
+        self::assertTrue(true);
+    }
+
+    public function testCredentialScopeIsNeverIncludedInSecurityLogs(): void
+    {
+        $credential = 'capability-UNIQUE-SECRET-MARKER';
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with(
+                'rate_limit_exceeded',
+                self::callback(
+                    static fn (array $context): bool =>
+                        !str_contains(
+                            (string) json_encode($context),
+                            $credential,
+                        ),
+                ),
+            );
+        $limiterFactory = $this->limiterFactory(limit: 1);
+        $enforcer = new RateLimitEnforcer(new SecurityEventLogger($logger));
+        $request = Request::create(
+            '/',
+            server: ['REMOTE_ADDR' => '203.0.113.4'],
+        );
+
+        $enforcer->enforce($limiterFactory, 'test_limiter', $request, $credential);
+
+        $this->expectException(TooManyRequestsHttpException::class);
+        $enforcer->enforce($limiterFactory, 'test_limiter', $request, $credential);
+    }
+
     private function limiterFactory(int $limit): RateLimiterFactory
     {
         return new RateLimiterFactory(

@@ -48,14 +48,18 @@ final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
             FollowUpEntryContent::fromString('Second entry.'),
             new DateTimeImmutable('2026-08-07T10:05:00+00:00'),
         );
-        $this->followUpEntryRepository->save($second);
+        self::assertTrue(
+            $this->followUpEntryRepository->saveIfReportHasCapacity($second, 100),
+        );
 
         $first = ReportFollowUpEntry::addedByReporter(
             $report,
             FollowUpEntryContent::fromString('First entry.'),
             new DateTimeImmutable('2026-08-07T10:00:00+00:00'),
         );
-        $this->followUpEntryRepository->save($first);
+        self::assertTrue(
+            $this->followUpEntryRepository->saveIfReportHasCapacity($first, 100),
+        );
 
         $this->entityManager->clear();
         $report = $this->reportRepository->findByPublicReference(
@@ -63,7 +67,7 @@ final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
         );
 
         $entries = $this->followUpEntryRepository
-            ->findByReportOrderedByCreatedAt($report);
+            ->findByReportOrderedByCreatedAt($report, 100);
 
         self::assertCount(2, $entries);
         self::assertSame('First entry.', $entries[0]->content()->toString());
@@ -75,7 +79,7 @@ final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
         $report = $this->createPersistedReport();
 
         $entries = $this->followUpEntryRepository
-            ->findByReportOrderedByCreatedAt($report);
+            ->findByReportOrderedByCreatedAt($report, 100);
 
         self::assertSame([], $entries);
     }
@@ -85,18 +89,47 @@ final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
         $reportA = $this->createPersistedReport();
         $reportB = $this->createPersistedReport();
 
-        $this->followUpEntryRepository->save(
+        $this->followUpEntryRepository->saveIfReportHasCapacity(
             ReportFollowUpEntry::addedByReporter(
                 $reportA,
                 FollowUpEntryContent::fromString('Belongs to report A.'),
                 new DateTimeImmutable(),
             ),
+            100,
         );
 
         $entries = $this->followUpEntryRepository
-            ->findByReportOrderedByCreatedAt($reportB);
+            ->findByReportOrderedByCreatedAt($reportB, 100);
 
         self::assertSame([], $entries);
+    }
+
+    public function testItDoesNotSaveBeyondTheReportCapacity(): void
+    {
+        $report = $this->createPersistedReport();
+
+        $first = ReportFollowUpEntry::addedByReporter(
+            $report,
+            FollowUpEntryContent::fromString('First entry.'),
+            new DateTimeImmutable(),
+        );
+        $second = ReportFollowUpEntry::addedByReporter(
+            $report,
+            FollowUpEntryContent::fromString('Second entry.'),
+            new DateTimeImmutable(),
+        );
+
+        self::assertTrue(
+            $this->followUpEntryRepository->saveIfReportHasCapacity($first, 1),
+        );
+        self::assertFalse(
+            $this->followUpEntryRepository->saveIfReportHasCapacity($second, 1),
+        );
+        self::assertCount(
+            1,
+            $this->followUpEntryRepository
+                ->findByReportOrderedByCreatedAt($report, 100),
+        );
     }
 
     private function createPersistedReport(): Report

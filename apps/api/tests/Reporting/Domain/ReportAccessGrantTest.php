@@ -63,11 +63,33 @@ final class ReportAccessGrantTest extends TestCase
         );
 
         $tenMinutesLater = $issuedAt->add(new DateInterval('PT10M'));
-        $grant->recordUseAt($tenMinutesLater);
+        self::assertTrue($grant->recordUseAt($tenMinutesLater));
 
         $twentyMinutesAfterIssuance = $issuedAt->add(new DateInterval('PT20M'));
 
         self::assertTrue($grant->isValidAt($twentyMinutesAfterIssuance));
+    }
+
+    public function testActivityIsPersistedAtMostOncePerMinute(): void
+    {
+        $issuedAt = new DateTimeImmutable('2026-08-06T10:00:00+00:00');
+        $grant = ReportAccessGrant::issue(
+            $this->createReport(),
+            ReportAccessCapability::generate(),
+            $issuedAt,
+        );
+
+        self::assertFalse(
+            $grant->recordUseAt($issuedAt->modify('+59 seconds')),
+        );
+        self::assertSame($issuedAt, $grant->lastUsedAt());
+        self::assertTrue(
+            $grant->recordUseAt($issuedAt->modify('+60 seconds')),
+        );
+        self::assertEquals(
+            $issuedAt->modify('+60 seconds'),
+            $grant->lastUsedAt(),
+        );
     }
 
     public function testItBecomesInvalidAfterTheAbsoluteLifetimeRegardlessOfActivity(): void
@@ -83,7 +105,7 @@ final class ReportAccessGrantTest extends TestCase
         $justBeforeTwoHours = $issuedAt
             ->add(new DateInterval('PT2H'))
             ->modify('-1 second');
-        $grant->recordUseAt($justBeforeTwoHours);
+        self::assertTrue($grant->recordUseAt($justBeforeTwoHours));
 
         $justAfterTwoHours = $issuedAt
             ->add(new DateInterval('PT2H'))
