@@ -61,7 +61,20 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Audit backend dependencies
-        run: composer audit --locked --no-interaction
+        run: |
+          for attempt in 1 2 3; do
+            if composer audit --locked --no-interaction; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Composer audit failed after 3 attempts."
+              exit 1
+            fi
+
+            echo "::warning::Composer audit attempt $attempt failed; retrying."
+            sleep $((attempt * 5))
+          done
 
       - name: Lint Symfony configuration
         run: |
