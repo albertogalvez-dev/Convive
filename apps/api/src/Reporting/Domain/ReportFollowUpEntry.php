@@ -32,6 +32,9 @@ class ReportFollowUpEntry
     )]
     private FollowUpAuthorType $authorType;
 
+    #[ORM\Column(type: 'uuid', nullable: true)]
+    private ?Uuid $professionalAuthorId;
+
     #[ORM\Column(type: Types::TEXT)]
     private string $content;
 
@@ -42,12 +45,14 @@ class ReportFollowUpEntry
         Uuid $id,
         Report $report,
         FollowUpAuthorType $authorType,
+        ?Uuid $professionalAuthorId,
         FollowUpEntryContent $content,
         DateTimeImmutable $createdAt,
     ) {
         $this->id = $id;
         $this->report = $report;
         $this->authorType = $authorType;
+        $this->professionalAuthorId = $professionalAuthorId;
         $this->content = $content->toString();
         $this->createdAt = $createdAt;
     }
@@ -61,6 +66,23 @@ class ReportFollowUpEntry
             Uuid::v7(),
             $report,
             FollowUpAuthorType::Reporter,
+            null,
+            $content,
+            $createdAt,
+        );
+    }
+
+    public static function addedByProfessional(
+        Report $report,
+        Uuid $professionalAuthorId,
+        FollowUpEntryContent $content,
+        DateTimeImmutable $createdAt,
+    ): self {
+        return new self(
+            Uuid::v7(),
+            $report,
+            FollowUpAuthorType::Professional,
+            $professionalAuthorId,
             $content,
             $createdAt,
         );
@@ -84,6 +106,11 @@ class ReportFollowUpEntry
     public function content(): FollowUpEntryContent
     {
         return FollowUpEntryContent::fromString($this->content);
+    }
+
+    public function professionalAuthorId(): ?Uuid
+    {
+        return $this->professionalAuthorId;
     }
 
     public function createdAt(): DateTimeImmutable
