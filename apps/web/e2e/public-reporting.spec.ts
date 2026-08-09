@@ -2,6 +2,10 @@ import { expect, test } from '@playwright/test';
 
 const PUBLIC_REPORTING_IDENTIFIER = 'ORG_E2E0000000000000';
 const FICTIONAL_ORGANISATION = 'Convive E2E School';
+const APP_BASE_URL = process.env['PLAYWRIGHT_BASE_URL'] ?? 'http://127.0.0.1:4200';
+const TRIAGE_EMAIL = 'triage.e2e@convive.example';
+const ADMINISTRATOR_EMAIL = 'administrator.e2e@convive.example';
+const PROFESSIONAL_PASSWORD = 'Fictional professional 35!';
 
 test.afterEach(async ({ context, page }, testInfo) => {
   if (testInfo.status === testInfo.expectedStatus) {
@@ -12,7 +16,8 @@ test.afterEach(async ({ context, page }, testInfo) => {
     .addStyleTag({
       content: `
         .credential-value.secret,
-        #accessSecret {
+        #accessSecret,
+        input[type='password'] {
           visibility: hidden !important;
         }
       `,
@@ -27,10 +32,16 @@ test.afterEach(async ({ context, page }, testInfo) => {
   await context.close();
 });
 
-test('submits a fictional report and completes anonymous follow-up', async ({ context, page }) => {
+test('completes the fictional reporter-professional conversation loop', async ({
+  browser,
+  context,
+  page,
+}) => {
+  test.setTimeout(240_000);
   const runMarker = `${Date.now()}-${test.info().retry}`;
   const situationDescription = `Fictional E2E report ${runMarker}`;
   const followUpContent = `Fictional E2E follow-up ${runMarker}`;
+  const professionalResponse = `Fictional E2E professional response ${runMarker}`;
 
   await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
 
@@ -67,13 +78,52 @@ test('submits a fictional report and completes anonymous follow-up', async ({ co
   await expect(page.getByText(situationDescription, { exact: true })).toBeVisible();
   await expectCredentialAbsentFromBrowserState(page, context, accessSecret);
 
-  await page.getByLabel('Qué quieres añadir').fill(followUpContent);
-  await page.getByRole('button', { name: 'Añadir información' }).click();
+  const professionalContext = await browser.newContext();
+  const administratorContext = await browser.newContext();
 
-  await expect(page.getByText(followUpContent, { exact: true })).toBeVisible();
-  await expect(
-    page.getByText('Hemos añadido tu información a la comunicación.', { exact: true }),
-  ).toBeVisible();
+  try {
+    const professionalPage = await professionalContext.newPage();
+    await loginAsProfessional(professionalPage, TRIAGE_EMAIL);
+    await professionalPage.goto(absoluteUrl('/profesionales/comunicaciones'));
+    await professionalPage.getByText(situationDescription, { exact: true }).click();
+
+    await expect(
+      professionalPage.getByRole('heading', { name: 'Comunicación', exact: true }),
+    ).toBeVisible();
+    const professionalDetailUrl = professionalPage.url();
+    await professionalPage
+      .getByLabel('Mensaje para la persona informante')
+      .fill(professionalResponse);
+    await professionalPage.getByRole('button', { name: 'Enviar respuesta' }).click();
+
+    await expect(professionalPage.getByText('Respuesta enviada.', { exact: true })).toBeVisible();
+    await expect(professionalPage.getByText(professionalResponse, { exact: true })).toBeVisible();
+
+    const administratorPage = await administratorContext.newPage();
+    await loginAsProfessional(administratorPage, ADMINISTRATOR_EMAIL);
+    await administratorPage.goto(professionalDetailUrl);
+    await expect(administratorPage.getByRole('alert')).toContainText('no está disponible');
+
+    await page.reload();
+    await page.getByLabel('Referencia').fill(publicReference);
+    await page.getByLabel('Secreto').fill(accessSecret);
+    await page.getByRole('button', { name: 'Abrir comunicación' }).click();
+    await page.getByLabel('Secreto').fill('');
+    await expect(page.getByText(professionalResponse, { exact: true })).toBeVisible();
+    await expect(page.getByText('El centro', { exact: true })).toBeVisible();
+    await expectCredentialAbsentFromBrowserState(page, context, accessSecret);
+
+    await page.getByLabel('Qué quieres añadir').fill(followUpContent);
+    await page.getByRole('button', { name: 'Añadir información' }).click();
+
+    await expect(page.getByText(followUpContent, { exact: true })).toBeVisible();
+    await expect(
+      page.getByText('Hemos añadido tu información a la comunicación.', { exact: true }),
+    ).toBeVisible();
+  } finally {
+    await administratorContext.close();
+    await professionalContext.close();
+  }
 
   await page.getByRole('button', { name: 'Cerrar acceso' }).click();
   await expect(page.getByRole('heading', { name: 'Consulta tu comunicación' })).toBeVisible();
@@ -85,6 +135,21 @@ test('submits a fictional report and completes anonymous follow-up', async ({ co
   ).toBeVisible();
   await expectCredentialAbsentFromBrowserState(page, context, accessSecret);
 });
+
+async function loginAsProfessional(
+  page: import('@playwright/test').Page,
+  email: string,
+): Promise<void> {
+  await page.goto(absoluteUrl('/profesionales/acceso'));
+  await page.getByLabel('Correo profesional').fill(email);
+  await page.getByLabel('Contraseña').fill(PROFESSIONAL_PASSWORD);
+  await page.getByRole('button', { name: 'Acceder' }).click();
+  await expect(page.getByRole('heading', { name: /Hola,/ })).toBeVisible();
+}
+
+function absoluteUrl(path: string): string {
+  return new URL(path, APP_BASE_URL).toString();
+}
 
 async function credentialIsAbsentFromBrowserState(
   page: import('@playwright/test').Page,

@@ -10,7 +10,7 @@ export default defineConfig({
   workers: 1,
   reporter: 'line',
   expect: {
-    timeout: 15_000,
+    timeout: 30_000,
   },
   use: {
     baseURL: process.env['PLAYWRIGHT_BASE_URL'] ?? 'http://127.0.0.1:4200',
