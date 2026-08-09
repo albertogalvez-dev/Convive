@@ -4,6 +4,9 @@ This directory documents the technical architecture of Convive.
 
 It explains the main system components, how they communicate and the reasons behind the most important technical decisions.
 
+Cross-cutting security and privacy boundaries are maintained in the
+[threat model and privacy engineering register](../security/README.md).
+
 ## Architecture diagram
 
 The [initial system architecture diagram](diagrams/initial-system-architecture.md)
