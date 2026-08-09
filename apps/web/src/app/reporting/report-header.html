@@ -7,6 +7,19 @@
         Paso {{ currentStep() }} de {{ totalSteps() }}
       </span>
     </div>
+  } @else if (showCloseAccess()) {
+    <button
+      type="button"
+      class="close-access"
+      [disabled]="closing()"
+      (click)="closeRequested.emit()"
+    >
+      @if (closing()) {
+        Cerrando…
+      } @else {
+        Cerrar acceso
+      }
+    </button>
   }
 </header>
 

@@ -36,6 +36,27 @@ button,
   cursor: pointer;
 }
 
+.close-access {
+  min-height: 2.75rem;
+  padding: 0.65rem 1.1rem;
+  color: #a51d38;
+  background: #fff3f5;
+  border: 1px solid #e5aab7;
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+.close-access:hover:not(:disabled) {
+  color: #fff;
+  background: #a51d38;
+  border-color: #a51d38;
+}
+
+.close-access:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
 button:focus-visible {
   outline: 3px solid rgb(35 157 209 / 30%);
   outline-offset: 3px;
