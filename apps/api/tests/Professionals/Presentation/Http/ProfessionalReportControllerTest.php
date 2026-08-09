@@ -73,6 +73,14 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertSame(2, $firstPage['pagination']['limit']);
         self::assertIsString($firstPage['pagination']['nextCursor']);
         self::assertNotSame('', $firstPage['pagination']['nextCursor']);
+        self::assertContains(
+            $firstPage['items'][0]['situationPreview'],
+            [
+                'First authorised fictional report.',
+                'Second authorised fictional report.',
+                'Third authorised fictional report.',
+            ],
+        );
 
         $firstPageIds = array_column($firstPage['items'], 'id');
         self::assertNotContains($foreignReport['report']->id()->toRfc4122(), $firstPageIds);

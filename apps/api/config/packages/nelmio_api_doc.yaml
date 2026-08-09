@@ -121,6 +121,7 @@ nelmio_api_doc:
                     required:
                         - id
                         - publicReference
+                        - situationPreview
                         - situationContext
                         - status
                         - createdAt
@@ -131,6 +132,9 @@ nelmio_api_doc:
                         publicReference:
                             type: string
                             example: 0123456789ABCDEF0123
+                        situationPreview:
+                            type: string
+                            maxLength: 111
                         situationContext:
                             type: string
                             enum: [in_person, digital, mixed, unknown]
@@ -160,6 +164,7 @@ nelmio_api_doc:
                     required:
                         - id
                         - publicReference
+                        - situationPreview
                         - situationContext
                         - status
                         - createdAt
@@ -173,6 +178,9 @@ nelmio_api_doc:
                         publicReference:
                             type: string
                             example: 0123456789ABCDEF0123
+                        situationPreview:
+                            type: string
+                            maxLength: 111
                         situationContext:
                             type: string
                             enum: [in_person, digital, mixed, unknown]

@@ -528,6 +528,7 @@ components:
       required:
         - id
         - publicReference
+        - situationPreview
         - situationContext
         - status
         - createdAt
@@ -538,6 +539,9 @@ components:
         publicReference:
           type: string
           example: 0123456789ABCDEF0123
+        situationPreview:
+          type: string
+          maxLength: 111
         situationContext:
           type: string
           enum:
@@ -573,6 +577,7 @@ components:
       required:
         - id
         - publicReference
+        - situationPreview
         - situationContext
         - status
         - createdAt
@@ -586,6 +591,9 @@ components:
         publicReference:
           type: string
           example: 0123456789ABCDEF0123
+        situationPreview:
+          type: string
+          maxLength: 111
         situationContext:
           type: string
           enum:
