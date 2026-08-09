@@ -59,7 +59,15 @@ access mechanism, expiry, CSRF constraints and required integration verification
 are defined in
 [ADR-0008](decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
 as amended by
-[ADR-0010](decisions/0010-use-a-single-secret-for-anonymous-report-access.md).
+[ADR-0010](decisions/0010-use-a-single-secret-for-anonymous-report-access.md)
+and
+[ADR-0011](decisions/0011-allow-the-reporter-browser-password-manager-to-store-the-access-secret.md).
+
+The reporter may keep the access secret in their own browser credential
+manager, chosen through the browser's own prompt. Convive never writes the
+secret or the capability handle to storage the application controls, and never
+invokes a credential-retrieval API in the background; it consumes an autofilled
+secret only when the reporter deliberately submits the access form.
 
 ## Public organisation routing
 
