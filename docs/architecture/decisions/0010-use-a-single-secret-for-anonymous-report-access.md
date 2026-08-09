@@ -5,6 +5,7 @@
 - **Related issue:** [#21](https://github.com/albertogalvez-dev/Convive/issues/21)
 - **Depends on:** [ADR-0006](0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md), [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md), [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md), [ADR-0009](0009-use-public-organisation-reporting-links.md)
 - **Changes:** The anonymous follow-up verification requirements of [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+- **Amended by:** [ADR-0011](0011-allow-the-reporter-browser-password-manager-to-store-the-access-secret.md), which permits the reporter's own credential manager to store the access secret while keeping application-controlled storage prohibited
 
 ## Context
 
