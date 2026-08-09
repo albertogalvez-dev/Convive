@@ -13,6 +13,8 @@ parameters:
     # rather than derived from request-time detection.
     report_access_cookie.name: 'report_access'
     report_access_cookie.secure: false
+    professional_session_cookie.name: 'professional_session'
+    professional_session_cookie.secure: false
 
 services:
     # default configuration for services in *this* file
@@ -33,12 +35,26 @@ services:
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
 
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments:
+            - '%env(SESSION_DATABASE_URL)%'
+            - { db_table: 'professional_sessions' }
+
+    app.professional_login_limiter:
+        class: Symfony\Component\Security\Http\RateLimiter\DefaultLoginRateLimiter
+        arguments:
+            $globalFactory: '@limiter.professional_login_network'
+            $localFactory: '@limiter.professional_login_account'
+            $secret: '%kernel.secret%'
+
 when@prod:
     parameters:
         # __Host- requires Secure, Path=/ and no Domain attribute; only
         # valid when the cookie is always sent over HTTPS.
         report_access_cookie.name: '__Host-report_access'
         report_access_cookie.secure: true
+        professional_session_cookie.name: '__Host-professional_session'
+        professional_session_cookie.secure: true
 
 when@test:
     services:

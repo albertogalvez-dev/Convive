@@ -149,6 +149,15 @@ nelmio_api_doc:
                                         type: string
 
             securitySchemes:
+                professionalSession:
+                    type: apiKey
+                    in: cookie
+                    name: professional_session
+                    description: >-
+                        Opaque server-side session identifier for an authenticated
+                        professional. Named professional_session in development and
+                        __Host-professional_session (Secure, HttpOnly, SameSite=Lax,
+                        Path=/, no Domain) in production.
                 reportAccessCookie:
                     type: apiKey
                     in: cookie

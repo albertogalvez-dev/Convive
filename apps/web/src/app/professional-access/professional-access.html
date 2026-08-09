@@ -1,0 +1,99 @@
+<main class="professional-page">
+  <div class="professional-flow">
+    <header>
+      <img src="/convive-logo.svg" alt="Convive" width="180" height="59" />
+      <span>Área profesional</span>
+    </header>
+
+    <section class="access-card" aria-labelledby="access-title">
+      <div class="access-intro">
+        <span class="access-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+            <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
+          </svg>
+        </span>
+        <p class="eyebrow">Acceso del centro</p>
+        <h1 id="access-title">Tu espacio profesional</h1>
+        <p class="introduction">Accede para gestionar las comunicaciones de tu centro.</p>
+      </div>
+
+      <div class="access-panel">
+        @if (professional(); as currentProfessional) {
+          <div class="session-state" aria-live="polite">
+            <span class="session-mark" aria-hidden="true">✓</span>
+            <p class="session-label">Sesión iniciada</p>
+            <h2>{{ currentProfessional.name }}</h2>
+            <p class="session-email">{{ currentProfessional.email }}</p>
+
+            @if (errorMessage(); as message) {
+              <p class="error-banner" role="alert">{{ message }}</p>
+            }
+
+            <button type="button" class="secondary" [disabled]="loggingOut()" (click)="logout()">
+              {{ loggingOut() ? 'Cerrando…' : 'Cerrar sesión' }}
+            </button>
+          </div>
+        } @else {
+          <form [formGroup]="form" (ngSubmit)="login()" novalidate>
+            <div class="field">
+              <label for="professional-email">Correo profesional</label>
+              <input
+                id="professional-email"
+                formControlName="email"
+                type="email"
+                autocomplete="username"
+                inputmode="email"
+                [attr.aria-describedby]="
+                  form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null
+                "
+              />
+              @if (form.controls.email.touched && form.controls.email.invalid) {
+                <p id="email-error" class="field-error" role="alert">Escribe un correo válido.</p>
+              }
+            </div>
+
+            <div class="field">
+              <label for="professional-password">Contraseña</label>
+              <div class="password-field">
+                <input
+                  id="professional-password"
+                  formControlName="password"
+                  [type]="passwordVisible() ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  [attr.aria-describedby]="
+                    form.controls.password.touched && form.controls.password.invalid
+                      ? 'password-error'
+                      : null
+                  "
+                />
+                <button
+                  type="button"
+                  class="visibility"
+                  [attr.aria-pressed]="passwordVisible()"
+                  (click)="togglePasswordVisibility()"
+                >
+                  {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
+                </button>
+              </div>
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <p id="password-error" class="field-error" role="alert">Escribe tu contraseña.</p>
+              }
+            </div>
+
+            @if (errorMessage(); as message) {
+              <p class="error-banner" role="alert">{{ message }}</p>
+            }
+
+            <button type="submit" class="primary" [disabled]="submitting()">
+              {{ submitting() ? 'Accediendo…' : 'Acceder' }}
+              @if (!submitting()) {
+                <span aria-hidden="true">→</span>
+              }
+            </button>
+          </form>
+        }
+      </div>
+    </section>
+  </div>
+</main>

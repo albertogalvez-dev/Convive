@@ -37,3 +37,13 @@ framework:
             policy: sliding_window
             limit: 10
             interval: '1 minute'
+
+        professional_login_account:
+            policy: token_bucket
+            limit: 5
+            rate: { interval: '15 minutes', amount: 5 }
+
+        professional_login_network:
+            policy: sliding_window
+            limit: 25
+            interval: '15 minutes'
