@@ -6,8 +6,10 @@ namespace App\Professionals\Presentation\Http;
 
 use App\Professionals\Application\AuthorisedReportingOrganisations;
 use App\Professionals\Domain\Professional;
+use App\Reporting\Application\AddProfessionalReportResponse\AddProfessionalReportResponse;
 use App\Reporting\Application\ProfessionalInbox\ProfessionalReportDetail;
 use App\Reporting\Application\ProfessionalInbox\ProfessionalReportInbox;
+use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAlreadyReviewed;
 use App\Reporting\Domain\ReportFollowUpEntry;
@@ -34,6 +36,7 @@ final readonly class ProfessionalReportController
         private AuthorisedReportingOrganisations $authorisedOrganisations,
         private ProfessionalReportInbox $inbox,
         private ProfessionalReportCursorCodec $cursorCodec,
+        private AddProfessionalReportResponse $addProfessionalResponse,
     ) {
     }
 
@@ -212,6 +215,70 @@ final readonly class ProfessionalReportController
 
         return $this->json(
             ['review' => $this->serializeReview($report)],
+            Response::HTTP_CREATED,
+        );
+    }
+
+    #[Route(
+        '/api/v1/professional/reports/{id}/responses',
+        name: 'api_v1_professional_respond_to_report',
+        methods: ['POST'],
+        format: 'json',
+    )]
+    #[OA\Post(
+        operationId: 'respondToProfessionalReport',
+        summary: 'Publish a reporter-visible professional response',
+        description: 'Appends an immutable professional-authored entry to the reporter-visible conversation. Internal notes are not accepted by this resource.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional reports'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['content'],
+                additionalProperties: false,
+                properties: [
+                    new OA\Property(
+                        property: 'content',
+                        type: 'string',
+                        maxLength: FollowUpEntryContent::MAX_LENGTH,
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_CREATED,
+                description: 'The reporter-visible response was published.',
+                content: new OA\JsonContent(ref: '#/components/schemas/FollowUpEntry'),
+            ),
+            new OA\Response(response: 401, description: 'A professional session is required.'),
+            new OA\Response(response: 404, description: 'The report is unavailable in this scope.'),
+            new OA\Response(response: 409, description: 'The conversation has reached its entry limit.'),
+            new OA\Response(response: 422, description: 'The response content is invalid.'),
+        ],
+    )]
+    public function respond(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        RespondToProfessionalReportRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+
+        try {
+            $content = FollowUpEntryContent::fromString($payload->content);
+        } catch (InvalidArgumentException $exception) {
+            throw new InvalidProfessionalReportResponseHttpException(previous: $exception);
+        }
+
+        $entry = ($this->addProfessionalResponse)(
+            $detail->report,
+            $professional->id(),
+            $content,
+        );
+
+        return $this->json(
+            $this->serializeFollowUpEntry($entry),
             Response::HTTP_CREATED,
         );
     }

@@ -35,6 +35,7 @@ erDiagram
         uuid id PK "UUIDv7, application-generated"
         uuid report_id FK
         varchar author_type "reporter | professional"
+        uuid professional_author_id "nullable; private audit metadata"
         text content "bounded to 2000 characters"
         timestamptz created_at "immutable UTC; append-only"
     }

@@ -34,6 +34,24 @@ final class ReportFollowUpEntryTest extends TestCase
         self::assertSame(FollowUpAuthorType::Reporter, $entry->authorType());
         self::assertTrue($content->equals($entry->content()));
         self::assertSame($now, $entry->createdAt());
+        self::assertNull($entry->professionalAuthorId());
+    }
+
+    public function testAddedByProfessionalKeepsPrivateAuditAuthorship(): void
+    {
+        $professionalId = Uuid::fromString('0192a5c0-2222-7000-8000-000000000002');
+        $now = new DateTimeImmutable('2026-08-09T21:45:00+00:00');
+
+        $entry = ReportFollowUpEntry::addedByProfessional(
+            $this->createReport(),
+            $professionalId,
+            FollowUpEntryContent::fromString('We have received your information.'),
+            $now,
+        );
+
+        self::assertSame(FollowUpAuthorType::Professional, $entry->authorType());
+        self::assertTrue($professionalId->equals($entry->professionalAuthorId()));
+        self::assertSame($now, $entry->createdAt());
     }
 
     private function createReport(): Report

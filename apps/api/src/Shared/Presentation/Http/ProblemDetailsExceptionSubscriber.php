@@ -7,6 +7,7 @@ namespace App\Shared\Presentation\Http;
 use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrganisationNotFound;
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
 use App\Professionals\Presentation\Http\InvalidProfessionalReportRequestHttpException;
+use App\Professionals\Presentation\Http\InvalidProfessionalReportResponseHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportAlreadyReviewedHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportNotFoundHttpException;
 use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
@@ -192,6 +193,19 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'Invalid report review',
                     Response::HTTP_UNPROCESSABLE_ENTITY,
                     'The submitted report review is invalid.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof InvalidProfessionalReportResponseHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:invalid-professional-report-response',
+                    'Invalid professional report response',
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'The submitted professional response is invalid.',
                 ),
             );
 

@@ -6,8 +6,8 @@ namespace App\Reporting\Domain;
 
 /**
  * Distinguishes who authored a follow-up entry without identifying
- * them (#25). Only Reporter is produced today; Professional is
- * reserved for #34.
+ * them in reporter-visible representations. Internal notes are a
+ * separate concept and must never be persisted as follow-up entries.
  */
 enum FollowUpAuthorType: string
 {

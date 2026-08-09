@@ -46,7 +46,8 @@ Ref: report_access_grants.report_id > reports.id
 Table report_follow_up_entries {
   id uuid [pk, note: 'application-generated UUIDv7']
   report_id uuid [not null]
-  author_type varchar(20) [not null, note: 'reporter | professional (CHECK constraint); only reporter is produced today']
+  author_type varchar(20) [not null, note: 'reporter | professional (CHECK constraint); all entries are reporter-visible']
+  professional_author_id uuid [note: 'private audit metadata; required only for professional-authored responses']
   content text [not null, note: 'bounded to 2000 characters by FollowUpEntryContent before persistence']
   created_at timestamptz [not null, note: 'immutable UTC instant; entries are append-only']
 
