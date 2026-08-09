@@ -21,11 +21,17 @@ export interface ProfessionalReportPage {
 export interface ProfessionalReportDetail extends ProfessionalReportSummary {
   situationDescription: string;
   review: { reason: string; reviewedAt: string } | null;
-  followUpEntries: { authorType: string; content: string; createdAt: string }[];
+  followUpEntries: ProfessionalReportConversationEntry[];
 }
 
 export interface ProfessionalReportReviewResponse {
   review: { reason: string; reviewedAt: string };
+}
+
+export interface ProfessionalReportConversationEntry {
+  authorType: 'reporter' | 'professional';
+  content: string;
+  createdAt: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -52,6 +58,13 @@ export class ProfessionalReportsService {
     return this.http.post<ProfessionalReportReviewResponse>(
       `${this.endpoint}/${encodeURIComponent(id)}/reviews`,
       { reason },
+    );
+  }
+
+  respond(id: string, content: string): Observable<ProfessionalReportConversationEntry> {
+    return this.http.post<ProfessionalReportConversationEntry>(
+      `${this.endpoint}/${encodeURIComponent(id)}/responses`,
+      { content },
     );
   }
 }
