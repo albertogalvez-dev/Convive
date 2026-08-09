@@ -436,6 +436,10 @@ Convive is not ready for deployment with real personal data.
 
 See [SECURITY.md](SECURITY.md) for the private vulnerability-reporting process. Do not disclose a security concern through a public issue.
 
+The maintained [threat model and privacy engineering
+register](docs/security/README.md) record implemented controls, residual risks
+and the gates keeping the demonstration restricted to fictional data.
+
 ## License
 
 This project is released under the MIT License. See [LICENSE](LICENSE).
