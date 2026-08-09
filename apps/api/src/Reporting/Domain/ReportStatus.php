@@ -7,4 +7,5 @@ namespace App\Reporting\Domain;
 enum ReportStatus: string
 {
     case Received = 'received';
+    case Reviewed = 'reviewed';
 }

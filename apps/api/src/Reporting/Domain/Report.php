@@ -14,6 +14,10 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'reports')]
+#[ORM\Index(
+    name: 'idx_reports_professional_inbox',
+    columns: ['organisation_id', 'status', 'created_at', 'id'],
+)]
 class Report
 {
     #[ORM\Id]
@@ -57,6 +61,19 @@ class Report
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $reviewReason = null;
+
+    #[ORM\Column(type: 'uuid', nullable: true)]
+    private ?Uuid $reviewedByProfessionalId = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $reviewedAt = null;
+
+    #[ORM\Version]
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 1])]
+    private int $version = 1;
 
     private function __construct(
         Uuid $id,
@@ -154,5 +171,37 @@ class Report
     public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function review(
+        ReportReviewReason $reason,
+        Uuid $reviewedByProfessionalId,
+        DateTimeImmutable $reviewedAt,
+    ): void {
+        if ($this->status === ReportStatus::Reviewed) {
+            throw new ReportAlreadyReviewed();
+        }
+
+        $this->status = ReportStatus::Reviewed;
+        $this->reviewReason = $reason->toString();
+        $this->reviewedByProfessionalId = $reviewedByProfessionalId;
+        $this->reviewedAt = $reviewedAt;
+    }
+
+    public function reviewReason(): ?ReportReviewReason
+    {
+        return $this->reviewReason === null
+            ? null
+            : ReportReviewReason::fromString($this->reviewReason);
+    }
+
+    public function reviewedByProfessionalId(): ?Uuid
+    {
+        return $this->reviewedByProfessionalId;
+    }
+
+    public function reviewedAt(): ?DateTimeImmutable
+    {
+        return $this->reviewedAt;
     }
 }
