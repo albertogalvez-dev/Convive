@@ -7,6 +7,8 @@ namespace App\Tests\Reporting\Domain;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\Report;
+use App\Reporting\Domain\ReportAlreadyReviewed;
+use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\ReportStatus;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
@@ -98,6 +100,41 @@ final class ReportTest extends TestCase
         self::assertSame('+00:00', $createdAt->format('P'));
         self::assertGreaterThanOrEqual($beforeCreation, $createdAt);
         self::assertLessThanOrEqual($afterCreation, $createdAt);
+    }
+
+    public function testItRecordsTheInitialReviewExactlyOnce(): void
+    {
+        $report = Report::create(
+            $this->createOrganisation(),
+            SituationDescription::fromString(
+                'A student is repeatedly excluded during break time.',
+            ),
+            SituationContext::InPerson,
+        )->report;
+        $professionalId = Uuid::fromString('0192a5c0-3333-7000-8000-000000000031');
+        $reviewedAt = new DateTimeImmutable('2026-08-09T20:00:00+00:00');
+
+        $report->review(
+            ReportReviewReason::fromString('Initial safeguarding assessment completed.'),
+            $professionalId,
+            $reviewedAt,
+        );
+
+        self::assertSame(ReportStatus::Reviewed, $report->status());
+        self::assertSame(
+            'Initial safeguarding assessment completed.',
+            $report->reviewReason()?->toString(),
+        );
+        self::assertTrue($professionalId->equals($report->reviewedByProfessionalId()));
+        self::assertSame($reviewedAt, $report->reviewedAt());
+
+        $this->expectException(ReportAlreadyReviewed::class);
+
+        $report->review(
+            ReportReviewReason::fromString('A second review must not replace the first.'),
+            $professionalId,
+            $reviewedAt,
+        );
     }
 
     private function createOrganisation(): Organisation

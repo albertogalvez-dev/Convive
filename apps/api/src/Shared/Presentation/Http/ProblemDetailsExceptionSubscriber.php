@@ -6,6 +6,9 @@ namespace App\Shared\Presentation\Http;
 
 use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrganisationNotFound;
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
+use App\Professionals\Presentation\Http\InvalidProfessionalReportRequestHttpException;
+use App\Professionals\Presentation\Http\ProfessionalReportAlreadyReviewedHttpException;
+use App\Professionals\Presentation\Http\ProfessionalReportNotFoundHttpException;
 use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
 use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
@@ -153,6 +156,48 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
             return;
         }
 
+        if ($exception instanceof ProfessionalReportNotFoundHttpException) {
+            $this->securityEventLogger->professionalReportAccessDenied(
+                $event->getRequest(),
+            );
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:professional-report-not-found',
+                    'Professional report not found',
+                    Response::HTTP_NOT_FOUND,
+                    'The requested report is not available in this professional scope.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof ProfessionalReportAlreadyReviewedHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:report-already-reviewed',
+                    'Report already reviewed',
+                    Response::HTTP_CONFLICT,
+                    'The report has already received its initial review.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof InvalidProfessionalReportRequestHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:invalid-report-review',
+                    'Invalid report review',
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'The submitted report review is invalid.',
+                ),
+            );
+
+            return;
+        }
+
         $validationException = $exception->getPrevious();
 
         if ($validationException instanceof ValidationFailedException) {
@@ -257,6 +302,7 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
             $status,
             [
                 'Content-Type' => 'application/problem+json',
+                'Cache-Control' => 'no-store',
             ],
         );
     }

@@ -21,6 +21,7 @@ framework:
                 'report_access_grant_revocation',
                 'professional_login',
                 'professional_logout',
+                'professional_report_review',
             ]
         check_header: true
 

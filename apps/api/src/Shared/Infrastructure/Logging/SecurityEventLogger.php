@@ -49,6 +49,16 @@ final readonly class SecurityEventLogger
         );
     }
 
+    public function professionalReportAccessDenied(Request $request): void
+    {
+        $this->logger->warning(
+            'professional_report_access_denied',
+            $this->context($request, [
+                'path' => '/api/v1/professional/reports/{id}',
+            ]),
+        );
+    }
+
     public function idempotentReplay(Request $request): void
     {
         $this->logger->info('idempotent_replay', $this->context($request));
@@ -62,10 +72,10 @@ final readonly class SecurityEventLogger
     private function context(Request $request, array $extra = []): array
     {
         return [
-            ...$extra,
             'path' => $request->getPathInfo(),
             'method' => $request->getMethod(),
             'client_ip' => $request->getClientIp(),
+            ...$extra,
         ];
     }
 }
