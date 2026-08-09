@@ -36,6 +36,7 @@ The current implementation provides:
 - a generated OpenAPI 3.1 contract with continuous-integration drift detection;
 - Doctrine migrations and fictional development fixtures;
 - domain, HTTP and PostgreSQL integration tests;
+- Chromium end-to-end coverage for anonymous submission and follow-up;
 - automated backend, frontend and infrastructure checks through GitHub Actions.
 
 The Angular root walking skeleton requests `GET /api/v1/health` through its
@@ -49,11 +50,10 @@ reporting identifiers that can be resolved independently from their internal
 UUIDs, and the backend already accepts anonymous report submissions through the
 public API described below.
 
-Anonymous follow-up and professional case-management workflows remain under
-development. The current reporting journey covers the basic text submission,
-situation context, review, safe error handling and one-time presentation of the
-returned access credentials. Attachments, optional email and follow-up are not
-implemented yet.
+The anonymous journey covers text submission, situation context, review,
+one-time presentation of access credentials and capability-based follow-up.
+Attachments, optional email and professional case-management workflows remain
+under development.
 
 Development and demonstrations must use fictional data only.
 
@@ -343,6 +343,24 @@ docker compose \
   -f infrastructure/compose/compose.development.yaml \
   exec web npm run build
 ```
+
+### Execute the Chromium end-to-end journey
+
+The end-to-end suite uses a dedicated fictional organisation and never reloads
+Doctrine fixtures. Follow the isolated Docker-based preparation and execution
+steps in [`docs/testing/playwright.md`](docs/testing/playwright.md).
+
+Once that stack is ready, install the pinned Chromium build and run the suite
+from `apps/web`:
+
+```bash
+npm run e2e:install
+npm run e2e
+```
+
+Failure output deliberately disables traces and video. It retains only a
+redacted screenshot and textual context that must not contain the report access
+secret.
 
 ### Validate Docker Compose
 

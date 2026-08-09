@@ -107,7 +107,7 @@ jobs:
         run: npm ci
 
       - name: Check frontend formatting
-        run: npm exec prettier -- --check "src/**/*.{ts,html,scss}" "*.{json,md}"
+        run: npm run format:check
 
       - name: Audit production dependencies
         run: npm audit --omit=dev
@@ -189,6 +189,108 @@ jobs:
         if: always()
         run: >
           docker compose
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          down --volumes --remove-orphans
+
+  end-to-end:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.15.0
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: apps/web
+        run: npm ci
+
+      - name: Install Chromium
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+
+      - name: Bootstrap backend dependencies through Docker Compose
+        run: >
+          docker compose
+          -p convive-e2e
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          run --rm --build --no-deps api composer install
+          --prefer-dist
+          --no-interaction
+          --no-progress
+
+      - name: Start the isolated end-to-end stack
+        run: >
+          docker compose
+          -p convive-e2e
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          up --detach --build
+
+      - name: Apply database migrations
+        run: >
+          docker compose
+          -p convive-e2e
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          exec -T api php bin/console doctrine:migrations:migrate
+          --no-interaction
+
+      - name: Create the fictional end-to-end organisation
+        run: >
+          docker compose
+          -p convive-e2e
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          exec -T database psql
+          --username=convive
+          --dbname=convive
+          --set=ON_ERROR_STOP=1
+          --command="INSERT INTO organisations (id, name, public_reporting_identifier)
+          VALUES ('00000000-0000-4000-8000-000000000027', 'Convive E2E School',
+          'ORG_E2E0000000000000')
+          ON CONFLICT (public_reporting_identifier)
+          DO UPDATE SET name = EXCLUDED.name;"
+
+      - name: Wait for the reporting journey
+        run: >
+          curl
+          --fail
+          --silent
+          --show-error
+          --retry 30
+          --retry-delay 2
+          --retry-connrefused
+          --retry-all-errors
+          http://127.0.0.1:4200/api/v1/health
+
+      - name: Run Chromium end-to-end tests
+        working-directory: apps/web
+        run: npm run e2e
+
+      - name: Display Docker Compose logs on failure
+        if: failure()
+        run: >
+          docker compose
+          -p convive-e2e
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          logs --no-color
+
+      - name: Remove the isolated end-to-end stack
+        if: always()
+        run: >
+          docker compose
+          -p convive-e2e
           -f infrastructure/compose/compose.yaml
           -f infrastructure/compose/compose.development.yaml
           down --volumes --remove-orphans
