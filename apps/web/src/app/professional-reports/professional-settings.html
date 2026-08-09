@@ -1,0 +1,28 @@
+<section class="settings" aria-labelledby="settings-title">
+  <p class="eyebrow">Tu espacio</p>
+  <h1 id="settings-title">Ajustes</h1>
+
+  <div class="settings-card">
+    <h2>Cuenta</h2>
+    @if (professional(); as currentProfessional) {
+      <dl>
+        <div>
+          <dt>Nombre</dt>
+          <dd>{{ currentProfessional.name }}</dd>
+        </div>
+        <div>
+          <dt>Correo</dt>
+          <dd>{{ currentProfessional.email }}</dd>
+        </div>
+      </dl>
+    }
+    <div class="session-row">
+      <div>
+        <strong>Sesi&oacute;n</strong><span>Cierra el acceso profesional en este dispositivo.</span>
+      </div>
+      <button type="button" [disabled]="loggingOut()" (click)="logout()">
+        {{ loggingOut() ? 'Cerrando…' : 'Cerrar sesión' }}
+      </button>
+    </div>
+  </div>
+</section>

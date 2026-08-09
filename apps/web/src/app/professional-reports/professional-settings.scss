@@ -1,0 +1,94 @@
+:host {
+  display: block;
+}
+.settings {
+  max-width: 54rem;
+  margin: 0 auto;
+  color: #102b60;
+}
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: #0b83b9;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0 0 1.8rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.035em;
+}
+.settings-card {
+  overflow: hidden;
+  border: 1px solid #d6e1ee;
+  border-radius: 1.1rem;
+  padding: 2rem;
+  background: #fff;
+  box-shadow: 0 1.25rem 2.8rem rgba(23, 43, 87, 0.08);
+}
+h2 {
+  margin: 0 0 1.4rem;
+  font-size: 1.25rem;
+}
+dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0 0 2rem;
+}
+dl div {
+  padding: 1rem;
+  border: 1px solid #e0e7f0;
+  border-radius: 0.8rem;
+  background: #f8fafc;
+}
+dt {
+  color: #6b7b98;
+  font-size: 0.74rem;
+  font-weight: 750;
+}
+dd {
+  margin: 0.35rem 0 0;
+  color: #172b57;
+  overflow-wrap: anywhere;
+}
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e7f0;
+}
+.session-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.session-row span {
+  color: #657694;
+  font-size: 0.85rem;
+}
+button {
+  border: 1px solid #ef9cab;
+  border-radius: 0.7rem;
+  padding: 0.75rem 1rem;
+  color: #b51535;
+  background: #fff5f6;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+@media (max-width: 40rem) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+  .settings-card {
+    padding: 1.3rem;
+  }
+  .session-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
