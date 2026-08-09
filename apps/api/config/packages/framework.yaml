@@ -3,13 +3,25 @@ framework:
     secret: '%env(APP_SECRET)%'
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        name: '%professional_session_cookie.name%'
+        cookie_secure: '%professional_session_cookie.secure%'
+        cookie_httponly: true
+        cookie_samesite: lax
+        cookie_lifetime: 0
+        gc_maxlifetime: 1800
 
     # Stateless, session-free CSRF protection (Sec-Fetch-Site/Origin checks
     # with a double-submit header fallback) for the cookie-authenticated
     # report-access revocation endpoint (#23). No PHP session is required.
     csrf_protection:
-        stateless_token_ids: ['report_access_grant_revocation']
+        stateless_token_ids:
+            [
+                'report_access_grant_revocation',
+                'professional_login',
+                'professional_logout',
+            ]
         check_header: true
 
     # Explicit per-environment proxy trust (#41): rate limiting keys on
@@ -34,5 +46,3 @@ framework:
 when@test:
     framework:
         test: true
-        session:
-            storage_factory_id: session.storage.factory.mock_file

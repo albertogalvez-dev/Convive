@@ -1,0 +1,42 @@
+security:
+    password_hashers:
+        App\Professionals\Domain\Professional:
+            algorithm: sodium
+
+    providers:
+        professionals:
+            id: App\Professionals\Infrastructure\Security\ProfessionalUserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+
+        main:
+            lazy: true
+            provider: professionals
+            user_checker: App\Professionals\Infrastructure\Security\ProfessionalUserChecker
+            entry_point: App\Professionals\Presentation\Http\ProfessionalAuthenticationEntryPoint
+            json_login:
+                check_path: api_v1_professional_login
+                username_path: email
+                password_path: password
+                failure_handler: App\Professionals\Presentation\Http\ProfessionalAuthenticationFailureHandler
+            login_throttling:
+                limiter: app.professional_login_limiter
+            logout:
+                path: api_v1_professional_logout
+                enable_csrf: false
+                invalidate_session: true
+
+    access_control:
+        - { path: ^/api/v1/professional/session$, methods: [POST], roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/professional, roles: ROLE_PROFESSIONAL }
+
+when@test:
+    security:
+        password_hashers:
+            App\Professionals\Domain\Professional:
+                algorithm: sodium
+                time_cost: 3
+                memory_cost: 10

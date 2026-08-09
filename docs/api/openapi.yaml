@@ -40,6 +40,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  /api/v1/professional/session:
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'Get the current professional session'
+      operationId: getProfessionalSession
+      responses:
+        '200':
+          description: 'The current professional identity.'
+        '401':
+          description: 'No active professional session.'
+      security:
+        -
+          professionalSession: []
+    post:
+      tags:
+        - 'Professional access'
+      summary: 'Create a professional session'
+      operationId: createProfessionalSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              type: object
+      responses:
+        '200':
+          description: 'The professional session was created.'
+        '401':
+          description: 'Authentication failed.'
+        '429':
+          description: 'Too many authentication attempts.'
+    delete:
+      tags:
+        - 'Professional access'
+      summary: 'End the current professional session'
+      operationId: deleteProfessionalSession
+      responses:
+        '204':
+          description: 'The session was invalidated.'
+      security:
+        -
+          professionalSession: []
   /api/v1/reporter/report/follow-up-entries:
     post:
       tags:
@@ -421,6 +474,11 @@ components:
           type: string
       type: object
   securitySchemes:
+    professionalSession:
+      type: apiKey
+      description: 'Opaque server-side session identifier for an authenticated professional. Named professional_session in development and __Host-professional_session (Secure, HttpOnly, SameSite=Lax, Path=/, no Domain) in production.'
+      name: professional_session
+      in: cookie
     reportAccessCookie:
       type: apiKey
       description: 'Opaque, short-lived capability handle scoped to exactly one report. Issued via POST /api/v1/public/report-access-grants and cleared via DELETE /api/v1/reporter/access-grant. Named report_access in development and __Host-report_access (Secure, HttpOnly, SameSite=Lax, Path=/, no Domain) in production.'
@@ -430,3 +488,6 @@ tags:
   -
     name: 'Public reporting'
     description: 'Public reporting'
+  -
+    name: 'Professional access'
+    description: 'Professional access'

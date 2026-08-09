@@ -41,6 +41,14 @@ final readonly class SecurityEventLogger
         $this->logger->warning('csrf_denied', $this->context($request));
     }
 
+    public function professionalAuthenticationFailed(Request $request): void
+    {
+        $this->logger->notice(
+            'professional_authentication_failed',
+            $this->context($request),
+        );
+    }
+
     public function idempotentReplay(Request $request): void
     {
         $this->logger->info('idempotent_replay', $this->context($request));
