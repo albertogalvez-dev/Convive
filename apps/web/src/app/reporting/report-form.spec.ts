@@ -9,6 +9,8 @@ import { ReportForm } from './report-form';
 describe('ReportForm', () => {
   const organisationIdentifier = 'ORG_6H3K8M5R2W9T4Q7X';
   const organisationEndpoint = `/api/v1/public/organisations/${organisationIdentifier}`;
+  const originalPasswordCredential = Object.getOwnPropertyDescriptor(window, 'PasswordCredential');
+  const originalCredentials = Object.getOwnPropertyDescriptor(navigator, 'credentials');
 
   let fixture: ComponentFixture<ReportForm>;
   let page: HTMLElement;
@@ -46,6 +48,8 @@ describe('ReportForm', () => {
 
   afterEach(() => {
     httpTesting.verify();
+    restoreOwnProperty(window, 'PasswordCredential', originalPasswordCredential);
+    restoreOwnProperty(navigator, 'credentials', originalCredentials);
   });
 
   it('should resolve the organisation before displaying the form', () => {
@@ -219,6 +223,11 @@ describe('ReportForm', () => {
     expect(page.textContent).toContain('secret-value');
     expect(page.textContent).toContain('Este secreto no puede recuperarse.');
     expect(page.textContent).toContain('Guárdalo antes de cerrar o perderás el acceso.');
+    const followUpLink = page.querySelector<HTMLAnchorElement>('.follow-up-hint a');
+
+    expect(followUpLink?.getAttribute('href')).toBe('/seguimiento');
+    expect(followUpLink?.getAttribute('target')).toBe('_blank');
+    expect(page.querySelector('.save-button')).toBeNull();
     expect(page.textContent).not.toContain('Cómo funciona');
     expect(page.textContent).not.toContain('Paso 3 de 3');
 
@@ -234,7 +243,7 @@ describe('ReportForm', () => {
 
     expect(writeText).toHaveBeenCalledWith('secret-value');
     expect(writeText).not.toHaveBeenCalledWith(expect.stringContaining('ABC123'));
-    expect(page.querySelector('.copy-status')?.textContent).toContain(
+    expect(page.querySelector('.credential-status')?.textContent).toContain(
       'Secreto copiado. Ya puedes cerrar esta página.',
     );
 
@@ -244,6 +253,79 @@ describe('ReportForm', () => {
     expect(afterCopy.defaultPrevented).toBe(false);
     expect(window.location.href).not.toContain('ABC123');
     expect(window.location.href).not.toContain('secret-value');
+  });
+
+  it('should ask the browser to store the reference and secret when it can', async () => {
+    const store = vi.fn<(credential: unknown) => Promise<void>>();
+    store.mockResolvedValue();
+
+    class FakePasswordCredential {
+      constructor(readonly data: { id: string; password: string; name?: string }) {}
+    }
+
+    Object.defineProperty(window, 'PasswordCredential', {
+      configurable: true,
+      value: FakePasswordCredential,
+    });
+    Object.defineProperty(navigator, 'credentials', {
+      configurable: true,
+      value: { store },
+    });
+
+    submitValidReport();
+
+    const saveButton = page.querySelector<HTMLButtonElement>('.save-button');
+
+    expect(saveButton).not.toBeNull();
+
+    saveButton?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(store).toHaveBeenCalledOnce();
+    expect((store.mock.calls[0][0] as FakePasswordCredential).data).toMatchObject({
+      id: 'ABC123',
+      password: 'secret-value',
+    });
+    expect(page.querySelector('.credential-status')?.textContent).toContain('tu navegador');
+
+    const afterSaving = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(afterSaving);
+
+    expect(afterSaving.defaultPrevented).toBe(false);
+  });
+
+  it('should keep warning before leaving when browser credential storage fails', async () => {
+    const store = vi.fn<(credential: unknown) => Promise<void>>();
+    store.mockRejectedValue(new DOMException('Saving was declined.', 'NotAllowedError'));
+
+    class FakePasswordCredential {
+      constructor(readonly data: { id: string; password: string; name?: string }) {}
+    }
+
+    Object.defineProperty(window, 'PasswordCredential', {
+      configurable: true,
+      value: FakePasswordCredential,
+    });
+    Object.defineProperty(navigator, 'credentials', {
+      configurable: true,
+      value: { store },
+    });
+
+    submitValidReport();
+
+    page.querySelector<HTMLButtonElement>('.save-button')?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(page.querySelector('.credential-status')?.textContent).toContain(
+      'No se ha podido guardar en el navegador.',
+    );
+
+    const afterFailedSaving = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(afterFailedSaving);
+
+    expect(afterFailedSaving.defaultPrevented).toBe(true);
   });
 
   it('should display a safe error when the reporting link is not valid', () => {
@@ -466,6 +548,29 @@ describe('ReportForm', () => {
     fixture.detectChanges();
   }
 
+  function submitValidReport(): void {
+    startValidForm();
+
+    writeDescription('Una situación ocurrió durante el recreo.');
+    continueToNextStep();
+
+    selectContext('En persona');
+    continueToNextStep();
+    submitReport();
+
+    httpTesting.expectOne(`${organisationEndpoint}/reports`).flush(
+      {
+        publicReference: 'ABC123',
+        accessSecret: 'secret-value',
+        status: 'received',
+        createdAt: '2026-08-04T12:00:00.000+00:00',
+      },
+      { status: 201, statusText: 'Created' },
+    );
+
+    fixture.detectChanges();
+  }
+
   function submitReport(): void {
     const button = page.querySelector<HTMLButtonElement>('button[type="submit"]');
 
@@ -475,5 +580,18 @@ describe('ReportForm', () => {
 
     button.click();
     fixture.detectChanges();
+  }
+
+  function restoreOwnProperty(
+    target: object,
+    property: PropertyKey,
+    descriptor: PropertyDescriptor | undefined,
+  ): void {
+    if (descriptor) {
+      Object.defineProperty(target, property, descriptor);
+      return;
+    }
+
+    Reflect.deleteProperty(target, property);
   }
 });

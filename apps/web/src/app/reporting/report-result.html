@@ -7,13 +7,7 @@
   <div class="perforation" aria-hidden="true"></div>
 
   <section class="access" aria-labelledby="access-title">
-    <div class="access-title">
-      <h2 id="access-title">Datos de acceso</h2>
-      <p class="reference">
-        <span>Referencia</span>
-        <code>{{ submitted().publicReference }}</code>
-      </p>
-    </div>
+    <h2 id="access-title">Datos de acceso</h2>
 
     <div class="warning" role="note">
       <span aria-hidden="true">!</span>
@@ -23,21 +17,42 @@
       </p>
     </div>
 
-    <span class="secret-label">Secreto</span>
-    <div class="secret-row">
+    <span class="credential-label">Referencia</span>
+    <p class="credential-value reference">
+      <code>{{ submitted().publicReference }}</code>
+    </p>
+
+    <span class="credential-label">Secreto</span>
+    <p class="credential-value secret">
       <code>{{ submitted().accessSecret }}</code>
-      <button
-        type="button"
-        class="copy-button"
-        aria-label="Copiar secreto de acceso"
-        (click)="copyAccessSecret()"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="8" y="8" width="11" height="11" rx="2"></rect>
-          <path d="M16 8V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h1"></path>
-        </svg>
-      </button>
+    </p>
+
+    <div class="actions">
+      @if (canSaveInBrowser()) {
+        <button type="button" class="save-button primary" (click)="saveInBrowser()">
+          Guardar en el navegador
+        </button>
+        <button type="button" class="copy-button secondary" (click)="copyAccessSecret()">
+          Copiar secreto
+        </button>
+      } @else {
+        <button type="button" class="copy-button primary" (click)="copyAccessSecret()">
+          Copiar secreto
+        </button>
+      }
     </div>
-    <p class="copy-status" aria-live="polite">{{ copyMessage() }}</p>
+
+    <p class="credential-status" aria-live="polite">{{ statusMessage() }}</p>
+
+    @if (canSaveInBrowser()) {
+      <p class="actions-help">
+        Se guarda junto a tus contraseñas. Evítalo en un dispositivo compartido.
+      </p>
+    }
+
+    <p class="follow-up-hint">
+      Cuando quieras ver cómo va o añadir información, entra en
+      <a href="/seguimiento" target="_blank" rel="noopener">Seguimiento</a>.
+    </p>
   </section>
 </div>
