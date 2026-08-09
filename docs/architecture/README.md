@@ -14,6 +14,12 @@ summarises the logical request flow between the application's users, Angular,
 Symfony and PostgreSQL. Its accompanying text records the development routing
 and initial Docker Compose and single-VPS deployment context.
 
+The [single-VPS deployment diagram](diagrams/single-vps-deployment.md) records
+the production trust boundaries between Cloudflare Tunnel, the private gateway,
+Symfony, PostgreSQL and Redis. The accompanying
+[deployment runbook](../operations/deployment-release-and-rollback.md) defines
+preflight, smoke-test and rollback decisions for the fictional demonstration.
+
 ## Data model
 
 The [data model diagram](diagrams/data-model.md) shows the entity–relationship
@@ -34,6 +40,12 @@ authoritative sources remain the Doctrine mappings and the committed migrations.
 - **Environment:** Docker Compose provides the reproducible development and
   testing environment and is the selected foundation for the future single-VPS
   deployment environment.
+- **Public ingress:** a named Cloudflare Tunnel reaches a Convive-owned private
+  gateway without publishing a VPS port or sharing ProjectX infrastructure, as
+  selected in [ADR-0012](decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md).
+- **Shared security state:** production Redis provides restart-resistant,
+  shared idempotency and rate-limit state and is reachable only by Symfony.
+  Professional sessions remain in PostgreSQL as selected in ADR-0008.
 
 ## Basic communication flow
 
