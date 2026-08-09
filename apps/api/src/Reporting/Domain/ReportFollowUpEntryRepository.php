@@ -6,10 +6,16 @@ namespace App\Reporting\Domain;
 
 interface ReportFollowUpEntryRepository
 {
-    public function save(ReportFollowUpEntry $entry): void;
+    public function saveIfReportHasCapacity(
+        ReportFollowUpEntry $entry,
+        int $maximumEntries,
+    ): bool;
 
     /**
      * @return list<ReportFollowUpEntry> ordered oldest first
      */
-    public function findByReportOrderedByCreatedAt(Report $report): array;
+    public function findByReportOrderedByCreatedAt(
+        Report $report,
+        int $maximumEntries,
+    ): array;
 }

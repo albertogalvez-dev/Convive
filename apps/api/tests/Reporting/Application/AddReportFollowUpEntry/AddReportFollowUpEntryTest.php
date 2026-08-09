@@ -7,6 +7,7 @@ namespace App\Tests\Reporting\Application\AddReportFollowUpEntry;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Application\AddReportFollowUpEntry\AddReportFollowUpEntry;
+use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
 use App\Reporting\Domain\FollowUpAuthorType;
 use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
@@ -29,7 +30,7 @@ final class AddReportFollowUpEntryTest extends TestCase
         $repository = $this->createMock(ReportFollowUpEntryRepository::class);
         $repository
             ->expects(self::once())
-            ->method('save')
+            ->method('saveIfReportHasCapacity')
             ->with(
                 self::callback(
                     static fn (ReportFollowUpEntry $entry): bool =>
@@ -37,7 +38,9 @@ final class AddReportFollowUpEntryTest extends TestCase
                         && $entry->authorType() === FollowUpAuthorType::Reporter
                         && $content->equals($entry->content()),
                 ),
-            );
+                100,
+            )
+            ->willReturn(true);
 
         $addReportFollowUpEntry = new AddReportFollowUpEntry($repository);
 
@@ -45,6 +48,24 @@ final class AddReportFollowUpEntryTest extends TestCase
 
         self::assertSame($report, $entry->report());
         self::assertTrue($content->equals($entry->content()));
+    }
+
+    public function testItRejectsAnEntryWhenTheReportIsAtCapacity(): void
+    {
+        $repository = $this->createMock(ReportFollowUpEntryRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('saveIfReportHasCapacity')
+            ->willReturn(false);
+
+        $addReportFollowUpEntry = new AddReportFollowUpEntry($repository);
+
+        $this->expectException(ReportFollowUpEntryLimitReached::class);
+
+        $addReportFollowUpEntry(
+            $this->createReport(),
+            FollowUpEntryContent::fromString('One entry too many.'),
+        );
     }
 
     private function createReport(): Report

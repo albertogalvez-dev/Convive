@@ -52,8 +52,9 @@ final readonly class ReportAccessGuard
             return null;
         }
 
-        $grant->recordUseAt($now);
-        $this->grantRepository->save($grant);
+        if ($grant->recordUseAt($now)) {
+            $this->grantRepository->save($grant);
+        }
 
         return $grant;
     }

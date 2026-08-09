@@ -1,8 +1,8 @@
 # Public-endpoint anti-abuse threat model
 
-Scope: the two unauthenticated public write/verification surfaces that
-exist today — anonymous report submission and access-secret
-verification. Attachment upload is out of scope; it doesn't exist yet
+Scope: the unauthenticated submission/verification surfaces and the
+capability-authenticated anonymous follow-up read/append surfaces that
+exist today. Attachment upload is out of scope; it doesn't exist yet
 (tracked separately in #36–#40).
 
 ## Endpoints in scope
@@ -11,6 +11,8 @@ verification. Attachment upload is out of scope; it doesn't exist yet
 |---|---|---|
 | `/api/v1/public/organisations/{id}/reports` | `POST` | Creates a report; low-entropy path parameter (organisation identifier) |
 | `/api/v1/public/report-access-grants` | `POST` | Verifies a high-entropy secret; the primary brute-force target |
+| `/api/v1/reporter/report` | `GET` | Reads confidential report and follow-up content through a capability cookie |
+| `/api/v1/reporter/report/follow-up-entries` | `POST` | Appends reporter-authored content through a capability cookie |
 
 ## Threats and mitigations
 
@@ -114,6 +116,32 @@ in a log line.
   starting point) and no longer, since they contain client IP
   addresses. #65 must implement and enforce this, not merely inherit
   the assumption.
+
+### 7. Follow-up read and append exhaustion
+
+A valid capability previously allowed unlimited reads and appended rows. Reads
+loaded the complete history and persisted grant activity every time, allowing a
+single capability holder to amplify database, response-memory and storage work.
+
+- **Request limits**: reads allow 120 requests/minute/IP and 60/minute for each
+  IP + capability pair; appends allow 20/minute/IP and 10/minute for each pair.
+  Both budgets are consumed before database lookup. This bounds clients that
+  rotate invalid cookies while preserving a separate, tighter budget for each
+  valid capability. Pair keys are one-way hashes; raw capabilities are never
+  stored in limiter keys or logs.
+- **Report capacity**: a report accepts at most 100 follow-up entries. The
+  Doctrine repository locks the report row, counts and persists in one
+  transaction, preventing concurrent requests from crossing the boundary
+  together. Capacity failures return a generic `409` Problem Details response.
+- **Bounded reads**: at most 100 entries are loaded, ordered by creation time
+  ascending and then UUID ascending when timestamps match.
+- **Activity writes**: successful use is persisted at most once per minute.
+  This preserves the 15-minute idle window while bounding write amplification;
+  persisted activity can be at most one minute behind after an unexpected
+  process failure.
+- **Deployment boundary**: #63 remains the production gate for shared,
+  restart-resistant limiter storage.
+- **Status**: delivered by #99, subject to #63 before public production.
 
 ## Explicitly out of scope
 

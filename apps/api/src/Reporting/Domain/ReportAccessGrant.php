@@ -16,6 +16,7 @@ class ReportAccessGrant
 {
     public const IDLE_TIMEOUT = 'PT15M';
     public const ABSOLUTE_LIFETIME = 'PT2H';
+    public const ACTIVITY_PERSIST_INTERVAL = 'PT1M';
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid')]
@@ -94,9 +95,17 @@ class ReportAccessGrant
         return $now <= $idleDeadline;
     }
 
-    public function recordUseAt(DateTimeImmutable $now): void
+    public function recordUseAt(DateTimeImmutable $now): bool
     {
+        if ($now < $this->lastUsedAt->add(
+            new DateInterval(self::ACTIVITY_PERSIST_INTERVAL),
+        )) {
+            return false;
+        }
+
         $this->lastUsedAt = $now;
+
+        return true;
     }
 
     public function revokeAt(DateTimeImmutable $now): void

@@ -33,6 +33,11 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
         parent::setUp();
 
         $this->client = static::createClient();
+        $this->client->disableReboot();
+        $this->client->setServerParameter(
+            'REMOTE_ADDR',
+            $this->uniqueTestClientIp(),
+        );
         $this->entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
@@ -240,6 +245,62 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
         );
     }
 
+    public function testItBoundsTheReturnedHistoryAndOrdersTiesById(): void
+    {
+        $creationResult = $this->persistReport('A bounded history report.');
+        $capability = $this->issueGrant($creationResult->report);
+        $createdAt = new DateTimeImmutable('2026-08-07T10:00:00+00:00');
+        $entriesById = [];
+
+        for ($index = 0; $index < 101; ++$index) {
+            $entry = ReportFollowUpEntry::addedByReporter(
+                $creationResult->report,
+                FollowUpEntryContent::fromString(sprintf('Tied entry %03d.', $index)),
+                $createdAt,
+            );
+            $entriesById[$entry->id()->toRfc4122()] = $entry->content()->toString();
+            $this->entityManager->persist($entry);
+        }
+        $this->entityManager->flush();
+        ksort($entriesById);
+
+        $this->request($capability);
+
+        self::assertResponseStatusCodeSame(200);
+        $returnedContent = array_column(
+            $this->responsePayload()['followUpEntries'],
+            'content',
+        );
+        self::assertCount(100, $returnedContent);
+        self::assertSame(
+            array_slice(array_values($entriesById), 0, 100),
+            $returnedContent,
+        );
+    }
+
+    public function testItRateLimitsReadsPerCapabilityAndIp(): void
+    {
+        $creationResult = $this->persistReport('A rate-limited report.');
+        $capability = $this->issueGrant($creationResult->report);
+
+        for ($attempt = 0; $attempt < 60; ++$attempt) {
+            $this->request($capability);
+            self::assertResponseStatusCodeSame(
+                200,
+                sprintf('Read attempt %d should be accepted.', $attempt + 1),
+            );
+        }
+
+        $this->request($capability);
+
+        $payload = $this->assertProblemDetails(
+            429,
+            'urn:convive:problem:rate-limited',
+            'Too many requests',
+        );
+        self::assertSame('Too many requests. Try again later.', $payload['detail']);
+    }
+
     private function request(string $capability): void
     {
         $this->client->getCookieJar()->set(
@@ -294,6 +355,15 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $creationResult;
+    }
+
+    private function uniqueTestClientIp(): string
+    {
+        return sprintf(
+            '192.0.%d.%d',
+            random_int(0, 255),
+            random_int(0, 255),
+        );
     }
 
     /**

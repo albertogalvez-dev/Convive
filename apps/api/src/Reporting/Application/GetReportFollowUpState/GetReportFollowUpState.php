@@ -6,6 +6,7 @@ namespace App\Reporting\Application\GetReportFollowUpState;
 
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportFollowUpEntryRepository;
+use App\Reporting\Domain\ReportFollowUpPolicy;
 
 final readonly class GetReportFollowUpState
 {
@@ -23,7 +24,10 @@ final readonly class GetReportFollowUpState
             $report->status(),
             $report->createdAt(),
             $this->followUpEntryRepository
-                ->findByReportOrderedByCreatedAt($report),
+                ->findByReportOrderedByCreatedAt(
+                    $report,
+                    ReportFollowUpPolicy::MAXIMUM_ENTRIES,
+                ),
         );
     }
 }

@@ -17,3 +17,23 @@ framework:
             policy: sliding_window
             limit: 5
             interval: '1 minute'
+
+        report_follow_up_read_ip:
+            policy: sliding_window
+            limit: 120
+            interval: '1 minute'
+
+        report_follow_up_read_capability:
+            policy: sliding_window
+            limit: 60
+            interval: '1 minute'
+
+        report_follow_up_append_ip:
+            policy: sliding_window
+            limit: 20
+            interval: '1 minute'
+
+        report_follow_up_append_capability:
+            policy: sliding_window
+            limit: 10
+            interval: '1 minute'

@@ -109,7 +109,8 @@ nelmio_api_doc:
                             format: date-time
                         followUpEntries:
                             type: array
-                            description: Authorised follow-up entries, oldest first.
+                            maxItems: 100
+                            description: Authorised follow-up entries ordered by creation time and UUID, oldest first.
                             items:
                                 $ref: '#/components/schemas/FollowUpEntry'
 

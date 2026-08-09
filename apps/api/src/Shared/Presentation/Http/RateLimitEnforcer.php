@@ -23,9 +23,15 @@ final readonly class RateLimitEnforcer
         RateLimiterFactory $limiter,
         string $limiterName,
         Request $request,
+        ?string $credentialScope = null,
     ): void {
+        $key = hash(
+            'sha256',
+            (string) $request->getClientIp()."\0".($credentialScope ?? ''),
+        );
+
         $limit = $limiter
-            ->create((string) $request->getClientIp())
+            ->create($key)
             ->consume();
 
         if (!$limit->isAccepted()) {

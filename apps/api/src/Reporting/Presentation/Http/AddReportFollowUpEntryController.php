@@ -6,8 +6,10 @@ namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Application\AddReportFollowUpEntry\AddReportFollowUpEntry;
 use App\Reporting\Domain\FollowUpEntryContent;
+use App\Shared\Presentation\Http\RateLimitEnforcer;
 use InvalidArgumentException;
 use OpenApi\Attributes as OA;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,12 @@ final readonly class AddReportFollowUpEntryController
     public function __construct(
         private ReportAccessGuard $guard,
         private AddReportFollowUpEntry $addReportFollowUpEntry,
+        private ReportAccessCookieFactory $cookieFactory,
+        private RateLimitEnforcer $rateLimitEnforcer,
+        #[Autowire(service: 'limiter.report_follow_up_append_ip')]
+        private \Symfony\Component\RateLimiter\RateLimiterFactory $ipRateLimiter,
+        #[Autowire(service: 'limiter.report_follow_up_append_capability')]
+        private \Symfony\Component\RateLimiter\RateLimiterFactory $capabilityRateLimiter,
     ) {
     }
 
@@ -75,6 +83,22 @@ final readonly class AddReportFollowUpEntryController
                     ),
                 ),
             ),
+            new OA\Response(
+                response: Response::HTTP_CONFLICT,
+                description: 'The report cannot accept more follow-up entries.',
+                content: new OA\MediaType(
+                    mediaType: 'application/problem+json',
+                    schema: new OA\Schema(ref: '#/components/schemas/ProblemDetails'),
+                ),
+            ),
+            new OA\Response(
+                response: Response::HTTP_TOO_MANY_REQUESTS,
+                description: 'The follow-up append limit was exceeded.',
+                content: new OA\MediaType(
+                    mediaType: 'application/problem+json',
+                    schema: new OA\Schema(ref: '#/components/schemas/ProblemDetails'),
+                ),
+            ),
         ],
     )]
     public function __invoke(
@@ -82,6 +106,18 @@ final readonly class AddReportFollowUpEntryController
         #[MapRequestPayload(acceptFormat: 'json')]
         AddReportFollowUpEntryRequest $payload,
     ): JsonResponse {
+        $this->rateLimitEnforcer->enforce(
+            $this->ipRateLimiter,
+            'report_follow_up_append_ip',
+            $request,
+        );
+        $this->rateLimitEnforcer->enforce(
+            $this->capabilityRateLimiter,
+            'report_follow_up_append_capability',
+            $request,
+            $this->cookieFactory->readFrom($request),
+        );
+
         $grant = $this->guard->resolve($request);
 
         if ($grant === null) {
