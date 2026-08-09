@@ -323,6 +323,134 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertSame('new', $this->responsePayload()['status']);
     }
 
+    public function testProfessionalResponsesRemainAvailableBeforeAndAfterInitialReview(): void
+    {
+        $organisation = $this->createOrganisation('33A', 'Response School');
+        $professional = $this->createProfessional('response', $organisation, ProfessionalRole::Triage);
+        $created = $this->createReport($organisation, 'Response-ready fictional report.');
+        $this->client->loginUser($professional);
+        $endpoint = '/api/v1/professional/reports/'
+            .$created['report']->id()->toRfc4122().'/responses';
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['content' => 'We have received your information and are reviewing it.'],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $firstResponse = $this->responsePayload();
+        self::assertSame('professional', $firstResponse['authorType']);
+        self::assertArrayNotHasKey('professionalAuthorId', $firstResponse);
+
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/professional/reports/'.$created['report']->id()->toRfc4122().'/reviews',
+            ['reason' => 'Initial fictional safeguarding assessment completed.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['content' => 'The initial review is complete and the conversation remains open.'],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertSame(
+            2,
+            (int) $this->connection->fetchOne(
+                "SELECT COUNT(*) FROM report_follow_up_entries
+                 WHERE report_id = ? AND author_type = 'professional'
+                 AND professional_author_id = ?",
+                [$created['report']->id()->toRfc4122(), $professional->id()->toRfc4122()],
+            ),
+        );
+    }
+
+    public function testInvalidAndAnonymousProfessionalResponsesAreRejected(): void
+    {
+        $organisation = $this->createOrganisation('33D', 'Response Validation School');
+        $professional = $this->createProfessional(
+            'response-validation',
+            $organisation,
+            ProfessionalRole::Triage,
+        );
+        $created = $this->createReport($organisation, 'Response validation report.');
+        $endpoint = '/api/v1/professional/reports/'
+            .$created['report']->id()->toRfc4122().'/responses';
+        $this->client->loginUser($professional);
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['content' => '   '],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        self::assertResponseHeaderSame('content-type', 'application/problem+json');
+
+        $this->client->restart();
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['content' => 'An anonymous request must not publish a response.'],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        self::assertSame(
+            0,
+            (int) $this->connection->fetchOne(
+                'SELECT COUNT(*) FROM report_follow_up_entries WHERE report_id = ?',
+                [$created['report']->id()->toRfc4122()],
+            ),
+        );
+    }
+
+    public function testForeignAndCrossSiteProfessionalResponsesAreRejected(): void
+    {
+        $authorised = $this->createOrganisation('33B', 'Response Boundary School');
+        $foreign = $this->createOrganisation('33C', 'Foreign Response School');
+        $professional = $this->createProfessional('response-boundary', $authorised, ProfessionalRole::Triage);
+        $foreignReport = $this->createReport($foreign, 'Foreign response report.');
+        $ownReport = $this->createReport($authorised, 'CSRF response report.');
+        $this->client->loginUser($professional);
+
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/professional/reports/'.$foreignReport['report']->id()->toRfc4122().'/responses',
+            ['content' => 'This response must not cross organisations.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/professional/reports/'.$ownReport['report']->id()->toRfc4122().'/responses',
+            ['content' => 'This cross-site response must not be published.'],
+            [
+                'HTTP_ORIGIN' => 'https://attacker.example',
+                'HTTP_SEC_FETCH_SITE' => 'cross-site',
+            ],
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        self::assertSame(
+            0,
+            (int) $this->connection->fetchOne(
+                'SELECT COUNT(*) FROM report_follow_up_entries WHERE report_id IN (?, ?)',
+                [
+                    $foreignReport['report']->id()->toRfc4122(),
+                    $ownReport['report']->id()->toRfc4122(),
+                ],
+            ),
+        );
+    }
+
     public function testInvalidPaginationAndFiltersReturnSafeBadRequests(): void
     {
         $organisation = $this->createOrganisation('31I', 'Validation School');

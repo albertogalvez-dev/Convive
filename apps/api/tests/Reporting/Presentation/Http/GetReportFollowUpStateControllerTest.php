@@ -113,8 +113,9 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
         $capability = $this->issueGrant($creationResult->report);
 
         $this->entityManager->persist(
-            ReportFollowUpEntry::addedByReporter(
+            ReportFollowUpEntry::addedByProfessional(
                 $creationResult->report,
+                Uuid::fromString('0192a5c0-2222-7000-8000-000000000002'),
                 FollowUpEntryContent::fromString('Second entry.'),
                 new DateTimeImmutable('2026-08-07T10:05:00+00:00'),
             ),
@@ -145,6 +146,14 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
         self::assertSame(
             'Second entry.',
             $payload['followUpEntries'][1]['content'],
+        );
+        self::assertSame(
+            'professional',
+            $payload['followUpEntries'][1]['authorType'],
+        );
+        self::assertArrayNotHasKey(
+            'professionalAuthorId',
+            $payload['followUpEntries'][1],
         );
     }
 
