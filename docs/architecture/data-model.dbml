@@ -26,3 +26,58 @@ Table reports {
 }
 
 Ref: reports.organisation_id > organisations.id
+
+Table report_access_grants {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  report_id uuid [not null]
+  capability_hash varchar(64) [not null, unique, note: 'lowercase hexadecimal SHA-256 lookup hash of the capability handle; CHECK constrained to [0-9a-f]{64}']
+  issued_at timestamptz [not null]
+  last_used_at timestamptz [not null, note: 'refreshed on each valid use; drives the 15-minute idle timeout']
+  absolute_expires_at timestamptz [not null, note: 'issued_at + 2 hours']
+  revoked_at timestamptz [null, note: 'set once, on explicit revocation or replacement by a newly unlocked report']
+
+  indexes {
+    report_id
+  }
+}
+
+Ref: report_access_grants.report_id > reports.id
+
+Table report_follow_up_entries {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  report_id uuid [not null]
+  author_type varchar(20) [not null, note: 'reporter | professional (CHECK constraint); only reporter is produced today']
+  content text [not null, note: 'bounded to 2000 characters by FollowUpEntryContent before persistence']
+  created_at timestamptz [not null, note: 'immutable UTC instant; entries are append-only']
+
+  indexes {
+    report_id
+  }
+}
+
+Ref: report_follow_up_entries.report_id > reports.id
+
+Table professionals {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  name varchar(255) [not null]
+  email varchar(255) [not null, unique, note: 'normalised lowercase; authentication is out of scope until #30']
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+}
+
+Table organisation_memberships {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  professional_id uuid [not null]
+  organisation_id uuid [not null]
+  role varchar(20) [not null, note: 'triage | administrator (CHECK constraint)']
+  granted_at timestamptz [not null]
+  revoked_at timestamptz [null, note: 'one row per (professional, organisation, role) forever; revocation clears this rather than deleting the row']
+
+  indexes {
+    professional_id
+    organisation_id
+    (professional_id, organisation_id, role) [unique]
+  }
+}
+
+Ref: organisation_memberships.professional_id > professionals.id
+Ref: organisation_memberships.organisation_id > organisations.id

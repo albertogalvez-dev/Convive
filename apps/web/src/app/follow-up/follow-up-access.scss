@@ -1,0 +1,289 @@
+:host {
+  display: block;
+  width: min(100%, 52rem);
+  margin: 0 auto;
+  color: #172b57;
+}
+
+.access-shell {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.85fr) minmax(25rem, 1.15fr);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #dbe4ed;
+  border-radius: 1.125rem;
+  box-shadow: 0 1rem 2.75rem rgb(23 43 87 / 7%);
+}
+
+.access-intro {
+  padding: 2.5rem;
+  background: #f0f7fb;
+  border-right: 1px solid #dbe8f0;
+}
+
+.access-label {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.icon {
+  display: grid;
+  flex: 0 0 2.25rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: #239dd1;
+  background: #eef7fb;
+  border: 1px solid #d6e8f1;
+  border-radius: 0.7rem;
+  place-items: center;
+}
+
+.icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.context-label {
+  margin: 0;
+  color: #35718f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 17rem;
+  margin: 0;
+  font-size: clamp(1.9rem, 2.5vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.introduction {
+  max-width: 18rem;
+  margin: 1.25rem 0 0;
+  color: #53647d;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.access-panel {
+  padding: 2.5rem;
+}
+
+.notice {
+  padding: 0.85rem 1rem;
+  margin: 0 0 1.5rem;
+  color: #1f4f6b;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: #eef7fb;
+  border-left: 4px solid #239dd1;
+  border-radius: 0.5rem;
+}
+
+label,
+.field-heading label {
+  display: block;
+  color: #40516c;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.field-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.55rem;
+}
+
+.field-heading span {
+  color: #718097;
+  font-size: 0.72rem;
+}
+
+.secret-label {
+  margin: 1.5rem 0 0.55rem;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  color: #172b57;
+  font: inherit;
+  letter-spacing: 0.04em;
+  background: #fbfcfe;
+  border: 1px solid #b6c4d5;
+  border-radius: 0.7rem;
+}
+
+input:focus {
+  background: #fff;
+  border-color: #239dd1;
+  outline: 0;
+  box-shadow: 0 0 0 4px rgb(35 157 209 / 14%);
+}
+
+.secret-field {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.secret-field input {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+.field-meta {
+  min-height: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.error {
+  margin: 0;
+  color: #a5233d;
+  font-size: 0.85rem;
+}
+
+.access-error {
+  padding: 0.8rem 1rem;
+  margin-top: 0.35rem;
+  background: #fff0f3;
+  border-radius: 0.55rem;
+}
+
+button {
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid rgb(35 157 209 / 30%);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: progress;
+}
+
+.visibility {
+  flex: 0 0 auto;
+  padding: 0 1rem;
+  color: #172b57;
+  font-size: 0.8rem;
+  background: #f6f9fc;
+  border: 1px solid #c9d6e3;
+}
+
+.primary {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3.25rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  color: #fff;
+  background: #172b57;
+  border: 1px solid #172b57;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgb(255 255 255 / 35%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: access-spin 0.8s linear infinite;
+}
+
+@keyframes access-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+.lost {
+  padding-top: 1.25rem;
+  margin-top: 1.5rem;
+  color: #53647d;
+  font-size: 0.82rem;
+  border-top: 1px solid #e3e9f0;
+}
+
+.lost summary {
+  color: #172b57;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lost summary:focus-visible {
+  outline: 3px solid rgb(35 157 209 / 30%);
+  outline-offset: 2px;
+}
+
+.lost p {
+  margin: 0.75rem 0 0;
+  line-height: 1.55;
+}
+
+@media (max-width: 48rem) {
+  .access-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .access-intro {
+    padding: 2rem;
+    border-right: 0;
+    border-bottom: 1px solid #dbe8f0;
+  }
+
+  .icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    max-width: none;
+    font-size: 2rem;
+  }
+
+  .access-panel {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .access-panel {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .access-intro {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .context-label {
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+}

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/albertogalvez-dev/Convive/security/policy
+    about: Do not report vulnerabilities through a public issue. See SECURITY.md.

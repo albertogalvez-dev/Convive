@@ -11,8 +11,8 @@ import {
   PublicReportingProfile,
   ReportingService,
   ReportSubmissionResponse,
-  SituationContext,
 } from './reporting.service';
+import { describeSituationContext, SituationContext } from './situation-context';
 
 type ReportingProfileState =
   | { status: 'loading' }
@@ -126,18 +126,9 @@ export class ReportForm {
   }
 
   protected contextSummary(): string {
-    switch (this.form.controls.situationContext.value) {
-      case 'in_person':
-        return 'En persona';
-      case 'digital':
-        return 'Online';
-      case 'mixed':
-        return 'En persona y online';
-      case 'unknown':
-        return 'Prefiero no decirlo';
-      default:
-        return '';
-    }
+    const context = this.form.controls.situationContext.value as SituationContext | '';
+
+    return context === '' ? '' : describeSituationContext(context);
   }
 
   protected retryProfileResolution(): void {

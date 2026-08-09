@@ -30,6 +30,8 @@ services:
     App\Reporting\Domain\ReportRepository: '@App\Reporting\Infrastructure\DoctrineReportRepository'
     App\Reporting\Domain\ReportAccessGrantRepository: '@App\Reporting\Infrastructure\DoctrineReportAccessGrantRepository'
     App\Reporting\Domain\ReportFollowUpEntryRepository: '@App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository'
+    App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
+    App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
 
 when@prod:
     parameters:

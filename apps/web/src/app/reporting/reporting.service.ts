@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-export type SituationContext = 'in_person' | 'digital' | 'mixed' | 'unknown';
+import { SituationContext } from './situation-context';
 
 export interface PublicReportingProfile {
   name: string;
