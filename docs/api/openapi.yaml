@@ -78,6 +78,18 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: 'The report cannot accept more follow-up entries.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '429':
+          description: 'The follow-up append limit was exceeded.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
       security:
         -
           reportAccessCookie: []
@@ -97,6 +109,12 @@ paths:
                 $ref: '#/components/schemas/ReportFollowUpStateResponse'
         '401':
           description: 'The report access capability was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '429':
+          description: 'The follow-up read limit was exceeded.'
           content:
             application/problem+json:
               schema:
@@ -332,10 +350,11 @@ components:
           type: string
           format: date-time
         followUpEntries:
-          description: 'Authorised follow-up entries, oldest first.'
+          description: 'Authorised follow-up entries ordered by creation time and UUID, oldest first.'
           type: array
           items:
             $ref: '#/components/schemas/FollowUpEntry'
+          maxItems: 100
       type: object
       additionalProperties: false
     ProblemDetails:

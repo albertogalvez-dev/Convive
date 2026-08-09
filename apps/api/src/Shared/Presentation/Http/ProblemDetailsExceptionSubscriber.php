@@ -6,6 +6,7 @@ namespace App\Shared\Presentation\Http;
 
 use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrganisationNotFound;
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
+use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
 use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
 use App\Reporting\Presentation\Http\InvalidFollowUpEntryHttpException;
@@ -109,7 +110,7 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                 'urn:convive:problem:rate-limited',
                 'Too many requests',
                 Response::HTTP_TOO_MANY_REQUESTS,
-                'Too many verification attempts. Try again later.',
+                'Too many requests. Try again later.',
             );
 
             $retryAfter = $exception->getHeaders()['Retry-After'] ?? null;
@@ -122,6 +123,19 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
             }
 
             $event->setResponse($response);
+
+            return;
+        }
+
+        if ($exception instanceof ReportFollowUpEntryLimitReached) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:follow-up-entry-limit-reached',
+                    'Follow-up entry limit reached',
+                    Response::HTTP_CONFLICT,
+                    'No more information can be added to this report.',
+                ),
+            );
 
             return;
         }

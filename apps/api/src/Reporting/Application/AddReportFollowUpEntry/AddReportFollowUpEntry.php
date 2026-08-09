@@ -8,6 +8,7 @@ use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportFollowUpEntryRepository;
+use App\Reporting\Domain\ReportFollowUpPolicy;
 use DateTimeImmutable;
 
 final readonly class AddReportFollowUpEntry
@@ -27,7 +28,12 @@ final readonly class AddReportFollowUpEntry
             DateTimeImmutable::createFromTimestamp(microtime(true)),
         );
 
-        $this->followUpEntryRepository->save($entry);
+        if (!$this->followUpEntryRepository->saveIfReportHasCapacity(
+            $entry,
+            ReportFollowUpPolicy::MAXIMUM_ENTRIES,
+        )) {
+            throw new ReportFollowUpEntryLimitReached();
+        }
 
         return $entry;
     }
