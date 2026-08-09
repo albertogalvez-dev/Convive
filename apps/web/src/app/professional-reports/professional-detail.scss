@@ -63,6 +63,7 @@ h1 {
 }
 .report-card,
 .review-card,
+.response-card,
 .page-state {
   border: 1px solid #d4dfed;
   border-radius: 1.1rem;
@@ -131,6 +132,10 @@ h2 {
 .history li + li {
   margin-top: 0.75rem;
 }
+.history li.from-professional {
+  border-left-color: #159bd2;
+  background: #f6fbfd;
+}
 .history li > div {
   display: flex;
   justify-content: space-between;
@@ -150,17 +155,24 @@ h2 {
   margin: 0;
   color: #687a99;
 }
-.review-card {
+.actions-column {
+  display: grid;
+  gap: 1rem;
+}
+.review-card,
+.response-card {
   padding: 1.6rem;
 }
-.review-card label {
+.review-card label,
+.response-card label {
   display: block;
   margin-bottom: 0.5rem;
   color: #334a74;
   font-size: 0.85rem;
   font-weight: 800;
 }
-.review-card textarea {
+.review-card textarea,
+.response-card textarea {
   width: 100%;
   min-height: 8rem;
   resize: vertical;
@@ -172,7 +184,8 @@ h2 {
   font: inherit;
   line-height: 1.5;
 }
-.review-card textarea:focus {
+.review-card textarea:focus,
+.response-card textarea:focus {
   border-color: #159bd2;
   outline: 3px solid #d8f1fb;
 }
@@ -192,7 +205,8 @@ h2 {
 .form-meta span {
   margin-left: auto;
 }
-.review-card button {
+.review-card button,
+.response-card button {
   width: 100%;
   border: 0;
   border-radius: 0.75rem;
@@ -203,16 +217,36 @@ h2 {
   font-weight: 800;
   cursor: pointer;
 }
-.review-card button:hover {
+.review-card button:hover,
+.response-card button:hover {
   background: #112b5e;
 }
-.review-card button:disabled {
+.review-card button:disabled,
+.response-card button:disabled {
   cursor: wait;
   opacity: 0.65;
 }
 .submit-error {
   color: #b91c36;
   font-size: 0.85rem;
+}
+.submit-confirmation {
+  margin: 0.75rem 0;
+  color: #14765e;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.visibility-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.45rem 0 1rem;
+  color: #687a99;
+  font-size: 0.78rem;
+}
+.visibility-row span:first-child {
+  color: #087caf;
+  font-weight: 700;
 }
 .review-mark {
   display: grid;
@@ -282,7 +316,8 @@ h2 {
     border-left: 0;
   }
   .report-card section,
-  .review-card {
+  .review-card,
+  .response-card {
     padding: 1.25rem;
   }
   .history li > div {

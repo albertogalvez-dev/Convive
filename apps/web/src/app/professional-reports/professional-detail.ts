@@ -1,7 +1,7 @@
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -32,9 +32,16 @@ export class ProfessionalDetail implements OnInit {
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly reviewError = signal<string | null>(null);
+  protected readonly responseSubmitting = signal(false);
+  protected readonly responseError = signal<string | null>(null);
+  protected readonly responseConfirmation = signal<string | null>(null);
+  protected readonly responseField = viewChild<ElementRef<HTMLTextAreaElement>>('responseField');
   protected readonly contextLabel = reportContextLabel;
   protected readonly reviewForm = this.formBuilder.nonNullable.group({
     reason: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+  });
+  protected readonly responseForm = this.formBuilder.nonNullable.group({
+    content: ['', [Validators.required, Validators.maxLength(2000)]],
   });
 
   ngOnInit(): void {
@@ -61,6 +68,40 @@ export class ProfessionalDetail implements OnInit {
           error instanceof HttpErrorResponse && error.status === 409
             ? 'Esta comunicaci\u00f3n ya ha sido revisada.'
             : 'No hemos podido guardar la revisi\u00f3n.',
+        );
+      },
+    });
+  }
+
+  protected respond(): void {
+    this.responseForm.markAllAsTouched();
+    const content = this.responseForm.controls.content.value.trim();
+    if (!content || this.responseForm.invalid || this.responseSubmitting() || !this.report())
+      return;
+
+    this.responseSubmitting.set(true);
+    this.responseError.set(null);
+    this.responseConfirmation.set(null);
+    this.reports.respond(this.id, content).subscribe({
+      next: (entry) => {
+        this.report.update((report) =>
+          report ? { ...report, followUpEntries: [...report.followUpEntries, entry] } : null,
+        );
+        this.responseForm.reset();
+        this.responseSubmitting.set(false);
+        this.responseConfirmation.set('Respuesta enviada.');
+        queueMicrotask(() => this.responseField()?.nativeElement.focus());
+      },
+      error: (error: unknown) => {
+        this.responseSubmitting.set(false);
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          void this.router.navigate(['/profesionales/acceso']);
+          return;
+        }
+        this.responseError.set(
+          error instanceof HttpErrorResponse && error.status === 409
+            ? 'Esta conversaci\u00f3n ya no admite m\u00e1s mensajes.'
+            : 'No hemos podido enviar la respuesta.',
         );
       },
     });

@@ -39,17 +39,18 @@ describe('ProfessionalDetail', () => {
     fixture.detectChanges();
     expect(page.textContent).toContain('Fictional original report');
     expect(page.textContent).toContain('Fictional follow-up');
+    expect(page.textContent).toContain('Persona informante');
     expect(page.textContent).not.toContain('secret');
   });
 
   it('validates and records the initial review', () => {
     http.expectOne(endpoint).flush(detail());
     fixture.detectChanges();
-    const textarea = page.querySelector<HTMLTextAreaElement>('textarea')!;
+    const textarea = page.querySelector<HTMLTextAreaElement>('#review-reason')!;
     textarea.value = 'Reviewed under the fictional safeguarding protocol.';
     textarea.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    page.querySelector<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
+    page.querySelector<HTMLFormElement>('.review-card form')?.dispatchEvent(new Event('submit'));
     const request = http.expectOne(`${endpoint}/reviews`);
     expect(request.request.body).toEqual({ reason: textarea.value });
     request.flush({
@@ -57,7 +58,62 @@ describe('ProfessionalDetail', () => {
     });
     fixture.detectChanges();
     expect(page.textContent).toContain('Revisi\u00f3n registrada');
-    expect(page.querySelector('form')).toBeNull();
+    expect(page.querySelector('.review-card form')).toBeNull();
+  });
+
+  it('publishes one reporter-visible response and appends it to history', async () => {
+    http.expectOne(endpoint).flush(detail());
+    fixture.detectChanges();
+    const textarea = page.querySelector<HTMLTextAreaElement>('#professional-response')!;
+    const form = page.querySelector<HTMLFormElement>('.response-card form')!;
+    textarea.value = 'A fictional response visible to the reporter.';
+    textarea.dispatchEvent(new Event('input'));
+    form.dispatchEvent(new Event('submit'));
+    form.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    const request = http.expectOne(`${endpoint}/responses`);
+    expect(request.request.body).toEqual({ content: textarea.value });
+    expect(page.querySelector<HTMLButtonElement>('.response-card button')?.disabled).toBe(true);
+    request.flush(
+      {
+        authorType: 'professional',
+        content: textarea.value,
+        createdAt: '2026-08-09T19:05:00+00:00',
+      },
+      { status: 201, statusText: 'Created' },
+    );
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(page.textContent).toContain('Respuesta del centro');
+    expect(page.textContent).toContain('A fictional response visible to the reporter.');
+    expect(page.textContent).toContain('Respuesta enviada.');
+    expect(textarea.value).toBe('');
+    expect(document.activeElement).toBe(textarea);
+  });
+
+  it('keeps the draft and shows a safe response failure', () => {
+    http.expectOne(endpoint).flush(detail());
+    fixture.detectChanges();
+    const textarea = page.querySelector<HTMLTextAreaElement>('#professional-response')!;
+    textarea.value = 'A response that remains available for retry.';
+    textarea.dispatchEvent(new Event('input'));
+    page.querySelector<HTMLFormElement>('.response-card form')?.dispatchEvent(new Event('submit'));
+
+    http
+      .expectOne(`${endpoint}/responses`)
+      .flush(
+        { detail: 'Internal information that must not be rendered.' },
+        { status: 500, statusText: 'Server Error' },
+      );
+    fixture.detectChanges();
+
+    expect(page.querySelector('.response-card [role="alert"]')?.textContent).toContain(
+      'No hemos podido enviar la respuesta.',
+    );
+    expect(page.textContent).not.toContain('Internal information');
+    expect(textarea.value).toBe('A response that remains available for retry.');
   });
 
   it('renders the indistinguishable unavailable state', () => {

@@ -53,9 +53,13 @@
           } @else {
             <ol>
               @for (entry of currentReport.followUpEntries; track entry.createdAt + entry.content) {
-                <li>
+                <li [class.from-professional]="entry.authorType === 'professional'">
                   <div>
-                    <strong>Persona informante</strong
+                    <strong>{{
+                      entry.authorType === 'professional'
+                        ? 'Respuesta del centro'
+                        : 'Persona informante'
+                    }}</strong
                     ><time [attr.datetime]="entry.createdAt">{{
                       entry.createdAt | date: 'd MMM y, HH:mm' : undefined : 'es'
                     }}</time>
@@ -68,43 +72,80 @@
         </section>
       </article>
 
-      <aside class="review-card">
-        @if (currentReport.review; as review) {
-          <span class="review-mark" aria-hidden="true">&#10003;</span>
-          <h2>Revisi&oacute;n registrada</h2>
-          <p class="reason">{{ review.reason }}</p>
-          <time [attr.datetime]="review.reviewedAt">{{
-            review.reviewedAt | date: 'd MMMM y, HH:mm' : undefined : 'es'
-          }}</time>
-        } @else {
-          <h2>Revisi&oacute;n inicial</h2>
-          <form [formGroup]="reviewForm" (ngSubmit)="review()" novalidate>
-            <label for="review-reason">Motivo de la revisi&oacute;n</label>
+      <aside class="actions-column">
+        <section class="response-card" aria-labelledby="response-title">
+          <h2 id="response-title">Responder</h2>
+          <form [formGroup]="responseForm" (ngSubmit)="respond()" novalidate>
+            <label for="professional-response">Mensaje para la persona informante</label>
             <textarea
-              id="review-reason"
-              formControlName="reason"
+              #responseField
+              id="professional-response"
+              formControlName="content"
               rows="5"
-              maxlength="1000"
+              maxlength="2000"
               [attr.aria-describedby]="
-                reviewForm.controls.reason.touched && reviewForm.controls.reason.invalid
-                  ? 'review-error'
-                  : null
+                responseForm.controls.content.touched && responseForm.controls.content.invalid
+                  ? 'response-error'
+                  : 'response-visibility'
               "
             ></textarea>
-            <div class="form-meta">
-              @if (reviewForm.controls.reason.touched && reviewForm.controls.reason.invalid) {
-                <p id="review-error" role="alert">Escribe al menos 10 caracteres.</p>
-              }
-              <span>{{ reviewForm.controls.reason.value.length }} / 1000</span>
+            <div class="visibility-row">
+              <span id="response-visibility">Visible en su seguimiento</span>
+              <span>{{ responseForm.controls.content.value.length }} / 2000</span>
             </div>
-            @if (reviewError(); as message) {
+            @if (responseForm.controls.content.touched && responseForm.controls.content.invalid) {
+              <p id="response-error" class="submit-error" role="alert">Escribe una respuesta.</p>
+            }
+            @if (responseError(); as message) {
               <p class="submit-error" role="alert">{{ message }}</p>
             }
-            <button type="submit" [disabled]="submitting()">
-              {{ submitting() ? 'Guardando\u2026' : 'Marcar como revisada' }}
+            @if (responseConfirmation(); as message) {
+              <p class="submit-confirmation" role="status">{{ message }}</p>
+            }
+            <button type="submit" [disabled]="responseSubmitting()">
+              {{ responseSubmitting() ? 'Enviando\u2026' : 'Enviar respuesta' }}
             </button>
           </form>
-        }
+        </section>
+
+        <section class="review-card">
+          @if (currentReport.review; as review) {
+            <span class="review-mark" aria-hidden="true">&#10003;</span>
+            <h2>Revisi&oacute;n registrada</h2>
+            <p class="reason">{{ review.reason }}</p>
+            <time [attr.datetime]="review.reviewedAt">{{
+              review.reviewedAt | date: 'd MMMM y, HH:mm' : undefined : 'es'
+            }}</time>
+          } @else {
+            <h2>Revisi&oacute;n inicial</h2>
+            <form [formGroup]="reviewForm" (ngSubmit)="review()" novalidate>
+              <label for="review-reason">Motivo de la revisi&oacute;n</label>
+              <textarea
+                id="review-reason"
+                formControlName="reason"
+                rows="5"
+                maxlength="1000"
+                [attr.aria-describedby]="
+                  reviewForm.controls.reason.touched && reviewForm.controls.reason.invalid
+                    ? 'review-error'
+                    : null
+                "
+              ></textarea>
+              <div class="form-meta">
+                @if (reviewForm.controls.reason.touched && reviewForm.controls.reason.invalid) {
+                  <p id="review-error" role="alert">Escribe al menos 10 caracteres.</p>
+                }
+                <span>{{ reviewForm.controls.reason.value.length }} / 1000</span>
+              </div>
+              @if (reviewError(); as message) {
+                <p class="submit-error" role="alert">{{ message }}</p>
+              }
+              <button type="submit" [disabled]="submitting()">
+                {{ submitting() ? 'Guardando\u2026' : 'Marcar como revisada' }}
+              </button>
+            </form>
+          }
+        </section>
       </aside>
     </div>
   }
