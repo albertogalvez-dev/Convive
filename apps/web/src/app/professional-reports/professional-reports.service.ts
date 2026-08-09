@@ -1,0 +1,57 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+export type ProfessionalReportStatus = 'new' | 'reviewed';
+
+export interface ProfessionalReportSummary {
+  id: string;
+  publicReference: string;
+  situationPreview: string;
+  situationContext: string;
+  status: ProfessionalReportStatus;
+  createdAt: string;
+}
+
+export interface ProfessionalReportPage {
+  items: ProfessionalReportSummary[];
+  pagination: { limit: number; nextCursor: string | null };
+}
+
+export interface ProfessionalReportDetail extends ProfessionalReportSummary {
+  situationDescription: string;
+  review: { reason: string; reviewedAt: string } | null;
+  followUpEntries: { authorType: string; content: string; createdAt: string }[];
+}
+
+export interface ProfessionalReportReviewResponse {
+  review: { reason: string; reviewedAt: string };
+}
+
+@Injectable({ providedIn: 'root' })
+export class ProfessionalReportsService {
+  private readonly http = inject(HttpClient);
+  private readonly endpoint = '/api/v1/professional/reports';
+
+  list(
+    status: ProfessionalReportStatus,
+    cursor?: string,
+    limit = 20,
+  ): Observable<ProfessionalReportPage> {
+    let params = new HttpParams().set('status', status).set('limit', limit);
+    if (cursor) params = params.set('cursor', cursor);
+
+    return this.http.get<ProfessionalReportPage>(this.endpoint, { params });
+  }
+
+  detail(id: string): Observable<ProfessionalReportDetail> {
+    return this.http.get<ProfessionalReportDetail>(`${this.endpoint}/${encodeURIComponent(id)}`);
+  }
+
+  review(id: string, reason: string): Observable<ProfessionalReportReviewResponse> {
+    return this.http.post<ProfessionalReportReviewResponse>(
+      `${this.endpoint}/${encodeURIComponent(id)}/reviews`,
+      { reason },
+    );
+  }
+}

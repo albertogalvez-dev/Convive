@@ -2,7 +2,7 @@
   <div class="professional-flow">
     <header>
       <img src="/convive-logo.svg" alt="Convive" width="180" height="59" />
-      <span>Área profesional</span>
+      <span>&Aacute;rea profesional</span>
     </header>
 
     <section class="access-card" aria-labelledby="access-title">
@@ -19,80 +19,67 @@
       </div>
 
       <div class="access-panel">
-        @if (professional(); as currentProfessional) {
-          <div class="session-state" aria-live="polite">
-            <span class="session-mark" aria-hidden="true">✓</span>
-            <p class="session-label">Sesión iniciada</p>
-            <h2>{{ currentProfessional.name }}</h2>
-            <p class="session-email">{{ currentProfessional.email }}</p>
-
-            @if (errorMessage(); as message) {
-              <p class="error-banner" role="alert">{{ message }}</p>
+        <form [formGroup]="form" (ngSubmit)="login()" novalidate>
+          <div class="field">
+            <label for="professional-email">Correo profesional</label>
+            <input
+              id="professional-email"
+              formControlName="email"
+              type="email"
+              autocomplete="username"
+              inputmode="email"
+              [attr.aria-describedby]="
+                form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null
+              "
+            />
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+              <p id="email-error" class="field-error" role="alert">
+                Escribe un correo v&aacute;lido.
+              </p>
             }
-
-            <button type="button" class="secondary" [disabled]="loggingOut()" (click)="logout()">
-              {{ loggingOut() ? 'Cerrando…' : 'Cerrar sesión' }}
-            </button>
           </div>
-        } @else {
-          <form [formGroup]="form" (ngSubmit)="login()" novalidate>
-            <div class="field">
-              <label for="professional-email">Correo profesional</label>
+
+          <div class="field">
+            <label for="professional-password">Contrase&ntilde;a</label>
+            <div class="password-field">
               <input
-                id="professional-email"
-                formControlName="email"
-                type="email"
-                autocomplete="username"
-                inputmode="email"
+                id="professional-password"
+                formControlName="password"
+                [type]="passwordVisible() ? 'text' : 'password'"
+                autocomplete="current-password"
                 [attr.aria-describedby]="
-                  form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null
+                  form.controls.password.touched && form.controls.password.invalid
+                    ? 'password-error'
+                    : null
                 "
               />
-              @if (form.controls.email.touched && form.controls.email.invalid) {
-                <p id="email-error" class="field-error" role="alert">Escribe un correo válido.</p>
-              }
+              <button
+                type="button"
+                class="visibility"
+                [attr.aria-pressed]="passwordVisible()"
+                (click)="togglePasswordVisibility()"
+              >
+                {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
+              </button>
             </div>
-
-            <div class="field">
-              <label for="professional-password">Contraseña</label>
-              <div class="password-field">
-                <input
-                  id="professional-password"
-                  formControlName="password"
-                  [type]="passwordVisible() ? 'text' : 'password'"
-                  autocomplete="current-password"
-                  [attr.aria-describedby]="
-                    form.controls.password.touched && form.controls.password.invalid
-                      ? 'password-error'
-                      : null
-                  "
-                />
-                <button
-                  type="button"
-                  class="visibility"
-                  [attr.aria-pressed]="passwordVisible()"
-                  (click)="togglePasswordVisibility()"
-                >
-                  {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
-                </button>
-              </div>
-              @if (form.controls.password.touched && form.controls.password.invalid) {
-                <p id="password-error" class="field-error" role="alert">Escribe tu contraseña.</p>
-              }
-            </div>
-
-            @if (errorMessage(); as message) {
-              <p class="error-banner" role="alert">{{ message }}</p>
+            @if (form.controls.password.touched && form.controls.password.invalid) {
+              <p id="password-error" class="field-error" role="alert">
+                Escribe tu contrase&ntilde;a.
+              </p>
             }
+          </div>
 
-            <button type="submit" class="primary" [disabled]="submitting()">
-              {{ submitting() ? 'Accediendo…' : 'Acceder' }}
-              @if (!submitting()) {
-                <span aria-hidden="true">→</span>
-              }
-            </button>
-          </form>
-        }
+          @if (errorMessage(); as message) {
+            <p class="error-banner" role="alert">{{ message }}</p>
+          }
+
+          <button type="submit" class="primary" [disabled]="submitting()">
+            {{ submitting() ? 'Accediendo…' : 'Acceder' }}
+            @if (!submitting()) {
+              <span aria-hidden="true">&rarr;</span>
+            }
+          </button>
+        </form>
       </div>
     </section>
   </div>

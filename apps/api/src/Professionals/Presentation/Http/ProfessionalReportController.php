@@ -238,10 +238,24 @@ final readonly class ProfessionalReportController
         return [
             'id' => $report->id()->toRfc4122(),
             'publicReference' => $report->publicReference(),
+            'situationPreview' => $this->situationPreview(
+                $report->situationDescription()->toString(),
+            ),
             'situationContext' => $report->situationContext()->value,
             'status' => $this->professionalStatus($report->status()),
             'createdAt' => $report->createdAt()->format(DATE_RFC3339_EXTENDED),
         ];
+    }
+
+    private function situationPreview(string $description): string
+    {
+        $preview = grapheme_substr($description, 0, 110);
+
+        if ($preview === false || grapheme_strlen($description) <= 110) {
+            return $description;
+        }
+
+        return rtrim($preview).'…';
     }
 
     /** @return array<string, mixed> */
