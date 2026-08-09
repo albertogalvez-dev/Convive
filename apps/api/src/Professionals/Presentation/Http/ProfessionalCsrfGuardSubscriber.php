@@ -18,6 +18,7 @@ final readonly class ProfessionalCsrfGuardSubscriber implements EventSubscriberI
         'api_v1_professional_login' => 'professional_login',
         'api_v1_professional_logout' => 'professional_logout',
         'api_v1_professional_review_report' => 'professional_report_review',
+        'api_v1_professional_respond_to_report' => 'professional_report_response',
     ];
 
     public function __construct(

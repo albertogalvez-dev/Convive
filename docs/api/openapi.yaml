@@ -153,6 +153,51 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/reports/{id}/responses':
+    post:
+      tags:
+        - 'Professional reports'
+      summary: 'Publish a reporter-visible professional response'
+      description: 'Appends an immutable professional-authored entry to the reporter-visible conversation. Internal notes are not accepted by this resource.'
+      operationId: respondToProfessionalReport
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  maxLength: 2000
+              type: object
+              additionalProperties: false
+      responses:
+        '201':
+          description: 'The reporter-visible response was published.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowUpEntry'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The report is unavailable in this scope.'
+        '409':
+          description: 'The conversation has reached its entry limit.'
+        '422':
+          description: 'The response content is invalid.'
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/session:
     get:
       tags:
@@ -699,6 +744,13 @@ components:
         - reason
       properties:
         reason:
+          type: string
+      type: object
+    RespondToProfessionalReportRequest:
+      required:
+        - content
+      properties:
+        content:
           type: string
       type: object
     AddReportFollowUpEntryRequest:
