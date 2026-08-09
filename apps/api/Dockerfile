@@ -1,6 +1,6 @@
 FROM composer:2.10.2 AS composer
 
-FROM php:8.5.8-cli-bookworm AS development
+FROM php:8.5.9-cli-bookworm AS development
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends libpq-dev unzip \
