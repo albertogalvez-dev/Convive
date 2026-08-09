@@ -10,12 +10,14 @@ use App\Organisations\Infrastructure\DoctrineOrganisationRepository;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAccessSecret;
 use App\Reporting\Domain\ReportStatus;
+use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Infrastructure\DoctrineReportRepository;
 use App\Tests\Shared\Infrastructure\Persistence\PostgreSqlTestCase;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Uid\Uuid;
 
 final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
@@ -180,6 +182,38 @@ final class DoctrineReportRepositoryTest extends PostgreSqlTestCase
         );
 
         self::assertNull($foundReport);
+    }
+
+    public function testConcurrentReviewCannotOverwriteTheFirstPersistedTransition(): void
+    {
+        $organisation = $this->createOrganisation();
+        $this->organisationRepository->save($organisation);
+        $report = Report::create(
+            $organisation,
+            SituationDescription::fromString('A concurrency-safe fictional report.'),
+            SituationContext::Unknown,
+        )->report;
+        $this->reportRepository->save($report);
+        $this->entityManager->clear();
+
+        $staleReport = $this->reportRepository->findByPublicReference(
+            $report->publicReference(),
+        );
+        self::assertNotNull($staleReport);
+        $staleReport->review(
+            ReportReviewReason::fromString('A stale concurrent assessment must not win.'),
+            Uuid::v7(),
+            new DateTimeImmutable(),
+        );
+
+        $this->entityManager->getConnection()->executeStatement(
+            'UPDATE reports SET version = version + 1 WHERE id = ?',
+            [$staleReport->id()->toRfc4122()],
+        );
+
+        $this->expectException(OptimisticLockException::class);
+
+        $this->reportRepository->save($staleReport);
     }
 
     public function testItRejectsANonCanonicalAccessSecretHash(): void

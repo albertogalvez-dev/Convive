@@ -65,6 +65,32 @@ final class SecurityEventLoggerTest extends TestCase
         );
     }
 
+    public function testProfessionalReportDenialDoesNotLogTheObjectIdentifier(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with(
+                'professional_report_access_denied',
+                self::callback(
+                    static fn (array $context): bool =>
+                        $context['path'] === '/api/v1/professional/reports/{id}'
+                        && !str_contains(
+                            (string) json_encode($context),
+                            '0192a5c0-9999-7000-8000-000000000031',
+                        ),
+                ),
+            );
+
+        (new SecurityEventLogger($logger))->professionalReportAccessDenied(
+            Request::create(
+                '/api/v1/professional/reports/0192a5c0-9999-7000-8000-000000000031',
+                'GET',
+            ),
+        );
+    }
+
     public function testIdempotentReplayLogsAnInfoLevelEvent(): void
     {
         $logger = $this->createMock(LoggerInterface::class);
