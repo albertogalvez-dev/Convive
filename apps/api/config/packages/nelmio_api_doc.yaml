@@ -103,6 +103,7 @@ nelmio_api_doc:
                             type: string
                             enum:
                                 - received
+                                - reviewed
                             example: received
                         createdAt:
                             type: string
@@ -113,6 +114,117 @@ nelmio_api_doc:
                             description: Authorised follow-up entries ordered by creation time and UUID, oldest first.
                             items:
                                 $ref: '#/components/schemas/FollowUpEntry'
+
+                ProfessionalReportSummary:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - id
+                        - publicReference
+                        - situationContext
+                        - status
+                        - createdAt
+                    properties:
+                        id:
+                            type: string
+                            format: uuid
+                        publicReference:
+                            type: string
+                            example: 0123456789ABCDEF0123
+                        situationContext:
+                            type: string
+                            enum: [in_person, digital, mixed, unknown]
+                        status:
+                            type: string
+                            enum: [new, reviewed]
+                        createdAt:
+                            type: string
+                            format: date-time
+
+                ProfessionalReportReview:
+                    type: object
+                    additionalProperties: false
+                    required: [reason, reviewedAt]
+                    properties:
+                        reason:
+                            type: string
+                            minLength: 10
+                            maxLength: 1000
+                        reviewedAt:
+                            type: string
+                            format: date-time
+
+                ProfessionalReportDetail:
+                    type: object
+                    additionalProperties: false
+                    required:
+                        - id
+                        - publicReference
+                        - situationContext
+                        - status
+                        - createdAt
+                        - situationDescription
+                        - review
+                        - followUpEntries
+                    properties:
+                        id:
+                            type: string
+                            format: uuid
+                        publicReference:
+                            type: string
+                            example: 0123456789ABCDEF0123
+                        situationContext:
+                            type: string
+                            enum: [in_person, digital, mixed, unknown]
+                        status:
+                            type: string
+                            enum: [new, reviewed]
+                        createdAt:
+                            type: string
+                            format: date-time
+                        situationDescription:
+                            type: string
+                        review:
+                            oneOf:
+                                - $ref: '#/components/schemas/ProfessionalReportReview'
+                                - type: 'null'
+                        followUpEntries:
+                            type: array
+                            maxItems: 100
+                            items:
+                                $ref: '#/components/schemas/FollowUpEntry'
+
+                ProfessionalReportPage:
+                    type: object
+                    additionalProperties: false
+                    required: [items, pagination]
+                    properties:
+                        items:
+                            type: array
+                            items:
+                                $ref: '#/components/schemas/ProfessionalReportSummary'
+                        pagination:
+                            type: object
+                            additionalProperties: false
+                            required: [limit, nextCursor]
+                            properties:
+                                limit:
+                                    type: integer
+                                    minimum: 1
+                                    maximum: 50
+                                nextCursor:
+                                    oneOf:
+                                        - type: string
+                                          maxLength: 512
+                                        - type: 'null'
+
+                ProfessionalReportReviewResponse:
+                    type: object
+                    additionalProperties: false
+                    required: [review]
+                    properties:
+                        review:
+                            $ref: '#/components/schemas/ProfessionalReportReview'
 
                 ProblemDetails:
                     type: object

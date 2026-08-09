@@ -40,6 +40,119 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  /api/v1/professional/reports:
+    get:
+      tags:
+        - 'Professional reports'
+      summary: 'List reports in the professional inbox'
+      operationId: listProfessionalReports
+      parameters:
+        -
+          name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - new
+              - reviewed
+        -
+          name: limit
+          in: query
+          schema:
+            type: integer
+            maximum: 50
+            minimum: 1
+        -
+          name: cursor
+          in: query
+          schema:
+            type: string
+            maxLength: 512
+      responses:
+        '200':
+          description: 'An organisation-scoped report page.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalReportPage'
+        '400':
+          description: 'A filter or cursor is invalid.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/reports/{id}':
+    get:
+      tags:
+        - 'Professional reports'
+      summary: 'Read an authorised professional report'
+      operationId: getProfessionalReport
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The authorised report detail.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalReportDetail'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The report is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/reports/{id}/reviews':
+    post:
+      tags:
+        - 'Professional reports'
+      summary: 'Record the initial professional review of a report'
+      operationId: reviewProfessionalReport
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 10
+              type: object
+      responses:
+        '201':
+          description: 'The initial review was recorded.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalReportReviewResponse'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The report is unavailable in this scope.'
+        '409':
+          description: 'The report was already reviewed.'
+        '422':
+          description: 'The review reason is invalid.'
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/session:
     get:
       tags:
@@ -399,6 +512,7 @@ components:
           example: received
           enum:
             - received
+            - reviewed
         createdAt:
           type: string
           format: date-time
@@ -408,6 +522,135 @@ components:
           items:
             $ref: '#/components/schemas/FollowUpEntry'
           maxItems: 100
+      type: object
+      additionalProperties: false
+    ProfessionalReportSummary:
+      required:
+        - id
+        - publicReference
+        - situationContext
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        publicReference:
+          type: string
+          example: 0123456789ABCDEF0123
+        situationContext:
+          type: string
+          enum:
+            - in_person
+            - digital
+            - mixed
+            - unknown
+        status:
+          type: string
+          enum:
+            - new
+            - reviewed
+        createdAt:
+          type: string
+          format: date-time
+      type: object
+      additionalProperties: false
+    ProfessionalReportReview:
+      required:
+        - reason
+        - reviewedAt
+      properties:
+        reason:
+          type: string
+          maxLength: 1000
+          minLength: 10
+        reviewedAt:
+          type: string
+          format: date-time
+      type: object
+      additionalProperties: false
+    ProfessionalReportDetail:
+      required:
+        - id
+        - publicReference
+        - situationContext
+        - status
+        - createdAt
+        - situationDescription
+        - review
+        - followUpEntries
+      properties:
+        id:
+          type: string
+          format: uuid
+        publicReference:
+          type: string
+          example: 0123456789ABCDEF0123
+        situationContext:
+          type: string
+          enum:
+            - in_person
+            - digital
+            - mixed
+            - unknown
+        status:
+          type: string
+          enum:
+            - new
+            - reviewed
+        createdAt:
+          type: string
+          format: date-time
+        situationDescription:
+          type: string
+        review:
+          oneOf:
+            -
+              $ref: '#/components/schemas/ProfessionalReportReview'
+            -
+              type: 'null'
+        followUpEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowUpEntry'
+          maxItems: 100
+      type: object
+      additionalProperties: false
+    ProfessionalReportPage:
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfessionalReportSummary'
+        pagination:
+          required:
+            - limit
+            - nextCursor
+          properties:
+            limit:
+              type: integer
+              maximum: 50
+              minimum: 1
+            nextCursor:
+              oneOf:
+                -
+                  type: string
+                  maxLength: 512
+                -
+                  type: 'null'
+          type: object
+          additionalProperties: false
+      type: object
+      additionalProperties: false
+    ProfessionalReportReviewResponse:
+      required:
+        - review
+      properties:
+        review:
+          $ref: '#/components/schemas/ProfessionalReportReview'
       type: object
       additionalProperties: false
     ProblemDetails:
@@ -443,6 +686,13 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    ReviewProfessionalReportRequest:
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+      type: object
     AddReportFollowUpEntryRequest:
       required:
         - content
@@ -488,6 +738,9 @@ tags:
   -
     name: 'Public reporting'
     description: 'Public reporting'
+  -
+    name: 'Professional reports'
+    description: 'Professional reports'
   -
     name: 'Professional access'
     description: 'Professional access'

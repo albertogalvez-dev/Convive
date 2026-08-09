@@ -17,6 +17,7 @@ final readonly class ProfessionalCsrfGuardSubscriber implements EventSubscriberI
     private const TOKEN_IDS = [
         'api_v1_professional_login' => 'professional_login',
         'api_v1_professional_logout' => 'professional_logout',
+        'api_v1_professional_review_report' => 'professional_report_review',
     ];
 
     public function __construct(
