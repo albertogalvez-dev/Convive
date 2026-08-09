@@ -1,0 +1,72 @@
+<section class="inbox" aria-labelledby="inbox-title">
+  <div class="inbox-heading">
+    <div>
+      <p class="eyebrow">Bandeja del centro</p>
+      <h1 id="inbox-title">Comunicaciones</h1>
+    </div>
+    <div class="filters" role="group" aria-label="Filtrar comunicaciones">
+      <button
+        type="button"
+        [class.active]="activeStatus() === 'new'"
+        [attr.aria-pressed]="activeStatus() === 'new'"
+        (click)="selectStatus('new')"
+      >
+        Nuevas
+      </button>
+      <button
+        type="button"
+        [class.active]="activeStatus() === 'reviewed'"
+        [attr.aria-pressed]="activeStatus() === 'reviewed'"
+        (click)="selectStatus('reviewed')"
+      >
+        Revisadas
+      </button>
+    </div>
+  </div>
+
+  <div class="inbox-card" aria-live="polite">
+    @if (loading()) {
+      <div class="state">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Cargando comunicaciones&hellip;</p>
+      </div>
+    } @else if (errorMessage(); as message) {
+      <div class="state">
+        <p role="alert">{{ message }}</p>
+        <button type="button" (click)="retry()">Volver a intentar</button>
+      </div>
+    } @else if (items().length === 0) {
+      <div class="state empty">
+        <span aria-hidden="true">&#10003;</span>
+        <h2>No hay comunicaciones {{ activeStatus() === 'new' ? 'nuevas' : 'revisadas' }}</h2>
+      </div>
+    } @else {
+      <ul>
+        @for (report of items(); track report.id) {
+          <li>
+            <a [routerLink]="['/profesionales/comunicaciones', report.id]">
+              <span class="report-main"
+                ><span class="context">{{ report.situationPreview }}</span
+                ><strong
+                  >{{ contextLabel(report.situationContext) }} &middot;
+                  {{ report.publicReference }}</strong
+                ></span
+              >
+              <time [attr.datetime]="report.createdAt">{{
+                report.createdAt | date: 'd MMM y, HH:mm' : undefined : 'es'
+              }}</time>
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        }
+      </ul>
+      @if (nextCursor()) {
+        <div class="load-more">
+          <button type="button" [disabled]="loadingMore()" (click)="loadMore()">
+            {{ loadingMore() ? 'Cargando\u2026' : 'Ver m\u00e1s' }}
+          </button>
+        </div>
+      }
+    }
+  </div>
+</section>

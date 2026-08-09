@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import { ProfessionalIdentity, ProfessionalSessionService } from './professional-session.service';
+import { ProfessionalSessionService } from './professional-session.service';
 
 @Component({
   selector: 'app-professional-access',
@@ -14,12 +15,11 @@ import { ProfessionalIdentity, ProfessionalSessionService } from './professional
 export class ProfessionalAccess implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly sessions = inject(ProfessionalSessionService);
+  private readonly router = inject(Router);
 
   protected readonly submitting = signal(false);
   protected readonly passwordVisible = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly professional = signal<ProfessionalIdentity | null>(null);
-  protected readonly loggingOut = signal(false);
 
   protected readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -27,8 +27,8 @@ export class ProfessionalAccess implements OnInit {
   });
 
   ngOnInit(): void {
-    this.sessions.current().subscribe({
-      next: ({ professional }) => this.professional.set(professional),
+    this.sessions.restore().subscribe({
+      next: () => void this.router.navigate(['/profesionales']),
       error: () => {
         // An absent or expired session is the normal anonymous entry state.
       },
@@ -48,35 +48,15 @@ export class ProfessionalAccess implements OnInit {
     const { email, password } = this.form.getRawValue();
 
     this.sessions.login(email.trim().toLowerCase(), password).subscribe({
-      next: ({ professional }) => {
+      next: () => {
         this.submitting.set(false);
         this.form.reset();
-        this.professional.set(professional);
+        void this.router.navigate(['/profesionales']);
       },
       error: (error: unknown) => {
         this.submitting.set(false);
         this.form.controls.password.reset();
         this.errorMessage.set(describeLoginError(error));
-      },
-    });
-  }
-
-  protected logout(): void {
-    if (this.loggingOut()) {
-      return;
-    }
-
-    this.loggingOut.set(true);
-    this.errorMessage.set(null);
-
-    this.sessions.logout().subscribe({
-      next: () => {
-        this.loggingOut.set(false);
-        this.professional.set(null);
-      },
-      error: () => {
-        this.loggingOut.set(false);
-        this.errorMessage.set('No hemos podido cerrar la sesión. Inténtalo de nuevo.');
       },
     });
   }
@@ -89,7 +69,7 @@ export class ProfessionalAccess implements OnInit {
 function describeLoginError(error: unknown): string {
   if (error instanceof HttpErrorResponse) {
     if (error.status === 401) {
-      return 'El correo o la contraseña no son correctos.';
+      return 'El correo o la contrase\u00f1a no son correctos.';
     }
 
     if (error.status === 429) {
@@ -97,5 +77,5 @@ function describeLoginError(error: unknown): string {
     }
   }
 
-  return 'No hemos podido iniciar sesión. Inténtalo de nuevo más tarde.';
+  return 'No hemos podido iniciar sesi\u00f3n. Int\u00e9ntalo de nuevo m\u00e1s tarde.';
 }
