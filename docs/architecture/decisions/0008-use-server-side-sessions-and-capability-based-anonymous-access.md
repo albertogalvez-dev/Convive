@@ -4,7 +4,7 @@
 - **Date:** 21 July 2026
 - **Related issue:** [#1](https://github.com/albertogalvez-dev/Convive/issues/1)
 - **Depends on:** [ADR-0002](0002-use-a-modular-monolith-for-the-backend.md), [ADR-0003](0003-use-a-separate-web-frontend.md), [ADR-0004](0004-use-angular-for-the-web-frontend.md), [ADR-0005](0005-use-docker-compose-for-reproducible-environments.md), [ADR-0006](0006-use-a-resource-oriented-json-http-api-with-an-openapi-contract.md), [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md)
-- **Amended by:** [ADR-0010](0010-use-a-single-secret-for-anonymous-report-access.md), which replaces the anonymous follow-up verification requirement with secret-only access
+- **Amended by:** [ADR-0010](0010-use-a-single-secret-for-anonymous-report-access.md), which replaces the anonymous follow-up verification requirement with secret-only access; and [ADR-0011](0011-allow-the-reporter-browser-password-manager-to-store-the-access-secret.md), which narrows the frontend storage prohibition below to application-controlled storage and permits the reporter's own credential manager
 
 ## Context
 

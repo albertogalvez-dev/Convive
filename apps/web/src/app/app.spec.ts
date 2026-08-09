@@ -65,16 +65,19 @@ describe('App', () => {
     expect(compiled.querySelector('.status')?.textContent).toContain('API status: ok');
   });
 
-  it('should not request the API health status on a direct reporting route', () => {
-    window.history.replaceState({}, '', '/r/ORG_TEST');
+  it.each(['/r/ORG_TEST', '/seguimiento'])(
+    'should not request the API health status on the public journey %s',
+    (path) => {
+      window.history.replaceState({}, '', path);
 
-    const fixture = TestBed.createComponent(App);
+      const fixture = TestBed.createComponent(App);
 
-    fixture.detectChanges();
+      fixture.detectChanges();
 
-    httpTesting.expectNone('/api/v1/health');
+      httpTesting.expectNone('/api/v1/health');
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.status')).toBeNull();
-  });
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('.status')).toBeNull();
+    },
+  );
 });
