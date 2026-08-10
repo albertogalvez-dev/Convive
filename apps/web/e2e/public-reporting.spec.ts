@@ -7,6 +7,11 @@ const APP_BASE_URL = process.env['PLAYWRIGHT_BASE_URL'] ?? 'http://127.0.0.1:420
 const TRIAGE_EMAIL = 'lucia.demo@convive.example';
 const ADMINISTRATOR_EMAIL = 'carlos.demo@convive.example';
 const PROFESSIONAL_PASSWORD = requiredEnvironmentVariable('E2E_PROFESSIONAL_PASSWORD');
+const PERFORMANCE_ATTEMPTS = 5;
+const MAX_DEMO_API_MEDIAN_MS = 250;
+const MAX_DEMO_API_SAMPLE_MS = 750;
+const MAX_PUBLIC_REPORTING_READY_MS = 3_000;
+const MAX_PROFESSIONAL_DASHBOARD_READY_MS = 3_000;
 
 test.afterEach(async ({ context, page }, testInfo) => {
   if (testInfo.status === testInfo.expectedStatus) {
@@ -163,6 +168,47 @@ test('keeps the public reporting form keyboard-operable and responsive', async (
   );
 });
 
+test('keeps the fictional demo critical paths within performance budgets', async ({
+  browser,
+  page,
+  request,
+}) => {
+  const healthMeasurements = await measureApiResponseTimes(request, '/api/v1/health');
+  const publicProfileMeasurements = await measureApiResponseTimes(
+    request,
+    `/api/v1/public/organisations/${PUBLIC_REPORTING_IDENTIFIER}`,
+  );
+
+  expectApiBudget('health', healthMeasurements);
+  expectApiBudget('public reporting profile', publicProfileMeasurements);
+
+  const publicReportingStartedAt = performance.now();
+  await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
+  await expect(page.getByText(FICTIONAL_ORGANISATION, { exact: true })).toBeVisible();
+  const publicReportingReadyInMs = performance.now() - publicReportingStartedAt;
+
+  console.info(
+    `[performance] public reporting ready in ${formatMilliseconds(publicReportingReadyInMs)} ms`,
+  );
+  expect(publicReportingReadyInMs).toBeLessThanOrEqual(MAX_PUBLIC_REPORTING_READY_MS);
+
+  const professionalContext = await browser.newContext();
+
+  try {
+    const professionalPage = await professionalContext.newPage();
+    const professionalDashboardStartedAt = performance.now();
+    await loginAsProfessional(professionalPage, TRIAGE_EMAIL);
+    const professionalDashboardReadyInMs = performance.now() - professionalDashboardStartedAt;
+
+    console.info(
+      `[performance] professional dashboard ready in ${formatMilliseconds(professionalDashboardReadyInMs)} ms`,
+    );
+    expect(professionalDashboardReadyInMs).toBeLessThanOrEqual(MAX_PROFESSIONAL_DASHBOARD_READY_MS);
+  } finally {
+    await professionalContext.close();
+  }
+});
+
 async function loginAsProfessional(
   page: import('@playwright/test').Page,
   email: string,
@@ -222,4 +268,42 @@ async function expectNoAccessibilityViolations(
     .analyze();
 
   expect(results.violations).toEqual([]);
+}
+
+async function measureApiResponseTimes(
+  request: import('@playwright/test').APIRequestContext,
+  path: string,
+): Promise<number[]> {
+  const measurements: number[] = [];
+
+  for (let attempt = 0; attempt < PERFORMANCE_ATTEMPTS; attempt += 1) {
+    const startedAt = performance.now();
+    const response = await request.get(absoluteUrl(path));
+    const duration = performance.now() - startedAt;
+
+    expect(response.ok()).toBe(true);
+    measurements.push(duration);
+  }
+
+  return measurements;
+}
+
+function expectApiBudget(name: string, measurements: number[]): void {
+  const sortedMeasurements = [...measurements].sort((left, right) => left - right);
+  const median = sortedMeasurements[Math.floor(sortedMeasurements.length / 2)];
+  const maximum = sortedMeasurements.at(-1);
+
+  if (median === undefined || maximum === undefined) {
+    throw new Error(`No performance measurements were collected for ${name}.`);
+  }
+
+  console.info(
+    `[performance] ${name}: median ${formatMilliseconds(median)} ms, maximum ${formatMilliseconds(maximum)} ms`,
+  );
+  expect(median).toBeLessThanOrEqual(MAX_DEMO_API_MEDIAN_MS);
+  expect(maximum).toBeLessThanOrEqual(MAX_DEMO_API_SAMPLE_MS);
+}
+
+function formatMilliseconds(value: number): string {
+  return value.toFixed(1);
 }

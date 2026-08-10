@@ -41,6 +41,9 @@ semantic roles, labels and keyboard interaction where a changed control has an
 accessible behaviour. The [accessibility baseline](accessibility.md) defines
 the project-wide automated checks and manual matrix.
 
+The [performance baseline and budgets](performance.md) defines bounded bundle,
+API and critical-route regression gates for the isolated fictional demo.
+
 ## Fictional data and isolation
 
 Tests never use real student, family, professional or school data. Unit tests
