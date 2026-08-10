@@ -15,6 +15,11 @@ parameters:
     report_access_cookie.secure: false
     professional_session_cookie.name: 'professional_session'
     professional_session_cookie.secure: false
+    # Attachment writes require an explicit private runtime directory. The
+    # development Compose override provides a dedicated named volume; test
+    # overrides this with an ignored cache path below. Production must supply
+    # a separately provisioned private mount before uploads are enabled.
+    attachment_storage.directory: '%env(ATTACHMENT_STORAGE_DIRECTORY)%'
 
 services:
     # default configuration for services in *this* file
@@ -32,6 +37,8 @@ services:
     App\Reporting\Domain\ReportRepository: '@App\Reporting\Infrastructure\DoctrineReportRepository'
     App\Reporting\Domain\ReportAccessGrantRepository: '@App\Reporting\Infrastructure\DoctrineReportAccessGrantRepository'
     App\Reporting\Domain\ReportFollowUpEntryRepository: '@App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository'
+    App\Reporting\Domain\ReportAttachmentRepository: '@App\Reporting\Infrastructure\DoctrineReportAttachmentRepository'
+    App\Reporting\Application\AttachmentStorage: '@App\Reporting\Infrastructure\LocalPrivateAttachmentStorage'
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
 
@@ -57,6 +64,9 @@ when@prod:
         professional_session_cookie.secure: true
 
 when@test:
+    parameters:
+        attachment_storage.directory: '%kernel.cache_dir%/private-attachments'
+
     services:
         # The development Compose environment keeps professional sessions in
         # `convive`. Tests must use the same isolated `convive_test` database

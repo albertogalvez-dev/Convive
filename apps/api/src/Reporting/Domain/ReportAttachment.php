@@ -99,6 +99,7 @@ class ReportAttachment
     }
 
     public static function quarantine(
+        Uuid $id,
         Report $report,
         AttachmentMediaType $mediaType,
         int $byteSize,
@@ -106,7 +107,7 @@ class ReportAttachment
         DateTimeImmutable $createdAt,
     ): self {
         return new self(
-            Uuid::v7(),
+            $id,
             $report,
             $mediaType,
             $byteSize,
@@ -231,12 +232,12 @@ class ReportAttachment
         return $this->status === ReportAttachmentStatus::Available;
     }
 
-    private static function quarantineStorageKey(Uuid $id): string
+    public static function quarantineStorageKey(Uuid $id): string
     {
         return 'quarantine/'.$id->toRfc4122();
     }
 
-    private static function availableStorageKey(Uuid $id): string
+    public static function availableStorageKey(Uuid $id): string
     {
         return 'available/'.$id->toRfc4122();
     }

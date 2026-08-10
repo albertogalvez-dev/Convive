@@ -16,6 +16,7 @@ use App\Reporting\Domain\SituationDescription;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV7;
 
 final class ReportAttachmentTest extends TestCase
@@ -24,6 +25,7 @@ final class ReportAttachmentTest extends TestCase
     {
         $createdAt = new DateTimeImmutable('2026-08-10T19:00:00+00:00');
         $attachment = ReportAttachment::quarantine(
+            Uuid::v7(),
             $this->createReport(),
             AttachmentMediaType::Pdf,
             1024,
@@ -44,6 +46,7 @@ final class ReportAttachmentTest extends TestCase
     public function testItRequiresScanningBeforeMakingAnAttachmentAvailable(): void
     {
         $attachment = ReportAttachment::quarantine(
+            Uuid::v7(),
             $this->createReport(),
             AttachmentMediaType::Png,
             2048,
@@ -61,6 +64,7 @@ final class ReportAttachmentTest extends TestCase
     public function testItMovesOnlyAScannedAttachmentToTheAvailableNamespace(): void
     {
         $attachment = ReportAttachment::quarantine(
+            Uuid::v7(),
             $this->createReport(),
             AttachmentMediaType::Jpeg,
             2048,
@@ -87,6 +91,7 @@ final class ReportAttachmentTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         ReportAttachment::quarantine(
+            Uuid::v7(),
             $report,
             AttachmentMediaType::Pdf,
             ReportAttachmentPolicy::MAXIMUM_FILE_BYTES + 1,
