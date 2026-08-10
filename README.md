@@ -72,8 +72,10 @@ docs/
 └── discovery/
 
 infrastructure/
-├── backup/  Versioned recovery automation and non-secret examples
-└── compose/  Development and production container topology
+├── backup/       Versioned recovery automation and non-secret examples
+├── compose/      Development container topology
+├── production/   Production images, gateway and Compose boundary
+└── release/      Controlled release reconciliation script
 ```
 
 Infrastructure automation belongs in this repository so that it can be
