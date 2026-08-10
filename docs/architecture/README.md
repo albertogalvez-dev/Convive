@@ -123,12 +123,12 @@ The routing decision and identifier boundary are defined in
 ## Public website and application boundary
 
 The future public product website and the application have separate
-responsibilities. `convive.es` is for product, blog, demonstration and contact
-content, while `app.convive.es` hosts reporter and professional routes. The QR
-route stays direct on the application host and never passes through commercial
-onboarding. These are architecture targets, not evidence of public DNS or
-deployment. Canonical routes, wordmark destinations, indexing, cookie and
-referrer rules are defined in
+responsibilities. `conviveaula.com` is for product, blog, demonstration and
+contact content, while `app.conviveaula.com` hosts reporter and professional
+routes. The QR route stays direct on the application host and never passes
+through commercial onboarding. These are architecture targets, not evidence of
+public DNS or deployment. Canonical routes, wordmark destinations, indexing,
+cookie and referrer rules are defined in
 [ADR-0014](decisions/0014-separate-public-website-and-application-domains.md).
 
 ## Backend interface
