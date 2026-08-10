@@ -206,6 +206,42 @@ jobs:
           -f infrastructure/compose/compose.development.yaml
           down --volumes --remove-orphans
 
+  recovery:
+    name: Encrypted recovery
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        with:
+          php-version: "8.5"
+          extensions: intl, pdo_pgsql, sodium
+          coverage: none
+          tools: composer:2.10.2
+
+      - name: Install backend dependencies
+        working-directory: apps/api
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Validate recovery configuration
+        shell: bash
+        run: |
+          bash -n infrastructure/backup/*.sh
+          CONVIVE_RESTORE_DATABASE_PASSWORD=configuration-check \
+          CONVIVE_RESTORE_APP_SECRET=configuration-check \
+          CONVIVE_RESTORE_API_IMAGE=convive-restore-api:configuration-check \
+            docker compose \
+              -f infrastructure/backup/compose.restore.yaml \
+              -f infrastructure/backup/compose.restore.local.yaml \
+              config --quiet
+
+      - name: Exercise encrypted backup and isolated restoration
+        run: infrastructure/backup/test-recovery.sh
+
   end-to-end:
     name: End-to-end
     runs-on: ubuntu-latest
