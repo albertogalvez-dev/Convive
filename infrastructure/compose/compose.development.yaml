@@ -10,6 +10,7 @@ services:
     environment:
       DATABASE_URL: "postgresql://convive:convive-development-only@database:5432/convive?serverVersion=18.4&charset=utf8"
       SESSION_DATABASE_URL: "pgsql:host=database;port=5432;dbname=convive;user=convive;password=convive-development-only"
+      SESSION_DATABASE_URL_TEST: "pgsql:host=database;port=5432;dbname=convive_test;user=convive;password=convive-development-only"
     volumes:
       - ../../apps/api:/app
     ports:

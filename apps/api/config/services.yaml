@@ -58,6 +58,14 @@ when@prod:
 
 when@test:
     services:
+        # The development Compose environment keeps professional sessions in
+        # `convive`. Tests must use the same isolated `convive_test` database
+        # as Doctrine, without mutating the development session store.
+        Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+            arguments:
+                - '%env(SESSION_DATABASE_URL_TEST)%'
+                - { db_table: 'professional_sessions' }
+
         # In-memory handler so tests can assert on security-channel log
         # records directly (#41), instead of parsing a log file.
         monolog.security_test_handler:
