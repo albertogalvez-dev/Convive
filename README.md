@@ -74,6 +74,7 @@ docs/
 infrastructure/
 ├── backup/       Versioned recovery automation and non-secret examples
 ├── compose/      Development container topology
+├── maintenance/  Versioned maintenance and support checks
 ├── production/   Production images, gateway and Compose boundary
 └── release/      Controlled release reconciliation script
 ```
@@ -82,6 +83,10 @@ Infrastructure automation belongs in this repository so that it can be
 reviewed, tested and reproduced. Populated production configuration, secrets,
 backup objects and runtime recovery evidence remain outside Git on the target
 host or approved external provider, as documented in the operational runbooks.
+
+Long-term demonstration ownership, maintenance cadence, renewal gates and
+retirement/transfer procedures are documented in
+[`docs/operations/maintenance-and-support.md`](docs/operations/maintenance-and-support.md).
 
 The backend follows a modular-monolith architecture. Each module owns its domain and persistence boundaries while sharing one Symfony application and one PostgreSQL database.
 
