@@ -101,3 +101,8 @@ The `End-to-end` job creates an ephemeral Compose project, applies migrations,
 generates and masks a fresh professional password, runs the reviewed demo seed,
 installs the pinned Chromium build and runs Playwright. The job always removes
 its containers and volumes. It does not upload Playwright artifacts.
+
+Playwright retries are disabled locally and in CI. A failed critical journey
+must be investigated as a potential defect or flaky test; it must not become
+green only because a retry passed. See the [layered testing strategy](strategy.md)
+for the ownership and remediation process.
