@@ -4,7 +4,9 @@ This runbook defines the repeatable release contract for the single-VPS
 fictional-data demonstration selected in
 [ADR-0012](../architecture/decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md).
 The production Compose files and automation will implement these steps in issue
-#64. Backup and restore commands are completed and exercised in issue #66.
+#64. Backup and restore commands are defined in the
+[encrypted backup and recovery runbook](backup-and-recovery.md) and are completed
+and exercised in issue #66.
 
 The runbook must not be used for real safeguarding data. A deployment is
 eligible only while it is visibly marked as a demonstration and contains
