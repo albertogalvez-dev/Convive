@@ -10,8 +10,15 @@ final readonly class ProfessionalEmail
 {
     public const MAX_LENGTH = 255;
 
-    private function __construct(private string $value)
+    /** @var non-empty-string */
+    private string $value;
+
+    /**
+     * @param non-empty-string $value
+     */
+    private function __construct(string $value)
     {
+        $this->value = $value;
     }
 
     public static function fromString(string $value): self
@@ -42,6 +49,7 @@ final readonly class ProfessionalEmail
         return new self($normalizedValue);
     }
 
+    /** @return non-empty-string */
     public function toString(): string
     {
         return $this->value;

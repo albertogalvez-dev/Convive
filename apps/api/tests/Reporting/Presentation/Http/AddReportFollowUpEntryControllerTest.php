@@ -38,9 +38,11 @@ final class AddReportFollowUpEntryControllerTest extends WebTestCase
             'REMOTE_ADDR',
             $this->uniqueTestClientIp(),
         );
-        $this->entityManager = self::getContainer()->get(
+        $entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->entityManager->getConnection()->beginTransaction();
     }
 
@@ -108,6 +110,7 @@ final class AddReportFollowUpEntryControllerTest extends WebTestCase
         $persistedReport = $this->entityManager
             ->getRepository(Report::class)
             ->find($creationResult->report->id());
+        self::assertInstanceOf(Report::class, $persistedReport);
 
         self::assertSame(
             'The original description.',

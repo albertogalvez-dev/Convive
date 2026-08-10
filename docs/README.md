@@ -14,5 +14,7 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Security index](security/README.md): threat, privacy, dependency and
   abuse-control boundaries.
 - [Testing guide](testing/playwright.md): browser and automated verification.
+- [Code-quality baseline](development/code-quality.md): static analysis,
+  formatting, exceptions and PhpStorm setup.
 - [Development log](development-log.md): material delivery decisions and
   evidence, without inventing history.

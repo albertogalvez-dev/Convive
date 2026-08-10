@@ -65,6 +65,7 @@ final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
         $report = $this->reportRepository->findByPublicReference(
             $report->publicReference(),
         );
+        self::assertInstanceOf(Report::class, $report);
 
         $entries = $this->followUpEntryRepository
             ->findByReportOrderedByCreatedAt($report, 100);

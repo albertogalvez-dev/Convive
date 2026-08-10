@@ -30,9 +30,11 @@ final class RevokeReportAccessControllerTest extends WebTestCase
         parent::setUp();
 
         $this->client = static::createClient();
-        $this->entityManager = self::getContainer()->get(
+        $entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->entityManager->getConnection()->beginTransaction();
     }
 
@@ -75,6 +77,7 @@ final class RevokeReportAccessControllerTest extends WebTestCase
         $persistedGrant = $this->entityManager
             ->getRepository(ReportAccessGrant::class)
             ->find($grant['id']);
+        self::assertInstanceOf(ReportAccessGrant::class, $persistedGrant);
 
         self::assertNotNull($persistedGrant->revokedAt());
     }

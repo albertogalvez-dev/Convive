@@ -61,6 +61,8 @@ final class DoctrineOrganisationMembershipRepositoryTest extends PostgreSqlTestC
             ->findByPublicReportingIdentifier(
                 $organisation->publicReportingIdentifier(),
             );
+        self::assertInstanceOf(Professional::class, $professional);
+        self::assertInstanceOf(Organisation::class, $organisation);
 
         $found = $this->membershipRepository
             ->findActiveByProfessionalAndOrganisation(
@@ -89,15 +91,20 @@ final class DoctrineOrganisationMembershipRepositoryTest extends PostgreSqlTestC
         $this->membershipRepository->save($membership);
         $this->entityManager->clear();
 
+        $storedProfessional = $this->professionalRepository->findByEmail(
+            $professional->email(),
+        );
+        $storedOrganisation = $this->organisationRepository
+            ->findByPublicReportingIdentifier(
+                $organisation->publicReportingIdentifier(),
+            );
+        self::assertInstanceOf(Professional::class, $storedProfessional);
+        self::assertInstanceOf(Organisation::class, $storedOrganisation);
+
         $found = $this->membershipRepository
             ->findActiveByProfessionalAndOrganisation(
-                $this->professionalRepository->findByEmail(
-                    $professional->email(),
-                ),
-                $this->organisationRepository
-                    ->findByPublicReportingIdentifier(
-                        $organisation->publicReportingIdentifier(),
-                    ),
+                $storedProfessional,
+                $storedOrganisation,
                 ProfessionalRole::Administrator,
             );
 
@@ -132,6 +139,7 @@ final class DoctrineOrganisationMembershipRepositoryTest extends PostgreSqlTestC
         $professional = $this->professionalRepository->findByEmail(
             $professional->email(),
         );
+        self::assertInstanceOf(Professional::class, $professional);
 
         $memberships = $this->membershipRepository
             ->findActiveByProfessional($professional);

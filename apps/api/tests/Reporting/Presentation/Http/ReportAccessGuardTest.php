@@ -50,7 +50,7 @@ final class ReportAccessGuardTest extends TestCase
         );
 
         self::assertSame($grant, $resolved);
-        self::assertSame($report, $resolved?->report());
+        self::assertSame($report, $resolved->report());
     }
 
     public function testItDoesNotPersistActivityForEveryValidRead(): void

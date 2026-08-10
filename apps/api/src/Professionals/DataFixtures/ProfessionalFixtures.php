@@ -14,6 +14,7 @@ use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use LogicException;
 use Symfony\Component\Uid\Uuid;
 
 final class ProfessionalFixtures extends Fixture implements DependentFixtureInterface
@@ -23,6 +24,10 @@ final class ProfessionalFixtures extends Fixture implements DependentFixtureInte
         $organisation = $manager->getRepository(Organisation::class)->findOneBy(
             ['name' => 'IES Valle Sereno'],
         );
+
+        if (!$organisation instanceof Organisation) {
+            throw new LogicException('The professional fixtures require the Valle Sereno organisation.');
+        }
 
         $triageProfessional = new Professional(
             Uuid::fromString('0192a5c0-3333-7000-8000-000000000001'),

@@ -23,6 +23,7 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
+    /** @var non-empty-string */
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     private string $email;
 
@@ -76,6 +77,7 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
         return $this->createdAt;
     }
 
+    /** @return non-empty-string */
     public function getUserIdentifier(): string
     {
         return $this->email;
