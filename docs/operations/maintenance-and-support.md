@@ -31,6 +31,10 @@ The following is the review register, not proof of future payment. The owner
 must update each `status` and `next_review` in the private operator record
 after purchasing or renewing a service.
 
+For a machine-readable starting point, copy
+[`maintenance-calendar.example.yaml`](maintenance-calendar.example.yaml) to
+that private register and fill only verified renewal dates and owners.
+
 | Service | Current state (2026-08-10) | Renewal/expiry owner | Next review | Gate before public launch |
 |---|---|---|---|---|
 | GitHub repository and Actions | Available; CI is green on `main` | Repository maintainer | 2026-09-01, then monthly | Confirm repository access and Actions minutes are adequate |
