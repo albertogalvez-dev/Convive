@@ -7,6 +7,8 @@ namespace App\Reporting\Infrastructure;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Domain\ReportAttachmentRepository;
+use App\Reporting\Domain\ReportAttachmentStatus;
+use DateTimeImmutable;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -74,6 +76,56 @@ final readonly class DoctrineReportAttachmentRepository implements ReportAttachm
             ->setParameter('report', $report)
             ->orderBy('attachment.createdAt', 'ASC')
             ->addOrderBy('attachment.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAwaitingScan(int $limit): array
+    {
+        /** @var list<ReportAttachment> */
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('attachment')
+            ->from(ReportAttachment::class, 'attachment')
+            ->where('attachment.status IN (:statuses)')
+            ->setParameter('statuses', [
+                ReportAttachmentStatus::Quarantined->value,
+                ReportAttachmentStatus::Scanning->value,
+            ])
+            ->orderBy('attachment.createdAt', 'ASC')
+            ->addOrderBy('attachment.id', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findForCleanup(
+        DateTimeImmutable $quarantineDeadline,
+        DateTimeImmutable $availableDeadline,
+        int $limit,
+    ): array {
+        /** @var list<ReportAttachment> */
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('attachment')
+            ->from(ReportAttachment::class, 'attachment')
+            ->where('attachment.status IN (:deletableStatuses)')
+            ->orWhere('attachment.status IN (:quarantineStatuses) AND attachment.createdAt <= :quarantineDeadline')
+            ->orWhere('attachment.status = :availableStatus AND attachment.createdAt <= :availableDeadline')
+            ->setParameter('deletableStatuses', [
+                ReportAttachmentStatus::Rejected->value,
+                ReportAttachmentStatus::DeletionPending->value,
+            ])
+            ->setParameter('quarantineStatuses', [
+                ReportAttachmentStatus::Quarantined->value,
+                ReportAttachmentStatus::Scanning->value,
+            ])
+            ->setParameter('quarantineDeadline', $quarantineDeadline)
+            ->setParameter('availableStatus', ReportAttachmentStatus::Available->value)
+            ->setParameter('availableDeadline', $availableDeadline)
+            ->orderBy('attachment.createdAt', 'ASC')
+            ->addOrderBy('attachment.id', 'ASC')
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }

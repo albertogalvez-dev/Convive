@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Reporting\Application;
 
 use App\Reporting\Domain\ReportAttachment;
+use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -20,4 +21,6 @@ interface AttachmentStorage
     public function promoteToAvailable(ReportAttachment $attachment): void;
 
     public function delete(ReportAttachment $attachment): void;
+
+    public function deleteQuarantineObjectsOlderThan(DateTimeImmutable $deadline): int;
 }

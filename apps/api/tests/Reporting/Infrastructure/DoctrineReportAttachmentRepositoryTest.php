@@ -74,6 +74,38 @@ final class DoctrineReportAttachmentRepositoryTest extends PostgreSqlTestCase
         $this->attachments->saveQuarantinedWithReportCapacity($attachments);
     }
 
+    public function testItFindsOnlyAttachmentsThatNeedPrivateScanWork(): void
+    {
+        $report = $this->persistReport();
+        $attachment = $this->attachment($report, AttachmentMediaType::Pdf, 1024, 'a');
+        $this->attachments->saveQuarantinedWithReportCapacity([$attachment]);
+        $this->entityManager->clear();
+
+        $awaitingScan = $this->attachments->findAwaitingScan(10);
+
+        self::assertCount(1, $awaitingScan);
+        self::assertSame($attachment->id()->toRfc4122(), $awaitingScan[0]->id()->toRfc4122());
+    }
+
+    public function testItFindsRejectedAttachmentsForCleanup(): void
+    {
+        $report = $this->persistReport();
+        $attachment = $this->attachment($report, AttachmentMediaType::Pdf, 1024, 'a');
+        $this->attachments->saveQuarantinedWithReportCapacity([$attachment]);
+        $attachment->reject(new DateTimeImmutable('2026-08-10T20:01:00+00:00'));
+        $this->attachments->save($attachment);
+        $this->entityManager->clear();
+
+        $candidates = $this->attachments->findForCleanup(
+            new DateTimeImmutable('2026-08-10T19:00:00+00:00'),
+            new DateTimeImmutable('2026-07-11T20:00:00+00:00'),
+            10,
+        );
+
+        self::assertCount(1, $candidates);
+        self::assertSame('rejected', $candidates[0]->status()->value);
+    }
+
     private function persistReport(): Report
     {
         $organisation = new Organisation(

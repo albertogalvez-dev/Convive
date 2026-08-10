@@ -39,6 +39,7 @@ services:
     App\Reporting\Domain\ReportFollowUpEntryRepository: '@App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository'
     App\Reporting\Domain\ReportAttachmentRepository: '@App\Reporting\Infrastructure\DoctrineReportAttachmentRepository'
     App\Reporting\Application\AttachmentStorage: '@App\Reporting\Infrastructure\LocalPrivateAttachmentStorage'
+    App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\UnavailableAttachmentScanner'
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
 

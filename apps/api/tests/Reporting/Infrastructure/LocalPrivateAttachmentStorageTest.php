@@ -74,6 +74,11 @@ final class LocalPrivateAttachmentStorageTest extends TestCase
 
         $attachment->beginScanning(new DateTimeImmutable('2026-08-10T19:01:00+00:00'));
         $storage->promoteToAvailable($attachment);
+
+        $reprocessingStream = $storage->open($attachment);
+        self::assertSame("%PDF-1.7\nfictional evidence\n", stream_get_contents($reprocessingStream));
+        fclose($reprocessingStream);
+
         $attachment->markAvailable(new DateTimeImmutable('2026-08-10T19:02:00+00:00'));
 
         $available = $storage->open($attachment);

@@ -9,6 +9,8 @@ use App\Reporting\Application\AttachmentStorageLimitExceeded;
 use App\Reporting\Application\StoredAttachment;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Domain\ReportAttachmentPolicy;
+use App\Reporting\Domain\ReportAttachmentStatus;
+use DateTimeImmutable;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Uid\Uuid;
@@ -109,6 +111,18 @@ final class LocalPrivateAttachmentStorage implements AttachmentStorage
     {
         $stream = @fopen($this->pathForKey($attachment->storageKey()), 'rb');
 
+        // A storage promotion can succeed immediately before an interrupted
+        // metadata flush. Reprocessing must be idempotent while the record is
+        // still scanning; this fallback does not make the object downloadable.
+        if ($stream === false && $attachment->status() === ReportAttachmentStatus::Scanning) {
+            $stream = @fopen(
+                $this->pathForKey(
+                    ReportAttachment::availableStorageKey($attachment->id()),
+                ),
+                'rb',
+            );
+        }
+
         if ($stream === false) {
             throw new RuntimeException('The private attachment object is unavailable.');
         }
@@ -144,6 +158,44 @@ final class LocalPrivateAttachmentStorage implements AttachmentStorage
         if (is_file($path) && !@unlink($path)) {
             throw new RuntimeException('The private attachment object could not be deleted.');
         }
+    }
+
+    public function deleteQuarantineObjectsOlderThan(DateTimeImmutable $deadline): int
+    {
+        $directory = $this->directory.'/quarantine';
+        $entries = scandir($directory);
+
+        if ($entries === false) {
+            throw new RuntimeException('The quarantine namespace cannot be read.');
+        }
+
+        $deleted = 0;
+
+        foreach ($entries as $entry) {
+            if (
+                preg_match(
+                    '/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/D',
+                    $entry,
+                ) !== 1
+            ) {
+                continue;
+            }
+
+            $path = $directory.'/'.$entry;
+            $modifiedAt = filemtime($path);
+
+            if ($modifiedAt === false || $modifiedAt > $deadline->getTimestamp()) {
+                continue;
+            }
+
+            if (!@unlink($path)) {
+                throw new RuntimeException('An expired quarantine object could not be deleted.');
+            }
+
+            ++$deleted;
+        }
+
+        return $deleted;
     }
 
     private function initialisePrivateDirectory(

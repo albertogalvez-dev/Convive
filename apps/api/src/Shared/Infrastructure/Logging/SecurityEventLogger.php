@@ -64,6 +64,26 @@ final readonly class SecurityEventLogger
         $this->logger->info('idempotent_replay', $this->context($request));
     }
 
+    public function attachmentScanUnavailable(): void
+    {
+        $this->logger->warning('attachment_scan_unavailable');
+    }
+
+    public function attachmentScanRejected(): void
+    {
+        $this->logger->warning('attachment_scan_rejected');
+    }
+
+    public function attachmentScanTimedOut(): void
+    {
+        $this->logger->warning('attachment_scan_timed_out');
+    }
+
+    public function attachmentDeletionFailed(): void
+    {
+        $this->logger->error('attachment_deletion_failed');
+    }
+
     /**
      * @param array<string, scalar> $extra
      *

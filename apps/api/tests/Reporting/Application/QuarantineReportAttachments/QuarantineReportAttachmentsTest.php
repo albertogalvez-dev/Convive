@@ -19,6 +19,7 @@ use App\Reporting\Domain\ReportAttachmentQuotaExceeded;
 use App\Reporting\Domain\ReportAttachmentRepository;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
@@ -151,6 +152,11 @@ final class InMemoryAttachmentStorage implements AttachmentStorage
     {
         $this->deletedIds[] = $attachment->id()->toRfc4122();
     }
+
+    public function deleteQuarantineObjectsOlderThan(DateTimeImmutable $deadline): int
+    {
+        return 0;
+    }
 }
 
 final class InMemoryAttachmentRepository implements ReportAttachmentRepository
@@ -197,5 +203,18 @@ final class InMemoryAttachmentRepository implements ReportAttachmentRepository
             $this->attachments,
             static fn (ReportAttachment $attachment): bool => $attachment->report()->id()->equals($report->id()),
         ));
+    }
+
+    public function findAwaitingScan(int $limit): array
+    {
+        return [];
+    }
+
+    public function findForCleanup(
+        DateTimeImmutable $quarantineDeadline,
+        DateTimeImmutable $availableDeadline,
+        int $limit,
+    ): array {
+        return [];
     }
 }
