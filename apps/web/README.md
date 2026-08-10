@@ -105,6 +105,15 @@ Check the frontend source formatting with:
 docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec web npm exec prettier -- --check "src/**/*.{ts,html,scss}" "*.{json,md}"
 ```
 
+## Type checking
+
+Check the Angular application and test projects with the repository's strict
+TypeScript and template configuration:
+
+```bash
+docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml exec web npm run typecheck
+```
+
 ## Production build
 
 Create the Angular production build with:
