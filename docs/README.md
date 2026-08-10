@@ -13,7 +13,9 @@ runtime evidence and meeting-specific material stay outside Git.
   recovery, monitoring and support procedures.
 - [Security index](security/README.md): threat, privacy, dependency and
   abuse-control boundaries.
-- [Testing guide](testing/playwright.md): browser and automated verification.
+- [Testing strategy](testing/strategy.md): risk ownership, isolation, coverage
+  and flaky-test policy across every automated layer.
+- [Playwright guide](testing/playwright.md): isolated browser verification.
 - [Code-quality baseline](development/code-quality.md): static analysis,
   formatting, exceptions and PhpStorm setup.
 - [Development log](development-log.md): material delivery decisions and

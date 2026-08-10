@@ -19,6 +19,8 @@ will fit the project's current direction or delivery order.
 - Development and demonstration data must always be fictional. Never
   submit a change that includes real student, family, professional or
   school information, in code, fixtures, tests or examples.
+- Read the [layered testing strategy](docs/testing/strategy.md) before changing
+  a test boundary or deciding what evidence a behaviour change needs.
 
 ## Workflow
 
@@ -39,6 +41,9 @@ will fit the project's current direction or delivery order.
      `vendor/bin/phpunit`.
    - Frontend (`apps/web`): `npm run format:check`, `npm run typecheck`,
      `npm audit --omit=dev`, `npm test`, `npm run build`.
+   - Browser, recovery and infrastructure changes: run the relevant isolated
+     exercise documented in `docs/testing/strategy.md` and record only
+     redacted fictional-data evidence.
    - All three commands run inside the Docker Compose development
      stack described in the README — no host PHP, Composer or Node.js
      installation is required.

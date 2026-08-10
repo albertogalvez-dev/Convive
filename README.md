@@ -293,6 +293,15 @@ docker compose \
   exec api composer audit --locked
 ```
 
+### Run backend static analysis
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec api composer analyse
+```
+
 ### Validate Symfony configuration
 
 ```bash
@@ -339,6 +348,15 @@ docker compose \
   --check "src/**/*.{ts,html,scss}" "*.{json,md}"
 ```
 
+### Type-check the frontend
+
+```bash
+docker compose \
+  -f infrastructure/compose/compose.yaml \
+  -f infrastructure/compose/compose.development.yaml \
+  exec web npm run typecheck
+```
+
 ### Audit production frontend dependencies
 
 ```bash
@@ -371,6 +389,9 @@ docker compose \
 The end-to-end suite uses a dedicated fictional organisation and never reloads
 Doctrine fixtures. Follow the isolated Docker-based preparation and execution
 steps in [`docs/testing/playwright.md`](docs/testing/playwright.md).
+
+The [layered testing strategy](docs/testing/strategy.md) explains which risks
+belong in each automated layer and how to handle a failure without hiding it.
 
 Once that stack is ready, install the pinned Chromium build and run the suite
 from `apps/web`:
