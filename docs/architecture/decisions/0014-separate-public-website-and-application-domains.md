@@ -12,37 +12,50 @@ professionals need the application: a direct QR entry, private follow-up and
 an authenticated workspace. A QR reporter must never be diverted through a
 commercial landing page.
 
-This decision defines architecture targets only. It does not provision DNS,
-publish a hostname or enable a public deployment.
+This decision defines the registered hostname boundary, not a public release.
+It does not provision application DNS records, publish either host or enable a
+public deployment.
 
 ## Decision
 
-When public hosts are provisioned, Convive uses two subdomains:
+Convive uses these two host responsibilities:
 
 | Host | Responsibility | Indexing |
 | --- | --- | --- |
-| `https://convive.es` | Product website, blog, demonstration request and contact information | Public website only |
-| `https://app.convive.es` | Anonymous reporting, private follow-up and professional workspace | Sensitive application routes excluded |
+| `https://conviveaula.com` | Product website, blog, demonstration request and contact information | Public website only |
+| `https://app.conviveaula.com` | Anonymous reporting, private follow-up and professional workspace | Sensitive application routes excluded |
 
 The canonical initial routes are:
 
 | Audience | URL |
 | --- | --- |
-| Product home | `https://convive.es/` |
-| Blog | `https://convive.es/blog/` |
-| Demonstration request | `https://convive.es/demostracion/` |
-| Contact | `https://convive.es/contacto/` |
-| Direct reporter entry | `https://app.convive.es/r/:publicReportingIdentifier` |
-| Private follow-up | `https://app.convive.es/seguimiento` |
-| Professional sign-in | `https://app.convive.es/profesionales/acceso` |
-| Professional workspace | `https://app.convive.es/profesionales` |
+| Product home | `https://conviveaula.com/` |
+| Blog | `https://conviveaula.com/blog/` |
+| Demonstration request | `https://conviveaula.com/demostracion/` |
+| Contact | `https://conviveaula.com/contacto/` |
+| Direct reporter entry | `https://app.conviveaula.com/r/:publicReportingIdentifier` |
+| Private follow-up | `https://app.conviveaula.com/seguimiento` |
+| Professional sign-in | `https://app.conviveaula.com/profesionales/acceso` |
+| Professional workspace | `https://app.conviveaula.com/profesionales` |
 
-`app.convive.es/` has no commercial-home responsibility. It is an intentional
+`app.conviveaula.com/` has no commercial-home responsibility. It is an intentional
 application route or a safe not-found response, never a duplicate public site.
+
+### Registration and renewal boundary
+
+The product owner registered `conviveaula.com` through Cloudflare on 10 August
+2026. Public registry data recorded the initial expiration as 10 August 2028,
+which covers the demonstrated service-support commitment through 31 August
+2027. Cloudflare remains both the registrar and authoritative DNS provider.
+
+This record contains no account, payment, contact or credential information.
+The owner must keep renewal enabled, retain valid billing and review the
+renewal state through the maintenance cadence. A registration is not legal or
+trademark clearance, nor proof that Convive is ready to process real data.
 
 ### Navigation and wordmarks
 
-- A public-website wordmark links to `https://convive.es/`.
+- A public-website wordmark links to `https://conviveaula.com/`.
 - In the direct QR form and follow-up entry, the Convive wordmark remains
   non-navigating: it must not discard form context or redirect to marketing.
 - The authenticated professional wordmark links to `/profesionales`, matching
@@ -53,8 +66,8 @@ application route or a safe not-found response, never a duplicate public site.
 
 ### Privacy, security and SEO
 
-- Application cookies remain host-only for `app.convive.es`; they are never
-  shared with `convive.es`.
+- Application cookies remain host-only for `app.conviveaula.com`; they are
+  never shared with `conviveaula.com`.
 - Report references, secrets, capabilities, organisation identifiers and
   report content never reach public-site links, query strings, analytics or
   forms. Application analytics stay disabled pending #56.
