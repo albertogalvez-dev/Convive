@@ -29,6 +29,12 @@ parameter, which keeps the tunnel token in a mounted secret file. See the
 [Cloudflare run parameters](https://developers.cloudflare.com/tunnel/advanced/run-parameters/)
 for the supported flag.
 
+The API is the only long-running service with the private `attachment-data`
+named volume. A network-isolated one-shot initializer assigns that volume to
+the unprivileged PHP user before the API starts; the gateway never mounts it or
+serves it as a static path. This local store is a fictional-demo boundary, not
+a selected real-data storage provider.
+
 The public demonstration remains fictional-data only. A real-data deployment
 requires the legal, privacy, security and operational approvals described in
 the architecture records.

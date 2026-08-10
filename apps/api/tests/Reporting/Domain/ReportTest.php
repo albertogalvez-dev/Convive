@@ -7,6 +7,8 @@ namespace App\Tests\Reporting\Domain;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\Report;
+use App\Reporting\Domain\ReportAttachmentPolicy;
+use App\Reporting\Domain\ReportAttachmentQuotaExceeded;
 use App\Reporting\Domain\ReportAlreadyReviewed;
 use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\ReportStatus;
@@ -135,6 +137,46 @@ final class ReportTest extends TestCase
             $professionalId,
             $reviewedAt,
         );
+    }
+
+    public function testItReservesAndReleasesAttachmentCapacityWithinTheDocumentedLimits(): void
+    {
+        $report = Report::create(
+            $this->createOrganisation(),
+            SituationDescription::fromString(
+                'Attachment capacity must remain bounded per report.',
+            ),
+            SituationContext::Digital,
+        )->report;
+
+        $report->reserveAttachmentCapacity(3, 15 * 1024 * 1024);
+
+        self::assertSame(3, $report->attachmentCount());
+        self::assertSame(15 * 1024 * 1024, $report->attachmentBytes());
+
+        $report->releaseAttachmentCapacity(1, 5 * 1024 * 1024);
+
+        self::assertSame(2, $report->attachmentCount());
+        self::assertSame(10 * 1024 * 1024, $report->attachmentBytes());
+    }
+
+    public function testItRejectsAttachmentCapacityThatWouldExceedThePerReportBoundary(): void
+    {
+        $report = Report::create(
+            $this->createOrganisation(),
+            SituationDescription::fromString(
+                'Attachment capacity must reject an excessive aggregate.',
+            ),
+            SituationContext::Digital,
+        )->report;
+        $report->reserveAttachmentCapacity(
+            ReportAttachmentPolicy::MAXIMUM_ATTACHMENTS_PER_REPORT,
+            ReportAttachmentPolicy::MAXIMUM_REPORT_ATTACHMENT_BYTES,
+        );
+
+        $this->expectException(ReportAttachmentQuotaExceeded::class);
+
+        $report->reserveAttachmentCapacity(1, 1);
     }
 
     private function createOrganisation(): Organisation

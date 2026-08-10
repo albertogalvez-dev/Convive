@@ -9,9 +9,10 @@ as a one-time compliance claim.
   data categories, minimisation, retention gates and access boundaries.
 - [Public-endpoint anti-abuse model](anti-abuse-threat-model.md): detailed
   analysis of the implemented anonymous write and verification endpoints.
-- [Attachment security boundary](attachment-threat-model.md): the accepted
-  pre-implementation threat model, private lifecycle, retrieval constraints
-  and deletion responsibilities for future evidence attachments.
+- [Attachment security boundary](attachment-threat-model.md): the implemented
+  fictional-data backend boundary, private lifecycle, retrieval constraints
+  and deletion responsibilities for evidence attachments; the reporter UI is
+  still pending.
 - [Dependency management](dependency-management.md): supply-chain ownership
   and verification.
 

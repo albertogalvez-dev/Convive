@@ -19,6 +19,7 @@ framework:
         stateless_token_ids:
             [
                 'report_access_grant_revocation',
+                'report_attachment_upload',
                 'professional_login',
                 'professional_logout',
                 'professional_report_review',

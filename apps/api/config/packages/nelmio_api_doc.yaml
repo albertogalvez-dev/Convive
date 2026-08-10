@@ -115,6 +115,50 @@ nelmio_api_doc:
                             items:
                                 $ref: '#/components/schemas/FollowUpEntry'
 
+                ReporterAttachment:
+                    type: object
+                    additionalProperties: false
+                    required: [id, status, createdAt]
+                    properties:
+                        id:
+                            type: string
+                            format: uuid
+                        status:
+                            type: string
+                            enum: [processing, available, unavailable]
+                            description: A minimal lifecycle state that never exposes a scanner verdict.
+                        createdAt:
+                            type: string
+                            format: date-time
+                        mediaType:
+                            type: string
+                            enum: [application/pdf, image/jpeg, image/png]
+                            description: Present only when the attachment is available.
+                        byteSize:
+                            type: integer
+                            minimum: 1
+                            maximum: 5242880
+                            description: Present only when the attachment is available.
+
+                ProfessionalReportAttachment:
+                    type: object
+                    additionalProperties: false
+                    required: [id, mediaType, byteSize, createdAt]
+                    properties:
+                        id:
+                            type: string
+                            format: uuid
+                        mediaType:
+                            type: string
+                            enum: [application/pdf, image/jpeg, image/png]
+                        byteSize:
+                            type: integer
+                            minimum: 1
+                            maximum: 5242880
+                        createdAt:
+                            type: string
+                            format: date-time
+
                 ProfessionalReportSummary:
                     type: object
                     additionalProperties: false

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run the private Convive attachment lifecycle every five minutes
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=5m
+RandomizedDelaySec=45s
+Persistent=true
+Unit=convive-attachment-lifecycle.service
+
+[Install]
+WantedBy=timers.target
