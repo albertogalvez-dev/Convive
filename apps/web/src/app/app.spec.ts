@@ -1,5 +1,3 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -7,77 +5,16 @@ import { App } from './app';
 import { routes } from './app.routes';
 
 describe('App', () => {
-  let httpTesting: HttpTestingController;
-
-  beforeEach(async () => {
+  it('creates the routing shell without a technical health request', async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(routes)],
+      providers: [provideRouter(routes)],
     }).compileComponents();
 
-    httpTesting = TestBed.inject(HttpTestingController);
-  });
-
-  afterEach(() => {
-    httpTesting.verify();
-    window.history.replaceState({}, '', '/');
-  });
-
-  it('should create the app', () => {
     const fixture = TestBed.createComponent(App);
-
     fixture.detectChanges();
-
-    const request = httpTesting.expectOne('/api/v1/health');
-
-    request.flush({ status: 'ok' });
 
     expect(fixture.componentInstance).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('router-outlet')).toBeTruthy();
   });
-
-  it('should render the application name', () => {
-    const fixture = TestBed.createComponent(App);
-
-    fixture.detectChanges();
-
-    const request = httpTesting.expectOne('/api/v1/health');
-
-    request.flush({ status: 'ok' });
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toBe('Convive');
-  });
-
-  it('should request and render the API health status', () => {
-    const fixture = TestBed.createComponent(App);
-
-    fixture.detectChanges();
-
-    const request = httpTesting.expectOne('/api/v1/health');
-
-    expect(request.request.method).toBe('GET');
-
-    request.flush({ status: 'ok' });
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.status')?.textContent).toContain('API status: ok');
-  });
-
-  it.each(['/r/ORG_TEST', '/seguimiento'])(
-    'should not request the API health status on the public journey %s',
-    (path) => {
-      window.history.replaceState({}, '', path);
-
-      const fixture = TestBed.createComponent(App);
-
-      fixture.detectChanges();
-
-      httpTesting.expectNone('/api/v1/health');
-
-      const compiled = fixture.nativeElement as HTMLElement;
-      expect(compiled.querySelector('.status')).toBeNull();
-    },
-  );
 });

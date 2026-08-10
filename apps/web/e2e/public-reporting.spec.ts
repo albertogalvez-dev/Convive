@@ -168,6 +168,52 @@ test('keeps the public reporting form keyboard-operable and responsive', async (
   );
 });
 
+test('keeps the public product homepage accessible and separate from reporting entry', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
+  ).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+  await expect(page.getByRole('link', { name: 'Área profesional' })).toHaveAttribute(
+    'href',
+    '/profesionales/acceso',
+  );
+  await expect(page.getByRole('link', { name: 'Blog' }).first()).toHaveAttribute('href', '/blog/');
+  await expect(page.getByRole('link', { name: 'Demostración' }).first()).toHaveAttribute(
+    'href',
+    '/demostracion/',
+  );
+  await expect(page.getByRole('link', { name: 'Contacto' }).first()).toHaveAttribute(
+    'href',
+    '/contacto/',
+  );
+
+  await page.goto('/demostracion/');
+  await expect(
+    page.getByRole('heading', { name: 'La demostración se está preparando.' }),
+  ).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+
+  await page.goto('/');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'Convive, inicio' })).toBeFocused();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+
+  await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
+  await expect(page.locator('app-report-form')).toHaveCount(1);
+  await expect(
+    page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
+  ).toHaveCount(0);
+});
+
 test('keeps the fictional demo critical paths within performance budgets', async ({
   browser,
   page,
