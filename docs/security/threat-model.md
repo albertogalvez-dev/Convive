@@ -32,8 +32,12 @@ Professional browser -> professional session (#30) -> Symfony API
 
 The browser, network metadata and all submitted content are untrusted. Angular
 is not an authorisation boundary. Symfony is authoritative. PostgreSQL and its
-backups require separate least-privilege operational access. Email, identity,
-monitoring and evidence services become new trust boundaries if introduced.
+backups require separate least-privilege operational access. Email, identity
+and monitoring services become new trust boundaries if introduced. Future
+evidence has an accepted design boundary: private quarantine storage, an
+isolated scanner and application-mediated retrieval, as defined in the
+[attachment security boundary](attachment-threat-model.md). It remains absent
+until #37 and #38 implement and verify that design.
 
 Anonymous capability and future professional cookies may share an origin but
 are mutually exclusive security contexts for an operation. No endpoint may
@@ -89,7 +93,7 @@ upgrade anonymous possession into professional authority.
 | T-05 | High     | Reporter secret leaks                                               | 256-bit secret, SHA-256 lookup, body-only exchange, E2E storage/artifact checks | Credential-manager/shared-profile and XSS risk remain; review ADR-0011 on new evidence                                                                                                                                                                     |
 | T-06 | High     | Capability theft/reuse/cross-report access                          | Hashed opaque handle, HttpOnly cookie, scope, expiry and revocation tests       | Cleanup, restore invalidation and mutation abuse controls remain deployment gates                                                                                                                                                                          |
 | T-07 | High     | Public/follow-up resource exhaustion                                | Submission, verification and capability/IP-scoped follow-up limits; transactional 100-entry cap; bounded deterministic reads | Shared, restart-resistant limiter state remains the production gate owned by #63 |
-| T-08 | High     | Malicious attachments or metadata                                   | Feature absent                                                                  | Threat/lifecycle, quarantine, scanning, isolation and deletion: [#36](https://github.com/albertogalvez-dev/Convive/issues/36)-[#38](https://github.com/albertogalvez-dev/Convive/issues/38)                                                                |
+| T-08 | High     | Malicious attachments or metadata                                   | Accepted [attachment threat model](attachment-threat-model.md); feature remains absent | Private quarantine, scanning, isolation, retrieval and deletion implementation: [#37](https://github.com/albertogalvez-dev/Convive/issues/37)-[#38](https://github.com/albertogalvez-dev/Convive/issues/38) |
 | T-09 | High     | CSRF or confused access context                                     | Same-origin, SameSite capability and distinct cookie                            | Explicit mutation/context tests required in #30 and [#33](https://github.com/albertogalvez-dev/Convive/issues/33)-[#35](https://github.com/albertogalvez-dev/Convive/issues/35)                                                                            |
 | T-10 | High     | Insider/stale membership/excess admin reads data                    | Least-privilege product rule                                                    | Object policy, invalidation and audit: #31, [#44](https://github.com/albertogalvez-dev/Convive/issues/44), [#47](https://github.com/albertogalvez-dev/Convive/issues/47)                                                                                   |
 | T-11 | Medium   | Logs/monitoring retain content, credentials or IPs                  | Structured security logger excludes bodies/secrets                              | Collection, redaction, access, retention and incident process: [#65](https://github.com/albertogalvez-dev/Convive/issues/65)                                                                                                                               |

@@ -27,7 +27,7 @@ identify someone.
 | P-09 | Professional identity/password hash/status          | Fictional fixtures/demo seed; reporter email never account recovery         | Invitation/reset/account lifecycle absent       | Model only / #30/#70         |
 | P-10 | Membership/role: organisation authorisation         | Identity, membership and role separate; admin is not blanket content access | Prompt revocation required                      | Model only / #30/#31/#44     |
 | P-11 | Professional sessions/auth events                   | Server session, no browser bearer token, minimal logs                       | Expiry/invalidation not implemented             | Planned / #30/#65            |
-| P-12 | Attachments/metadata: evidence                      | Not collected; allowlist, limits, isolation and scanning required           | Lifecycle must precede collection               | Blocked / #36-#38            |
+| P-12 | Attachments/metadata: evidence                      | Not collected; accepted allowlist, private quarantine, scan and access boundary in [attachment threat model](attachment-threat-model.md) | Fictional lifecycle is explicit; real retention remains blocked | Design accepted / #37-#38 |
 | P-13 | Optional reporter email/delivery metadata           | Not collected; never identity or access recovery                            | Provider retention/verification undecided       | Blocked / #39-#40            |
 | P-14 | Case people/actions/assessments                     | Not implemented; only necessary fields/assignments                          | Protocol, deletion/legal hold must be versioned | Blocked / #43-#49            |
 | P-15 | Audit trail: protected accountability               | Separate from logs; exclude secrets/gratuitous content                      | Controller-approved access/period needed        | Blocked / #47/#66            |
@@ -45,7 +45,7 @@ identify someone.
 | R-04 | High     | Shared browser exposes saved secret: saving is explicit/browser-controlled; warn and preserve capability closure                  | ADR-0011 trigger |
 | R-05 | High     | Indefinite reports/logs/backups: real data blocked until periods, deletion, legal hold and restore continuity exist               | #47/#65/#66      |
 | R-06 | High     | Email/third party links identity to report: disabled until purpose, verification and provider boundary are reviewed               | #39/#40          |
-| R-07 | High     | Evidence malware/metadata harms people: attachments disabled pending lifecycle/threat decision                                    | #36-#38          |
+| R-07 | High     | Evidence malware/metadata harms people: attachments remain disabled until the accepted private lifecycle, scan and retrieval design is implemented | #37-#38          |
 | R-08 | Medium   | Monitoring captures excessive IP/device data: the implemented checks use fixed redacted fields; real deployment still needs approved purpose, access and period | #65 / controller gate |
 | R-09 | Medium   | Test artifacts retain credentials/content: fictional data; E2E removes context and redacts failure screenshot                     | Verified #27     |
 | R-10 | Medium   | Restore resurrects deleted/revoked access: reconcile sessions, grants, tokens, memberships, deletion and audit                    | #66              |
