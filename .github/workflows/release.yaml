@@ -1,0 +1,189 @@
+name: Controlled release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_ref:
+        description: Reviewed commit or tag from main to release
+        required: true
+        default: main
+        type: string
+      deploy:
+        description: Reconcile the approved convive-demo VPS environment
+        required: true
+        default: false
+        type: boolean
+      migration_class:
+        description: Migration rollback classification
+        required: true
+        default: backward-compatible
+        type: choice
+        options:
+          - none
+          - backward-compatible
+          - incompatible
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  packages: write
+
+concurrency:
+  group: convive-controlled-release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify reviewed main revision
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
+
+    steps:
+      - name: Check out selected revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.release_ref }}
+          fetch-depth: 0
+
+      - name: Verify revision belongs to main
+        id: revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          git fetch --no-tags origin main --depth=1
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "The selected revision is not an ancestor of origin/main." >&2
+            exit 1
+          fi
+
+          for check in Backend Frontend Infrastructure "Encrypted recovery" "End-to-end"; do
+            conclusion="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${sha}/check-runs" --paginate --jq ".check_runs[] | select(.name == \"${check}\") | .conclusion" | tail -n 1)"
+            if [[ "$conclusion" != success ]]; then
+              echo "Required check '$check' is not successful (got '$conclusion')." >&2
+              exit 1
+            fi
+          done
+
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build immutable images
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      api_image: ${{ steps.images.outputs.api_image }}
+      gateway_image: ${{ steps.images.outputs.gateway_image }}
+
+    steps:
+      - name: Check out reviewed revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.verify.outputs.revision }}
+
+      - name: Log in to GHCR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+
+      - name: Build and publish API image
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}/api:${{ needs.verify.outputs.revision }}
+          REVISION: ${{ needs.verify.outputs.revision }}
+        run: |
+          set -euo pipefail
+          image="${IMAGE,,}"
+          docker build \
+            --file infrastructure/production/api.Dockerfile \
+            --label "org.opencontainers.image.revision=$REVISION" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --tag "$image" .
+          docker push "$image"
+          echo "API_IMAGE_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$image")" >> "$GITHUB_ENV"
+
+      - name: Build and publish gateway image
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}/gateway:${{ needs.verify.outputs.revision }}
+          REVISION: ${{ needs.verify.outputs.revision }}
+        run: |
+          set -euo pipefail
+          image="${IMAGE,,}"
+          docker build \
+            --file infrastructure/production/gateway.Dockerfile \
+            --label "org.opencontainers.image.revision=$REVISION" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --tag "$image" .
+          docker push "$image"
+          echo "GATEWAY_IMAGE_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$image")" >> "$GITHUB_ENV"
+
+      - name: Expose immutable image digests
+        id: images
+        run: |
+          set -euo pipefail
+          test -n "${API_IMAGE_DIGEST:-}" \
+            && test -n "${GATEWAY_IMAGE_DIGEST:-}"
+          echo "api_image=$API_IMAGE_DIGEST" >> "$GITHUB_OUTPUT"
+          echo "gateway_image=$GATEWAY_IMAGE_DIGEST" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy approved demonstration
+    if: ${{ inputs.deploy }}
+    needs: [verify, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: convive-demo
+      url: ${{ secrets.CONVIVE_PUBLIC_URL }}
+
+    steps:
+      - name: Check out reviewed revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.verify.outputs.revision }}
+
+      - name: Prepare SSH trust
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.CONVIVE_VPS_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.CONVIVE_VPS_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -m 0700 -d "$RUNNER_TEMP/convive-ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/convive-ssh/id_ed25519"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/convive-ssh/known_hosts"
+          chmod 0600 "$RUNNER_TEMP/convive-ssh/id_ed25519" "$RUNNER_TEMP/convive-ssh/known_hosts"
+
+      - name: Upload reviewed release materials
+        env:
+          VPS_HOST: ${{ secrets.CONVIVE_VPS_HOST }}
+          VPS_USER: ${{ secrets.CONVIVE_VPS_USER }}
+          RELEASE_ID: ${{ needs.verify.outputs.revision }}
+          SSH_DIR: ${{ runner.temp }}/convive-ssh
+        run: |
+          set -euo pipefail
+          staging="/tmp/convive-release-${RELEASE_ID}"
+          ssh -i "$SSH_DIR/id_ed25519" -o UserKnownHostsFile="$SSH_DIR/known_hosts" "$VPS_USER@$VPS_HOST" "install -d -m 0700 '$staging'"
+          scp -i "$SSH_DIR/id_ed25519" -o UserKnownHostsFile="$SSH_DIR/known_hosts" \
+            infrastructure/production/compose.production.yaml \
+            infrastructure/release/reconcile.sh \
+            "$VPS_USER@$VPS_HOST:$staging/"
+
+      - name: Reconcile Convive and run smoke checks
+        env:
+          VPS_HOST: ${{ secrets.CONVIVE_VPS_HOST }}
+          VPS_USER: ${{ secrets.CONVIVE_VPS_USER }}
+          PUBLIC_URL: ${{ secrets.CONVIVE_PUBLIC_URL }}
+          RELEASE_ID: ${{ needs.verify.outputs.revision }}
+          API_IMAGE: ${{ needs.build.outputs.api_image }}
+          GATEWAY_IMAGE: ${{ needs.build.outputs.gateway_image }}
+          MIGRATION_CLASS: ${{ inputs.migration_class }}
+          SSH_DIR: ${{ runner.temp }}/convive-ssh
+        run: |
+          set -euo pipefail
+          staging="/tmp/convive-release-${RELEASE_ID}"
+          ssh -i "$SSH_DIR/id_ed25519" -o UserKnownHostsFile="$SSH_DIR/known_hosts" "$VPS_USER@$VPS_HOST" \
+            "sudo -n env CONVIVE_PUBLIC_URL='$PUBLIC_URL' CONVIVE_RUNTIME_DIR=/srv/convive CONVIVE_SECRET_DIR=/etc/convive/secrets bash '$staging/reconcile.sh' '$staging' '$RELEASE_ID' '$API_IMAGE' '$GATEWAY_IMAGE' '$MIGRATION_CLASS'"

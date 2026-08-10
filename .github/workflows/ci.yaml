@@ -147,6 +147,22 @@ jobs:
           -f infrastructure/compose/compose.development.yaml
           config --quiet
 
+      - name: Validate production release boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          secret_dir="$(mktemp -d)"
+          trap 'rm -rf "$secret_dir"' EXIT
+          printf '%s\n' tunnel-token > "$secret_dir/cloudflare_tunnel_token"
+          printf '%s\n' 'APP_SECRET=ci-only' > "$secret_dir/api.env"
+          printf '%s\n' database-password > "$secret_dir/database_password"
+          printf '%s\n' 'requirepass ci-only' 'appendonly yes' > "$secret_dir/redis.conf"
+          CONVIVE_SECRET_DIR="$secret_dir" \
+          CONVIVE_API_IMAGE="ghcr.io/albertogalvez-dev/convive/api@sha256:$(printf 'a%.0s' {1..64})" \
+          CONVIVE_GATEWAY_IMAGE="ghcr.io/albertogalvez-dev/convive/gateway@sha256:$(printf 'b%.0s' {1..64})" \
+            docker compose -f infrastructure/production/compose.production.yaml config --quiet
+          bash -n infrastructure/release/*.sh
+
       - name: Bootstrap backend dependencies through Docker Compose
         run: >
           docker compose
