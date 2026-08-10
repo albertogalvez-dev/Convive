@@ -16,6 +16,8 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Testing strategy](testing/strategy.md): risk ownership, isolation, coverage
   and flaky-test policy across every automated layer.
 - [Playwright guide](testing/playwright.md): isolated browser verification.
+- [Accessibility baseline](testing/accessibility.md): automated checks, manual
+  matrix, responsive reflow and defect priority.
 - [Code-quality baseline](development/code-quality.md): static analysis,
   formatting, exceptions and PhpStorm setup.
 - [Development log](development-log.md): material delivery decisions and

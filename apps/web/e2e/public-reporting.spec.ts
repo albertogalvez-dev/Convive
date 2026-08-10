@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const PUBLIC_REPORTING_IDENTIFIER = 'ORG_DEM0000000000000';
@@ -46,6 +47,7 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
 
   await expect(page.getByText(FICTIONAL_ORGANISATION, { exact: true })).toBeVisible();
+  await expectNoAccessibilityViolations(page);
   await page.getByLabel('¿Qué ha ocurrido?').fill(situationDescription);
   await page.getByRole('button', { name: 'Continuar' }).click();
   await page.getByLabel('Online').check();
@@ -65,6 +67,7 @@ test('completes the fictional reporter-professional conversation loop', async ({
 
   page.on('dialog', (dialog) => dialog.accept());
   await page.goto('/seguimiento');
+  await expectNoAccessibilityViolations(page);
   expect(publicReference).toMatch(/^[0-9A-F]{20}$/);
   expect(accessSecret.length).toBeGreaterThanOrEqual(32);
   expect(credentialWasAbsentAfterSubmission).toBe(true);
@@ -84,6 +87,7 @@ test('completes the fictional reporter-professional conversation loop', async ({
   try {
     const professionalPage = await professionalContext.newPage();
     await loginAsProfessional(professionalPage, TRIAGE_EMAIL);
+    await expectNoAccessibilityViolations(professionalPage);
     await professionalPage.goto(absoluteUrl('/profesionales/comunicaciones'));
     await professionalPage.getByText(situationDescription, { exact: true }).click();
 
@@ -136,6 +140,29 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await expectCredentialAbsentFromBrowserState(page, context, accessSecret);
 });
 
+test('keeps the public reporting form keyboard-operable and responsive', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
+
+  const description = page.locator('#situationDescription');
+  await expect(description).toBeVisible();
+  await description.press('Tab');
+  await expect(page.getByRole('button', { name: 'Continuar' })).toBeFocused();
+  await page.getByRole('button', { name: 'Continuar' }).press('Enter');
+  await expect(page.getByRole('alert')).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe(
+    'auto',
+  );
+});
+
 async function loginAsProfessional(
   page: import('@playwright/test').Page,
   email: string,
@@ -185,4 +212,14 @@ async function expectCredentialAbsentFromBrowserState(
   accessSecret: string,
 ): Promise<void> {
   expect(await credentialIsAbsentFromBrowserState(page, context, accessSecret)).toBe(true);
+}
+
+async function expectNoAccessibilityViolations(
+  page: import('@playwright/test').Page,
+): Promise<void> {
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .analyze();
+
+  expect(results.violations).toEqual([]);
 }

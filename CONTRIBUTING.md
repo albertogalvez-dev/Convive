@@ -21,6 +21,8 @@ will fit the project's current direction or delivery order.
   school information, in code, fixtures, tests or examples.
 - Read the [layered testing strategy](docs/testing/strategy.md) before changing
   a test boundary or deciding what evidence a behaviour change needs.
+- Read the [accessibility baseline](docs/testing/accessibility.md) before
+  changing an interface, keyboard interaction, responsive layout or motion.
 
 ## Workflow
 
