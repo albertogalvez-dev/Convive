@@ -18,6 +18,8 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Playwright guide](testing/playwright.md): isolated browser verification.
 - [Accessibility baseline](testing/accessibility.md): automated checks, manual
   matrix, responsive reflow and defect priority.
+- [Performance baseline](testing/performance.md): bounded bundle, API and
+  critical-route regression budgets for the fictional demo.
 - [Code-quality baseline](development/code-quality.md): static analysis,
   formatting, exceptions and PhpStorm setup.
 - [Development log](development-log.md): material delivery decisions and
