@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-const PUBLIC_REPORTING_IDENTIFIER = 'ORG_E2E0000000000000';
-const FICTIONAL_ORGANISATION = 'Convive E2E School';
+const PUBLIC_REPORTING_IDENTIFIER = 'ORG_DEM0000000000000';
+const FICTIONAL_ORGANISATION = 'IES Horizonte Ficticio — DEMOSTRACIÓN';
 const APP_BASE_URL = process.env['PLAYWRIGHT_BASE_URL'] ?? 'http://127.0.0.1:4200';
-const TRIAGE_EMAIL = 'triage.e2e@convive.example';
-const ADMINISTRATOR_EMAIL = 'administrator.e2e@convive.example';
-const PROFESSIONAL_PASSWORD = 'Fictional professional 35!';
+const TRIAGE_EMAIL = 'lucia.demo@convive.example';
+const ADMINISTRATOR_EMAIL = 'carlos.demo@convive.example';
+const PROFESSIONAL_PASSWORD = requiredEnvironmentVariable('E2E_PROFESSIONAL_PASSWORD');
 
 test.afterEach(async ({ context, page }, testInfo) => {
   if (testInfo.status === testInfo.expectedStatus) {
@@ -149,6 +149,16 @@ async function loginAsProfessional(
 
 function absoluteUrl(path: string): string {
   return new URL(path, APP_BASE_URL).toString();
+}
+
+function requiredEnvironmentVariable(name: string): string {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`${name} is required for the isolated fictional E2E journey.`);
+  }
+
+  return value;
 }
 
 async function credentialIsAbsentFromBrowserState(
