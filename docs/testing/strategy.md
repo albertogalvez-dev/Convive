@@ -38,9 +38,8 @@ always require automated evidence before merge:
 
 Accessibility is a quality boundary too. Component and browser tests must use
 semantic roles, labels and keyboard interaction where a changed control has an
-accessible behaviour. Issue #61 owns the project-wide accessibility matrix and
-the selection of additional automated checks; this strategy prevents that work
-from being duplicated prematurely.
+accessible behaviour. The [accessibility baseline](accessibility.md) defines
+the project-wide automated checks and manual matrix.
 
 ## Fictional data and isolation
 
