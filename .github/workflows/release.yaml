@@ -138,7 +138,6 @@ jobs:
     timeout-minutes: 20
     environment:
       name: convive-demo
-      url: ${{ secrets.CONVIVE_PUBLIC_URL }}
 
     steps:
       - name: Check out reviewed revision

@@ -33,7 +33,9 @@ WORKDIR /app
 COPY --from=dependencies-runtime /app/vendor ./vendor
 COPY apps/api .
 
-RUN mkdir --parents var/cache var/log \
+RUN rm --force .env .env.dev .env.test \
+    && rm --recursive --force tests \
+    && mkdir --parents var/cache var/log \
     && chown --recursive www-data:www-data var
 
 USER www-data

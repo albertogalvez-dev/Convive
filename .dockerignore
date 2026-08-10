@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+docs
+apps/api/tests
+apps/api/var
+apps/api/vendor
+apps/web/.angular
+apps/web/coverage
+apps/web/dist
+apps/web/node_modules
+apps/web/playwright-report
+apps/web/test-results
+apps/web/e2e
+*.log
