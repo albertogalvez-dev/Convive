@@ -1,0 +1,132 @@
+name: convive
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:2025.7.0
+    command: ["tunnel", "--no-autoupdate", "run", "--token-file", "/run/secrets/cloudflare_tunnel_token"]
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    secrets: [cloudflare_tunnel_token]
+    networks: [edge]
+
+  gateway:
+    image: ${CONVIVE_GATEWAY_IMAGE:?CONVIVE_GATEWAY_IMAGE is required}
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/data", "/config"]
+    restart: unless-stopped
+    networks: [edge, application]
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  api:
+    image: ${CONVIVE_API_IMAGE:?CONVIVE_API_IMAGE is required}
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      TRUSTED_PROXIES: 172.30.16.0/28
+    env_file:
+      - ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
+    secrets: [api_env]
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp"]
+    restart: unless-stopped
+    networks: [application, data, cache]
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  database:
+    image: postgres:18.4-bookworm
+    environment:
+      POSTGRES_DB: convive
+      POSTGRES_USER: convive
+      POSTGRES_PASSWORD_FILE: /run/secrets/database_password
+    secrets: [database_password]
+    volumes: [database-data:/var/lib/postgresql]
+    read_only: true
+    tmpfs: ["/tmp", "/run/postgresql"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=convive --dbname=convive"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: redis:8.2.1-alpine
+    command: ["redis-server", "/run/secrets/redis.conf", "--appendonly", "yes"]
+    secrets: [redis_conf]
+    volumes: [redis-data:/data]
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [cache]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli --no-auth-warning -a \"$$(sed -n 's/^requirepass //p' /run/secrets/redis.conf)\" ping | grep --fixed-strings PONG",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  database-data:
+  redis-data:
+
+networks:
+  edge:
+    name: convive_edge
+    ipam:
+      config: [{subnet: 172.30.0.0/28}]
+  application:
+    name: convive_application
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.16.0/28}]
+  data:
+    name: convive_data
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.32.0/28}]
+  cache:
+    name: convive_cache
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.48.0/28}]
+
+secrets:
+  cloudflare_tunnel_token:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/cloudflare_tunnel_token
+  api_env:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
+  database_password:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/database_password
+  redis_conf:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/redis.conf
