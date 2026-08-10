@@ -10,7 +10,7 @@
 }
 .eyebrow {
   margin: 0 0 0.45rem;
-  color: #168fc5;
+  color: #176f9c;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -67,14 +67,14 @@ h1 {
 }
 .summary-card small {
   grid-column: 1;
-  color: #687a99;
+  color: #5d6f8e;
   font-size: 0.82rem;
 }
 .card-arrow {
   grid-column: 2;
   grid-row: 2 / 4;
   align-self: end;
-  color: #159bd2;
+  color: #176f9c;
   font-size: 1.25rem;
 }
 .summary-card:hover {
@@ -144,7 +144,7 @@ li > a:hover {
 }
 .report-copy > span {
   overflow: hidden;
-  color: #697a99;
+  color: #5d6f8e;
   font:
     700 0.72rem ui-monospace,
     SFMono-Regular,
@@ -155,7 +155,7 @@ li > a:hover {
 .report-status {
   border-radius: 999px;
   padding: 0.3rem 0.6rem;
-  color: #087caf;
+  color: #0b638a;
   background: #eaf7fc;
   font-size: 0.72rem;
   font-weight: 800;
@@ -165,16 +165,16 @@ li > a:hover {
   background: #edf8f4;
 }
 time {
-  color: #687a99;
+  color: #5d6f8e;
   font-size: 0.8rem;
 }
 .row-arrow {
-  color: #159bd2;
+  color: #176f9c;
 }
 .empty {
   margin: 0;
   padding: 2.5rem 1.5rem;
-  color: #687a99;
+  color: #5d6f8e;
 }
 .dashboard-state {
   min-height: 22rem;
