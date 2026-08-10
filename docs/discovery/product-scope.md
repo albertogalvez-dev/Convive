@@ -170,6 +170,11 @@ authentication, proof of membership or a report follow-up secret. The initial
 slice does not require a public organisation directory or a mandatory rotating
 centre access code.
 
+The direct reporter route is separate from the future public product website:
+it remains on the application host and does not pass through commercial
+onboarding. The host, navigation, indexing and privacy boundary is selected in
+[ADR-0014](../architecture/decisions/0014-separate-public-website-and-application-domains.md).
+
 The interface must clearly explain:
 
 - what anonymity means;
