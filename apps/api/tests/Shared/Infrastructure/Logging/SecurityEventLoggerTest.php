@@ -103,4 +103,84 @@ final class SecurityEventLoggerTest extends TestCase
             ),
         );
     }
+
+    public function testReporterAttachmentDownloadAuditNeverLogsTheAttachmentIdentifier(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('info')
+            ->with(
+                'reporter_attachment_downloaded',
+                self::callback(
+                    static fn (array $context): bool =>
+                        $context['path'] === '/api/v1/reporter/report/attachments/{id}/download'
+                        && !str_contains(
+                            (string) json_encode($context),
+                            '0192a5c0-9999-7000-8000-000000000037',
+                        ),
+                ),
+            );
+        $request = Request::create(
+            '/api/v1/reporter/report/attachments/0192a5c0-9999-7000-8000-000000000037/download',
+            'GET',
+        );
+
+        (new SecurityEventLogger($logger))->reporterAttachmentDownloaded($request);
+    }
+
+    public function testAttachmentRateLimitAuditUsesTheRouteTemplate(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with(
+                'rate_limit_exceeded',
+                self::callback(
+                    static fn (array $context): bool =>
+                        $context['path'] === '/api/v1/reporter/report/attachments/{id}/download'
+                        && !str_contains(
+                            (string) json_encode($context),
+                            '0192a5c0-9999-7000-8000-000000000037',
+                        ),
+                ),
+            );
+        $request = Request::create(
+            '/api/v1/reporter/report/attachments/0192a5c0-9999-7000-8000-000000000037/download',
+            'GET',
+        );
+        $request->attributes->set('_route', 'api_v1_reporter_download_report_attachment');
+
+        (new SecurityEventLogger($logger))->rateLimitExceeded(
+            'report_attachment_download_capability',
+            $request,
+        );
+    }
+
+    public function testAttachmentDownloadConcurrencyAuditUsesTheRouteTemplate(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with(
+                'attachment_download_concurrency_limited',
+                self::callback(
+                    static fn (array $context): bool =>
+                        $context['path'] === '/api/v1/reporter/report/attachments/{id}/download'
+                        && !str_contains(
+                            (string) json_encode($context),
+                            '0192a5c0-9999-7000-8000-000000000037',
+                        ),
+                ),
+            );
+        $request = Request::create(
+            '/api/v1/reporter/report/attachments/0192a5c0-9999-7000-8000-000000000037/download',
+            'GET',
+        );
+        $request->attributes->set('_route', 'api_v1_reporter_download_report_attachment');
+
+        (new SecurityEventLogger($logger))->attachmentDownloadConcurrencyLimited($request);
+    }
 }

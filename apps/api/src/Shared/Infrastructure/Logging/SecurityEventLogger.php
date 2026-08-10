@@ -27,13 +27,19 @@ final readonly class SecurityEventLogger
     {
         $this->logger->warning('rate_limit_exceeded', $this->context(
             $request,
-            ['limiter' => $limiterName],
+            [
+                'path' => $this->safePath($request),
+                'limiter' => $limiterName,
+            ],
         ));
     }
 
     public function reportAccessDenied(Request $request): void
     {
-        $this->logger->notice('report_access_denied', $this->context($request));
+        $this->logger->notice('report_access_denied', $this->context(
+            $request,
+            ['path' => $this->safePath($request)],
+        ));
     }
 
     public function csrfDenied(Request $request): void
@@ -84,6 +90,64 @@ final readonly class SecurityEventLogger
         $this->logger->error('attachment_deletion_failed');
     }
 
+    public function attachmentUploadRejected(Request $request): void
+    {
+        $this->logger->notice(
+            'attachment_upload_rejected',
+            $this->context($request, [
+                'path' => '/api/v1/reporter/report/attachments',
+            ]),
+        );
+    }
+
+    public function reporterAttachmentDownloadDenied(Request $request): void
+    {
+        $this->logger->notice(
+            'reporter_attachment_download_denied',
+            $this->context($request, [
+                'path' => '/api/v1/reporter/report/attachments/{id}/download',
+            ]),
+        );
+    }
+
+    public function reporterAttachmentDownloaded(Request $request): void
+    {
+        $this->logger->info(
+            'reporter_attachment_downloaded',
+            $this->context($request, [
+                'path' => '/api/v1/reporter/report/attachments/{id}/download',
+            ]),
+        );
+    }
+
+    public function attachmentDownloadConcurrencyLimited(Request $request): void
+    {
+        $this->logger->warning(
+            'attachment_download_concurrency_limited',
+            $this->context($request, ['path' => $this->safePath($request)]),
+        );
+    }
+
+    public function professionalAttachmentDownloadDenied(Request $request): void
+    {
+        $this->logger->warning(
+            'professional_attachment_download_denied',
+            $this->context($request, [
+                'path' => '/api/v1/professional/reports/{reportId}/attachments/{attachmentId}/download',
+            ]),
+        );
+    }
+
+    public function professionalAttachmentDownloaded(Request $request): void
+    {
+        $this->logger->info(
+            'professional_attachment_downloaded',
+            $this->context($request, [
+                'path' => '/api/v1/professional/reports/{reportId}/attachments/{attachmentId}/download',
+            ]),
+        );
+    }
+
     /**
      * @param array<string, scalar> $extra
      *
@@ -97,5 +161,17 @@ final readonly class SecurityEventLogger
             'client_ip' => $request->getClientIp(),
             ...$extra,
         ];
+    }
+
+    private function safePath(Request $request): string
+    {
+        return match ($request->attributes->getString('_route')) {
+            'api_v1_reporter_upload_report_attachments',
+            'api_v1_reporter_list_report_attachments' => '/api/v1/reporter/report/attachments',
+            'api_v1_reporter_download_report_attachment' => '/api/v1/reporter/report/attachments/{id}/download',
+            'api_v1_professional_list_report_attachments' => '/api/v1/professional/reports/{id}/attachments',
+            'api_v1_professional_download_report_attachment' => '/api/v1/professional/reports/{reportId}/attachments/{attachmentId}/download',
+            default => $request->getPathInfo(),
+        };
     }
 }

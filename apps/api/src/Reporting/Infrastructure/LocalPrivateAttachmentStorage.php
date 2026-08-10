@@ -198,6 +198,12 @@ final class LocalPrivateAttachmentStorage implements AttachmentStorage
         return $deleted;
     }
 
+    /** @internal Shared only with local private-volume infrastructure. */
+    public function privateDirectory(): string
+    {
+        return $this->directory;
+    }
+
     private function initialisePrivateDirectory(
         string $directory,
         string $projectDirectory,

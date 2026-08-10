@@ -109,6 +109,70 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/reports/{id}/attachments':
+    get:
+      tags:
+        - 'Professional reports'
+      summary: 'List available evidence for an authorised professional report'
+      description: "Returns only available attachments in the professional's active triage scope. Processing, rejected and deleted evidence is omitted."
+      operationId: listProfessionalReportAttachments
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Available attachments in the authorised report scope.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - items
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/ProfessionalReportAttachment' } }
+                type: object
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The report is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/reports/{id}/attachments/{attachmentId}/download':
+    get:
+      tags:
+        - 'Professional reports'
+      summary: 'Download available evidence in an authorised professional report'
+      description: 'Streams one available private attachment with a generated filename. It never returns a direct object URL or an inline preview.'
+      operationId: downloadProfessionalReportAttachment
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The authorised attachment stream.'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The report or attachment is unavailable in this scope.'
+        '429':
+          description: 'The download rate or concurrent stream limit was exceeded.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/reports/{id}/reviews':
     post:
       tags:
@@ -330,6 +394,104 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
+  /api/v1/reporter/report/attachments:
+    get:
+      tags:
+        - 'Public reporting'
+      summary: "List the reporter's attachment states"
+      description: 'Returns only a minimal processing or unavailable state until an attachment is scanned and available. It never exposes a scanner verdict or storage metadata.'
+      operationId: listReporterReportAttachments
+      responses:
+        '200':
+          description: 'The reporter attachment states.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - items
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/ReporterAttachment' } }
+                type: object
+        '401':
+          description: 'The report access capability was not accepted.'
+        '429':
+          description: 'The read rate limit was exceeded.'
+      security:
+        -
+          reportAccessCookie: []
+    post:
+      tags:
+        - 'Public reporting'
+      summary: "Upload evidence for the reporter's own report"
+      description: 'Accepts up to three PDF, JPEG or PNG multipart files only after capability and same-origin checks. Files remain unavailable until private scanning completes.'
+      operationId: uploadReporterReportAttachments
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - attachments
+              properties:
+                attachments:
+                  type: array
+                  items: { type: string, format: binary }
+                  maxItems: 3
+              type: object
+      responses:
+        '201':
+          description: 'Private attachment records were quarantined for scanning.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - items
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/ReporterAttachment' } }
+                type: object
+        '401':
+          description: 'The report access capability was not accepted.'
+        '403':
+          description: 'The upload failed CSRF validation.'
+        '409':
+          description: 'The report attachment capacity was reached.'
+        '413':
+          description: 'An attachment exceeds the accepted size.'
+        '415':
+          description: 'A submitted attachment type is not accepted.'
+        '422':
+          description: 'The multipart upload is invalid.'
+        '429':
+          description: 'The upload rate limit was exceeded.'
+      security:
+        -
+          reportAccessCookie: []
+  '/api/v1/reporter/report/attachments/{id}/download':
+    get:
+      tags:
+        - 'Public reporting'
+      summary: "Download an available attachment from the reporter's own report"
+      description: 'Streams an available private object with a generated filename. Files that are processing, rejected or deleted are indistinguishable from unknown attachments.'
+      operationId: downloadReporterReportAttachment
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The authorised attachment stream.'
+        '401':
+          description: 'The report access capability was not accepted.'
+        '404':
+          description: 'The attachment is unavailable.'
+        '429':
+          description: 'The download rate or concurrent stream limit was exceeded.'
       security:
         -
           reportAccessCookie: []
@@ -567,6 +729,64 @@ components:
           items:
             $ref: '#/components/schemas/FollowUpEntry'
           maxItems: 100
+      type: object
+      additionalProperties: false
+    ReporterAttachment:
+      required:
+        - id
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          description: 'A minimal lifecycle state that never exposes a scanner verdict.'
+          type: string
+          enum:
+            - processing
+            - available
+            - unavailable
+        createdAt:
+          type: string
+          format: date-time
+        mediaType:
+          description: 'Present only when the attachment is available.'
+          type: string
+          enum:
+            - application/pdf
+            - image/jpeg
+            - image/png
+        byteSize:
+          description: 'Present only when the attachment is available.'
+          type: integer
+          maximum: 5242880
+          minimum: 1
+      type: object
+      additionalProperties: false
+    ProfessionalReportAttachment:
+      required:
+        - id
+        - mediaType
+        - byteSize
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        mediaType:
+          type: string
+          enum:
+            - application/pdf
+            - image/jpeg
+            - image/png
+        byteSize:
+          type: integer
+          maximum: 5242880
+          minimum: 1
+        createdAt:
+          type: string
+          format: date-time
       type: object
       additionalProperties: false
     ProfessionalReportSummary:

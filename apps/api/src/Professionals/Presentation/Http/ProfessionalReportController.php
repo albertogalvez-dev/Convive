@@ -11,19 +11,29 @@ use App\Reporting\Application\ProfessionalInbox\ProfessionalReportDetail;
 use App\Reporting\Application\ProfessionalInbox\ProfessionalReportInbox;
 use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
+use App\Reporting\Domain\ReportAttachment;
+use App\Reporting\Domain\ReportAttachmentRepository;
 use App\Reporting\Domain\ReportAlreadyReviewed;
 use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\ReportStatus;
+use App\Reporting\Presentation\Http\PrivateReportAttachmentDownloadResponder;
+use App\Reporting\Presentation\Http\ReportAttachmentPresenter;
+use App\Reporting\Presentation\Http\ReportAttachmentUnavailableHttpException;
+use App\Shared\Infrastructure\Logging\SecurityEventLogger;
+use App\Shared\Presentation\Http\RateLimitEnforcer;
 use Doctrine\ORM\OptimisticLockException;
 use InvalidArgumentException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Uid\Uuid;
 
@@ -37,6 +47,13 @@ final readonly class ProfessionalReportController
         private ProfessionalReportInbox $inbox,
         private ProfessionalReportCursorCodec $cursorCodec,
         private AddProfessionalReportResponse $addProfessionalResponse,
+        private ReportAttachmentRepository $attachments,
+        private ReportAttachmentPresenter $attachmentPresenter,
+        private PrivateReportAttachmentDownloadResponder $attachmentDownloadResponder,
+        private RateLimitEnforcer $rateLimitEnforcer,
+        private SecurityEventLogger $securityEventLogger,
+        #[Autowire(service: 'limiter.professional_attachment_download_ip')]
+        private RateLimiterFactory $attachmentDownloadRateLimiter,
     ) {
     }
 
@@ -135,6 +152,113 @@ final readonly class ProfessionalReportController
         $detail = $this->resolveDetail($id, $professional);
 
         return $this->json($this->serializeDetail($detail));
+    }
+
+    #[Route(
+        '/api/v1/professional/reports/{id}/attachments',
+        name: 'api_v1_professional_list_report_attachments',
+        methods: ['GET'],
+    )]
+    #[OA\Get(
+        operationId: 'listProfessionalReportAttachments',
+        summary: 'List available evidence for an authorised professional report',
+        description: 'Returns only available attachments in the professional\'s active triage scope. Processing, rejected and deleted evidence is omitted.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional reports'],
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_OK,
+                description: 'Available attachments in the authorised report scope.',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    required: ['items'],
+                    properties: [
+                        new OA\Property(
+                            property: 'items',
+                            type: 'array',
+                            items: new OA\Items(ref: '#/components/schemas/ProfessionalReportAttachment'),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'A professional session is required.'),
+            new OA\Response(response: 404, description: 'The report is unavailable in this scope.'),
+        ],
+    )]
+    public function listAttachments(
+        string $id,
+        #[CurrentUser] Professional $professional,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $attachments = array_values(array_filter(
+            $this->attachments->findByReport($detail->report),
+            static fn (ReportAttachment $attachment): bool => $attachment->isAvailable(),
+        ));
+
+        return $this->json([
+            'items' => array_map($this->attachmentPresenter->professional(...), $attachments),
+        ]);
+    }
+
+    #[Route(
+        '/api/v1/professional/reports/{id}/attachments/{attachmentId}/download',
+        name: 'api_v1_professional_download_report_attachment',
+        methods: ['GET'],
+    )]
+    #[OA\Get(
+        operationId: 'downloadProfessionalReportAttachment',
+        summary: 'Download available evidence in an authorised professional report',
+        description: 'Streams one available private attachment with a generated filename. It never returns a direct object URL or an inline preview.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional reports'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The authorised attachment stream.'),
+            new OA\Response(response: 401, description: 'A professional session is required.'),
+            new OA\Response(response: 404, description: 'The report or attachment is unavailable in this scope.'),
+            new OA\Response(response: 429, description: 'The download rate or concurrent stream limit was exceeded.'),
+        ],
+    )]
+    public function downloadAttachment(
+        string $id,
+        string $attachmentId,
+        #[CurrentUser] Professional $professional,
+        Request $request,
+    ): StreamedResponse {
+        $this->rateLimitEnforcer->enforce(
+            $this->attachmentDownloadRateLimiter,
+            'professional_attachment_download_ip',
+            $request,
+        );
+        $detail = $this->resolveDetail($id, $professional);
+
+        if (!Uuid::isValid($attachmentId)) {
+            $this->securityEventLogger->professionalAttachmentDownloadDenied($request);
+
+            throw new ReportAttachmentUnavailableHttpException();
+        }
+
+        $attachment = $this->attachments->findByIdForReport(
+            Uuid::fromString($attachmentId),
+            $detail->report,
+        );
+
+        if ($attachment === null || !$attachment->isAvailable()) {
+            $this->securityEventLogger->professionalAttachmentDownloadDenied($request);
+
+            throw new ReportAttachmentUnavailableHttpException();
+        }
+
+        try {
+            $response = $this->attachmentDownloadResponder->respond($attachment);
+        } catch (ReportAttachmentUnavailableHttpException $exception) {
+            $this->securityEventLogger->professionalAttachmentDownloadDenied($request);
+
+            throw $exception;
+        }
+
+        $this->securityEventLogger->professionalAttachmentDownloaded($request);
+
+        return $response;
     }
 
     #[Route(

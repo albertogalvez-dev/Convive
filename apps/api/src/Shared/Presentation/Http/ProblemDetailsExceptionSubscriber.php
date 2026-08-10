@@ -11,11 +11,19 @@ use App\Professionals\Presentation\Http\InvalidProfessionalReportResponseHttpExc
 use App\Professionals\Presentation\Http\ProfessionalReportAlreadyReviewedHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportNotFoundHttpException;
 use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
+use App\Reporting\Application\AttachmentStorageLimitExceeded;
+use App\Reporting\Application\AttachmentDownloadConcurrencyLimitReached;
+use App\Reporting\Application\QuarantineReportAttachments\AttachmentUploadCountExceeded;
 use App\Reporting\Application\SubmitAnonymousReport\ReportingOrganisationNotFound;
 use App\Reporting\Application\VerifyReportAccess\ReportAccessDenied;
+use App\Reporting\Domain\ReportAttachmentQuotaExceeded;
+use App\Reporting\Presentation\Http\AttachmentUploadInvalidHttpException;
+use App\Reporting\Presentation\Http\AttachmentUploadTooLargeHttpException;
+use App\Reporting\Presentation\Http\AttachmentUploadUnsupportedMediaTypeHttpException;
 use App\Reporting\Presentation\Http\InvalidFollowUpEntryHttpException;
 use App\Reporting\Presentation\Http\ReportAccessCapabilityRejectedHttpException;
 use App\Reporting\Presentation\Http\ReportAccessDeniedHttpException;
+use App\Reporting\Presentation\Http\ReportAttachmentUnavailableHttpException;
 use App\Reporting\Presentation\Http\ReportingOrganisationNotFoundHttpException;
 use App\Shared\Infrastructure\Logging\SecurityEventLogger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -110,6 +118,20 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
         }
 
         if ($exception instanceof TooManyRequestsHttpException) {
+            if ($exception instanceof AttachmentDownloadConcurrencyLimitReached) {
+                $this->securityEventLogger->attachmentDownloadConcurrencyLimited($event->getRequest());
+                $response = $this->createResponse(
+                    'urn:convive:problem:attachment-download-busy',
+                    'Attachment download busy',
+                    Response::HTTP_TOO_MANY_REQUESTS,
+                    'The attachment download capacity is temporarily full. Try again shortly.',
+                );
+                $response->headers->set('Retry-After', '1');
+                $event->setResponse($response);
+
+                return;
+            }
+
             $response = $this->createResponse(
                 'urn:convive:problem:rate-limited',
                 'Too many requests',
@@ -151,6 +173,74 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'Invalid follow-up entry',
                     Response::HTTP_UNPROCESSABLE_ENTITY,
                     'The submitted follow-up entry is invalid.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof AttachmentUploadUnsupportedMediaTypeHttpException) {
+            $this->securityEventLogger->attachmentUploadRejected($event->getRequest());
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:attachment-type-not-accepted',
+                    'Attachment type not accepted',
+                    Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
+                    'The submitted attachment type is not accepted.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof AttachmentUploadTooLargeHttpException || $exception instanceof AttachmentStorageLimitExceeded) {
+            $this->securityEventLogger->attachmentUploadRejected($event->getRequest());
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:attachment-too-large',
+                    'Attachment too large',
+                    413,
+                    'The submitted attachment exceeds the accepted size.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof AttachmentUploadInvalidHttpException || $exception instanceof AttachmentUploadCountExceeded) {
+            $this->securityEventLogger->attachmentUploadRejected($event->getRequest());
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:invalid-attachment-upload',
+                    'Invalid attachment upload',
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'The attachment upload could not be accepted.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof ReportAttachmentQuotaExceeded) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:attachment-capacity-reached',
+                    'Attachment capacity reached',
+                    Response::HTTP_CONFLICT,
+                    'This report cannot accept more attachment data.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof ReportAttachmentUnavailableHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:attachment-unavailable',
+                    'Attachment unavailable',
+                    Response::HTTP_NOT_FOUND,
+                    'The requested attachment is unavailable.',
                 ),
             );
 

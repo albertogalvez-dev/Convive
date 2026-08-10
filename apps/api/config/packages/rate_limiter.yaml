@@ -38,6 +38,41 @@ framework:
             limit: 10
             interval: '1 minute'
 
+        report_attachment_upload_ip:
+            policy: sliding_window
+            limit: 6
+            interval: '1 minute'
+
+        report_attachment_upload_capability:
+            policy: sliding_window
+            limit: 3
+            interval: '1 minute'
+
+        report_attachment_read_ip:
+            policy: sliding_window
+            limit: 120
+            interval: '1 minute'
+
+        report_attachment_read_capability:
+            policy: sliding_window
+            limit: 60
+            interval: '1 minute'
+
+        report_attachment_download_ip:
+            policy: sliding_window
+            limit: 60
+            interval: '1 minute'
+
+        report_attachment_download_capability:
+            policy: sliding_window
+            limit: 30
+            interval: '1 minute'
+
+        professional_attachment_download_ip:
+            policy: sliding_window
+            limit: 120
+            interval: '1 minute'
+
         professional_login_account:
             policy: token_bucket
             limit: 5

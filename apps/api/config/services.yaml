@@ -16,9 +16,8 @@ parameters:
     professional_session_cookie.name: 'professional_session'
     professional_session_cookie.secure: false
     # Attachment writes require an explicit private runtime directory. The
-    # development Compose override provides a dedicated named volume; test
-    # overrides this with an ignored cache path below. Production must supply
-    # a separately provisioned private mount before uploads are enabled.
+    # development and production Compose each provide a dedicated private
+    # named volume; test overrides this with an ignored cache path below.
     attachment_storage.directory: '%env(ATTACHMENT_STORAGE_DIRECTORY)%'
 
 services:
@@ -39,6 +38,7 @@ services:
     App\Reporting\Domain\ReportFollowUpEntryRepository: '@App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository'
     App\Reporting\Domain\ReportAttachmentRepository: '@App\Reporting\Infrastructure\DoctrineReportAttachmentRepository'
     App\Reporting\Application\AttachmentStorage: '@App\Reporting\Infrastructure\LocalPrivateAttachmentStorage'
+    App\Reporting\Application\AttachmentDownloadConcurrencyLimiter: '@App\Reporting\Infrastructure\LocalPrivateAttachmentDownloadConcurrencyLimiter'
     App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\UnavailableAttachmentScanner'
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
