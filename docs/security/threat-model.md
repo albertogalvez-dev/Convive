@@ -25,7 +25,7 @@ Untrusted reporter browser
   -> trusted edge and request controls (#63, not implemented)
   -> Symfony validation, authentication and authorisation boundary
   -> PostgreSQL
-  -> encrypted backup and restore boundary (#66, not implemented)
+  -> encrypted backup and restore boundary (#66, implementation in progress)
 
 Professional browser -> professional session (#30) -> Symfony API
 ```

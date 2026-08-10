@@ -1,0 +1,39 @@
+name: convive-restore
+
+services:
+  api:
+    image: ${CONVIVE_RESTORE_API_IMAGE:?required}
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${CONVIVE_RESTORE_APP_SECRET:?required}
+      DEFAULT_URI: http://localhost
+      DATABASE_URL: postgresql://convive_restore:${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}@database:5432/convive_restore?serverVersion=18.4&charset=utf8
+      SESSION_DATABASE_URL: pgsql:host=database;port=5432;dbname=convive_restore;user=convive_restore;password=${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
+    depends_on:
+      database:
+        condition: service_healthy
+    tmpfs:
+      - /app/var
+    networks:
+      - restore
+
+  database:
+    image: postgres:18.4-bookworm
+    environment:
+      POSTGRES_DB: convive_restore
+      POSTGRES_USER: convive_restore
+      POSTGRES_PASSWORD: ${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=$$POSTGRES_USER --dbname=$$POSTGRES_DB"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+    tmpfs:
+      - /var/lib/postgresql
+    networks:
+      - restore
+
+networks:
+  restore:
+    internal: true

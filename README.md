@@ -72,8 +72,14 @@ docs/
 └── discovery/
 
 infrastructure/
-└── compose/
+├── backup/  Versioned recovery automation and non-secret examples
+└── compose/  Development and production container topology
 ```
+
+Infrastructure automation belongs in this repository so that it can be
+reviewed, tested and reproduced. Populated production configuration, secrets,
+backup objects and runtime recovery evidence remain outside Git on the target
+host or approved external provider, as documented in the operational runbooks.
 
 The backend follows a modular-monolith architecture. Each module owns its domain and persistence boundaries while sharing one Symfony application and one PostgreSQL database.
 
