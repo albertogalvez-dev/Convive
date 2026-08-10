@@ -24,7 +24,9 @@ The current implementation provides:
 - PostgreSQL 18.4 with Doctrine ORM, DBAL and Migrations;
 - Docker Compose development infrastructure;
 - a versioned API namespace under `/api/v1`;
-- an operational frontend-to-backend health-check flow;
+- an operational API health endpoint and same-origin development proxy;
+- a public product homepage, kept separate from direct reporting and the
+  authenticated application by host responsibility;
 - the initial `Organisations` and `Reporting` domain model;
 - persistence for organisations and anonymous reports;
 - persisted public reporting identifiers and repository resolution for
@@ -39,10 +41,14 @@ The current implementation provides:
 - Chromium end-to-end coverage for anonymous submission and follow-up;
 - automated backend, frontend and infrastructure checks through GitHub Actions.
 
-The Angular root walking skeleton requests `GET /api/v1/health` through its
-development proxy. The public route `/r/{publicReportingIdentifier}` provides
-the anonymous reporting journey and submits reports through the same-origin API
-proxy.
+In development, `localhost` makes both host responsibilities available for
+verification. In the planned public boundary, `https://conviveaula.com` serves
+product information while `https://app.conviveaula.com` serves the direct
+reporter and professional routes. The public route
+`/r/{publicReportingIdentifier}` remains on the application host and submits
+reports through the same-origin API proxy. See
+[ADR-0014](docs/architecture/decisions/0014-separate-public-website-and-application-domains.md)
+for the canonical routes and security boundaries.
 
 The first reporting data model stores the minimum information required to
 receive an anonymous report securely. Organisations have persisted public
