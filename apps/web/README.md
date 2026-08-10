@@ -4,17 +4,20 @@ Angular frontend for Convive's public reporting and professional case-management
 
 ## Current status
 
-The frontend contains Convive's operational walking skeleton and the first
-public reporting journey.
+The frontend contains Convive's public product entry, direct reporter journey,
+private follow-up and protected professional workspace.
 
 It currently:
 
 - runs Angular 22 with TypeScript;
 - uses standalone Angular components;
 - uses the Angular Router;
-- requests `GET /api/v1/health` through `HttpClient`;
 - sends relative `/api/**` requests through the development proxy;
-- renders the health response returned by Symfony;
+- renders the public product homepage at `/`;
+- keeps the planned public website and application hosts separate while making
+  both paths available on local development hosts;
+- presents clear, non-operational public information pages until their blog,
+  interactive demonstration and contact journeys are implemented;
 - exposes `/r/:publicReportingIdentifier` for anonymous report submission;
 - guides the reporter through description, context and review steps;
 - displays the returned reference and one-time access secret without persisting
@@ -23,8 +26,22 @@ It currently:
 - uses Vitest for frontend tests;
 - produces static assets through the Angular production build.
 
-Anonymous follow-up, attachments, optional email and professional case
-management are not implemented yet.
+Attachments, optional email, public contact collection, blog publication and
+interactive demonstrations remain separate product increments. All current
+demonstration data is fictional.
+
+## Public host boundary
+
+The registered public product host is `https://conviveaula.com`; the sensitive
+application host is `https://app.conviveaula.com`. The former owns product,
+blog, demonstration and contact routes. The latter owns direct reporting,
+private follow-up and the professional workspace. Local development hosts
+intentionally serve both areas so the complete application remains testable.
+
+The root page does not route QR reporters through product content. On the
+application host, `/r/:publicReportingIdentifier` remains the direct reporter
+entry point. The host, cookie, navigation and indexing consequences are defined
+in [ADR-0014](../../docs/architecture/decisions/0014-separate-public-website-and-application-domains.md).
 
 ## Canonical development environment
 
@@ -87,15 +104,17 @@ docker compose -f infrastructure/compose/compose.yaml -f infrastructure/compose/
 
 The current test suite verifies:
 
-- creation of the root Angular component;
-- rendering of the Convive application name;
-- the relative health request and rendered API status.
+- root routing and host-boundary behaviour;
+- public product and public-information destinations;
 - the reporting journey, API request and response states;
 - context-selection rules and safe public error messages;
 - credential copy behaviour and leave protection;
 - keyboard interaction and focus management in the help dialog.
 
-End-to-end browser testing is not configured yet.
+The isolated Playwright suite also covers the fictional reporter-to-professional
+journey and the public homepage's accessibility, responsive layout and direct
+reporter separation. Follow [the Playwright guide](../../docs/testing/playwright.md)
+before running the full browser suite locally.
 
 ## Formatting
 

@@ -1,0 +1,16 @@
+<main>
+  <header>
+    <a class="wordmark" routerLink="/" aria-label="Convive, inicio">
+      <img src="/convive-logo.svg" alt="" width="158" height="52" />
+    </a>
+    <a [href]="professionalAccessUrl">Área profesional</a>
+  </header>
+
+  <section aria-labelledby="information-title">
+    <p>{{ content.eyebrow }}</p>
+    <h1 id="information-title">{{ content.title }}</h1>
+    <p>{{ content.description }}</p>
+    <p class="notice">{{ content.notice }}</p>
+    <a routerLink="/">Volver al inicio</a>
+  </section>
+</main>
