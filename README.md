@@ -246,6 +246,10 @@ regenerates the contract and fails on drift.
 ## Prepare the test database
 
 The PostgreSQL integration tests use a separate `convive_test` database.
+The Compose development environment injects a test-only session DSN when
+`APP_ENV=test`, so the command below does not need a manual
+`SESSION_DATABASE_URL` override and never writes professional sessions to the
+development database.
 
 Create it if it does not already exist:
 

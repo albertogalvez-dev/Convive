@@ -26,6 +26,7 @@ jobs:
     env:
       APP_ENV: test
       DATABASE_URL: "postgresql://convive:convive-development-only@127.0.0.1:5432/convive?serverVersion=18.4&charset=utf8"
+      SESSION_DATABASE_URL_TEST: "pgsql:host=127.0.0.1;port=5432;dbname=convive_test;user=convive;password=convive-development-only"
 
     services:
       database:
