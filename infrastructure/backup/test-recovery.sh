@@ -60,6 +60,7 @@ export CONVIVE_RESTORE_DATABASE_PASSWORD="$database_password"
 export DEMO_PROFESSIONAL_PASSWORD="$demo_password"
 export CONVIVE_RESTORE_API_IMAGE="convive-restore-api-$suffix:local"
 export CONVIVE_RESTORE_APP_SECRET="$restore_app_secret"
+export CONVIVE_RESTORE_RUNTIME_MODE=reviewed-source
 
 docker compose -p "$source_project" "${TEST_COMPOSE_ARGUMENTS[@]}" up --detach --build --wait database
 docker compose -p "$source_project" "${TEST_COMPOSE_ARGUMENTS[@]}" run --rm --no-deps api \

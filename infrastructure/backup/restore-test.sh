@@ -10,6 +10,7 @@ require_variable CONVIVE_RESTORE_COMPOSE_PROJECT
 require_variable CONVIVE_RESTORE_COMPOSE_FILES
 require_variable CONVIVE_RESTORE_API_IMAGE
 require_variable CONVIVE_RESTORE_APP_SECRET
+require_variable CONVIVE_RESTORE_RUNTIME_MODE
 
 readonly LOCK_FILE="${CONVIVE_BACKUP_LOCK_FILE:-/run/lock/convive-backup.lock}"
 exec 9> "$LOCK_FILE"
@@ -40,13 +41,18 @@ if [[ "$(realpath "${restore_files[0]}")" != "$expected_restore_file" ]]; then
   exit 1
 fi
 
-if [[ "$CONVIVE_BACKUP_STORAGE_MODE" == 'off-host' ]]; then
+if [[ "$CONVIVE_RESTORE_RUNTIME_MODE" == 'immutable-image' ]]; then
   if [[ "${#restore_files[@]}" -ne 1 || ! "$CONVIVE_RESTORE_API_IMAGE" =~ @sha256:[0-9a-f]{64}$ ]]; then
     echo 'Production restoration requires one isolated Compose file and an immutable API image digest.' >&2
     exit 1
   fi
-elif [[ "${#restore_files[@]}" -ne 2 || "$(realpath "${restore_files[1]}")" != "$expected_local_file" ]]; then
-  echo 'Local restoration requires only the reviewed local Compose override.' >&2
+elif [[ "$CONVIVE_RESTORE_RUNTIME_MODE" == 'reviewed-source' ]]; then
+  if [[ "${#restore_files[@]}" -ne 2 || "$(realpath "${restore_files[1]}")" != "$expected_local_file" ]]; then
+    echo 'Reviewed-source restoration requires only the dedicated local Compose override.' >&2
+    exit 1
+  fi
+elif [[ "$CONVIVE_RESTORE_RUNTIME_MODE" != 'immutable-image' ]]; then
+  echo 'CONVIVE_RESTORE_RUNTIME_MODE must be immutable-image or reviewed-source.' >&2
   exit 1
 fi
 

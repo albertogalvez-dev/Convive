@@ -163,6 +163,27 @@ and starts the Symfony health endpoint against the restored database. It records
 only the snapshot prefix, report count, tested revision, timestamp and outcome.
 A successful SQL import without these checks is not a successful exercise.
 
+Before the immutable release images exist, the first R2 acceptance exercise may
+run directly from the reviewed issue branch on the isolated VPS. This separates
+the off-host storage proof from the later release-image publication owned by the
+continuous-delivery workflow. It still uses the private EU R2 repository and
+the complete isolated restore verification, but builds the API from the exact
+checked-out revision and never exposes a service or reuses the deployment
+project:
+
+```text
+set -a
+. /etc/convive/backup-job.conf
+set +a
+/srv/convive/current/infrastructure/backup/exercise-off-host-recovery.sh
+```
+
+`exercise-off-host-recovery.sh` is an acceptance tool, not the scheduled
+production job. It requires root, fictional demo data, the reviewed local
+Compose override and a clean checkout whose revision is recorded in evidence.
+The scheduled restore path remains `immutable-image` and refuses any image that
+is not pinned by registry digest.
+
 ## Evidence, failures and remediation
 
 Timestamped results are retained with mode `0600`. Atomic convenience copies of
