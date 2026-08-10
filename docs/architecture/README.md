@@ -9,6 +9,10 @@ Cross-cutting security and privacy boundaries are maintained in the
 
 ## Architecture diagram
 
+The [diagram catalogue](diagrams/README.md) records each diagram's audience,
+implementation source and maintenance status. It is the index to the current
+logical, sequence, deployment, recovery and data-model views.
+
 The [initial system architecture diagram](diagrams/initial-system-architecture.md)
 summarises the logical request flow between the application's users, Angular,
 Symfony and PostgreSQL. Its accompanying text records the development routing
@@ -19,6 +23,12 @@ the production trust boundaries between Cloudflare Tunnel, the private gateway,
 Symfony, PostgreSQL and Redis. The accompanying
 [deployment runbook](../operations/deployment-release-and-rollback.md) defines
 preflight, smoke-test and rollback decisions for the fictional demonstration.
+
+The [implemented reporting sequence](diagrams/reporting-sequence.md) covers
+the current anonymous and professional conversation paths. The [recovery
+flow](diagrams/recovery-flow.md) covers the encrypted off-host backup gate and
+isolated restoration exercise. Future case-management, email, attachment and
+analytics behaviour is deliberately not drawn until its implementation exists.
 
 ## Data model
 

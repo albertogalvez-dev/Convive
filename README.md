@@ -433,15 +433,21 @@ The public demonstration and all development environments must use fictional dat
 
 ## Documentation
 
+- [Documentation index](docs/README.md)
 - [Problem statement](docs/discovery/problem-statement.md)
 - [Product scope](docs/discovery/product-scope.md)
 - [Regulatory context](docs/discovery/regulatory-context.md)
 - [Architecture overview](docs/architecture/README.md)
+- [Architecture diagram catalogue](docs/architecture/diagrams/README.md)
 - [Initial system architecture](docs/architecture/diagrams/initial-system-architecture.md)
+- [Implemented reporting sequence](docs/architecture/diagrams/reporting-sequence.md)
+- [Encrypted recovery flow](docs/architecture/diagrams/recovery-flow.md)
 - [Initial data model](docs/architecture/diagrams/data-model.md)
 - [DBML data-model source](docs/architecture/data-model.dbml)
 - [OpenAPI contract](docs/api/openapi.yaml)
 - [Architecture decision records](docs/architecture/decisions/README.md)
+- [Operations runbooks](docs/operations/README.md)
+- [Development log](docs/development-log.md)
 - [Brand assets and usage](docs/brand/README.md)
 
 The Doctrine mappings and committed migrations are authoritative for the executable database schema. Diagrams and DBML provide reviewed documentation of that model.
