@@ -258,69 +258,26 @@ jobs:
           exec -T api php bin/console doctrine:migrations:migrate
           --no-interaction
 
-      - name: Create the fictional end-to-end actors
+      - name: Create an ephemeral fictional professional credential
+        shell: bash
         run: |
-          docker compose \
-            -p convive-e2e \
-            -f infrastructure/compose/compose.yaml \
-            -f infrastructure/compose/compose.development.yaml \
-            exec -T database psql \
-            --username=convive \
-            --dbname=convive \
-            --set=ON_ERROR_STOP=1 <<'SQL'
-          INSERT INTO organisations (id, name, public_reporting_identifier)
-          VALUES (
-            '00000000-0000-4000-8000-000000000027',
-            'Convive E2E School',
-            'ORG_E2E0000000000000'
-          )
-          ON CONFLICT (public_reporting_identifier)
-          DO UPDATE SET name = EXCLUDED.name;
+          credential="$(openssl rand -hex 32)"
+          echo "::add-mask::$credential"
+          echo "DEMO_PROFESSIONAL_PASSWORD=$credential" >> "$GITHUB_ENV"
+          echo "E2E_PROFESSIONAL_PASSWORD=$credential" >> "$GITHUB_ENV"
 
-          INSERT INTO professionals (
-            id, name, email, created_at, password_hash, active, security_revision
-          ) VALUES
-            (
-              '00000000-0000-4000-8000-000000000035',
-              'E2E Triage Professional',
-              'triage.e2e@convive.example',
-              NOW(),
-              '$argon2id$v=19$m=65536,t=4,p=1$3zuZpwi3MwiEN9vPxUOeoA$uhNwMIi2DQJEAfDDArXtEIY0b0vV8HloEzR42EXM380',
-              TRUE,
-              1
-            ),
-            (
-              '00000000-0000-4000-8000-000000000036',
-              'E2E Administrator',
-              'administrator.e2e@convive.example',
-              NOW(),
-              '$argon2id$v=19$m=65536,t=4,p=1$3zuZpwi3MwiEN9vPxUOeoA$uhNwMIi2DQJEAfDDArXtEIY0b0vV8HloEzR42EXM380',
-              TRUE,
-              1
-            )
-          ON CONFLICT (email) DO NOTHING;
-
-          INSERT INTO organisation_memberships (
-            id, professional_id, organisation_id, role, granted_at, revoked_at
-          ) VALUES
-            (
-              '00000000-0000-4000-8000-000000000037',
-              '00000000-0000-4000-8000-000000000035',
-              '00000000-0000-4000-8000-000000000027',
-              'triage',
-              NOW(),
-              NULL
-            ),
-            (
-              '00000000-0000-4000-8000-000000000038',
-              '00000000-0000-4000-8000-000000000036',
-              '00000000-0000-4000-8000-000000000027',
-              'administrator',
-              NOW(),
-              NULL
-            )
-          ON CONFLICT (professional_id, organisation_id, role) DO NOTHING;
-          SQL
+      - name: Create the isolated fictional demo dataset
+        run: >
+          docker compose
+          -p convive-e2e
+          -f infrastructure/compose/compose.yaml
+          -f infrastructure/compose/compose.development.yaml
+          exec -T
+          -e APP_ENV=prod
+          -e APP_DEMO_MODE=1
+          -e APP_SECRET=fictional-e2e-only
+          -e DEMO_PROFESSIONAL_PASSWORD
+          api php bin/console app:demo:seed --env=prod --no-debug
 
       - name: Wait for the reporting journey
         run: >

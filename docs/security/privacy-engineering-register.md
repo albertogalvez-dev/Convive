@@ -4,7 +4,7 @@
 
 **Owner:** repository maintainer
 
-**Last reviewed:** 9 August 2026
+**Last reviewed:** 10 August 2026
 
 This is an engineering register, not a record of processing, DPIA or legal
 opinion. Those require the actual controller, DPO, deployment, vendors and
@@ -24,7 +24,7 @@ identify someone.
 | P-06 | Follow-up content/time: add information             | Required, whitespace checked, 2,000-char bound; transactional 100-entry cap and bounded reads | Retention period still requires formal approval | Fictional only / retention gate |
 | P-07 | Client IP: abuse/incident evidence                  | Selected security fields only; no bodies or credentials                     | No approved/enforced period                     | Partial / #65                |
 | P-08 | Idempotency key/reference: prevent retry duplicates | Organisation scoped; no secret/response body                                | Current cache expiry only                       | Partial / #63                |
-| P-09 | Professional identity/password hash/status          | Fictional fixtures; reporter email never account recovery                   | Invitation/reset/account lifecycle absent       | Model only / #30             |
+| P-09 | Professional identity/password hash/status          | Fictional fixtures/demo seed; reporter email never account recovery         | Invitation/reset/account lifecycle absent       | Model only / #30/#70         |
 | P-10 | Membership/role: organisation authorisation         | Identity, membership and role separate; admin is not blanket content access | Prompt revocation required                      | Model only / #30/#31/#44     |
 | P-11 | Professional sessions/auth events                   | Server session, no browser bearer token, minimal logs                       | Expiry/invalidation not implemented             | Planned / #30/#65            |
 | P-12 | Attachments/metadata: evidence                      | Not collected; allowlist, limits, isolation and scanning required           | Lifecycle must precede collection               | Blocked / #36-#38            |
@@ -33,7 +33,7 @@ identify someone.
 | P-15 | Audit trail: protected accountability               | Separate from logs; exclude secrets/gratuitous content                      | Controller-approved access/period needed        | Blocked / #47/#66            |
 | P-16 | Logs/metrics/incidents: operation/security          | No analytics; avoid report data/high-cardinality identifiers                | Per-stream period/access required               | Blocked / #65                |
 | P-17 | Backups: recovery                                   | Full sensitive copy; encrypt, inventory, restrict and test                  | Rotation/deletion and stale-access invalidation | Blocked / #66                |
-| P-18 | Fictional demo records                              | Clearly fictional, isolated and repeatably seeded                           | Resettable environment                          | Partial / #70                |
+| P-18 | Fictional demo records                              | Clearly fictional, isolated and repeatably seeded                           | Guarded reset to a known state                   | Verified / #70               |
 
 ## Prioritised privacy risks
 

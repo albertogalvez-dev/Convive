@@ -16,9 +16,8 @@ soon as the secret has been exchanged for the protected capability cookie.
 
 Playwright traces, automatic screenshots and video are disabled because they
 could retain a secret shown by the credential-result page. On failure, the
-suite creates one screenshot after hiding credential fields. Its textual error
-context is captured only after the access secret is no longer present in the
-page accessibility tree.
+suite creates one screenshot after hiding anonymous and professional credential
+fields. Global teardown removes Playwright's textual accessibility context.
 
 Promotional screenshots or recordings are a separate, explicitly sanitised
 demo workflow. They must use stable fictional content and must never record a
@@ -54,20 +53,25 @@ docker compose \
   exec -T api php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
-Create the dedicated fictional organisation. The statement is idempotent and
-does not modify any other development record:
+Create a strong ephemeral professional password in the shell without printing
+it, then run the same isolated fictional-demo command used by releases. The
+example uses Bash; an equivalent secret-safe environment assignment is required
+in other shells:
 
 ```bash
+export DEMO_PROFESSIONAL_PASSWORD="$(openssl rand -hex 32)"
+export E2E_PROFESSIONAL_PASSWORD="$DEMO_PROFESSIONAL_PASSWORD"
+
 docker compose \
   -p convive-e2e \
   -f infrastructure/compose/compose.yaml \
   -f infrastructure/compose/compose.development.yaml \
-  exec -T database psql \
-  --username=convive --dbname=convive --set=ON_ERROR_STOP=1 \
-  --command="INSERT INTO organisations (id, name, public_reporting_identifier) \
-  VALUES ('00000000-0000-4000-8000-000000000027', 'Convive E2E School', \
-  'ORG_E2E0000000000000') ON CONFLICT (public_reporting_identifier) \
-  DO UPDATE SET name = EXCLUDED.name;"
+  exec -T \
+  -e APP_ENV=prod \
+  -e APP_DEMO_MODE=1 \
+  -e APP_SECRET=fictional-e2e-only \
+  -e DEMO_PROFESSIONAL_PASSWORD \
+  api php bin/console app:demo:seed --env=prod --no-debug
 ```
 
 From `apps/web`, install the pinned browser and execute the test:
@@ -94,6 +98,6 @@ deleting its database is explicitly intended.
 ## Continuous integration
 
 The `End-to-end` job creates an ephemeral Compose project, applies migrations,
-inserts the same fictional organisation, installs the pinned Chromium build and
-runs Playwright. The job always removes its containers and volumes. It does not
-upload Playwright artifacts.
+generates and masks a fresh professional password, runs the reviewed demo seed,
+installs the pinned Chromium build and runs Playwright. The job always removes
+its containers and volumes. It does not upload Playwright artifacts.

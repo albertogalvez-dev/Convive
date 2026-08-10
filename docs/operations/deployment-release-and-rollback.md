@@ -47,8 +47,8 @@ Stop the release if any check fails:
    locks, expected duration and rollback class are written in the release
    record. Destructive or incompatible changes have an approved maintenance and
    restore plan.
-10. The fictional demo seed command, if required, is idempotent and demo mode is
-    explicitly enabled. Never run Doctrine fixtures.
+10. The [fictional demo seed command](fictional-demo-data.md), if required, is
+    idempotent and demo mode is explicitly enabled. Never run Doctrine fixtures.
 
 ## Release
 
@@ -60,8 +60,10 @@ Stop the release if any check fails:
    require it.
 4. Run Doctrine migrations once in a one-off container created from the new API
    digest. Abort on any failure; do not start the new application generation.
-5. If required, run the explicit idempotent fictional-demo seed command. It must
-   refuse execution when demo mode is disabled.
+5. If required, run the explicit idempotent fictional-demo seed command using
+   the [reviewed procedure](fictional-demo-data.md). It must refuse execution
+   when demo mode is disabled. A destructive restore additionally requires its
+   exact reset confirmation token.
 6. Reconcile the production Compose project with health waiting enabled. Replace
    only Convive-owned services and never use a host-wide prune or an unrelated
    Compose project command.

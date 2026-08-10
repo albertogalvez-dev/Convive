@@ -175,6 +175,11 @@ docker compose \
 
 All fixtures must remain fictional.
 
+Development fixtures are not the public demonstration dataset. The production
+demo uses the explicit, non-fixture mechanism documented in
+[`docs/operations/fictional-demo-data.md`](docs/operations/fictional-demo-data.md);
+it never runs automatically during startup or migrations.
+
 ## Local addresses
 
 Once the services are running:
