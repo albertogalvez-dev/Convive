@@ -162,6 +162,8 @@ jobs:
           CONVIVE_GATEWAY_IMAGE="ghcr.io/albertogalvez-dev/convive/gateway@sha256:$(printf 'b%.0s' {1..64})" \
             docker compose -f infrastructure/production/compose.production.yaml config --quiet
           bash -n infrastructure/release/*.sh
+          bash -n infrastructure/observability/*.sh
+          bash infrastructure/observability/exercise-failure.sh
 
       - name: Bootstrap backend dependencies through Docker Compose
         run: >

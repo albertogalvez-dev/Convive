@@ -22,7 +22,7 @@ identify someone.
 | P-04 | Access-secret hash: account-free proof              | Secret shown once; only SHA-256 of 256-bit random value stored              | No readable recovery                            | Implemented / ADR-0010       |
 | P-05 | Capability hash/scope/expiry/revocation             | HttpOnly opaque cookie, one report, short lifetime                          | Restore purge implemented; production exercise pending | Partial / #63/#66       |
 | P-06 | Follow-up content/time: add information             | Required, whitespace checked, 2,000-char bound; transactional 100-entry cap and bounded reads | Retention period still requires formal approval | Fictional only / retention gate |
-| P-07 | Client IP: abuse/incident evidence                  | Selected security fields only; no bodies or credentials                     | No approved/enforced period                     | Partial / #65                |
+| P-07 | Client IP: abuse/incident evidence                  | Selected security fields only; no bodies or credentials; alert evidence is redacted | 30-day fictional-demo default; real period requires approval | Implemented baseline / #65 |
 | P-08 | Idempotency key/reference: prevent retry duplicates | Organisation scoped; no secret/response body                                | Current cache expiry only                       | Partial / #63                |
 | P-09 | Professional identity/password hash/status          | Fictional fixtures/demo seed; reporter email never account recovery         | Invitation/reset/account lifecycle absent       | Model only / #30/#70         |
 | P-10 | Membership/role: organisation authorisation         | Identity, membership and role separate; admin is not blanket content access | Prompt revocation required                      | Model only / #30/#31/#44     |
@@ -31,7 +31,7 @@ identify someone.
 | P-13 | Optional reporter email/delivery metadata           | Not collected; never identity or access recovery                            | Provider retention/verification undecided       | Blocked / #39-#40            |
 | P-14 | Case people/actions/assessments                     | Not implemented; only necessary fields/assignments                          | Protocol, deletion/legal hold must be versioned | Blocked / #43-#49            |
 | P-15 | Audit trail: protected accountability               | Separate from logs; exclude secrets/gratuitous content                      | Controller-approved access/period needed        | Blocked / #47/#66            |
-| P-16 | Logs/metrics/incidents: operation/security          | No analytics; avoid report data/high-cardinality identifiers                | Per-stream period/access required               | Blocked / #65                |
+| P-16 | Logs/metrics/incidents: operation/security          | JSON health/alert events and security channel exclude report data, secrets and complete request bodies | 30-day fictional-demo default; root-only access | Implemented baseline / #65 |
 | P-17 | Backups: recovery                                   | Full sensitive copy; encrypt, inventory, restrict and test                  | Rotation/deletion and stale-access invalidation | Blocked / #66                |
 | P-18 | Fictional demo records                              | Clearly fictional, isolated and repeatably seeded                           | Guarded reset to a known state                   | Verified / #70               |
 
@@ -46,7 +46,7 @@ identify someone.
 | R-05 | High     | Indefinite reports/logs/backups: real data blocked until periods, deletion, legal hold and restore continuity exist               | #47/#65/#66      |
 | R-06 | High     | Email/third party links identity to report: disabled until purpose, verification and provider boundary are reviewed               | #39/#40          |
 | R-07 | High     | Evidence malware/metadata harms people: attachments disabled pending lifecycle/threat decision                                    | #36-#38          |
-| R-08 | Medium   | Monitoring captures excessive IP/device data: define purpose, fields, access and period before release                            | #65              |
+| R-08 | Medium   | Monitoring captures excessive IP/device data: the implemented checks use fixed redacted fields; real deployment still needs approved purpose, access and period | #65 / controller gate |
 | R-09 | Medium   | Test artifacts retain credentials/content: fictional data; E2E removes context and redacts failure screenshot                     | Verified #27     |
 | R-10 | Medium   | Restore resurrects deleted/revoked access: reconcile sessions, grants, tokens, memberships, deletion and audit                    | #66              |
 
