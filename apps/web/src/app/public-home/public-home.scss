@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: radial-gradient(circle at 90% 0, #e4f6fc, transparent 28rem), #f6f9fd;
+  color: #172b57;
+}
+main {
+  width: min(100%, 76rem);
+  margin: auto;
+  padding: 2rem clamp(1.25rem, 5vw, 5rem) 3rem;
+}
+header,
+footer,
+.hero div,
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+header,
+footer {
+  justify-content: space-between;
+}
+header nav {
+  margin-left: auto;
+}
+header a,
+footer a {
+  color: #176f9c;
+  font-weight: 700;
+  text-decoration: none;
+}
+nav a {
+  color: #526987;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.hero {
+  max-width: 48rem;
+  padding: 5rem 0 3.5rem;
+}
+.hero > p:first-child,
+.demo > p:first-child {
+  color: #176f9c;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+}
+h1 {
+  margin: 0.6rem 0 1.1rem;
+  font-size: clamp(2.6rem, 7vw, 5.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1.3rem;
+}
+p {
+  line-height: 1.6;
+}
+.hero > p:not(:first-child) {
+  max-width: 38rem;
+  font-size: 1.15rem;
+}
+.hero div {
+  justify-content: flex-start;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.hero div a,
+.demo a {
+  border-radius: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  background: #173367;
+  color: #fff;
+  font-weight: 750;
+  text-decoration: none;
+}
+.hero div a:last-child {
+  background: #fff;
+  color: #173367;
+  border: 1px solid #cdd9e9;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+article,
+.demo {
+  border: 1px solid #d5e0ed;
+  border-radius: 1rem;
+  padding: 1.4rem;
+  background: #fff;
+  box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
+}
+article p {
+  margin: 0;
+  color: #526987;
+}
+.demo {
+  margin-top: 1rem;
+  background: #eaf7fc;
+}
+footer {
+  margin-top: 3.5rem;
+  color: #5d6f8e;
+  font-size: 0.85rem;
+}
+a:focus-visible {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 3px;
+}
+@media (max-width: 42rem) {
+  main {
+    padding-top: 1.25rem;
+  }
+  .hero {
+    padding: 3.5rem 0 2.5rem;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  header img {
+    width: 8rem;
+    height: auto;
+  }
+  header nav {
+    display: none;
+  }
+  footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

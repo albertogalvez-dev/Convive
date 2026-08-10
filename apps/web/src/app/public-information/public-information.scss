@@ -1,0 +1,81 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: radial-gradient(circle at 90% 0, #e4f6fc, transparent 28rem), #f6f9fd;
+  color: #172b57;
+}
+
+main {
+  width: min(100%, 76rem);
+  margin: auto;
+  padding: 2rem clamp(1.25rem, 5vw, 5rem) 3rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+header > a:last-child,
+section > a {
+  color: #176f9c;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+section {
+  width: min(100%, 44rem);
+  margin: clamp(5rem, 16vw, 11rem) 0;
+  border: 1px solid #d5e0ed;
+  border-radius: 1rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  background: #fff;
+  box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
+}
+
+section > p:first-child {
+  margin: 0 0 0.75rem;
+  color: #176f9c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  letter-spacing: -0.025em;
+}
+
+h1 + p,
+.notice {
+  max-width: 36rem;
+  line-height: 1.65;
+}
+
+.notice {
+  margin: 1.5rem 0;
+  color: #526987;
+}
+
+a:focus-visible {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 3px;
+}
+
+@media (max-width: 42rem) {
+  main {
+    padding-top: 1.25rem;
+  }
+
+  header img {
+    width: 8rem;
+    height: auto;
+  }
+
+  section {
+    margin: 4rem 0;
+  }
+}
