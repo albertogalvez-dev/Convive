@@ -23,6 +23,9 @@ Dockerfile text eol=lf
 *.sql text eol=lf
 *.sh text eol=lf
 *.svg text eol=lf
+*.example text eol=lf
+*.service text eol=lf
+*.timer text eol=lf
 
 # Native Windows scripts
 *.bat text eol=crlf

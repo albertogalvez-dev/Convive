@@ -11,3 +11,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Populated backup configuration and local recovery evidence
+infrastructure/backup/backup-job.conf
+infrastructure/backup/backup-repository.env
+infrastructure/backup/evidence/
