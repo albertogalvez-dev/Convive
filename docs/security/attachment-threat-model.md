@@ -1,6 +1,7 @@
 # Attachment security boundary and threat model
 
-**Status:** accepted design boundary; no attachment upload exists yet
+**Status:** fictional-data backend boundary implemented; reporter UI remains
+unimplemented
 
 **Owner:** repository maintainer
 
@@ -13,12 +14,13 @@
 Attachments can contain evidence, identifying metadata and hostile content.
 They are therefore a separate security boundary from the existing bounded text
 report and follow-up fields. This document sets the non-negotiable design that
-must be implemented before an attachment control is exposed.
+must hold before an attachment control is exposed.
 
-It does **not** enable uploads, select or procure a production storage vendor,
-or authorise real safeguarding data. The current demonstration continues to
-accept fictional text only. The attachment API is owned by #37 and the
-reporter UI and genuine transfer-progress behaviour by #38.
+It does **not** authorise real safeguarding data or select or procure a
+production storage vendor. The current demonstration continues to use only
+fictional data. #37 implements a private, application-mediated backend
+boundary; #38 remains responsible for any reporter-facing upload control and
+genuine transfer-progress behaviour.
 
 The design intentionally favours a narrow evidence format set, private
 application-mediated access and unavailable evidence over an unsafe preview or
@@ -30,7 +32,7 @@ authorisation must all hold. No individual control is sufficient.
 
 ### Initial evidence format and capacity policy
 
-The first implementation may accept only these formats:
+The implemented backend accepts only these formats:
 
 | User-visible format | Required detected media type | Rationale                                                              |
 | ------------------- | ---------------------------- | ---------------------------------------------------------------------- |
@@ -53,6 +55,7 @@ and the detected extension.
 | Files per report                        |      10 | Transactional report-scoped check                              |
 | Aggregate attachment bytes per report   |  20 MiB | Transactional report-scoped check, including quarantined bytes |
 | Multipart request bytes                 |  16 MiB | Trusted edge/runtime limit and application defence in depth    |
+| Concurrent attachment download streams  |       4 | Private-volume permit held for the streamed response lifetime  |
 | Filename received from a client         | ignored | Never persisted or used for storage or response headers        |
 
 All limits include files awaiting a scan so that a client cannot exhaust
@@ -96,7 +99,7 @@ scan rejection, timeout or scanner outage
   -> minimal non-content audit outcome only
 ```
 
-The domain model introduced by #37 must make these states explicit:
+The domain model introduced by #37 makes these states explicit:
 `QUARANTINED`, `SCANNING`, `AVAILABLE`, `REJECTED`, `DELETION_PENDING` and
 `DELETED`. Only `AVAILABLE` is downloadable. Validation failures that have not
 written bytes create no attachment record; failures after a quarantined write
@@ -191,27 +194,28 @@ block automatic deletion only after a reviewed product/operational increment.
 
 | ID   | Threat                                                          | Required controls                                                                                               | Residual work/owner                                          |
 | ---- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| A-01 | Malware, active PDF/image content or parser exploit             | Narrow allowlist, signature check, private quarantine, isolated scanner, no inline rendering or transformations | #37 scanner and retrieval tests                              |
+| A-01 | Malware, active PDF/image content or parser exploit             | Narrow allowlist, signature check, private quarantine, fail-closed scanner port, no inline rendering or transformations | Configure/review an isolated scanner before any real-data use |
 | A-02 | Archive/decompression or media-processing resource exhaustion   | Archives/audio/video/extraction/OCR/transcoding are not accepted                                                | Reassess only in a dedicated threat review                   |
 | A-03 | Filename/path traversal or object overwrite                     | Ignore original name; generate opaque identifier/key; no web-root storage                                       | #37 persistence and negative tests                           |
 | A-04 | Cross-report or cross-organisation disclosure                   | Capability/role/object checks on every read; no public object URLs                                              | #37 authorisation tests; #44 object-policy work              |
 | A-05 | Browser execution, cache leakage or content sniffing            | Attachment disposition, detected type, `nosniff`, no-store, sandbox CSP, same-origin resource policy            | #37 HTTP tests; #38 must not add preview                     |
 | A-06 | Scanner outage or false operational confidence                  | Fail closed, bounded retry, 24-hour quarantine deletion, no override                                            | #37 worker and unavailable-scanner tests                     |
 | A-07 | Personal data in EXIF/PDF metadata                              | Warn before upload; preserve private original; do not extract/render metadata                                   | #38 UX copy and future redaction decision                    |
-| A-08 | Storage exhaustion and abusive uploads                          | Per-file/request/report limits, transactional aggregate enforcement and existing abuse controls                 | #37 limits; deployment controls remain #63                   |
+| A-08 | Storage exhaustion and abusive uploads                          | Per-file/request/report limits, transactional aggregate enforcement, four private download permits and existing abuse controls | Deployment controls remain #63                               |
 | A-09 | Evidence disclosure to a third-party scanner or backup provider | No public scanning service; dedicated scanner identity; separate private storage from backup repository         | Provider/processor review before real data                   |
-| A-10 | Incomplete deletion or restored evidence after expiry           | Explicit lifecycle, deletion audit, backup continuity gate                                                      | #37 deletion implementation; controller/DPO real-data policy |
+| A-10 | Incomplete deletion or restored evidence after expiry           | Explicit lifecycle, deletion command, backup continuity gate                                                    | Scheduled-operation evidence; controller/DPO real-data policy |
 
 ## Delivery contract for dependent issues
 
 ### #37 — backend and storage boundary
 
-#37 must introduce the attachment metadata/state model, server-side streaming
-limits, generated object keys, private storage abstraction, scanner/cleanup
-interfaces, authorisation, audit events and OpenAPI documentation. It must
-prove unsupported, spoofed, oversized, excessive, quarantined, failed-scan and
-cross-scope requests are denied without leaking content or paths. It must not
-select a production provider or send any file to an external service.
+#37 introduced the attachment metadata/state model, server-side streaming
+limits, generated object keys, private storage abstraction, fail-closed
+scanner/cleanup interfaces, authorisation, audit events and OpenAPI
+documentation. Its tests prove unsupported, spoofed, oversized, excessive,
+quarantined, failed-scan and cross-scope requests are denied without leaking
+content or paths. It does not select a production provider or send a file to
+an external service.
 
 ### #38 — reporter experience
 
