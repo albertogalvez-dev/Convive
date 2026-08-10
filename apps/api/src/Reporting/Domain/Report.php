@@ -71,6 +71,12 @@ class Report
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $reviewedAt = null;
 
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private int $attachmentCount = 0;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private int $attachmentBytes = 0;
+
     #[ORM\Version]
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 1])]
     private int $version = 1;
@@ -203,5 +209,42 @@ class Report
     public function reviewedAt(): ?DateTimeImmutable
     {
         return $this->reviewedAt;
+    }
+
+    public function reserveAttachmentCapacity(int $count, int $bytes): void
+    {
+        if ($count < 1 || $bytes < 1) {
+            throw new \InvalidArgumentException('Attachment capacity must be positive.');
+        }
+
+        if (
+            $this->attachmentCount + $count > ReportAttachmentPolicy::MAXIMUM_ATTACHMENTS_PER_REPORT
+            || $this->attachmentBytes + $bytes > ReportAttachmentPolicy::MAXIMUM_REPORT_ATTACHMENT_BYTES
+        ) {
+            throw new ReportAttachmentQuotaExceeded();
+        }
+
+        $this->attachmentCount += $count;
+        $this->attachmentBytes += $bytes;
+    }
+
+    public function releaseAttachmentCapacity(int $count, int $bytes): void
+    {
+        if ($count < 1 || $bytes < 1 || $count > $this->attachmentCount || $bytes > $this->attachmentBytes) {
+            throw new \LogicException('Attachment capacity cannot become negative.');
+        }
+
+        $this->attachmentCount -= $count;
+        $this->attachmentBytes -= $bytes;
+    }
+
+    public function attachmentCount(): int
+    {
+        return $this->attachmentCount;
+    }
+
+    public function attachmentBytes(): int
+    {
+        return $this->attachmentBytes;
     }
 }
