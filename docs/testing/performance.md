@@ -17,10 +17,19 @@ for representative VPS, tunnel and internet measurements before release.
 
 The production Angular build reported an initial raw transfer of **438.66 kB**
 (**106.84 kB** estimated transfer) before this baseline was added. The existing
-component-style limits are retained. The API and render values are printed by
-the isolated CI journey for every pull request because runner timing is
-variable; use their median and maximum, rather than a single historical number,
-when investigating a change.
+component-style limits are retained. The first complete isolated CI run
+(`31411206898`, 10 August 2026) measured:
+
+| Path | Median | Maximum or readiness |
+| --- | ---: | ---: |
+| Health endpoint | 9.4 ms | 23.1 ms maximum |
+| Fictional public reporting profile | 20.7 ms | 21.9 ms maximum |
+| Public reporting ready | — | 276.1 ms |
+| Professional dashboard ready | — | 568.2 ms |
+
+The API and render values are printed by the isolated CI journey for every pull
+request because runner timing is variable; use their median and maximum,
+rather than a single historical number, when investigating a change.
 
 All measurements use only the reserved fictional organisation
 `ORG_DEM0000000000000`, its fictional public profile and the fictional triage
