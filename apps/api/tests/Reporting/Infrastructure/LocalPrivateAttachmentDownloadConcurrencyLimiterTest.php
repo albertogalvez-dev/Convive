@@ -39,7 +39,7 @@ final class LocalPrivateAttachmentDownloadConcurrencyLimiterTest extends TestCas
             $limiter->acquire();
             self::fail('The private download concurrency boundary was not enforced.');
         } catch (AttachmentDownloadConcurrencyLimitReached) {
-            self::assertTrue(true);
+            // The fifth private stream must be rejected until a permit returns.
         }
 
         $permits[0]->release();
