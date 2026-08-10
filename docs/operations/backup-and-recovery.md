@@ -57,6 +57,43 @@ repositories are accepted only by the automated recovery test and cannot
 satisfy the off-host criterion. R2 usage is metered even when it remains within
 the included monthly allowance and must be monitored.
 
+### Cloudflare R2 provisioning checklist
+
+Provision these resources interactively in the reviewed Convive Cloudflare
+account. Enabling the R2 subscription is a billing action and requires the
+account owner's explicit approval. Do not record account identifiers, payment
+details or credentials in Git, tickets or terminal transcripts.
+
+1. Enable R2 only after approval and confirm the account and billing boundary
+   before submitting the subscription action.
+2. Create one new Standard storage bucket dedicated to Convive backups. Under
+   **Location**, choose **Specify jurisdiction** and **European Union (EU)**.
+   A Western or Eastern Europe location hint is not an equivalent residency
+   control, and a bucket's jurisdiction cannot be changed after creation.
+3. Leave both public access mechanisms disabled: do not enable the Public
+   Development URL and do not attach a custom domain. Confirm the bucket
+   settings report no public access before uploading any backup.
+4. Create a dedicated R2 account API token with **Object Read & Write** access
+   scoped to only this bucket. Do not grant account-admin access or access to
+   all buckets. Record the one-time Access Key ID and Secret Access Key directly
+   in the approved password manager.
+5. Populate the root-owned runtime environment file with the EU endpoint
+   `s3:https://<account-id>.eu.r2.cloudflarestorage.com/<bucket>`, the two R2
+   credentials and `AWS_DEFAULT_REGION=auto`. Keep the independent Restic
+   password in the password manager as well as on the host.
+6. Run `init-repository.sh`, `backup.sh` and the complete isolated
+   `restore-test.sh`. The issue remains open until all three succeed against R2
+   and the resulting non-secret evidence records identify the deployed Git
+   revision and a successful outcome.
+7. Recheck that no public URL or custom domain was enabled, inspect the bucket's
+   stored-byte and operation metrics, and set an operational usage threshold or
+   billing notification appropriate to the approved cost boundary.
+
+The S3 credentials deliberately need delete access: Restic retention and
+repository maintenance remove objects. Limiting them to this bucket contains
+that authority without breaking `forget --prune`. A separate read-only token
+cannot run the automated backup lifecycle and is not a substitute.
+
 ## Host configuration
 
 Copy the non-secret example to `/etc/convive/backup-job.conf`, replace the
