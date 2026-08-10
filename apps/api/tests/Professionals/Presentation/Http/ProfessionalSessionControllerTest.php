@@ -31,7 +31,9 @@ final class ProfessionalSessionControllerTest extends WebTestCase
 
         $this->client = static::createClient();
         $container = self::getContainer();
-        $this->entityManager = $container->get(EntityManagerInterface::class);
+        $entityManager = $container->get(EntityManagerInterface::class);
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->connection = $this->entityManager->getConnection();
         $rateLimiterCache = $container->get('cache.rate_limiter');
         self::assertInstanceOf(CacheItemPoolInterface::class, $rateLimiterCache);
@@ -65,6 +67,8 @@ final class ProfessionalSessionControllerTest extends WebTestCase
             'no-store',
             (string) $client->getResponse()->headers->get('Cache-Control'),
         );
+        $loginResponse = $client->getResponse()->getContent();
+        self::assertIsString($loginResponse);
         self::assertJsonStringEqualsJsonString(
             json_encode([
                 'professional' => [
@@ -73,7 +77,7 @@ final class ProfessionalSessionControllerTest extends WebTestCase
                     'email' => 'alex@session-test.example',
                 ],
             ], JSON_THROW_ON_ERROR),
-            $client->getResponse()->getContent(),
+            $loginResponse,
         );
 
         $cookie = $client->getCookieJar()->get('professional_session');
@@ -86,7 +90,9 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $client->request('GET', '/api/v1/professional/session');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('alex@session-test.example', $client->getResponse()->getContent());
+        $sessionResponse = $client->getResponse()->getContent();
+        self::assertIsString($sessionResponse);
+        self::assertStringContainsString('alex@session-test.example', $sessionResponse);
         self::assertSame(1, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM professional_sessions',
         ));
@@ -101,6 +107,7 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $knownResponse = $client->getResponse()->getContent();
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        self::assertIsString($knownResponse);
 
         $client->restart();
         $this->login($client, 'unknown@session-test.example', 'wrong password');
@@ -129,9 +136,11 @@ final class ProfessionalSessionControllerTest extends WebTestCase
             'no-store',
             (string) $client->getResponse()->headers->get('Cache-Control'),
         );
+        $rateLimitedResponse = $client->getResponse()->getContent();
+        self::assertIsString($rateLimitedResponse);
         self::assertStringNotContainsString(
             'throttled@session-test.example',
-            $client->getResponse()->getContent(),
+            $rateLimitedResponse,
         );
     }
 
@@ -160,7 +169,9 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $this->login($client, 'disabled@session-test.example', self::PASSWORD);
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        self::assertStringNotContainsString('disabled', $client->getResponse()->getContent());
+        $disabledResponse = $client->getResponse()->getContent();
+        self::assertIsString($disabledResponse);
+        self::assertStringNotContainsString('disabled', $disabledResponse);
     }
 
     public function testSecurityRevisionChangeInvalidatesAnExistingSession(): void

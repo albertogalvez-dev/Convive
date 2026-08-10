@@ -23,9 +23,11 @@ final class GetPublicReportingProfileControllerTest extends WebTestCase
         parent::setUp();
 
         $this->client = static::createClient();
-        $this->entityManager = self::getContainer()->get(
+        $entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->entityManager->getConnection()->beginTransaction();
 
         $this->entityManager->persist(

@@ -35,7 +35,9 @@ final class ProfessionalReportControllerTest extends WebTestCase
 
         $this->client = static::createClient();
         $this->client->disableReboot();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->connection = $this->entityManager->getConnection();
         $this->cleanTestData();
     }
@@ -106,6 +108,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertSame($expectedIds, $returnedIds);
 
         $body = $this->client->getResponse()->getContent();
+        self::assertIsString($body);
         self::assertStringNotContainsString($foreignReport['secret'], $body);
         foreach ($authorisedReports as $created) {
             self::assertStringNotContainsString($created['secret'], $body);
@@ -147,9 +150,11 @@ final class ProfessionalReportControllerTest extends WebTestCase
             'The fictional situation happened again today.',
             $payload['followUpEntries'][0]['content'],
         );
+        $detailResponse = $this->client->getResponse()->getContent();
+        self::assertIsString($detailResponse);
         self::assertStringNotContainsString(
             $created['secret'],
-            $this->client->getResponse()->getContent(),
+            $detailResponse,
         );
     }
 
@@ -167,6 +172,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         $foreignResponse = $this->client->getResponse()->getContent();
+        self::assertIsString($foreignResponse);
 
         $this->client->request(
             'GET',
@@ -542,8 +548,11 @@ final class ProfessionalReportControllerTest extends WebTestCase
     /** @return array<string, mixed> */
     private function responsePayload(): array
     {
+        $responseContent = $this->client->getResponse()->getContent();
+        self::assertIsString($responseContent);
+
         return json_decode(
-            $this->client->getResponse()->getContent(),
+            $responseContent,
             true,
             flags: JSON_THROW_ON_ERROR,
         );

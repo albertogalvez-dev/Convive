@@ -25,7 +25,9 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
         parent::setUp();
 
         $this->connection = $this->entityManager->getConnection();
-        $this->seeder = self::getContainer()->get(SeedFictionalDemo::class);
+        $seeder = self::getContainer()->get(SeedFictionalDemo::class);
+        self::assertInstanceOf(SeedFictionalDemo::class, $seeder);
+        $this->seeder = $seeder;
     }
 
     public function testCommandRequiresTheSupportedExplicitDemoEnvironment(): void

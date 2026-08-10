@@ -71,7 +71,6 @@ final class RateLimitEnforcerTest extends TestCase
         $enforcer->enforce($limiterFactory, 'test_limiter', $request, 'first');
         $enforcer->enforce($limiterFactory, 'test_limiter', $request, 'second');
 
-        self::assertTrue(true);
     }
 
     public function testCredentialScopeIsNeverIncludedInSecurityLogs(): void

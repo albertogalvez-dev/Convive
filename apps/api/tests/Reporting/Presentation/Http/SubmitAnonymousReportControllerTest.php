@@ -33,9 +33,11 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
             'REMOTE_ADDR',
             $this->uniqueTestClientIp(),
         );
-        $this->entityManager = self::getContainer()->get(
+        $entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->entityManager->getConnection()->beginTransaction();
 
         $this->entityManager->persist(

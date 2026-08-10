@@ -37,9 +37,11 @@ final class SecurityLoggingTest extends WebTestCase
             $this->uniqueTestClientIp(),
         );
 
-        $this->entityManager = self::getContainer()->get(
+        $entityManager = self::getContainer()->get(
             EntityManagerInterface::class,
         );
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
         $this->entityManager->getConnection()->beginTransaction();
 
         $this->entityManager->persist(
@@ -53,9 +55,11 @@ final class SecurityLoggingTest extends WebTestCase
         );
         $this->entityManager->flush();
 
-        $this->securityLogHandler = self::getContainer()->get(
+        $securityLogHandler = self::getContainer()->get(
             'monolog.security_test_handler',
         );
+        self::assertInstanceOf(TestHandler::class, $securityLogHandler);
+        $this->securityLogHandler = $securityLogHandler;
     }
 
     protected function tearDown(): void

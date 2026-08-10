@@ -82,6 +82,9 @@ jobs:
           php bin/console lint:yaml config
           php bin/console lint:container
 
+      - name: Run PHPStan static analysis
+        run: composer analyse
+
       - name: Verify OpenAPI contract is up to date
         run: |
           php bin/console nelmio:apidoc:dump --format=yaml > /tmp/openapi.yaml
@@ -122,6 +125,9 @@ jobs:
 
       - name: Check frontend formatting
         run: npm run format:check
+
+      - name: Run frontend type check
+        run: npm run typecheck
 
       - name: Audit production dependencies
         run: npm audit --omit=dev

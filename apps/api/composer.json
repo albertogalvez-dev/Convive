@@ -63,6 +63,7 @@
         "symfony/polyfill-php82": "*"
     },
     "scripts": {
+        "analyse": "phpstan analyse --memory-limit=1G",
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
@@ -85,6 +86,10 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^13.2",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
