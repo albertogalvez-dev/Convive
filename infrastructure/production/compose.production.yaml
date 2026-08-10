@@ -34,6 +34,9 @@ services:
       APP_ENV: prod
       APP_DEBUG: "0"
       TRUSTED_PROXIES: 172.30.16.0/28
+      # Private named volume; never mounted by the gateway or exposed as a
+      # static path. Production evidence remains fictional-only.
+      ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments
     env_file:
       - ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
     secrets: [api_env]
@@ -42,10 +45,13 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      attachment-store-init:
+        condition: service_completed_successfully
     read_only: true
     cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
     tmpfs: ["/tmp"]
+    volumes: [attachment-data:/var/lib/convive/attachments]
     restart: unless-stopped
     networks: [application, data, cache]
     healthcheck:
@@ -53,6 +59,25 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+
+  # A short-lived privileged setup step gives the unprivileged PHP process
+  # exclusive ownership of the private attachment volume. It has no network
+  # and no access to application, database, cache or gateway volumes.
+  attachment-store-init:
+    image: busybox:1.37.0@sha256:9db7b59979c38555a39def84a31fb98b5296952f9e3afd4f6f11f05b07adfab0
+    user: "0:0"
+    read_only: true
+    cap_drop: ["ALL"]
+    cap_add: ["CHOWN", "FOWNER"]
+    security_opt: ["no-new-privileges:true"]
+    network_mode: none
+    restart: "no"
+    volumes: [attachment-data:/attachments]
+    entrypoint: ["/bin/sh", "-ec"]
+    command: |
+      mkdir -p /attachments
+      chown 33:33 /attachments
+      chmod 0700 /attachments
 
   database:
     image: postgres:18.4-bookworm
@@ -99,6 +124,7 @@ services:
 volumes:
   database-data:
   redis-data:
+  attachment-data:
 
 networks:
   edge:

@@ -15,6 +15,13 @@
 	}
 
 	@api path /api/v1/* /api/doc.json
+	@attachment_upload {
+		method POST
+		path /api/v1/reporter/report/attachments
+	}
+	request_body @attachment_upload {
+		max_size 16MiB
+	}
 	handle @api {
 		header Cache-Control "no-store"
 		php_fastcgi api:9000 {

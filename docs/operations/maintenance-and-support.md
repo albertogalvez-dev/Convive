@@ -43,6 +43,7 @@ that private register and fill only verified renewal dates and owners.
 | Cloudflare Tunnel and edge TLS | Production tunnel not provisioned; TLS will terminate at the edge once a hostname exists | Repository maintainer | Before deployment and monthly thereafter | Store tunnel token outside Git and pass the public smoke test |
 | Cloudflare R2 `convive-demo-backups-eu` | Private EU bucket and bucket-scoped token provisioned; current billable usage checked at USD 0 | Repository maintainer | Monthly; billing alert before any charge | Run off-host backup and isolated restore, then monitor usage |
 | Backup/restore timers | Versioned; host enablement depends on the production deployment gate | Repository maintainer | After deployment, then daily signal/monthly exercise | Fresh restore evidence must be present before every release |
+| Attachment lifecycle timer | Versioned; host enablement depends on the production deployment gate | Repository maintainer | After deployment, then daily signal | Bounded scan/cleanup commands run and fail closed; no real-data scanner is selected |
 | Observability timer and alert publication | Versioned; host enablement depends on the production deployment gate | Repository maintainer | After deployment, then weekly review | Public health, containers, disk and restore freshness checks active |
 
 No row marked “not provisioned”, “prepared” or “depends on the deployment gate”
@@ -69,6 +70,8 @@ to redacted evidence.
 ### Daily automated signals
 
 - [ ] Backup timer runs at 02:30 Europe/Madrid with the documented retention.
+- [ ] Attachment lifecycle timer runs every five minutes without bypassing an
+      unavailable scanner.
 - [ ] Observability checks run every minute and publish only redacted status.
 - [ ] A failed timer or stale restore evidence pages the maintainer through the
       configured systemd failure path.

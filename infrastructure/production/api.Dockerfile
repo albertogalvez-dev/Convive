@@ -32,6 +32,7 @@ WORKDIR /app
 
 COPY --from=dependencies-runtime /app/vendor ./vendor
 COPY apps/api .
+COPY apps/api/docker/php/conf.d/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 RUN rm --force .env .env.dev .env.test \
     && rm --recursive --force tests \
