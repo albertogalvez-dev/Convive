@@ -217,6 +217,39 @@
             }
           </ol>
         </section>
+
+        @if (item.permissions.viewAudit) {
+          <section class="panel audit-panel" aria-labelledby="audit-title">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Registro protegido</p>
+                <h2 id="audit-title">Auditoría</h2>
+              </div>
+              <a [href]="auditExportUrl(item.id)">Exportar CSV</a>
+            </div>
+            @if (auditLoading()) {
+              <p class="empty" aria-live="polite">Cargando registro&hellip;</p>
+            } @else if (auditUnavailable()) {
+              <p class="empty" role="status">El registro no está disponible en este momento.</p>
+            } @else if (auditEvents().length === 0) {
+              <p class="empty">Todavía no hay acciones auditables.</p>
+            } @else {
+              <ol class="team-list audit-list">
+                @for (event of auditEvents(); track event.id) {
+                  <li>
+                    <span
+                      ><strong>{{ auditActionLabel(event.action) }}</strong
+                      ><small>{{ event.actorName }}</small></span
+                    >
+                    <time [attr.datetime]="event.occurredAt">{{
+                      event.occurredAt | date: 'd MMM y, HH:mm' : undefined : 'es'
+                    }}</time>
+                  </li>
+                }
+              </ol>
+            }
+          </section>
+        }
       </aside>
     </div>
   }

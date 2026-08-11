@@ -33,6 +33,7 @@ real safeguarding data.
 | [Encrypted backup and recovery](backup-and-recovery.md) | VPS operator | Restic/R2 backup, retention and isolated restoration |
 | [Incident response and observability](incident-response.md) | Maintainer/on-call | Redacted signals, alert publication and triage |
 | [Private attachment lifecycle](attachment-lifecycle.md) | VPS operator | Bounded scan retries and fictional-evidence cleanup |
+| [Fictional case-audit lifecycle](case-audit-lifecycle.md) | Maintainer | Explicit 30-day fictional audit cleanup boundary |
 | [Reporter email notifications](reporter-email-notifications.md) | Developer/operator | Isolated Mailpit delivery, bounded outbox and production gate |
 | [Supported maintenance through 2027](maintenance-and-support.md) | Maintainer/transfer owner | Ownership, cadence, renewals and retirement |
 | [Fictional demonstration data](fictional-demo-data.md) | Maintainer | Safe deterministic demo seed and reset boundaries |

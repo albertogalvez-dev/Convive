@@ -32,8 +32,19 @@ describe('ProfessionalCaseDetailPage', () => {
 
   afterEach(() => http.verify());
 
-  it('renders operational tasks, source authority and a private evidence route', () => {
+  it('renders operational tasks, source authority, a private evidence route and the explicit audit trail', () => {
     http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({
+      items: [
+        {
+          id: 'audit-1',
+          action: 'task_created',
+          target: 'task',
+          actorName: 'Fictional Professional',
+          occurredAt: '2026-08-11T09:30:00+00:00',
+        },
+      ],
+    });
     fixture.detectChanges();
 
     expect(page.textContent).toContain('Comunicación con Inspección');
@@ -43,6 +54,11 @@ describe('ProfessionalCaseDetailPage', () => {
     expect(page.textContent).toContain('Abierto como caso');
     expect(page.querySelector<HTMLAnchorElement>('.evidence-list a')?.getAttribute('href')).toBe(
       '/api/v1/professional/cases/case-1/evidence/evidence-1/download',
+    );
+    expect(page.textContent).toContain('Auditoría');
+    expect(page.textContent).toContain('Tarea creada');
+    expect(page.querySelector<HTMLAnchorElement>('.audit-panel a')?.getAttribute('href')).toBe(
+      '/api/v1/professional/cases/case-1/audit-events/export',
     );
   });
 
@@ -68,7 +84,7 @@ describe('ProfessionalCaseDetailPage', () => {
       pendingTasks: 1,
       overdueTasks: 0,
       nextDueAt: '2026-08-12T09:00:00+00:00',
-      permissions: { manage: true, manageAssignments: true },
+      permissions: { manage: true, manageAssignments: true, viewAudit: true },
       people: [{ id: 'person-1', name: 'Fictional person', role: 'affected' }],
       assignments: [
         {

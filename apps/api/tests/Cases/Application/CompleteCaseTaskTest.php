@@ -6,10 +6,14 @@ namespace App\Tests\Cases\Application;
 
 use App\Cases\Application\AuthoriseCaseAccess;
 use App\Cases\Application\CompleteCaseTask;
+use App\Cases\Application\CreateCaseTask;
+use App\Cases\Application\MarkCaseTaskNotApplicable;
 use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
 use App\Cases\Domain\CaseAssignmentRepository;
 use App\Cases\Domain\CaseAssignmentRole;
+use App\Cases\Domain\CaseAuditEvent;
+use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseModality;
 use App\Cases\Domain\CaseProtocolStage;
 use App\Cases\Domain\CaseTask;
@@ -35,9 +39,11 @@ final class CompleteCaseTaskTest extends TestCase
     public function testCompletionRequiresAndRecordsAnExplicitAuthorisedActor(): void
     {
         [$task, $professional, $membership, $assignment] = $this->scope(CaseAssignmentRole::Contributor);
+        $auditEvents = new InMemoryCaseAuditEventRepository();
         $service = new CompleteCaseTask(
             new AuthoriseCaseAccess($this->memberships([$membership]), $this->assignments([$assignment])),
             $this->tasks(),
+            $auditEvents,
         );
         $completedAt = new DateTimeImmutable('2026-08-11T12:00:00+00:00');
 
@@ -46,6 +52,9 @@ final class CompleteCaseTaskTest extends TestCase
         self::assertSame(CaseTaskStatus::Completed, $task->status());
         self::assertSame($professional, $task->resolvedBy());
         self::assertSame($completedAt, $task->resolvedAt());
+        self::assertCount(1, $auditEvents->events);
+        self::assertSame('task_completed', $auditEvents->events[0]->action()->value);
+        self::assertTrue($auditEvents->events[0]->targetId()->equals($task->id()));
     }
 
     public function testAnObserverCannotCompleteACommunicationTask(): void
@@ -54,6 +63,7 @@ final class CompleteCaseTaskTest extends TestCase
         $service = new CompleteCaseTask(
             new AuthoriseCaseAccess($this->memberships([$membership]), $this->assignments([$assignment])),
             $this->tasks(),
+            $this->auditEvents(),
         );
 
         try {
@@ -63,6 +73,43 @@ final class CompleteCaseTaskTest extends TestCase
             self::assertSame(CaseTaskStatus::Pending, $task->status());
             self::assertNull($task->resolvedAt());
         }
+    }
+
+    public function testCreationAndNotApplicableResolutionRecordTheirMinimalTaskEvents(): void
+    {
+        [$existingTask, $professional, $membership, $assignment] = $this->scope(CaseAssignmentRole::Lead);
+        $auditEvents = new InMemoryCaseAuditEventRepository();
+        $authorise = new AuthoriseCaseAccess(
+            $this->memberships([$membership]),
+            $this->assignments([$assignment]),
+        );
+        $tasks = $this->tasks();
+        $createdAt = new DateTimeImmutable('2026-08-11T12:00:00+00:00');
+        $task = (new CreateCaseTask($authorise, $tasks, $auditEvents))->create(
+            Uuid::v7(),
+            $existingTask->managedCase(),
+            $professional,
+            $existingTask->source(),
+            CaseProtocolStage::InformationCollection,
+            CaseTaskKind::InternalAction,
+            'Collect fictional follow-up information',
+            $createdAt->modify('+1 day'),
+            $professional,
+            $createdAt,
+        );
+
+        (new MarkCaseTaskNotApplicable($authorise, $tasks, $auditEvents))->mark(
+            $task,
+            $professional,
+            $createdAt->modify('+1 hour'),
+            'The fictional follow-up is no longer required.',
+        );
+
+        self::assertSame(CaseTaskStatus::NotApplicable, $task->status());
+        self::assertSame(['task_created', 'task_marked_not_applicable'], array_map(
+            static fn (CaseAuditEvent $event): string => $event->action()->value,
+            $auditEvents->events,
+        ));
     }
 
     /** @return array{CaseTask, Professional, OrganisationMembership, CaseAssignment} */
@@ -163,5 +210,35 @@ final class CompleteCaseTaskTest extends TestCase
             {
             }
         };
+    }
+
+    private function auditEvents(): CaseAuditEventRepository
+    {
+        return new InMemoryCaseAuditEventRepository();
+    }
+}
+
+final class InMemoryCaseAuditEventRepository implements CaseAuditEventRepository
+{
+    /** @var list<CaseAuditEvent> */
+    public array $events = [];
+
+    public function append(CaseAuditEvent $event): void
+    {
+        $this->events[] = $event;
+    }
+
+    public function flush(): void
+    {
+    }
+
+    public function findByCase(ManagedCase $managedCase): array
+    {
+        return [];
+    }
+
+    public function purgeBefore(DateTimeImmutable $cutoff, int $limit): int
+    {
+        return 0;
     }
 }

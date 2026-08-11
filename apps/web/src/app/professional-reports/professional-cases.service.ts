@@ -7,6 +7,16 @@ export type CaseModality = 'in_person' | 'digital' | 'mixed' | 'unknown';
 export type CaseAssignmentRole = 'lead' | 'contributor' | 'observer';
 export type CaseTaskStatus = 'pending' | 'completed' | 'not_applicable';
 export type WorkflowSourceAuthority = 'binding' | 'recommended' | 'internal';
+export type CaseAuditAction =
+  | 'case_created'
+  | 'report_linked'
+  | 'assignment_created'
+  | 'assignment_revoked'
+  | 'task_created'
+  | 'task_completed'
+  | 'task_marked_not_applicable'
+  | 'evidence_download_authorised'
+  | 'audit_exported';
 
 export interface ProfessionalCaseSummary {
   id: string;
@@ -21,7 +31,7 @@ export interface ProfessionalCaseSummary {
 }
 
 export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
-  permissions: { manage: boolean; manageAssignments: boolean };
+  permissions: { manage: boolean; manageAssignments: boolean; viewAudit: boolean };
   people: Array<{ id: string; name: string; role: string }>;
   assignments: Array<{
     id: string;
@@ -64,6 +74,14 @@ export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
   timeline: Array<{ type: string; occurredAt: string }>;
 }
 
+export interface ProfessionalCaseAuditEvent {
+  id: string;
+  action: CaseAuditAction;
+  target: 'case' | 'triage_decision' | 'assignment' | 'task' | 'attachment' | 'audit_trail';
+  actorName: string;
+  occurredAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProfessionalCasesService {
   private readonly http = inject(HttpClient);
@@ -77,7 +95,17 @@ export class ProfessionalCasesService {
     return this.http.get<ProfessionalCaseDetail>(`${this.endpoint}/${encodeURIComponent(id)}`);
   }
 
+  auditEvents(id: string): Observable<{ items: ProfessionalCaseAuditEvent[] }> {
+    return this.http.get<{ items: ProfessionalCaseAuditEvent[] }>(
+      `${this.endpoint}/${encodeURIComponent(id)}/audit-events`,
+    );
+  }
+
   evidenceDownloadUrl(caseId: string, evidenceId: string): string {
     return `${this.endpoint}/${encodeURIComponent(caseId)}/evidence/${encodeURIComponent(evidenceId)}/download`;
+  }
+
+  auditExportUrl(caseId: string): string {
+    return `${this.endpoint}/${encodeURIComponent(caseId)}/audit-events/export`;
   }
 }

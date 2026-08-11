@@ -16,7 +16,6 @@ use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use DateTimeImmutable;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -26,7 +25,6 @@ use Symfony\Component\Uid\Uuid;
 final class ProfessionalReportControllerTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;
-    private Connection $connection;
     private KernelBrowser $client;
 
     protected function setUp(): void
@@ -38,14 +36,18 @@ final class ProfessionalReportControllerTest extends WebTestCase
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
         $this->entityManager = $entityManager;
-        $this->connection = $this->entityManager->getConnection();
-        $this->cleanTestData();
+        $this->entityManager->getConnection()->beginTransaction();
     }
 
     protected function tearDown(): void
     {
-        $this->cleanTestData();
-        $this->entityManager->clear();
+        if (isset($this->entityManager)) {
+            $connection = $this->entityManager->getConnection();
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            $this->entityManager->clear();
+        }
 
         parent::tearDown();
     }
@@ -197,7 +199,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertSame($foreignResponse, $this->client->getResponse()->getContent());
         self::assertSame(
             'received',
-            $this->connection->fetchOne(
+            $this->entityManager->getConnection()->fetchOne(
                 'SELECT status FROM reports WHERE id = ?',
                 [$foreignReport['report']->id()->toRfc4122()],
             ),
@@ -263,7 +265,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
             'Initial fictional safeguarding assessment completed.',
             $this->responsePayload()['review']['reason'],
         );
-        $storedReview = $this->connection->fetchAssociative(
+        $storedReview = $this->entityManager->getConnection()->fetchAssociative(
             'SELECT status, review_reason, reviewed_by_professional_id, reviewed_at, version '
             .'FROM reports WHERE id = ?',
             [$created['report']->id()->toRfc4122()],
@@ -368,7 +370,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertSame(
             2,
-            (int) $this->connection->fetchOne(
+            (int) $this->entityManager->getConnection()->fetchOne(
                 "SELECT COUNT(*) FROM report_follow_up_entries
                  WHERE report_id = ? AND author_type = 'professional'
                  AND professional_author_id = ?",
@@ -430,15 +432,18 @@ final class ProfessionalReportControllerTest extends WebTestCase
         $retried = $this->responsePayload()['decision'];
         self::assertSame($linked['id'], $retried['id']);
         self::assertSame($linked['caseId'], $retried['caseId']);
-        self::assertSame(1, (int) $this->connection->fetchOne('SELECT COUNT(*) FROM managed_cases'));
-        $caseState = $this->connection->fetchNumeric(
+        self::assertSame(1, (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT COUNT(*) FROM managed_cases WHERE organisation_id = ?',
+            [$organisation->id()->toRfc4122()],
+        ));
+        $caseState = $this->entityManager->getConnection()->fetchNumeric(
             'SELECT status, modality FROM managed_cases WHERE id = ?',
             [$linked['caseId']],
         );
         self::assertNotFalse($caseState);
         self::assertSame(['assessment', 'in_person'], $caseState);
 
-        $leadAssignment = $this->connection->fetchNumeric(
+        $leadAssignment = $this->entityManager->getConnection()->fetchNumeric(
             'SELECT role, professional_id FROM case_assignments WHERE case_id = ?',
             [$linked['caseId']],
         );
@@ -447,16 +452,24 @@ final class ProfessionalReportControllerTest extends WebTestCase
             ['lead', $professional->id()->toRfc4122()],
             $leadAssignment,
         );
+        self::assertSame([
+            ['action' => 'case_created', 'target' => 'case'],
+            ['action' => 'report_linked', 'target' => 'triage_decision'],
+            ['action' => 'assignment_created', 'target' => 'assignment'],
+        ], $this->entityManager->getConnection()->fetchAllAssociative(
+            'SELECT action, target FROM case_audit_events WHERE case_id = ? ORDER BY occurred_at, id',
+            [$linked['caseId']],
+        ));
         self::assertSame(
             2,
-            (int) $this->connection->fetchOne(
+            (int) $this->entityManager->getConnection()->fetchOne(
                 'SELECT COUNT(*) FROM report_triage_decisions WHERE report_id = ?',
                 [$created['report']->id()->toRfc4122()],
             ),
         );
         self::assertSame(
             $originalDescription,
-            $this->connection->fetchOne('SELECT situation_description FROM reports WHERE id = ?', [
+            $this->entityManager->getConnection()->fetchOne('SELECT situation_description FROM reports WHERE id = ?', [
                 $created['report']->id()->toRfc4122(),
             ]),
         );
@@ -500,14 +513,14 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
         self::assertSame(
             'dismiss',
-            $this->connection->fetchOne(
+            $this->entityManager->getConnection()->fetchOne(
                 'SELECT outcome FROM report_triage_decisions WHERE report_id = ?',
                 [$created['report']->id()->toRfc4122()],
             ),
         );
         self::assertSame(
             1,
-            (int) $this->connection->fetchOne('SELECT COUNT(*) FROM reports WHERE id = ?', [
+            (int) $this->entityManager->getConnection()->fetchOne('SELECT COUNT(*) FROM reports WHERE id = ?', [
                 $created['report']->id()->toRfc4122(),
             ]),
         );
@@ -547,7 +560,10 @@ final class ProfessionalReportControllerTest extends WebTestCase
             ['HTTP_ORIGIN' => 'https://attacker.example', 'HTTP_SEC_FETCH_SITE' => 'cross-site'],
         );
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-        self::assertSame(0, (int) $this->connection->fetchOne('SELECT COUNT(*) FROM report_triage_decisions'));
+        self::assertSame(0, (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT COUNT(*) FROM report_triage_decisions WHERE report_id = ?',
+            [$local['report']->id()->toRfc4122()],
+        ));
     }
 
     public function testInvalidAndAnonymousProfessionalResponsesAreRejected(): void
@@ -584,7 +600,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
         self::assertSame(
             0,
-            (int) $this->connection->fetchOne(
+            (int) $this->entityManager->getConnection()->fetchOne(
                 'SELECT COUNT(*) FROM report_follow_up_entries WHERE report_id = ?',
                 [$created['report']->id()->toRfc4122()],
             ),
@@ -620,7 +636,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         self::assertSame(
             0,
-            (int) $this->connection->fetchOne(
+            (int) $this->entityManager->getConnection()->fetchOne(
                 'SELECT COUNT(*) FROM report_follow_up_entries WHERE report_id IN (?, ?)',
                 [
                     $foreignReport['report']->id()->toRfc4122(),
@@ -740,42 +756,4 @@ final class ProfessionalReportControllerTest extends WebTestCase
         ];
     }
 
-    private function cleanTestData(): void
-    {
-        $this->connection->executeStatement('DELETE FROM professional_sessions');
-        $this->connection->executeStatement('DELETE FROM report_triage_decisions');
-        $this->connection->executeStatement('DELETE FROM case_involved_people');
-        $this->connection->executeStatement('DELETE FROM case_assignments');
-        $this->connection->executeStatement('DELETE FROM managed_cases');
-        $this->connection->executeStatement(
-            "DELETE FROM report_follow_up_entries WHERE report_id IN (
-                SELECT reports.id FROM reports
-                INNER JOIN organisations ON organisations.id = reports.organisation_id
-                WHERE organisations.public_reporting_identifier LIKE 'ORG_1NB0X%'
-            )",
-        );
-        $this->connection->executeStatement(
-            "DELETE FROM report_access_grants WHERE report_id IN (
-                SELECT reports.id FROM reports
-                INNER JOIN organisations ON organisations.id = reports.organisation_id
-                WHERE organisations.public_reporting_identifier LIKE 'ORG_1NB0X%'
-            )",
-        );
-        $this->connection->executeStatement(
-            "DELETE FROM reports WHERE organisation_id IN (
-                SELECT id FROM organisations WHERE public_reporting_identifier LIKE 'ORG_1NB0X%'
-            )",
-        );
-        $this->connection->executeStatement(
-            "DELETE FROM organisation_memberships WHERE professional_id IN (
-                SELECT id FROM professionals WHERE email LIKE '%@inbox-test.example'
-            )",
-        );
-        $this->connection->executeStatement(
-            "DELETE FROM professionals WHERE email LIKE '%@inbox-test.example'",
-        );
-        $this->connection->executeStatement(
-            "DELETE FROM organisations WHERE public_reporting_identifier LIKE 'ORG_1NB0X%'",
-        );
-    }
 }

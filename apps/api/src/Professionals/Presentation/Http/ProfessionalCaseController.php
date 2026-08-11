@@ -6,8 +6,14 @@ namespace App\Professionals\Presentation\Http;
 
 use App\Cases\Application\CaseWorkspaceDetail;
 use App\Cases\Application\CaseWorkspaceSummary;
+use App\Cases\Application\AuthoriseCaseAccess;
 use App\Cases\Application\ProfessionalCaseWorkspace;
+use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
+use App\Cases\Domain\CaseAuditAction;
+use App\Cases\Domain\CaseAuditEvent;
+use App\Cases\Domain\CaseAuditEventRepository;
+use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CaseInvolvedPerson;
 use App\Cases\Domain\CasePermission;
 use App\Cases\Domain\CaseTask;
@@ -33,6 +39,8 @@ final readonly class ProfessionalCaseController
 {
     public function __construct(
         private ProfessionalCaseWorkspace $workspace,
+        private AuthoriseCaseAccess $authorise,
+        private CaseAuditEventRepository $auditEvents,
         private PrivateReportAttachmentDownloadResponder $downloadResponder,
         private SecurityEventLogger $securityEventLogger,
         private RateLimitEnforcer $rateLimitEnforcer,
@@ -149,8 +157,109 @@ final readonly class ProfessionalCaseController
             throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
         }
         $this->securityEventLogger->professionalAttachmentDownloaded($request);
+        $this->auditEvents->append(new CaseAuditEvent(
+            Uuid::v7(),
+            $detail->managedCase,
+            $professional,
+            CaseAuditAction::EvidenceDownloadAuthorised,
+            CaseAuditTarget::Attachment,
+            $attachment->id(),
+            DateTimeImmutable::createFromTimestamp(microtime(true)),
+        ));
+        $this->auditEvents->flush();
 
         return $response;
+    }
+
+    #[Route(
+        '/api/v1/professional/cases/{id}/audit-events',
+        name: 'api_v1_professional_list_case_audit_events',
+        methods: ['GET'],
+    )]
+    #[OA\Get(
+        operationId: 'listProfessionalCaseAuditEvents',
+        summary: 'Read the explicit audit trail for an assigned case',
+        description: 'Requires the separate case audit permission and returns no case content or target identifiers.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_OK,
+                description: 'The minimised ordered audit events.',
+                content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseAuditEventPage'),
+            ),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
+        ],
+    )]
+    public function auditEvents(string $id, #[CurrentUser] Professional $professional): JsonResponse
+    {
+        $detail = $this->resolveAuditDetail($id, $professional);
+
+        return $this->json([
+            'items' => array_map($this->serializeAuditEvent(...), $this->auditEvents->findByCase($detail->managedCase)),
+        ]);
+    }
+
+    #[Route(
+        '/api/v1/professional/cases/{id}/audit-events/export',
+        name: 'api_v1_professional_export_case_audit_events',
+        methods: ['GET'],
+    )]
+    #[OA\Get(
+        operationId: 'exportProfessionalCaseAuditEvents',
+        summary: 'Export the minimal audit trail for an assigned case',
+        description: 'Requires the separate case audit permission. The CSV excludes case content, people, evidence, reasons and target identifiers.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The minimised audit CSV.'),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
+        ],
+    )]
+    public function exportAuditEvents(string $id, #[CurrentUser] Professional $professional): StreamedResponse
+    {
+        $detail = $this->resolveAuditDetail($id, $professional);
+        $now = DateTimeImmutable::createFromTimestamp(microtime(true));
+        $this->auditEvents->append(new CaseAuditEvent(
+            Uuid::v7(),
+            $detail->managedCase,
+            $professional,
+            CaseAuditAction::AuditExported,
+            CaseAuditTarget::AuditTrail,
+            $detail->managedCase->id(),
+            $now,
+        ));
+        $this->auditEvents->flush();
+        $events = $this->auditEvents->findByCase($detail->managedCase);
+
+        return new StreamedResponse(
+            static function () use ($events): void {
+                $output = fopen('php://output', 'wb');
+                if ($output === false) {
+                    throw new \RuntimeException('The audit export could not be opened.');
+                }
+
+                fputcsv($output, ['occurred_at', 'action', 'target', 'actor'], ',', '"', '');
+                foreach ($events as $event) {
+                    fputcsv($output, [
+                        $event->occurredAt()->format(DATE_RFC3339_EXTENDED),
+                        $event->action()->value,
+                        $event->target()->value,
+                        $event->actor()->name(),
+                    ], ',', '"', '');
+                }
+                fclose($output);
+            },
+            Response::HTTP_OK,
+            [
+                'Cache-Control' => 'no-store',
+                'Content-Disposition' => 'attachment; filename="case-audit.csv"',
+                'Content-Type' => 'text/csv; charset=utf-8',
+                'X-Content-Type-Options' => 'nosniff',
+            ],
+        );
     }
 
     private function resolveDetail(string $id, Professional $professional): CaseWorkspaceDetail
@@ -161,6 +270,19 @@ final readonly class ProfessionalCaseController
 
         return $this->workspace->detail(Uuid::fromString($id), $professional)
             ?? throw new ProfessionalCaseNotFoundHttpException();
+    }
+
+    private function resolveAuditDetail(string $id, Professional $professional): CaseWorkspaceDetail
+    {
+        $detail = $this->resolveDetail($id, $professional);
+
+        try {
+            $this->authorise->require($detail->managedCase, $professional, CasePermission::ViewAudit);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+
+        return $detail;
     }
 
     /** @return array<string, mixed> */
@@ -189,6 +311,7 @@ final readonly class ProfessionalCaseController
             'permissions' => [
                 'manage' => $detail->currentAssignment->permits(CasePermission::Manage),
                 'manageAssignments' => $detail->currentAssignment->permits(CasePermission::ManageAssignments),
+                'viewAudit' => $detail->currentAssignment->permits(CasePermission::ViewAudit),
             ],
             'people' => array_map($this->serializePerson(...), $detail->people),
             'assignments' => array_map($this->serializeAssignment(...), $detail->assignments),
@@ -280,6 +403,18 @@ final readonly class ProfessionalCaseController
             'mediaType' => $attachment->mediaType()->value,
             'byteSize' => $attachment->byteSize(),
             'createdAt' => $attachment->createdAt()->format(DATE_RFC3339_EXTENDED),
+        ];
+    }
+
+    /** @return array{id: string, action: string, target: string, actorName: string, occurredAt: string} */
+    private function serializeAuditEvent(CaseAuditEvent $event): array
+    {
+        return [
+            'id' => $event->id()->toRfc4122(),
+            'action' => $event->action()->value,
+            'target' => $event->target()->value,
+            'actorName' => $event->actor()->name(),
+            'occurredAt' => $event->occurredAt()->format(DATE_RFC3339_EXTENDED),
         ];
     }
 

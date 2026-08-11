@@ -223,6 +223,9 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await expect(leadPage.getByRole('heading', { name: 'Tareas' })).toBeVisible();
     await expect(leadPage.getByRole('heading', { name: 'Decisión registrada' })).toBeVisible();
     await expect(leadPage.getByText('Abierto como caso', { exact: true })).toBeVisible();
+    await expect(leadPage.getByRole('heading', { name: 'Auditoría' })).toBeVisible();
+    await expect(leadPage.getByRole('link', { name: 'Exportar CSV' })).toBeVisible();
+    await expect(leadPage.getByText('Todavía no hay acciones auditables.')).toBeVisible();
     const assignedCaseUrl = leadPage.url();
 
     const administratorPage = await administratorContext.newPage();

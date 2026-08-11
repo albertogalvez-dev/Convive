@@ -122,6 +122,7 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame('mixed', $detail['modality']);
         self::assertTrue($detail['permissions']['manage']);
         self::assertTrue($detail['permissions']['manageAssignments']);
+        self::assertTrue($detail['permissions']['viewAudit']);
         self::assertSame('Fictional affected person', $detail['people'][0]['name']);
         self::assertSame('inspection_communication', $detail['tasks'][0]['stage']);
         self::assertSame('binding', $detail['tasks'][0]['source']['authority']);
@@ -138,6 +139,25 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSame('application/pdf', $this->client->getResponse()->headers->get('content-type'));
         self::assertSame('%PDF-1.7\nfake case evidence\n', $this->client->getInternalResponse()->getContent());
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString(
+            'no-store',
+            (string) $this->client->getResponse()->headers->get('Cache-Control'),
+        );
+        $audit = $this->responsePayload();
+        self::assertSame('evidence_download_authorised', $audit['items'][0]['action']);
+        self::assertSame('attachment', $audit['items'][0]['target']);
+        self::assertArrayNotHasKey('targetId', $audit['items'][0]);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events/export');
+        self::assertResponseIsSuccessful();
+        self::assertSame('text/csv; charset=utf-8', $this->client->getResponse()->headers->get('content-type'));
+        $export = $this->client->getInternalResponse()->getContent();
+        self::assertStringContainsString('occurred_at,action,target,actor', $export);
+        self::assertStringContainsString('audit_exported', $export);
+        self::assertStringNotContainsString('Fictional case evidence.', $export);
     }
 
     public function testOrganisationMembershipWithoutExactCaseAssignmentCannotDiscoverTheCase(): void
@@ -174,6 +194,44 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         self::assertSame($deniedEvidence, $this->client->getResponse()->getContent());
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $deniedAudit = $this->client->getResponse()->getContent();
+        self::assertIsString($deniedAudit);
+
+        $this->client->request('GET', '/api/v1/professional/cases/0192a5c0-9999-7000-8000-000000000046/audit-events');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        self::assertSame($deniedAudit, $this->client->getResponse()->getContent());
+    }
+
+    public function testContributorCanReadTheCaseButCannotDiscoverItsProtectedAuditTrail(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $contributor = $this->createProfessional('case-contributor', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $managedCase,
+            $contributor,
+            CaseAssignmentRole::Contributor,
+            $lead,
+            new DateTimeImmutable(),
+        ));
+        $this->entityManager->flush();
+        $this->client->loginUser($contributor);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        self::assertFalse($this->responsePayload()['permissions']['viewAudit']);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $denied = $this->client->getResponse()->getContent();
+        self::assertIsString($denied);
+
+        $this->client->request('GET', '/api/v1/professional/cases/0192a5c0-9999-7000-8000-000000000046/audit-events');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        self::assertSame($denied, $this->client->getResponse()->getContent());
     }
 
     public function testAnonymousRequestsCannotReadProfessionalCases(): void
