@@ -27,8 +27,10 @@ preflight, smoke-test and rollback decisions for the fictional demonstration.
 The [implemented reporting sequence](diagrams/reporting-sequence.md) covers
 the current anonymous and professional conversation paths. The [recovery
 flow](diagrams/recovery-flow.md) covers the encrypted off-host backup gate and
-isolated restoration exercise. Future case-management, email, attachment and
-analytics behaviour is deliberately not drawn until its implementation exists.
+isolated restoration exercise. ADR-0015 defines the future optional-email
+boundary without claiming an implemented delivery path. Future case-management,
+email-delivery and analytics behaviour is deliberately not drawn until its
+implementation exists.
 
 ## Data model
 

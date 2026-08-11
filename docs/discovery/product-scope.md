@@ -241,6 +241,14 @@ must not be visible to professionals who do not need it.
 A reporter who does not provide an email can still use the access secret to
 check for updates manually. The tracking reference does not grant access.
 
+[ADR-0015](../architecture/decisions/0015-use-verified-email-only-for-generic-reporter-notifications.md)
+defines the accepted boundary: verification proves control of a mailbox only;
+email, the public reference and manual staff checks cannot recover report
+access. A notification links only to the general secure follow-up entry point
+and reveals no organisation, report reference, status, content or credential.
+Unverified contact expires within 24 hours, removal stops future delivery, and
+the no-email journey remains equally capable.
+
 ### 4. Report triage
 
 Authorised professionals must be able to:

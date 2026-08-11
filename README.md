@@ -58,8 +58,9 @@ public API described below.
 
 The anonymous journey covers text submission, situation context, review,
 one-time presentation of access credentials and capability-based follow-up.
-Attachments, optional email and professional case-management workflows remain
-under development.
+Private fictional attachments are implemented. Optional email has an accepted
+notification-only privacy boundary but no delivery implementation; professional
+case-management workflows remain under development.
 
 Development and demonstrations must use fictional data only.
 

@@ -134,8 +134,10 @@ This ADR does not implement:
 
 - the anonymous follow-up API;
 - the capability-cookie lifecycle;
-- optional email notifications;
-- secret recovery;
+- optional email notifications, whose notification-only boundary is selected
+  in [ADR-0015](0015-use-verified-email-only-for-generic-reporter-notifications.md);
+- secret recovery; ADR-0015 explicitly rejects email-only and manual-support
+  recovery for the initial release;
 - attachment access;
 - the complete rate-limiting policy;
 - professional report access.
