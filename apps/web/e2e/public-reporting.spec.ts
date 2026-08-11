@@ -22,6 +22,7 @@ test.afterEach(async ({ context, page }, testInfo) => {
     .addStyleTag({
       content: `
         .credential-value.secret,
+        .print-secret,
         #accessSecret,
         input[type='password'] {
           visibility: hidden !important;
@@ -65,6 +66,27 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await expect(page.getByRole('heading', { name: 'Comunicación enviada' })).toBeVisible();
   const publicReference = await page.locator('.credential-value.reference code').innerText();
   const accessSecret = await page.locator('.credential-value.secret code').innerText();
+
+  await expect(page.getByRole('button', { name: 'Copiar secreto' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Imprimir o guardar en PDF' })).toBeVisible();
+  await expect(page.locator('.print-receipt')).toBeHidden();
+  expect(await page.title()).not.toContain(publicReference);
+  expect(await page.title()).not.toContain(accessSecret);
+  expect(page.url()).not.toContain(publicReference);
+  expect(page.url()).not.toContain(accessSecret);
+
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.print-receipt')).toBeVisible();
+  await expect(page.locator('.result')).toBeHidden();
+  await expect(page.locator('.initial-evidence')).toBeHidden();
+  await expect(page.locator('.print-receipt')).toContainText('app.conviveaula.com/seguimiento');
+  await expect(page.locator('.print-secret')).toContainText(accessSecret);
+  await expect(page.locator('.print-receipt')).not.toContainText(publicReference);
+  await expect(page.locator('.print-warning')).toContainText(
+    'Cualquiera que tenga este secreto puede entrar',
+  );
+  await expectNoAccessibilityViolations(page);
+  await page.emulateMedia({ media: 'screen' });
 
   await page.getByRole('button', { name: 'Añadir pruebas' }).click();
   await page.locator('#evidence-files').setInputFiles({
