@@ -73,6 +73,21 @@ framework:
             limit: 120
             interval: '1 minute'
 
+        reporter_email_configuration_ip:
+            policy: sliding_window
+            limit: 6
+            interval: '1 hour'
+
+        reporter_email_configuration_capability:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+
+        reporter_email_verification:
+            policy: sliding_window
+            limit: 10
+            interval: '1 minute'
+
         professional_login_account:
             policy: token_bucket
             limit: 5

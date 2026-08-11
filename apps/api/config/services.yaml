@@ -19,6 +19,10 @@ parameters:
     # development and production Compose each provide a dedicated private
     # named volume; test overrides this with an ignored cache path below.
     attachment_storage.directory: '%env(ATTACHMENT_STORAGE_DIRECTORY)%'
+    reporter_email.enabled: '%env(bool:REPORTER_EMAIL_ENABLED)%'
+    reporter_email.from: '%env(REPORTER_EMAIL_FROM)%'
+    reporter_email.public_url: '%env(REPORTER_EMAIL_PUBLIC_URL)%'
+    reporter_email.follow_up_url: '%env(REPORTER_EMAIL_FOLLOW_UP_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -67,6 +71,7 @@ when@prod:
 when@test:
     parameters:
         attachment_storage.directory: '%kernel.cache_dir%/private-attachments'
+        reporter_email.enabled: true
 
     services:
         # The development Compose environment keeps professional sessions in

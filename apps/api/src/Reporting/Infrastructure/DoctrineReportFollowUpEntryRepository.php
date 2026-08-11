@@ -7,13 +7,16 @@ namespace App\Reporting\Infrastructure;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportFollowUpEntryRepository;
+use App\Reporting\Domain\FollowUpAuthorType;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class DoctrineReportFollowUpEntryRepository implements ReportFollowUpEntryRepository
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly DoctrineReporterEmailNotifications $reporterEmailNotifications,
+    ) {
     }
 
     public function saveIfReportHasCapacity(
@@ -37,6 +40,10 @@ final class DoctrineReportFollowUpEntryRepository implements ReportFollowUpEntry
             }
 
             $this->entityManager->persist($entry);
+
+            if ($entry->authorType() === FollowUpAuthorType::Professional) {
+                $this->reporterEmailNotifications->queueReportUpdate($report, $entry->id());
+            }
 
             return true;
         });

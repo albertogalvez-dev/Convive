@@ -397,6 +397,168 @@ paths:
       security:
         -
           reportAccessCookie: []
+  /api/v1/reporter/report/email-notifications:
+    get:
+      tags:
+        - 'Public reporting'
+      summary: 'Read the optional reporter-email notification state'
+      description: 'Returns only whether the feature is available and whether the contact is absent, pending or verified. It never returns the address.'
+      operationId: getReporterEmailNotificationStatus
+      responses:
+        '200':
+          description: 'The privacy-minimised notification state.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - enabled
+                  - status
+                properties:
+                  enabled: { type: boolean }
+                  status: { type: string, enum: [none, pending, verified] }
+                type: object
+        '401':
+          description: 'The report access capability was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
+    put:
+      tags:
+        - 'Public reporting'
+      summary: 'Request optional generic reporter-email notifications'
+      description: 'Stores a separate pending contact and queues a generic mailbox-verification message. The address grants no report access.'
+      operationId: configureReporterEmailNotifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - consentAccepted
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 254
+                consentAccepted:
+                  type: boolean
+                  enum: [true]
+              type: object
+      responses:
+        '202':
+          description: 'Verification was queued or the existing verified contact was retained.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - enabled
+                  - status
+                properties:
+                  enabled: { type: boolean }
+                  status: { type: string, enum: [pending, verified] }
+                type: object
+        '401':
+          description: 'The report access capability was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: 'The request failed same-origin validation.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: 'The address or consent evidence is invalid.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '429':
+          description: 'The configuration limit was exceeded.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
+    delete:
+      tags:
+        - 'Public reporting'
+      summary: 'Remove the optional reporter-email contact'
+      description: 'Immediately deletes the separated contact and cascades all queued or retrying delivery work.'
+      operationId: removeReporterEmailNotifications
+      responses:
+        '204':
+          description: 'The contact and notification work were removed.'
+        '401':
+          description: 'The report access capability was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: 'The request failed same-origin validation.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      security:
+        -
+          reportAccessCookie: []
+  /api/v1/public/reporter-email-verifications:
+    post:
+      tags:
+        - 'Public reporting'
+      summary: 'Verify an optional reporter-email contact'
+      description: 'Consumes a single-use mailbox token. It grants no report capability and returns no report information.'
+      operationId: verifyReporterEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  pattern: '^[0-9a-f]{64}$'
+              type: object
+      responses:
+        '200':
+          description: 'The mailbox was verified.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - verified
+                properties:
+                  verified: { type: boolean, enum: [true] }
+                type: object
+        '422':
+          description: 'The token is invalid, expired or already used.'
+          content:
+            application/json:
+              schema:
+                required:
+                  - verified
+                properties:
+                  verified: { type: boolean, enum: [false] }
+                type: object
+        '429':
+          description: 'The verification limit was exceeded.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/v1/reporter/report/attachments:
     get:
       tags:
@@ -996,6 +1158,24 @@ components:
         - content
       properties:
         content:
+          type: string
+      type: object
+    ConfigureReporterEmailRequest:
+      required:
+        - email
+        - consentAccepted
+      properties:
+        email:
+          type: string
+          maxLength: 254
+        consentAccepted:
+          type: boolean
+      type: object
+    VerifyReporterEmailRequest:
+      required:
+        - token
+      properties:
+        token:
           type: string
       type: object
     SubmitAnonymousReportRequest:
