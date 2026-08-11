@@ -225,6 +225,27 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             )',
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         ));
+        self::assertSame(1, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM managed_cases WHERE id = :id AND status = :status AND modality = :modality',
+            [
+                'id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                'status' => 'assessment',
+                'modality' => 'mixed',
+            ],
+        ));
+        self::assertSame(1, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_assignments
+             WHERE id = :assignment_id AND case_id = :case_id AND role = :role AND revoked_at IS NULL',
+            [
+                'assignment_id' => FictionalDemoDataset::CASE_ASSIGNMENT_ID,
+                'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                'role' => 'lead',
+            ],
+        ));
+        self::assertSame(2, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_involved_people WHERE case_id = :id',
+            ['id' => FictionalDemoDataset::MANAGED_CASE_ID],
+        ));
     }
 
     private function demoReportCount(): int

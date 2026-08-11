@@ -30,16 +30,25 @@ class ManagedCase
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: Types::STRING, length: 20, enumType: CaseStatus::class)]
+    private CaseStatus $status;
+
+    #[ORM\Column(type: Types::STRING, length: 20, enumType: CaseModality::class)]
+    private CaseModality $modality;
+
     public function __construct(
         Uuid $id,
         Organisation $organisation,
         Professional $createdBy,
         DateTimeImmutable $createdAt,
+        CaseModality $modality,
     ) {
         $this->id = $id;
         $this->organisation = $organisation;
         $this->createdBy = $createdBy;
         $this->createdAt = $createdAt;
+        $this->status = CaseStatus::Assessment;
+        $this->modality = $modality;
     }
 
     public function id(): Uuid
@@ -60,5 +69,15 @@ class ManagedCase
     public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function status(): CaseStatus
+    {
+        return $this->status;
+    }
+
+    public function modality(): CaseModality
+    {
+        return $this->modality;
     }
 }

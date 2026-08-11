@@ -62,10 +62,10 @@ returns the existing decision and case rather than creating duplicates. A retry
 does not replace the original actor, reason or time. Database uniqueness and a
 single transaction enforce the invariant under concurrent requests.
 
-The case created here contains only identity, organisation, creator and creation
-time. Case lifecycle, involved people, permissions beyond source triage access,
-assignments, tasks and deadlines remain explicitly deferred to issues #44 and
-#45.
+The case was initially introduced with only identity, organisation, creator and
+creation time. [ADR-0018](0018-require-case-assignments-for-case-content.md)
+now defines its lifecycle baseline, involved people and assignment boundary.
+Tasks and deadlines remain deferred to issue #45.
 
 The initial `new`/`reviewed` report status remains separate. Triage requires the
 existing initial review first, but no triage outcome mutates report content,

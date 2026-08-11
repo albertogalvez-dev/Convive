@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Reporting\Infrastructure;
 
+use App\Cases\Domain\CaseAssignment;
+use App\Cases\Domain\CaseAssignmentRole;
+use App\Cases\Domain\CaseModality;
 use App\Cases\Domain\ManagedCase;
 use App\Professionals\Domain\Professional;
 use App\Reporting\Domain\Report;
@@ -57,7 +60,13 @@ final readonly class DoctrineReportTriageDecisionRepository implements ReportTri
             }
 
             $managedCase = $outcome === ReportTriageOutcome::LinkToCase
-                ? new ManagedCase(Uuid::v7(), $report->organisation(), $professional, $decidedAt)
+                ? new ManagedCase(
+                    Uuid::v7(),
+                    $report->organisation(),
+                    $professional,
+                    $decidedAt,
+                    CaseModality::from($report->situationContext()->value),
+                )
                 : null;
             $decision = new ReportTriageDecision(
                 Uuid::v7(),
@@ -71,6 +80,14 @@ final readonly class DoctrineReportTriageDecisionRepository implements ReportTri
 
             if ($managedCase !== null) {
                 $this->entityManager->persist($managedCase);
+                $this->entityManager->persist(new CaseAssignment(
+                    Uuid::v7(),
+                    $managedCase,
+                    $professional,
+                    CaseAssignmentRole::Lead,
+                    $professional,
+                    $decidedAt,
+                ));
             }
 
             $this->entityManager->persist($decision);

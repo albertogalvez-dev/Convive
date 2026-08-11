@@ -19,6 +19,12 @@ Table reports {
   public_reference varchar(32) [not null, unique, note: 'non-sequential public tracking reference']
   access_secret_hash varchar(64) [not null, unique, note: 'lowercase hexadecimal SHA-256 lookup hash of the access secret; the secret is never stored']
   created_at timestamptz [not null, note: 'immutable UTC instant']
+  review_reason text [note: 'bounded initial professional assessment; null until reviewed']
+  reviewed_by_professional_id uuid [note: 'professional actor; null until reviewed']
+  reviewed_at timestamptz [note: 'immutable UTC instant; null until reviewed']
+  attachment_count int [not null, note: 'reserved attachment slots; non-negative']
+  attachment_bytes int [not null, note: 'reserved attachment bytes; non-negative']
+  version int [not null, note: 'optimistic-lock version']
 
   indexes {
     organisation_id
@@ -60,19 +66,43 @@ Table report_follow_up_entries {
 Ref: report_follow_up_entries.report_id > reports.id
 
 Table managed_cases {
-  id uuid [pk, note: 'application-generated UUIDv7; minimal case identity introduced by #43']
+  id uuid [pk, note: 'application-generated UUIDv7']
   organisation_id uuid [not null]
   created_by_professional_id uuid [not null]
   created_at timestamptz [not null, note: 'immutable UTC instant']
-  review_reason text [note: 'bounded initial professional assessment; null until reviewed']
-  reviewed_by_professional_id uuid [note: 'professional actor; null until reviewed']
-  reviewed_at timestamptz [note: 'immutable UTC instant; null until reviewed']
-  attachment_count int [not null, note: 'reserved attachment slots; non-negative']
-  attachment_bytes int [not null, note: 'reserved attachment bytes; non-negative']
-  version int [not null, note: 'optimistic-lock version']
+  status varchar(20) [not null, note: 'assessment | active | closed (CHECK constraint)']
+  modality varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
 
   indexes {
     organisation_id
+  }
+}
+
+Table case_assignments {
+  id uuid [pk]
+  case_id uuid [not null]
+  professional_id uuid [not null]
+  role varchar(20) [not null, note: 'lead | contributor | observer (CHECK constraint)']
+  assigned_by_professional_id uuid [not null]
+  assigned_at timestamptz [not null]
+  revoked_at timestamptz [note: 'null while active; cannot precede assigned_at']
+
+  indexes {
+    (case_id, professional_id) [unique]
+    (professional_id, revoked_at)
+  }
+}
+
+Table case_involved_people {
+  id uuid [pk]
+  case_id uuid [not null]
+  name varchar(120) [not null, note: 'bounded case-local operational identity; not an academic record']
+  role varchar(20) [not null, note: 'affected | alleged_actor | witness | guardian | other (CHECK constraint)']
+  added_by_professional_id uuid [not null]
+  added_at timestamptz [not null]
+
+  indexes {
+    case_id
   }
 }
 
@@ -96,6 +126,11 @@ Table report_triage_decisions {
 
 Ref: managed_cases.organisation_id > organisations.id
 Ref: managed_cases.created_by_professional_id > professionals.id
+Ref: case_assignments.case_id > managed_cases.id
+Ref: case_assignments.professional_id > professionals.id
+Ref: case_assignments.assigned_by_professional_id > professionals.id
+Ref: case_involved_people.case_id > managed_cases.id
+Ref: case_involved_people.added_by_professional_id > professionals.id
 Ref: report_triage_decisions.report_id > reports.id
 Ref: report_triage_decisions.organisation_id > organisations.id
 Ref: report_triage_decisions.decided_by_professional_id > professionals.id

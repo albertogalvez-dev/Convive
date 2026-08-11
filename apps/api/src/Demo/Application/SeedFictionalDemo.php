@@ -39,8 +39,9 @@ final readonly class SeedFictionalDemo
             $this->upsertMemberships();
             $this->upsertReports();
             $this->upsertConversationEntries();
+            $this->upsertManagedCase();
 
-            return new FictionalDemoSeedResult(1, 2, 4, 4, $reset);
+            return new FictionalDemoSeedResult(1, 2, 4, 4, 1, 1, 2, $reset);
         });
     }
 
@@ -118,6 +119,15 @@ final readonly class SeedFictionalDemo
                 throw new FictionalDemoDatasetConflict('The reserved demo report identifiers are already in use.');
             }
         }
+
+        $managedCase = $this->connection->fetchAssociative(
+            'SELECT id, organisation_id FROM managed_cases WHERE id = :id',
+            ['id' => FictionalDemoDataset::MANAGED_CASE_ID],
+        );
+
+        if ($managedCase !== false && $managedCase['organisation_id'] !== FictionalDemoDataset::ORGANISATION_ID) {
+            throw new FictionalDemoDatasetConflict('The reserved demo case identifier is already in use.');
+        }
     }
 
     private function removeDemoOrganisationData(): void
@@ -154,6 +164,26 @@ final readonly class SeedFictionalDemo
             'DELETE FROM report_follow_up_entries WHERE report_id IN (
                 SELECT id FROM reports WHERE organisation_id = :organisation_id
             )',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        );
+        $this->connection->executeStatement(
+            'DELETE FROM report_triage_decisions WHERE organisation_id = :organisation_id',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        );
+        $this->connection->executeStatement(
+            'DELETE FROM case_involved_people WHERE case_id IN (
+                SELECT id FROM managed_cases WHERE organisation_id = :organisation_id
+            )',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        );
+        $this->connection->executeStatement(
+            'DELETE FROM case_assignments WHERE case_id IN (
+                SELECT id FROM managed_cases WHERE organisation_id = :organisation_id
+            )',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        );
+        $this->connection->executeStatement(
+            'DELETE FROM managed_cases WHERE organisation_id = :organisation_id',
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         );
         $this->connection->executeStatement(
@@ -348,6 +378,116 @@ final readonly class SeedFictionalDemo
                     'professional_author_id' => $entry['professional'],
                     'content' => $entry['content'],
                     'created_at' => $entry['created_at'],
+                ],
+            );
+        }
+    }
+
+    private function upsertManagedCase(): void
+    {
+        $this->connection->executeStatement(
+            'INSERT INTO managed_cases (
+                id, organisation_id, created_by_professional_id, created_at, status, modality
+             ) VALUES (
+                :id, :organisation_id, :professional_id, :created_at, :status, :modality
+             )
+             ON CONFLICT (id) DO UPDATE SET
+                organisation_id = EXCLUDED.organisation_id,
+                created_by_professional_id = EXCLUDED.created_by_professional_id,
+                created_at = EXCLUDED.created_at,
+                status = EXCLUDED.status,
+                modality = EXCLUDED.modality',
+            [
+                'id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                'organisation_id' => FictionalDemoDataset::ORGANISATION_ID,
+                'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+                'created_at' => '2026-08-10T09:30:00+02:00',
+                'status' => 'assessment',
+                'modality' => 'mixed',
+            ],
+        );
+
+        $this->connection->executeStatement(
+            'INSERT INTO report_triage_decisions (
+                id, report_id, organisation_id, decided_by_professional_id, outcome,
+                reason, decided_at, terminal_report_id, case_id
+             ) VALUES (
+                :id, :report_id, :organisation_id, :professional_id, :outcome,
+                :reason, :decided_at, :report_id, :case_id
+             )
+             ON CONFLICT (id) DO UPDATE SET
+                report_id = EXCLUDED.report_id,
+                organisation_id = EXCLUDED.organisation_id,
+                decided_by_professional_id = EXCLUDED.decided_by_professional_id,
+                outcome = EXCLUDED.outcome,
+                reason = EXCLUDED.reason,
+                decided_at = EXCLUDED.decided_at,
+                terminal_report_id = EXCLUDED.terminal_report_id,
+                case_id = EXCLUDED.case_id',
+            [
+                'id' => FictionalDemoDataset::CASE_TRIAGE_DECISION_ID,
+                'report_id' => FictionalDemoDataset::REPORT_IDS[2],
+                'organisation_id' => FictionalDemoDataset::ORGANISATION_ID,
+                'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+                'outcome' => 'link_to_case',
+                'reason' => 'La valoración ficticia requiere seguimiento estructurado por el centro.',
+                'decided_at' => '2026-08-10T09:30:00+02:00',
+                'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
+            ],
+        );
+
+        $this->connection->executeStatement(
+            'INSERT INTO case_assignments (
+                id, case_id, professional_id, role, assigned_by_professional_id, assigned_at, revoked_at
+             ) VALUES (
+                :id, :case_id, :professional_id, :role, :professional_id, :assigned_at, NULL
+             )
+             ON CONFLICT (case_id, professional_id) DO UPDATE SET
+                id = EXCLUDED.id,
+                role = EXCLUDED.role,
+                assigned_by_professional_id = EXCLUDED.assigned_by_professional_id,
+                assigned_at = EXCLUDED.assigned_at,
+                revoked_at = NULL',
+            [
+                'id' => FictionalDemoDataset::CASE_ASSIGNMENT_ID,
+                'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+                'role' => 'lead',
+                'assigned_at' => '2026-08-10T09:30:00+02:00',
+            ],
+        );
+
+        $people = [
+            [
+                'id' => FictionalDemoDataset::CASE_AFFECTED_PERSON_ID,
+                'name' => 'Persona ficticia A',
+                'role' => 'affected',
+            ],
+            [
+                'id' => FictionalDemoDataset::CASE_WITNESS_PERSON_ID,
+                'name' => 'Persona ficticia B',
+                'role' => 'witness',
+            ],
+        ];
+
+        foreach ($people as $person) {
+            $this->connection->executeStatement(
+                'INSERT INTO case_involved_people (
+                    id, case_id, name, role, added_by_professional_id, added_at
+                 ) VALUES (
+                    :id, :case_id, :name, :role, :professional_id, :added_at
+                 )
+                 ON CONFLICT (id) DO UPDATE SET
+                    case_id = EXCLUDED.case_id,
+                    name = EXCLUDED.name,
+                    role = EXCLUDED.role,
+                    added_by_professional_id = EXCLUDED.added_by_professional_id,
+                    added_at = EXCLUDED.added_at',
+                [
+                    ...$person,
+                    'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                    'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+                    'added_at' => '2026-08-10T09:35:00+02:00',
                 ],
             );
         }

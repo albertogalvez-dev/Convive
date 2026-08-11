@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Reporting\Domain;
 
 use App\Cases\Domain\ManagedCase;
+use App\Cases\Domain\CaseModality;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Professionals\Domain\Professional;
@@ -31,7 +32,7 @@ final class ReportTriageDecisionTest extends TestCase
         $report = $this->report($organisation);
         $decidedAt = new DateTimeImmutable('2026-08-11T06:00:00+00:00');
         $case = $outcome === ReportTriageOutcome::LinkToCase
-            ? new ManagedCase(Uuid::v7(), $organisation, $professional, $decidedAt)
+            ? new ManagedCase(Uuid::v7(), $organisation, $professional, $decidedAt, CaseModality::Unknown)
             : null;
 
         $decision = new ReportTriageDecision(
@@ -65,7 +66,7 @@ final class ReportTriageDecisionTest extends TestCase
     {
         $organisation = $this->organisation('43B');
         $professional = $this->professional($organisation);
-        $case = new ManagedCase(Uuid::v7(), $organisation, $professional, new DateTimeImmutable());
+        $case = new ManagedCase(Uuid::v7(), $organisation, $professional, new DateTimeImmutable(), CaseModality::Unknown);
 
         $this->expectException(\LogicException::class);
 
@@ -85,7 +86,7 @@ final class ReportTriageDecisionTest extends TestCase
         $reportOrganisation = $this->organisation('43C');
         $caseOrganisation = $this->organisation('43D');
         $professional = $this->professional($reportOrganisation);
-        $case = new ManagedCase(Uuid::v7(), $caseOrganisation, $professional, new DateTimeImmutable());
+        $case = new ManagedCase(Uuid::v7(), $caseOrganisation, $professional, new DateTimeImmutable(), CaseModality::Unknown);
 
         $this->expectException(\LogicException::class);
 

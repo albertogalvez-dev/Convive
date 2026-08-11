@@ -86,12 +86,15 @@ final class SeedFictionalDemoCommand extends Command
         }
 
         $output->writeln(sprintf(
-            '<info>Fictional demo %s: %d organisation, %d professionals, %d reports and %d conversation entries.</info>',
+            '<info>Fictional demo %s: %d organisation, %d professionals, %d reports, %d conversation entries, %d case, %d assignment and %d involved people.</info>',
             $result->reset ? 'restored' : 'seeded',
             $result->organisations,
             $result->professionals,
             $result->reports,
             $result->conversationEntries,
+            $result->managedCases,
+            $result->caseAssignments,
+            $result->caseInvolvedPeople,
         ));
         $output->writeln('Public reporting identifier: '.FictionalDemoDataset::PUBLIC_REPORTING_IDENTIFIER);
         $output->writeln('No credentials were printed.');
