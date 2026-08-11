@@ -1,0 +1,95 @@
+<main>
+  <header>
+    <a routerLink="/" aria-label="Convive, inicio"
+      ><img src="/convive-logo.svg" alt="" width="158" height="52" /></a
+    ><a routerLink="/demostracion/">Demostración informante</a>
+  </header>
+  <section class="intro">
+    <p>DEMOSTRACIÓN PROFESIONAL FICTICIA</p>
+    <h1>Del aviso al seguimiento, con límites claros.</h1>
+    <p>
+      Una muestra local del trabajo de un profesional autorizado. No inicia sesión, no muestra datos
+      reales y no permite ninguna acción operativa.
+    </p>
+  </section>
+  <section class="workspace" aria-label="Espacio profesional de muestra">
+    <aside>
+      <p>RECORRIDO GUIADO</p>
+      <nav aria-label="Vistas de muestra">
+        @for (view of views; track view; let index = $index) {
+          <button
+            type="button"
+            (click)="choose(index)"
+            [class.active]="activeView === index"
+            [attr.aria-current]="activeView === index ? 'page' : null"
+          >
+            <span>{{ index + 1 }}</span
+            >{{ view }}
+          </button>
+        }
+      </nav>
+      <div class="controls">
+        @if (guiding) {
+          <button type="button" (click)="pause()">Pausar guía</button>
+        } @else {
+          <button type="button" (click)="restart()">Reiniciar guía</button>
+        }
+        <button type="button" (click)="skip()">Saltar guía</button>
+      </div>
+    </aside>
+    <section class="screen">
+      <p class="fictional">DATOS FICTICIOS · ENTORNO DE MUESTRA</p>
+      @if (activeView === 0) {
+        <h2>Bandeja del centro</h2>
+        <div class="stats">
+          <strong>2 <span>nuevas</span></strong
+          ><strong>1 <span>revisada</span></strong>
+        </div>
+        <article>
+          <b>Una compañera parece aislada</b><span>En el centro · hace 20 min</span><em>Nueva</em>
+        </article>
+        <article>
+          <b>Conflicto en un grupo online</b><span>Online · ayer</span><em>Revisada</em>
+        </article>
+        <p class="hint">
+          La bandeja ayuda a ordenar comunicaciones; no decide medidas por sí sola.
+        </p>
+      } @else if (activeView === 1) {
+        <h2>Revisión inicial</h2>
+        <article class="detail">
+          <span>Comunicación ficticia</span><b>Una compañera parece aislada</b>
+          <p>
+            La profesional autorizada lee el contexto antes de registrar una revisión y puede
+            responder de forma visible para la persona informante.
+          </p>
+          <div>
+            <button type="button" disabled>Revisada en el ejemplo</button
+            ><button type="button" disabled>Respuesta de muestra</button>
+          </div>
+        </article>
+        <p class="hint">
+          Los controles aparecen desactivados porque esta página nunca modifica datos.
+        </p>
+      } @else {
+        <h2>Seguimiento del caso</h2>
+        <article class="detail">
+          <span>Caso ficticio · evaluación</span><b>Coordinación de seguimiento</b>
+          <ul>
+            <li>Tarea: comprobar el contexto con el equipo</li>
+            <li>Asignación: profesional responsable</li>
+            <li>Actividad: revisión inicial registrada</li>
+          </ul>
+        </article>
+        <p class="hint">
+          El caso muestra tareas y actividad de seguimiento ya implementadas; no presenta
+          automatismos, diagnósticos ni funcionalidades futuras.
+        </p>
+        @if (guideFinished) {
+          <p role="status" class="complete">
+            Recorrido finalizado. No se ha consultado ni alterado ninguna comunicación.
+          </p>
+        }
+      }
+    </section>
+  </section>
+</main>

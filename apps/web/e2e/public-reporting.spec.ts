@@ -356,6 +356,25 @@ test('keeps the reporter demonstration fictional, accessible and isolated', asyn
   ).toBe(true);
 });
 
+test('professional-demo-isolated keeps the demonstration fictional and outside professional access', async ({
+  page,
+}) => {
+  await page.route('**/api/**', (route) => route.abort());
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/demostracion/profesional/');
+
+  await expect(page.getByText('DATOS FICTICIOS · ENTORNO DE MUESTRA')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Del aviso al seguimiento, con límites claros.' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Pausar guía' }).click();
+  await page.getByRole('button', { name: 'Saltar guía' }).click();
+  await expect(page.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('No se ha consultado ni alterado');
+  await expectNoAccessibilityViolations(page);
+  expect(page.url()).not.toContain('/profesionales/');
+});
+
 test('keeps the fictional demo critical paths within performance budgets', async ({
   browser,
   page,
