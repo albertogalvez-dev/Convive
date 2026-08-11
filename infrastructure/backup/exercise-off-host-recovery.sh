@@ -79,6 +79,11 @@ docker compose -p "$source_project" "${EXERCISE_COMPOSE_ARGUMENTS[@]}" run --rm 
   -e DEMO_PROFESSIONAL_PASSWORD \
   api php bin/console app:demo:seed --env=prod --no-debug
 
+seed_fictional_recovery_attachment \
+  "$source_project" \
+  "$RESTORE_COMPOSE_FILE" \
+  "$LOCAL_COMPOSE_FILE"
+
 docker compose -p "$source_project" "${EXERCISE_COMPOSE_ARGUMENTS[@]}" exec -T database sh -eu -c \
   'psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --set=ON_ERROR_STOP=1' <<'SQL'
 INSERT INTO professional_sessions (sess_id, sess_data, sess_lifetime, sess_time)

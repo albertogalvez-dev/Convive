@@ -18,7 +18,8 @@ services:
         condition: service_healthy
     tmpfs:
       - /app/var
-      - /var/lib/convive/attachments:mode=0700,uid=33,gid=33
+    volumes:
+      - attachment-data:/var/lib/convive/attachments
     networks:
       - restore
 
@@ -42,3 +43,6 @@ services:
 networks:
   restore:
     internal: true
+
+volumes:
+  attachment-data:

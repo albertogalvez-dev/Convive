@@ -1,5 +1,5 @@
 [Unit]
-Description=Convive encrypted PostgreSQL backup
+Description=Convive encrypted persistent-data backup
 Requires=docker.service
 After=docker.service
 

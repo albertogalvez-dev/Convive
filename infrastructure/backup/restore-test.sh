@@ -67,6 +67,16 @@ done
 stage='restore'
 trap 'record_evidence failure restore-test "$stage"' ERR
 
+docker compose "${restore_args[@]}" run --rm --no-deps api true
+
+source_attachment_volume="$(attachment_volume_name "$CONVIVE_COMPOSE_PROJECT")"
+restore_attachment_volume="$(attachment_volume_name "$CONVIVE_RESTORE_COMPOSE_PROJECT")"
+
+if [[ "$source_attachment_volume" == "$restore_attachment_volume" ]]; then
+  echo 'Refusing to restore attachment objects into the source volume.' >&2
+  false
+fi
+
 existing_tables="$(docker compose "${restore_args[@]}" exec -T database sh -eu -c \
   'psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --set=ON_ERROR_STOP=1 --command="SELECT count(*) FROM pg_tables WHERE schemaname = '\''public'\''"')"
 
@@ -75,11 +85,18 @@ if [[ "$existing_tables" != '0' ]]; then
   false
 fi
 
-snapshot_id="$(latest_snapshot_id)"
+read -r snapshot_id generation < <(latest_snapshot_generation)
+attachment_snapshot="$(attachment_snapshot_id "$generation")"
 
 run_restic dump "$snapshot_id" convive.dump \
   | docker compose "${restore_args[@]}" exec -T database sh -eu -c \
       'exec pg_restore --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --no-owner --no-acl --exit-on-error'
+
+stage='attachment-restoration'
+run_restic_with_attachment_volume "$restore_attachment_volume" readwrite restore \
+  "$attachment_snapshot" \
+  --target / \
+  --verify >/dev/null
 
 stage='credential-invalidation'
 docker compose "${restore_args[@]}" exec -T database sh -eu -c \
@@ -105,6 +122,15 @@ if [[ ! "$restored_reports" =~ ^[0-9]+$ ]]; then
   false
 fi
 
+stage='attachment-verification'
+restored_attachment_state="$(
+  attachment_consistency_state \
+    "$CONVIVE_RESTORE_COMPOSE_PROJECT" \
+    "$restore_attachment_volume" \
+    "${restore_files[@]}"
+)"
+restored_attachment_summary="${restored_attachment_state#*;}"
+
 stage='application-verification'
 docker compose "${restore_args[@]}" run --rm --no-deps api \
   php bin/console doctrine:schema:validate >/dev/null
@@ -123,5 +149,5 @@ exit($valid ? 0 : 1);
 ' >/dev/null
 
 trap - ERR
-record_evidence success restore-test "snapshot=${snapshot_id:0:12};reports=$restored_reports;credentials=0"
-echo "Isolated restore completed: ${restored_reports} reports and no revived sessions or capabilities."
+record_evidence success restore-test "generation=${generation:0:12};reports=$restored_reports;${restored_attachment_summary};credentials=0"
+echo "Isolated restore completed: ${restored_reports} reports, ${restored_attachment_summary//;/, } and no revived sessions or capabilities."
