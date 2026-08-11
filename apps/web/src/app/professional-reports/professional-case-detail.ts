@@ -65,6 +65,10 @@ export class ProfessionalCaseDetailPage implements OnInit {
     return this.cases.auditExportUrl(caseId);
   }
 
+  protected caseRecordExportUrl(caseId: string): string {
+    return this.cases.caseRecordExportUrl(caseId);
+  }
+
   protected auditActionLabel(action: CaseAuditAction): string {
     return (
       {

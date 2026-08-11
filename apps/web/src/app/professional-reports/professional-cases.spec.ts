@@ -46,6 +46,9 @@ describe('ProfessionalCases', () => {
     expect(page.querySelector<HTMLAnchorElement>('li a')?.getAttribute('href')).toContain(
       '/profesionales/casos/case-ABCD1234',
     );
+    expect(page.querySelector<HTMLAnchorElement>('.overview-export')?.getAttribute('href')).toBe(
+      '/api/v1/professional/cases/operational-overview/export',
+    );
   });
 
   it('shows the accessible empty state and redirects after session expiry', () => {
