@@ -7,6 +7,7 @@ namespace App\Tests\Reporting\Domain;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\AttachmentMediaType;
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Domain\ReportAttachmentPolicy;
@@ -41,6 +42,22 @@ final class ReportAttachmentTest extends TestCase
         self::assertStringStartsWith('quarantine/', $attachment->storageKey());
         self::assertStringNotContainsString('report', $attachment->storageKey());
         self::assertFalse($attachment->isAvailable());
+    }
+
+    public function testItKeepsOnlyBoundedReporterContextAlongsidePrivateMetadata(): void
+    {
+        $attachment = ReportAttachment::quarantine(
+            Uuid::v7(),
+            $this->createReport(),
+            AttachmentMediaType::Pdf,
+            1024,
+            str_repeat('d', 64),
+            new DateTimeImmutable('2026-08-10T19:00:00+00:00'),
+            AttachmentDescription::fromNullable('  Captura del canal de clase.  '),
+        );
+
+        self::assertSame('Captura del canal de clase.', $attachment->description()?->toString());
+        self::assertStringNotContainsString('Captura del canal de clase.', $attachment->storageKey());
     }
 
     public function testItRequiresScanningBeforeMakingAnAttachmentAvailable(): void

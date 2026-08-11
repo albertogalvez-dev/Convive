@@ -440,6 +440,10 @@ paths:
                   type: array
                   items: { type: string, format: binary }
                   maxItems: 3
+                descriptions:
+                  type: array
+                  items: { type: string, maxLength: 500 }
+                  maxItems: 3
               type: object
       responses:
         '201':
@@ -736,6 +740,7 @@ components:
         - id
         - status
         - createdAt
+        - description
       properties:
         id:
           type: string
@@ -750,6 +755,12 @@ components:
         createdAt:
           type: string
           format: date-time
+        description:
+          description: 'Optional reporter-supplied context. The original client filename is never stored or returned.'
+          type:
+            - string
+            - 'null'
+          maxLength: 500
         mediaType:
           description: 'Present only when the attachment is available.'
           type: string
@@ -770,6 +781,7 @@ components:
         - mediaType
         - byteSize
         - createdAt
+        - description
       properties:
         id:
           type: string
@@ -787,6 +799,12 @@ components:
         createdAt:
           type: string
           format: date-time
+        description:
+          description: 'Optional reporter-supplied context. The original client filename is never stored or returned.'
+          type:
+            - string
+            - 'null'
+          maxLength: 500
       type: object
       additionalProperties: false
     ProfessionalReportSummary:

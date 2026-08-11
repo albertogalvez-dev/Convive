@@ -9,13 +9,14 @@ use App\Reporting\Domain\ReportAttachmentStatus;
 
 final class ReportAttachmentPresenter
 {
-    /** @return array{id: string, status: string, createdAt: string, mediaType?: string, byteSize?: int} */
+    /** @return array{id: string, status: string, createdAt: string, description: ?string, mediaType?: string, byteSize?: int} */
     public function reporter(ReportAttachment $attachment): array
     {
         $response = [
             'id' => $attachment->id()->toRfc4122(),
             'status' => $this->reporterStatus($attachment),
             'createdAt' => $attachment->createdAt()->format(DATE_RFC3339_EXTENDED),
+            'description' => $attachment->description()?->toString(),
         ];
 
         if (!$attachment->isAvailable()) {
@@ -29,7 +30,7 @@ final class ReportAttachmentPresenter
         ];
     }
 
-    /** @return array{id: string, mediaType: string, byteSize: int, createdAt: string} */
+    /** @return array{id: string, mediaType: string, byteSize: int, createdAt: string, description: ?string} */
     public function professional(ReportAttachment $attachment): array
     {
         if (!$attachment->isAvailable()) {
@@ -41,6 +42,7 @@ final class ReportAttachmentPresenter
             'mediaType' => $attachment->mediaType()->value,
             'byteSize' => $attachment->byteSize(),
             'createdAt' => $attachment->createdAt()->format(DATE_RFC3339_EXTENDED),
+            'description' => $attachment->description()?->toString(),
         ];
     }
 

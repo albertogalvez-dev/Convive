@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Application\QuarantinedAttachmentUpload;
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\AttachmentMediaType;
 use App\Reporting\Domain\ReportAttachmentPolicy;
 use finfo;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,9 +45,10 @@ final readonly class ReportAttachmentUploadInspector
             throw new AttachmentUploadInvalidHttpException();
         }
 
+        $descriptions = $this->descriptions($request, count($files));
         $uploads = [];
 
-        foreach ($files as $file) {
+        foreach ($files as $index => $file) {
             if (!$file instanceof UploadedFile) {
                 throw new AttachmentUploadInvalidHttpException();
             }
@@ -54,10 +57,46 @@ final readonly class ReportAttachmentUploadInspector
             $uploads[] = new QuarantinedAttachmentUpload(
                 $file->getPathname(),
                 $this->detectMediaType($file),
+                $descriptions[$index],
             );
         }
 
         return $uploads;
+    }
+
+    /** @return list<?AttachmentDescription> */
+    private function descriptions(Request $request, int $attachmentCount): array
+    {
+        $formFields = $request->request->all();
+        $rawDescriptions = $formFields['descriptions'] ?? null;
+
+        if ($rawDescriptions === null) {
+            return array_fill(0, $attachmentCount, null);
+        }
+
+        if (
+            !is_array($rawDescriptions)
+            || !array_is_list($rawDescriptions)
+            || count($rawDescriptions) !== $attachmentCount
+        ) {
+            throw new AttachmentUploadInvalidHttpException();
+        }
+
+        $descriptions = [];
+
+        foreach ($rawDescriptions as $description) {
+            if (!is_string($description)) {
+                throw new AttachmentUploadInvalidHttpException();
+            }
+
+            try {
+                $descriptions[] = AttachmentDescription::fromNullable($description);
+            } catch (InvalidArgumentException $exception) {
+                throw new AttachmentUploadInvalidHttpException(previous: $exception);
+            }
+        }
+
+        return $descriptions;
     }
 
     private function assertValidSize(UploadedFile $file): void

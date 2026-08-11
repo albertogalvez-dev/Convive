@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Application\QuarantineReportAttachments\QuarantineReportAttachments;
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Domain\ReportAttachmentRepository;
 use App\Shared\Infrastructure\Logging\SecurityEventLogger;
@@ -75,6 +76,12 @@ final readonly class ReporterReportAttachmentController
                             type: 'array',
                             maxItems: 3,
                             items: new OA\Items(type: 'string', format: 'binary'),
+                        ),
+                        new OA\Property(
+                            property: 'descriptions',
+                            type: 'array',
+                            maxItems: 3,
+                            items: new OA\Items(type: 'string', maxLength: AttachmentDescription::MAX_LENGTH),
                         ),
                     ],
                 ),

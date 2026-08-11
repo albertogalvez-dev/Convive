@@ -50,6 +50,7 @@ final readonly class QuarantineReportAttachments
                     $stored->byteSize,
                     $stored->contentHash,
                     $now,
+                    $upload->description,
                 );
             }
 

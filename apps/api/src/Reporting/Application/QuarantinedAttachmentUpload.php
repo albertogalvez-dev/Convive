@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Reporting\Application;
 
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\AttachmentMediaType;
 use InvalidArgumentException;
 
@@ -16,6 +17,7 @@ final readonly class QuarantinedAttachmentUpload
     public function __construct(
         public string $sourcePath,
         public AttachmentMediaType $mediaType,
+        public ?AttachmentDescription $description = null,
     ) {
         if (!is_file($this->sourcePath) || !is_readable($this->sourcePath)) {
             throw new InvalidArgumentException('The attachment source is not readable.');

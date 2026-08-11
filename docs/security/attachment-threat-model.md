@@ -128,6 +128,13 @@ can contain names, location or other identifying data and ask for only
 necessary evidence. No EXIF, PDF metadata, extracted text or thumbnail is
 displayed by default.
 
+A reporter may optionally associate up to 500 characters of plain-text context
+with an attachment. This is stored as report data and is made available only to
+the same authorised reporter and to an authorised professional when the
+attachment itself is available. It is not a filename, media-derived metadata,
+scanner output or storage key. Empty context is stored as absent; the original
+client filename remains neither persisted nor returned.
+
 If a later product decision introduces a derived redacted or metadata-stripped
 copy, it must preserve the original's private lifecycle, label the derivative,
 record provenance, keep both copies subject to the same authorisation and have

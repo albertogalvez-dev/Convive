@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Reporting\Presentation\Http;
 
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\AttachmentMediaType;
 use App\Reporting\Domain\ReportAttachmentPolicy;
 use App\Reporting\Presentation\Http\AttachmentUploadInvalidHttpException;
@@ -40,6 +41,39 @@ final class ReportAttachmentUploadInspectorTest extends TestCase
         self::assertSame(AttachmentMediaType::Pdf, $uploads[0]->mediaType);
         self::assertSame($file->getPathname(), $uploads[0]->sourcePath);
         self::assertStringNotContainsString('evidence.exe', $uploads[0]->sourcePath);
+    }
+
+    public function testItBindsAnOptionalBoundedDescriptionToItsOwnValidatedFile(): void
+    {
+        $file = $this->upload('%PDF-1.7\nfictional evidence\n', 'evidence.pdf');
+
+        $uploads = (new ReportAttachmentUploadInspector())->inspect(
+            $this->multipartRequest([$file], ['  Contexto de la prueba.  ']),
+        );
+
+        self::assertSame('Contexto de la prueba.', $uploads[0]->description?->toString());
+    }
+
+    public function testItRejectsDescriptionCollectionsThatCannotMapExactlyToTheFiles(): void
+    {
+        $file = $this->upload('%PDF-1.7\nfictional evidence\n', 'evidence.pdf');
+
+        $this->expectException(AttachmentUploadInvalidHttpException::class);
+
+        (new ReportAttachmentUploadInspector())->inspect(
+            $this->multipartRequest([$file], ['Una descripción.', 'Otra descripción.']),
+        );
+    }
+
+    public function testItRejectsAnOversizedDescriptionAtTheServerBoundary(): void
+    {
+        $file = $this->upload('%PDF-1.7\nfictional evidence\n', 'evidence.pdf');
+
+        $this->expectException(AttachmentUploadInvalidHttpException::class);
+
+        (new ReportAttachmentUploadInspector())->inspect(
+            $this->multipartRequest([$file], [str_repeat('a', AttachmentDescription::MAX_LENGTH + 1)]),
+        );
     }
 
     public function testItRejectsSpoofedAndUnsupportedContent(): void
@@ -87,12 +121,16 @@ final class ReportAttachmentUploadInspectorTest extends TestCase
         (new ReportAttachmentUploadInspector())->inspect($this->multipartRequest([$file]));
     }
 
-    /** @param list<UploadedFile> $files */
-    private function multipartRequest(array $files): Request
+    /**
+     * @param list<UploadedFile> $files
+     * @param list<string>|null  $descriptions
+     */
+    private function multipartRequest(array $files, ?array $descriptions = null): Request
     {
         return Request::create(
             '/api/v1/reporter/report/attachments',
             'POST',
+            $descriptions === null ? [] : ['descriptions' => $descriptions],
             files: ['attachments' => $files],
             server: ['CONTENT_TYPE' => 'multipart/form-data; boundary=convive'],
         );

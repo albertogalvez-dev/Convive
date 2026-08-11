@@ -118,7 +118,7 @@ nelmio_api_doc:
                 ReporterAttachment:
                     type: object
                     additionalProperties: false
-                    required: [id, status, createdAt]
+                    required: [id, status, createdAt, description]
                     properties:
                         id:
                             type: string
@@ -130,6 +130,11 @@ nelmio_api_doc:
                         createdAt:
                             type: string
                             format: date-time
+                        description:
+                            type: string
+                            nullable: true
+                            maxLength: 500
+                            description: Optional reporter-supplied context. The original client filename is never stored or returned.
                         mediaType:
                             type: string
                             enum: [application/pdf, image/jpeg, image/png]
@@ -143,7 +148,7 @@ nelmio_api_doc:
                 ProfessionalReportAttachment:
                     type: object
                     additionalProperties: false
-                    required: [id, mediaType, byteSize, createdAt]
+                    required: [id, mediaType, byteSize, createdAt, description]
                     properties:
                         id:
                             type: string
@@ -158,6 +163,11 @@ nelmio_api_doc:
                         createdAt:
                             type: string
                             format: date-time
+                        description:
+                            type: string
+                            nullable: true
+                            maxLength: 500
+                            description: Optional reporter-supplied context. The original client filename is never stored or returned.
 
                 ProfessionalReportSummary:
                     type: object
