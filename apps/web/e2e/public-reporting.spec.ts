@@ -207,6 +207,36 @@ test('keeps the public reporting form keyboard-operable and responsive', async (
   );
 });
 
+test('keeps the fictional professional case workspace assignment-scoped', async ({ browser }) => {
+  test.setTimeout(240_000);
+  const leadContext = await browser.newContext();
+  const administratorContext = await browser.newContext();
+
+  try {
+    const leadPage = await leadContext.newPage();
+    await loginAsProfessional(leadPage, TRIAGE_EMAIL);
+    await leadPage.goto(absoluteUrl('/profesionales/casos'));
+    await expect(leadPage.getByRole('heading', { name: 'Casos', exact: true })).toBeVisible();
+    await expect(leadPage.locator('.cases-card li a')).toHaveCount(1);
+    await leadPage.locator('.cases-card li a').click();
+    await expect(leadPage.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
+    await expect(leadPage.getByRole('heading', { name: 'Tareas' })).toBeVisible();
+    await expect(leadPage.getByRole('heading', { name: 'Decisión registrada' })).toBeVisible();
+    await expect(leadPage.getByText('Abierto como caso', { exact: true })).toBeVisible();
+    const assignedCaseUrl = leadPage.url();
+
+    const administratorPage = await administratorContext.newPage();
+    await loginAsProfessional(administratorPage, ADMINISTRATOR_EMAIL);
+    await administratorPage.goto(assignedCaseUrl);
+    await expect(
+      administratorPage.getByRole('heading', { name: 'Caso no disponible' }),
+    ).toBeVisible();
+  } finally {
+    await administratorContext.close();
+    await leadContext.close();
+  }
+});
+
 test('keeps the public product homepage accessible and separate from reporting entry', async ({
   page,
 }) => {

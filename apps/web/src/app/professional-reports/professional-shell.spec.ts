@@ -46,6 +46,7 @@ describe('ProfessionalShell', () => {
       page.querySelector<HTMLAnchorElement>('.notification-button')?.getAttribute('href'),
     ).toBe('/profesionales/comunicaciones?estado=new');
     expect(page.querySelector('.notification-button span')?.textContent).toBe('1');
+    expect(page.querySelectorAll('.mobile-header nav a[aria-label]')).toHaveLength(4);
 
     page.querySelector<HTMLButtonElement>('.collapse-button')?.click();
     fixture.detectChanges();

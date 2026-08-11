@@ -90,6 +90,20 @@ export const routes: Routes = [
           { path: '', pathMatch: 'full', component: ProfessionalDashboard },
           { path: 'comunicaciones', component: ProfessionalInbox },
           { path: 'comunicaciones/:id', component: ProfessionalDetail },
+          {
+            path: 'casos',
+            loadComponent: () =>
+              import('./professional-reports/professional-cases').then(
+                (module) => module.ProfessionalCases,
+              ),
+          },
+          {
+            path: 'casos/:id',
+            loadComponent: () =>
+              import('./professional-reports/professional-case-detail').then(
+                (module) => module.ProfessionalCaseDetailPage,
+              ),
+          },
           { path: 'ajustes', component: ProfessionalSettings },
         ],
       },

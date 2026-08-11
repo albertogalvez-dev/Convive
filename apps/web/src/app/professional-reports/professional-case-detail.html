@@ -1,0 +1,223 @@
+<section class="case-detail" aria-labelledby="case-title">
+  <a class="back-link" routerLink="/profesionales/casos">&larr; Volver a casos</a>
+
+  @if (loading()) {
+    <div class="page-state" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Cargando caso&hellip;</p>
+    </div>
+  } @else if (unavailable()) {
+    <div class="page-state">
+      <h1 id="case-title">Caso no disponible</h1>
+      <p>No existe o no est&aacute; asignado a tu perfil.</p>
+      <a routerLink="/profesionales/casos">Ver mis casos</a>
+    </div>
+  } @else if (errorMessage(); as message) {
+    <div class="page-state">
+      <p role="alert">{{ message }}</p>
+      <button type="button" (click)="retry()">Volver a intentar</button>
+    </div>
+  } @else if (detail(); as item) {
+    <header class="case-heading">
+      <div>
+        <p class="eyebrow">Caso {{ item.id.slice(-8).toUpperCase() }}</p>
+        <h1 id="case-title">Seguimiento del caso</h1>
+        <p class="case-meta">
+          {{ item.organisationName }} &middot; {{ caseModalityLabel(item.modality) }}
+        </p>
+      </div>
+      <div class="heading-badges">
+        <span class="role">{{ assignmentRoleLabel(item.assignmentRole) }}</span>
+        <span [class]="'status ' + item.status">{{ caseStatusLabel(item.status) }}</span>
+      </div>
+    </header>
+
+    <div class="summary-grid">
+      <article>
+        <span>Tareas pendientes</span><strong>{{ item.pendingTasks }}</strong>
+      </article>
+      <article [class.alert]="item.overdueTasks > 0">
+        <span>Fuera de plazo</span><strong>{{ item.overdueTasks }}</strong>
+      </article>
+      <article>
+        <span>Personas vinculadas</span><strong>{{ item.people.length }}</strong>
+      </article>
+      <article>
+        <span>Evidencias disponibles</span><strong>{{ item.evidence.length }}</strong>
+      </article>
+    </div>
+
+    <div class="workspace-grid">
+      <div class="primary-column">
+        <section class="panel tasks-panel" aria-labelledby="tasks-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Pr&oacute;ximas acciones</p>
+              <h2 id="tasks-title">Tareas</h2>
+            </div>
+          </div>
+          @if (item.tasks.length === 0) {
+            <p class="empty">No hay tareas registradas.</p>
+          } @else {
+            <ul class="task-list">
+              @for (task of item.tasks; track task.id) {
+                <li [class.overdue]="task.overdue">
+                  <div class="task-topline">
+                    <span class="stage">{{ stageLabel(task.stage) }}</span>
+                    <span [class]="'task-status ' + task.status">{{
+                      taskStatusLabel(task.status)
+                    }}</span>
+                  </div>
+                  <h3>{{ task.title }}</h3>
+                  <div class="task-details">
+                    <span
+                      >Responsable: <strong>{{ task.owner.name }}</strong></span
+                    >
+                    <time [attr.datetime]="task.dueAt"
+                      >Objetivo: {{ task.dueAt | date: 'd MMM y, HH:mm' : undefined : 'es' }}</time
+                    >
+                  </div>
+                  @if (task.overdue) {
+                    <p class="deadline-alert">Fuera del objetivo temporal</p>
+                  }
+                  <div class="source">
+                    <span [class]="'authority ' + task.source.authority">{{
+                      sourceAuthorityLabel(task.source.authority)
+                    }}</span>
+                    @if (task.source.uri) {
+                      <a [href]="task.source.uri" target="_blank" rel="noopener noreferrer">{{
+                        task.source.title
+                      }}</a>
+                    } @else {
+                      <span>{{ task.source.title }}</span>
+                    }
+                    <small>{{ task.source.version }} &middot; {{ task.source.territory }}</small>
+                  </div>
+                  @if (task.status === 'not_applicable' && task.notApplicableReason) {
+                    <p class="resolution">{{ task.notApplicableReason }}</p>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </section>
+
+        <section class="panel" aria-labelledby="people-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Alcance del caso</p>
+              <h2 id="people-title">Personas vinculadas</h2>
+            </div>
+          </div>
+          @if (item.people.length === 0) {
+            <p class="empty">No hay personas vinculadas.</p>
+          } @else {
+            <ul class="people-list">
+              @for (person of item.people; track person.id) {
+                <li>
+                  <span class="person-avatar" aria-hidden="true">{{ person.name.charAt(0) }}</span
+                  ><span
+                    ><strong>{{ person.name }}</strong
+                    ><small>{{ personRoleLabel(person.role) }}</small></span
+                  >
+                </li>
+              }
+            </ul>
+          }
+        </section>
+
+        <section class="panel" aria-labelledby="evidence-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Documentaci&oacute;n privada</p>
+              <h2 id="evidence-title">Evidencias</h2>
+            </div>
+            @if (item.sourceReport) {
+              <a [routerLink]="['/profesionales/comunicaciones', item.sourceReport.id]"
+                >Ver comunicaci&oacute;n</a
+              >
+            }
+          </div>
+          @if (item.evidence.length === 0) {
+            <p class="empty">No hay evidencias disponibles.</p>
+          } @else {
+            <ul class="evidence-list">
+              @for (evidence of item.evidence; track evidence.id) {
+                <li>
+                  <span
+                    ><strong>{{ evidence.description || 'Evidencia adjunta' }}</strong
+                    ><small
+                      >{{ evidence.mediaType }} &middot;
+                      {{ evidence.byteSize / 1024 | number: '1.0-0' }} KB</small
+                    ></span
+                  ><a [href]="evidenceUrl(item.id, evidence.id)">Descargar</a>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+
+        @if (item.sourceReport?.decision; as decision) {
+          <section class="panel origin-panel" aria-labelledby="origin-title">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Origen del caso</p>
+                <h2 id="origin-title">Decisi&oacute;n registrada</h2>
+              </div>
+              <span class="task-status completed">Abierto como caso</span>
+            </div>
+            <p>{{ decision.reason }}</p>
+            <time [attr.datetime]="decision.decidedAt">{{
+              decision.decidedAt | date: 'd MMM y, HH:mm' : undefined : 'es'
+            }}</time>
+          </section>
+        }
+      </div>
+
+      <aside class="secondary-column">
+        <section class="panel" aria-labelledby="team-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Acceso al caso</p>
+              <h2 id="team-title">Equipo</h2>
+            </div>
+          </div>
+          <ul class="team-list">
+            @for (assignment of item.assignments; track assignment.id) {
+              <li>
+                <span
+                  ><strong>{{ assignment.professional.name }}</strong
+                  ><small>{{ assignmentRoleLabel(assignment.role) }}</small></span
+                ><time [attr.datetime]="assignment.assignedAt">{{
+                  assignment.assignedAt | date: 'd MMM y' : undefined : 'es'
+                }}</time>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <section class="panel" aria-labelledby="timeline-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Actividad del caso</p>
+              <h2 id="timeline-title">Actividad</h2>
+            </div>
+          </div>
+          <ol class="timeline">
+            @for (event of item.timeline; track event.type + event.occurredAt) {
+              <li>
+                <span aria-hidden="true"></span>
+                <div>
+                  <strong>{{ timelineLabel(event.type) }}</strong
+                  ><time [attr.datetime]="event.occurredAt">{{
+                    event.occurredAt | date: 'd MMM y, HH:mm' : undefined : 'es'
+                  }}</time>
+                </div>
+              </li>
+            }
+          </ol>
+        </section>
+      </aside>
+    </div>
+  }
+</section>
