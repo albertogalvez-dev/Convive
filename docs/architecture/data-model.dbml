@@ -70,6 +70,7 @@ Table managed_cases {
   organisation_id uuid [not null]
   created_by_professional_id uuid [not null]
   created_at timestamptz [not null, note: 'immutable UTC instant']
+  operational_updated_at timestamptz [not null, note: 'latest explicit case, assignment or task activity; deterministic operational ordering']
   status varchar(20) [not null, note: 'assessment | active | closed (CHECK constraint)']
   modality varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
 

@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Cases\Application;
 
 use App\Cases\Domain\CaseAccessDenied;
+use App\Cases\Domain\CaseOperationalView;
 use App\Cases\Domain\CasePermission;
 use App\Cases\Domain\CaseTaskStatus;
 use App\Cases\Domain\CaseTask;
+use App\Cases\Domain\CaseWorkspaceCursor;
+use App\Cases\Domain\CaseWorkspaceQuery;
 use App\Cases\Domain\CaseWorkspaceRepository;
+use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
 use App\Reporting\Domain\ReportAttachmentRepository;
 use DateTimeImmutable;
@@ -16,24 +20,30 @@ use Symfony\Component\Uid\Uuid;
 
 final readonly class ProfessionalCaseWorkspace
 {
-    private const MAXIMUM_CASES = 50;
-
     public function __construct(
         private AuthoriseCaseAccess $authorise,
         private CaseWorkspaceRepository $cases,
         private ReportAttachmentRepository $attachments,
+        private OrganisationMembershipRepository $memberships,
     ) {
     }
 
-    /** @return list<CaseWorkspaceSummary> */
-    public function list(Professional $professional, DateTimeImmutable $now): array
+    public function page(Professional $professional, CaseWorkspaceQuery $query): CaseWorkspacePage
     {
         if (!$professional->isActive()) {
-            return [];
+            return new CaseWorkspacePage([], null);
+        }
+
+        $organisations = array_map(
+            static fn ($membership) => $membership->organisation(),
+            $this->memberships->findActiveByProfessional($professional),
+        );
+        if ($organisations === []) {
+            return new CaseWorkspacePage([], null);
         }
 
         $summaries = [];
-        foreach ($this->cases->findActiveAssignmentsForProfessional($professional, self::MAXIMUM_CASES) as $assignment) {
+        foreach ($this->cases->findActiveAssignmentsForProfessional($professional, $organisations, $query) as $assignment) {
             $managedCase = $assignment->managedCase();
 
             try {
@@ -47,7 +57,7 @@ final readonly class ProfessionalCaseWorkspace
                 $tasks,
                 static fn (CaseTask $task): bool => $task->status() === CaseTaskStatus::Pending,
             ));
-            $overdue = array_filter($pending, static fn (CaseTask $task): bool => $task->isOverdue($now));
+            $overdue = array_filter($pending, static fn (CaseTask $task): bool => $task->isOverdue($query->now));
 
             $summaries[] = new CaseWorkspaceSummary(
                 $managedCase,
@@ -58,7 +68,38 @@ final readonly class ProfessionalCaseWorkspace
             );
         }
 
-        return $summaries;
+        $hasNextPage = count($summaries) > $query->limit;
+        if ($hasNextPage) {
+            array_pop($summaries);
+        }
+
+        $last = $summaries === [] ? null : $summaries[array_key_last($summaries)];
+
+        return new CaseWorkspacePage(
+            $summaries,
+            $hasNextPage && $last !== null
+                ? new CaseWorkspaceCursor(
+                    $query->view,
+                    $this->cursorSortAt($last, $query->view),
+                    $last->managedCase->id(),
+                )
+                : null,
+        );
+    }
+
+    /** @return array{assigned: int, overdue: int, upcoming: int} */
+    public function operationalCounts(Professional $professional, DateTimeImmutable $now): array
+    {
+        if (!$professional->isActive()) {
+            return ['assigned' => 0, 'overdue' => 0, 'upcoming' => 0];
+        }
+
+        $organisations = array_map(
+            static fn ($membership) => $membership->organisation(),
+            $this->memberships->findActiveByProfessional($professional),
+        );
+
+        return $this->cases->countOperationalCasesForProfessional($professional, $organisations, $now);
     }
 
     public function detail(Uuid $id, Professional $professional): ?CaseWorkspaceDetail
@@ -93,5 +134,15 @@ final readonly class ProfessionalCaseWorkspace
             $sourceDecision,
             $evidence,
         );
+    }
+
+    private function cursorSortAt(CaseWorkspaceSummary $summary, CaseOperationalView $view): DateTimeImmutable
+    {
+        return match ($view) {
+            CaseOperationalView::Assigned => $summary->managedCase->createdAt(),
+            CaseOperationalView::Recent => $summary->managedCase->operationalUpdatedAt(),
+            CaseOperationalView::Overdue, CaseOperationalView::Upcoming => $summary->nextDueAt
+                ?? throw new \LogicException('Task views require a pending task due time.'),
+        };
     }
 }

@@ -15,8 +15,12 @@ use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CaseInvolvedPerson;
+use App\Cases\Domain\CaseModality;
+use App\Cases\Domain\CaseOperationalView;
 use App\Cases\Domain\CasePermission;
+use App\Cases\Domain\CaseStatus;
 use App\Cases\Domain\CaseTask;
+use App\Cases\Domain\CaseWorkspaceQuery;
 use App\Professionals\Domain\Professional;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Presentation\Http\PrivateReportAttachmentDownloadResponder;
@@ -30,6 +34,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -37,8 +42,12 @@ use Symfony\Component\Uid\Uuid;
 
 final readonly class ProfessionalCaseController
 {
+    private const DEFAULT_PAGE_LIMIT = 20;
+    private const MAXIMUM_PAGE_LIMIT = 50;
+
     public function __construct(
         private ProfessionalCaseWorkspace $workspace,
+        private ProfessionalCaseCursorCodec $cursorCodec,
         private AuthoriseCaseAccess $authorise,
         private CaseAuditEventRepository $auditEvents,
         private PrivateReportAttachmentDownloadResponder $downloadResponder,
@@ -52,28 +61,59 @@ final readonly class ProfessionalCaseController
     #[Route('/api/v1/professional/cases', name: 'api_v1_professional_list_cases', methods: ['GET'])]
     #[OA\Get(
         operationId: 'listProfessionalCases',
-        summary: 'List cases assigned to the current professional',
+        summary: 'List operational views of cases assigned to the current professional',
         security: [['professionalSession' => []]],
         tags: ['Professional cases'],
+        parameters: [
+            new OA\Parameter(name: 'view', in: 'query', schema: new OA\Schema(type: 'string', enum: ['assigned', 'overdue', 'upcoming', 'recent'])),
+            new OA\Parameter(name: 'status', in: 'query', schema: new OA\Schema(type: 'string', enum: ['assessment', 'active', 'closed'])),
+            new OA\Parameter(name: 'modality', in: 'query', schema: new OA\Schema(type: 'string', enum: ['in_person', 'digital', 'mixed', 'unknown'])),
+            new OA\Parameter(name: 'reference', in: 'query', schema: new OA\Schema(type: 'string', maxLength: 64)),
+            new OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer', minimum: 1, maximum: self::MAXIMUM_PAGE_LIMIT)),
+            new OA\Parameter(name: 'cursor', in: 'query', schema: new OA\Schema(type: 'string', maxLength: 512)),
+        ],
         responses: [
             new OA\Response(
                 response: Response::HTTP_OK,
                 description: 'The bounded case workspace overview.',
                 content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCasePage'),
             ),
+            new OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'A filter or cursor is invalid.'),
             new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
         ],
     )]
-    public function list(#[CurrentUser] Professional $professional): JsonResponse
+    public function list(#[CurrentUser] Professional $professional, Request $request): JsonResponse
     {
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
+        $query = $this->parseWorkspaceQuery($request, $now);
+        $page = $this->workspace->page($professional, $query);
 
         return $this->json([
-            'items' => array_map(
-                fn (CaseWorkspaceSummary $summary): array => $this->serializeSummary($summary),
-                $this->workspace->list($professional, $now),
-            ),
+            'items' => array_map($this->serializeSummary(...), $page->items),
+            'pagination' => [
+                'limit' => $query->limit,
+                'nextCursor' => $page->nextCursor === null ? null : $this->cursorCodec->encode($page->nextCursor),
+            ],
         ]);
+    }
+
+    #[Route('/api/v1/professional/cases/operational-summary', name: 'api_v1_professional_case_operational_summary', methods: ['GET'])]
+    #[OA\Get(
+        operationId: 'getProfessionalCaseOperationalSummary',
+        summary: 'Read permission-preserving case operational counts',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'Counts derived only from exact active case assignments.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseOperationalSummary')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+        ],
+    )]
+    public function operationalSummary(#[CurrentUser] Professional $professional): JsonResponse
+    {
+        return $this->json($this->workspace->operationalCounts(
+            $professional,
+            DateTimeImmutable::createFromTimestamp(microtime(true)),
+        ));
     }
 
     #[Route('/api/v1/professional/cases/{id}', name: 'api_v1_professional_get_case', methods: ['GET'])]
@@ -260,6 +300,48 @@ final readonly class ProfessionalCaseController
                 'X-Content-Type-Options' => 'nosniff',
             ],
         );
+    }
+
+    private function parseWorkspaceQuery(Request $request, DateTimeImmutable $now): CaseWorkspaceQuery
+    {
+        $view = CaseOperationalView::tryFrom($request->query->getString('view') ?: CaseOperationalView::Assigned->value)
+            ?? throw new BadRequestHttpException('The case view is invalid.');
+        $statusValue = $request->query->getString('status');
+        $status = $statusValue === '' ? null : CaseStatus::tryFrom($statusValue);
+        if ($statusValue !== '' && $status === null) {
+            throw new BadRequestHttpException('The case status filter is invalid.');
+        }
+        $modalityValue = $request->query->getString('modality');
+        $modality = $modalityValue === '' ? null : CaseModality::tryFrom($modalityValue);
+        if ($modalityValue !== '' && $modality === null) {
+            throw new BadRequestHttpException('The case modality filter is invalid.');
+        }
+
+        $reference = trim($request->query->getString('reference'));
+        if (mb_strlen($reference) > 64) {
+            throw new BadRequestHttpException('The case reference filter is invalid.');
+        }
+        $reference = $reference === '' ? null : strtoupper($reference);
+
+        $limitValue = $request->query->get('limit');
+        if ($limitValue === null || $limitValue === '') {
+            $limit = self::DEFAULT_PAGE_LIMIT;
+        } elseif (filter_var($limitValue, FILTER_VALIDATE_INT) === false) {
+            throw new BadRequestHttpException('The case page limit is invalid.');
+        } else {
+            $limit = (int) $limitValue;
+        }
+        if ($limit < 1 || $limit > self::MAXIMUM_PAGE_LIMIT) {
+            throw new BadRequestHttpException('The case page limit is invalid.');
+        }
+
+        $cursorValue = $request->query->getString('cursor');
+        $cursor = $cursorValue === '' ? null : $this->cursorCodec->decode($cursorValue);
+        if ($cursorValue !== '' && ($cursor === null || $cursor->view !== $view)) {
+            throw new BadRequestHttpException('The case cursor is invalid.');
+        }
+
+        return new CaseWorkspaceQuery($view, $status, $modality, $reference, $cursor, $limit, $now);
     }
 
     private function resolveDetail(string $id, Professional $professional): CaseWorkspaceDetail

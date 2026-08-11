@@ -13,6 +13,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'managed_cases')]
+#[ORM\Index(name: 'idx_managed_case_operational_updated', columns: ['operational_updated_at', 'id'])]
 class ManagedCase
 {
     #[ORM\Id]
@@ -29,6 +30,9 @@ class ManagedCase
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private DateTimeImmutable $operationalUpdatedAt;
 
     #[ORM\Column(type: Types::STRING, length: 20, enumType: CaseStatus::class)]
     private CaseStatus $status;
@@ -47,6 +51,7 @@ class ManagedCase
         $this->organisation = $organisation;
         $this->createdBy = $createdBy;
         $this->createdAt = $createdAt;
+        $this->operationalUpdatedAt = $createdAt;
         $this->status = CaseStatus::Assessment;
         $this->modality = $modality;
     }
@@ -69,6 +74,22 @@ class ManagedCase
     public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function operationalUpdatedAt(): DateTimeImmutable
+    {
+        return $this->operationalUpdatedAt;
+    }
+
+    public function recordOperationalActivity(DateTimeImmutable $occurredAt): void
+    {
+        if ($occurredAt < $this->createdAt) {
+            throw new \LogicException('Case activity cannot predate case creation.');
+        }
+
+        if ($occurredAt > $this->operationalUpdatedAt) {
+            $this->operationalUpdatedAt = $occurredAt;
+        }
     }
 
     public function status(): CaseStatus

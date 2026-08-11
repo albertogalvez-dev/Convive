@@ -170,6 +170,16 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSame([], $this->responsePayload()['items']);
 
+        foreach (['overdue', 'upcoming', 'recent'] as $view) {
+            $this->client->request('GET', '/api/v1/professional/cases?view='.$view);
+            self::assertResponseIsSuccessful();
+            self::assertSame([], $this->responsePayload()['items']);
+        }
+
+        $this->client->request('GET', '/api/v1/professional/cases/operational-summary');
+        self::assertResponseIsSuccessful();
+        self::assertSame(['assigned' => 0, 'overdue' => 0, 'upcoming' => 0], $this->responsePayload());
+
         $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         $denied = $this->client->getResponse()->getContent();
@@ -234,6 +244,96 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame($denied, $this->client->getResponse()->getContent());
     }
 
+    public function testOperationalViewsRemainAssignmentScopedAndUseStableCursors(): void
+    {
+        $now = new DateTimeImmutable('now');
+        [$baselineCase, $lead, $organisation, , $sourceReport] = $this->createCaseWorkspace($now->modify('-6 days'));
+        $source = new WorkflowSourceVersion(
+            Uuid::v7(),
+            'operational-view-'.Uuid::v7()->toRfc4122(),
+            '2026.1',
+            'Fictional operational-view source',
+            'https://example.invalid/operational-view-source',
+            'Andalucia',
+            WorkflowSourceAuthority::Recommended,
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-01-02'),
+        );
+        $this->entityManager->persist($source);
+        [$firstOverdue] = $this->createAssignedCase(
+            $organisation,
+            $lead,
+            $source,
+            $now->modify('-4 days'),
+            $now->modify('-3 days'),
+            CaseModality::Digital,
+        );
+        [$secondOverdue] = $this->createAssignedCase(
+            $organisation,
+            $lead,
+            $source,
+            $now->modify('-3 days'),
+            $now->modify('-2 days'),
+            CaseModality::Digital,
+        );
+        [$recent, $completedTask] = $this->createAssignedCase(
+            $organisation,
+            $lead,
+            $source,
+            $now->modify('-2 days'),
+            $now->modify('+1 day'),
+            CaseModality::Mixed,
+        );
+        $this->entityManager->flush();
+        $completedTask->complete($lead, $now->modify('-1 minute'));
+        $this->entityManager->flush();
+        $this->client->loginUser($lead);
+
+        $this->client->request('GET', '/api/v1/professional/cases?view=overdue&modality=digital&limit=1');
+        self::assertResponseIsSuccessful();
+        $firstPage = $this->responsePayload();
+        self::assertSame($firstOverdue->id()->toRfc4122(), $firstPage['items'][0]['id']);
+        self::assertSame(1, $firstPage['pagination']['limit']);
+        self::assertIsString($firstPage['pagination']['nextCursor']);
+
+        $this->client->request(
+            'GET',
+            '/api/v1/professional/cases?view=overdue&modality=digital&limit=1&cursor='
+            .rawurlencode($firstPage['pagination']['nextCursor']),
+        );
+        self::assertResponseIsSuccessful();
+        self::assertSame($secondOverdue->id()->toRfc4122(), $this->responsePayload()['items'][0]['id']);
+
+        $this->client->request('GET', '/api/v1/professional/cases?view=recent');
+        self::assertResponseIsSuccessful();
+        self::assertSame($recent->id()->toRfc4122(), $this->responsePayload()['items'][0]['id']);
+
+        $this->client->request('GET', '/api/v1/professional/cases?reference='.$recent->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        self::assertSame([$recent->id()->toRfc4122()], array_column($this->responsePayload()['items'], 'id'));
+
+        $this->client->request('GET', '/api/v1/professional/cases?reference='.$sourceReport->publicReference());
+        self::assertResponseIsSuccessful();
+        self::assertSame([$baselineCase->id()->toRfc4122()], array_column($this->responsePayload()['items'], 'id'));
+
+        $this->client->request('GET', '/api/v1/professional/cases?status=active');
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+
+        $this->client->request('GET', '/api/v1/professional/cases/operational-summary');
+        self::assertResponseIsSuccessful();
+        self::assertSame(['assigned' => 4, 'overdue' => 3, 'upcoming' => 0], $this->responsePayload());
+
+        $this->client->request('GET', '/api/v1/professional/cases?view=unknown');
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $this->client->request(
+            'GET',
+            '/api/v1/professional/cases?view=recent&cursor='.rawurlencode($firstPage['pagination']['nextCursor']),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+    }
+
     public function testAnonymousRequestsCannotReadProfessionalCases(): void
     {
         $this->client->request('GET', '/api/v1/professional/cases');
@@ -246,12 +346,12 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         );
     }
 
-    /** @return array{ManagedCase, Professional, Organisation, ReportAttachment} */
-    private function createCaseWorkspace(): array
+    /** @return array{ManagedCase, Professional, Organisation, ReportAttachment, Report} */
+    private function createCaseWorkspace(?DateTimeImmutable $now = null): array
     {
         $organisation = $this->createOrganisation('46A', 'Case Workspace School');
         $lead = $this->createProfessional('case-lead', $organisation, ProfessionalRole::Triage);
-        $now = new DateTimeImmutable('now');
+        $now ??= new DateTimeImmutable('now');
         $managedCase = new ManagedCase(Uuid::v7(), $organisation, $lead, $now, CaseModality::Mixed);
         $assignment = new CaseAssignment(
             Uuid::v7(),
@@ -315,7 +415,44 @@ final class ProfessionalCaseControllerTest extends WebTestCase
 
         $attachment = $this->persistAvailableAttachment($report);
 
-        return [$managedCase, $lead, $organisation, $attachment];
+        return [$managedCase, $lead, $organisation, $attachment, $report];
+    }
+
+    /** @return array{ManagedCase, CaseTask} */
+    private function createAssignedCase(
+        Organisation $organisation,
+        Professional $lead,
+        WorkflowSourceVersion $source,
+        DateTimeImmutable $createdAt,
+        DateTimeImmutable $dueAt,
+        CaseModality $modality,
+    ): array {
+        $managedCase = new ManagedCase(Uuid::v7(), $organisation, $lead, $createdAt, $modality);
+        $assignment = new CaseAssignment(
+            Uuid::v7(),
+            $managedCase,
+            $lead,
+            CaseAssignmentRole::Lead,
+            $lead,
+            $createdAt,
+        );
+        $task = new CaseTask(
+            Uuid::v7(),
+            $managedCase,
+            $lead,
+            $source,
+            CaseProtocolStage::Assessment,
+            CaseTaskKind::InternalAction,
+            'Fictional operational case task.',
+            $dueAt,
+            $lead,
+            $createdAt,
+        );
+        foreach ([$managedCase, $assignment, $task] as $entity) {
+            $this->entityManager->persist($entity);
+        }
+
+        return [$managedCase, $task];
     }
 
     private function createOrganisation(string $suffix, string $name): Organisation
