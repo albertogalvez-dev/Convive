@@ -72,7 +72,13 @@ docker compose -p "$source_project" "${TEST_COMPOSE_ARGUMENTS[@]}" run --rm --no
   -e DEMO_PROFESSIONAL_PASSWORD \
   api php bin/console app:demo:seed --env=prod --no-debug
 
-docker compose -p "$source_project" "${TEST_COMPOSE_ARGUMENTS[@]}" exec -T database sh -eu -c \
+seed_fictional_recovery_attachment \
+  "$source_project" \
+  "$RESTORE_COMPOSE_FILE" \
+  "$LOCAL_COMPOSE_FILE"
+
+docker compose -p "$source_project" "${TEST_COMPOSE_ARGUMENTS[@]}" exec -T \
+  database sh -eu -c \
   'psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --set=ON_ERROR_STOP=1' <<'SQL'
 INSERT INTO professional_sessions (sess_id, sess_data, sess_lifetime, sess_time)
 VALUES ('recovery-test-session', '\x00', 3600, 1786320000);
@@ -98,6 +104,63 @@ FROM reports
 ORDER BY id
 LIMIT 1;
 SQL
+
+source_attachment_volume="$(attachment_volume_name "$source_project")"
+
+restore_fictional_attachment() {
+  write_fictional_recovery_attachment "$source_attachment_volume"
+}
+
+expect_attachment_validation_failure() {
+  local scenario="$1"
+  local failure_log="$temporary_root/expected-attachment-failure.log"
+
+  if attachment_consistency_state \
+    "$source_project" \
+    "$source_attachment_volume" \
+    "$RESTORE_COMPOSE_FILE" \
+    "$LOCAL_COMPOSE_FILE" > "$failure_log" 2>&1; then
+    echo "Invalid private attachment storage unexpectedly passed the $scenario consistency check." >&2
+    exit 1
+  fi
+
+  if grep --fixed-strings --quiet "$FICTIONAL_RECOVERY_ATTACHMENT_ID" "$failure_log" \
+    || grep --fixed-strings --quiet "$FICTIONAL_RECOVERY_ATTACHMENT_HASH" "$failure_log" \
+    || grep --fixed-strings --quiet 'Fictional recovery evidence' "$failure_log"; then
+    echo 'Attachment consistency failure output disclosed private metadata.' >&2
+    exit 1
+  fi
+}
+
+docker run --rm \
+  --env FICTIONAL_ATTACHMENT_ID="$FICTIONAL_RECOVERY_ATTACHMENT_ID" \
+  --mount "type=volume,source=$source_attachment_volume,target=/attachments" \
+  "$BACKUP_UTILITY_IMAGE" sh -eu -c \
+  'printf corrupt > "/attachments/available/$FICTIONAL_ATTACHMENT_ID"'
+expect_attachment_validation_failure corruption
+restore_fictional_attachment
+
+docker run --rm \
+  --env FICTIONAL_ATTACHMENT_ID="$FICTIONAL_RECOVERY_ATTACHMENT_ID" \
+  --mount "type=volume,source=$source_attachment_volume,target=/attachments" \
+  "$BACKUP_UTILITY_IMAGE" sh -eu -c \
+  'rm "/attachments/available/$FICTIONAL_ATTACHMENT_ID"'
+docker run --rm \
+  --env FICTIONAL_ATTACHMENT_ID="$FICTIONAL_RECOVERY_ATTACHMENT_ID" \
+  --mount "type=volume,source=$source_attachment_volume,target=/attachments,readonly" \
+  "$BACKUP_UTILITY_IMAGE" sh -eu -c \
+  'test ! -e "/attachments/available/$FICTIONAL_ATTACHMENT_ID"'
+expect_attachment_validation_failure missing-object
+restore_fictional_attachment
+
+docker run --rm \
+  --mount "type=volume,source=$source_attachment_volume,target=/attachments" \
+  "$BACKUP_UTILITY_IMAGE" sh -eu -c \
+  'printf unexpected > /attachments/available/00000000-0000-7000-8000-000000000999'
+expect_attachment_validation_failure unexpected-object
+docker run --rm \
+  --mount "type=volume,source=$source_attachment_volume,target=/attachments" \
+  "$BACKUP_UTILITY_IMAGE" rm /attachments/available/00000000-0000-7000-8000-000000000999
 
 secret_environment="$temporary_root/repository.env"
 printf '%s\n' \
@@ -159,6 +222,13 @@ restore_attachment_directory="$(
 
 if [[ "$restore_attachment_directory" != '/var/lib/convive/attachments' ]]; then
   echo 'The isolated recovery environment did not provide its private attachment boundary.' >&2
+  exit 1
+fi
+
+if grep --recursive --fixed-strings --quiet "$FICTIONAL_RECOVERY_ATTACHMENT_ID" "$CONVIVE_BACKUP_EVIDENCE_DIRECTORY" \
+  || grep --recursive --fixed-strings --quiet "$FICTIONAL_RECOVERY_ATTACHMENT_HASH" "$CONVIVE_BACKUP_EVIDENCE_DIRECTORY" \
+  || grep --recursive --fixed-strings --quiet 'Fictional recovery evidence' "$CONVIVE_BACKUP_EVIDENCE_DIRECTORY"; then
+  echo 'Recovery evidence disclosed private attachment metadata.' >&2
   exit 1
 fi
 

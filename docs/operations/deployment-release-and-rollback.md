@@ -43,8 +43,9 @@ Stop the release if any check fails:
    change.
 7. PostgreSQL and Redis report healthy. The current release is healthy and its
    exact digests are recoverable.
-8. A fresh encrypted database backup exists and the backup process has recent,
-   successful restore-test evidence as required by issue #66.
+8. A fresh encrypted persistent-data generation exists and the backup process
+   has recent, successful database-and-attachment restore-test evidence as
+   required by issues #66 and #138.
 9. Every pending Doctrine migration has been reviewed. Its forward operation,
    locks, expected duration and rollback class are written in the release
    record. Destructive or incompatible changes have an approved maintenance and
@@ -112,10 +113,10 @@ later reviewed forward migration; do not invoke Doctrine `down()` automatically.
 ### An incompatible or destructive migration ran
 
 Keep maintenance mode active. Stop application writes, preserve incident
-evidence, restore the verified pre-release database backup according to the
-issue #66 procedure, select the previous image digests and repeat the complete
-smoke test. Record the recovery point and any data written after the backup that
-could not be retained.
+evidence, restore the verified pre-release persistent-data generation according
+to the issues #66/#138 procedure, select the previous image digests and repeat
+the complete smoke test. Record the recovery point and any data written after
+the backup that could not be retained.
 
 If the backup cannot be restored or the previous generation cannot pass smoke
 tests, keep the service unavailable and escalate. Serving an uncertain state is

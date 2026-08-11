@@ -7,18 +7,32 @@ backup and restore-test evidence record.
 
 ## Recovery targets and scope
 
-The only persistent application asset in the current deployment is PostgreSQL.
-The backup therefore contains one transactionally consistent custom-format
-`pg_dump` of the complete Convive database, including Doctrine migration state.
-Redis is deliberately excluded: it holds restart-resistant rate-limit and
-idempotency state, not authoritative business data. Angular assets, container
-images and configuration are reproduced from the reviewed Git revision and
-immutable image digests; secrets are restored from the separate operator secret
-store, never from the database backup.
+The persistent application boundary contains PostgreSQL and the private
+attachment volume. Each successful backup generation contains one
+transactionally consistent custom-format `pg_dump` of the complete Convive
+database, including Doctrine migration state, and one read-only snapshot of the
+private attachment namespaces. Redis is deliberately excluded: it holds
+restart-resistant rate-limit and idempotency state, not authoritative business
+data. Angular assets, container images and configuration are reproduced from
+the reviewed Git revision and immutable image digests; secrets are restored
+from the separate operator secret store, never from the backup.
+
+The two snapshots share a random generation tag and exact UTC timestamp so
+retention keeps or removes them as a pair. Before the database dump,
+between the database and object snapshots, and after the object snapshot, the
+job compares the sorted attachment metadata and validates every object key,
+size and SHA-256 digest. It accepts the documented scanning-promotion and
+deletion-pending crash-recovery states, but rejects missing, extra, corrupt,
+symlinked or structurally invalid objects. Before publication, the object
+snapshot is restored into a third disposable volume and checked against the
+same manifest, closing transient capture races. A changed or invalid state
+removes that partial generation. Only paired generations tagged `complete`
+participate in restore selection or retention.
 
 For the fictional demonstration, the operational targets are:
 
-- recovery point objective (RPO): no more than 24 hours of database changes;
+- recovery point objective (RPO): no more than 24 hours of database or private
+  attachment changes;
 - recovery time objective (RTO): four hours from declared recovery to verified
   service restoration;
 - schedule: daily at 02:30 Europe/Madrid with up to 20 minutes of random delay;
@@ -83,8 +97,8 @@ details or credentials in Git, tickets or terminal transcripts.
    password in the password manager as well as on the host.
 6. Run `init-repository.sh`, `backup.sh` and the complete isolated
    `restore-test.sh`. The issue remains open until all three succeed against R2
-   and the resulting non-secret evidence records identify the deployed Git
-   revision and a successful outcome.
+   with a strictly fictional attachment and the resulting non-secret evidence
+   records identify the deployed Git revision and a successful outcome.
 7. Recheck that no public URL or custom domain was enabled, inspect the bucket's
    stored-byte and operation metrics, and set an operational usage threshold or
    billing notification appropriate to the approved cost boundary.
@@ -141,7 +155,9 @@ Never test restoration against the live Compose project. Use a unique project
 name beginning `convive-restore-`, a fresh random database password and the
 dedicated restore Compose file. The API uses the deployed immutable image
 digest; it is never built from or bind-mounted to source on the VPS. The
-database uses temporary storage and publishes no port.
+database uses temporary storage, the restored attachments use a new
+project-scoped private volume, and neither publishes a port. The restore refuses
+an attachment target whose Docker volume identity matches the source.
 
 ```text
 export CONVIVE_RESTORE_DATABASE_PASSWORD='<fresh random value>'
@@ -193,7 +209,10 @@ the latest results are also written to:
 - `/var/lib/convive-backup/evidence/latest-restore-test.json`.
 
 Each record contains UTC time, exact Git revision, operation, outcome and a
-non-secret detail. The systemd unit exits non-zero on dump, upload, integrity,
+non-secret detail. Successful records may contain a shortened generation,
+report count, attachment count and total bytes; they never contain an object
+key, filename, description, content hash, report content or credential. The
+systemd unit exits non-zero on dump, object consistency, upload, integrity,
 retention or evidence failure; issue #65 connects that failure state and stale
 evidence to external alerts. Do not paste environment files or unredacted
 command traces into tickets or logs.
@@ -216,11 +235,12 @@ recoverable generation.
 ## Emergency recovery
 
 During a genuine outage, first preserve the failed environment and select an
-explicit known-good snapshot. Reconstruct the reviewed release and secrets on a
-new isolated Compose project, restore the dump, invalidate sessions and
-capabilities, validate schema/migrations and run the internal/public smoke tests
-from the release runbook. Only then switch public traffic. Record the selected
-snapshot, source revision, recovery time, lost-data window and final checks.
+explicit known-good generation. Reconstruct the reviewed release and secrets on
+a new isolated Compose project, restore the paired database/object generation,
+invalidate sessions and capabilities, validate attachment consistency and
+schema/migrations, and run the internal/public smoke tests from the release
+runbook. Only then switch public traffic. Record the selected generation,
+source revision, recovery time, lost-data window and final checks.
 
 Do not automatically run Doctrine down-migrations. If the restored database and
 selected application image are incompatible, follow the migration compatibility
