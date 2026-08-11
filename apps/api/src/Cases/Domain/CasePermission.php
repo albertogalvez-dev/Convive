@@ -7,6 +7,7 @@ namespace App\Cases\Domain;
 enum CasePermission: string
 {
     case View = 'view';
+    case ViewAudit = 'view_audit';
     case Manage = 'manage';
     case ManageAssignments = 'manage_assignments';
 }

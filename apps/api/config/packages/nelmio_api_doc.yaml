@@ -455,6 +455,30 @@ nelmio_api_doc:
                         byteSize: { type: integer, minimum: 1, maximum: 5242880 }
                         createdAt: { type: string, format: date-time }
 
+                ProfessionalCaseAuditEvent:
+                    type: object
+                    additionalProperties: false
+                    required: [id, action, target, actorName, occurredAt]
+                    properties:
+                        id: { type: string, format: uuid }
+                        action:
+                            type: string
+                            enum: [case_created, report_linked, assignment_created, assignment_revoked, task_created, task_completed, task_marked_not_applicable, evidence_download_authorised, audit_exported]
+                        target:
+                            type: string
+                            enum: [case, triage_decision, assignment, task, attachment, audit_trail]
+                        actorName: { type: string, maxLength: 160 }
+                        occurredAt: { type: string, format: date-time }
+
+                ProfessionalCaseAuditEventPage:
+                    type: object
+                    additionalProperties: false
+                    required: [items]
+                    properties:
+                        items:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCaseAuditEvent' }
+
                 ProfessionalCaseTimelineEvent:
                     type: object
                     additionalProperties: false
@@ -483,10 +507,11 @@ nelmio_api_doc:
                         permissions:
                             type: object
                             additionalProperties: false
-                            required: [manage, manageAssignments]
+                            required: [manage, manageAssignments, viewAudit]
                             properties:
                                 manage: { type: boolean }
                                 manageAssignments: { type: boolean }
+                                viewAudit: { type: boolean }
                         people:
                             type: array
                             items: { $ref: '#/components/schemas/ProfessionalCasePerson' }

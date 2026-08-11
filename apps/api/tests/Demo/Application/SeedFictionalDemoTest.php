@@ -16,6 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 final class SeedFictionalDemoTest extends PostgreSqlTestCase
 {
     private const PASSWORD = 'A fictional demo password 70!';
+    private const RESEEDED_PASSWORD = 'A different fictional demo password 71!';
 
     private Connection $connection;
     private SeedFictionalDemo $seeder;
@@ -90,6 +91,27 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'created_at' => '2026-08-10T10:00:00+02:00',
             ],
         );
+        self::assertSame(5, $this->demoReportCount());
+        $securityRevision = $this->connection->fetchOne(
+            'SELECT security_revision FROM professionals WHERE id = :id',
+            ['id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
+        );
+        self::assertIsNumeric($securityRevision);
+
+        $reseed = $this->command(password: self::RESEEDED_PASSWORD);
+        self::assertSame(Command::SUCCESS, $reseed->execute([]));
+        self::assertStringNotContainsString(self::RESEEDED_PASSWORD, $reseed->getDisplay());
+        $reseededHash = $this->connection->fetchOne(
+            'SELECT password_hash FROM professionals WHERE id = :id',
+            ['id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
+        );
+        self::assertIsString($reseededHash);
+        self::assertFalse(password_verify(self::PASSWORD, $reseededHash));
+        self::assertTrue(password_verify(self::RESEEDED_PASSWORD, $reseededHash));
+        self::assertSame((int) $securityRevision + 1, (int) $this->connection->fetchOne(
+            'SELECT security_revision FROM professionals WHERE id = :id',
+            ['id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
+        ));
         self::assertSame(5, $this->demoReportCount());
 
         $attachmentId = '019fe900-0000-7000-8000-000000000100';

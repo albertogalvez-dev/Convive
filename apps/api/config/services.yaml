@@ -50,6 +50,7 @@ services:
     App\Cases\Domain\CaseAssignmentRepository: '@App\Cases\Infrastructure\DoctrineCaseAssignmentRepository'
     App\Cases\Domain\CaseTaskRepository: '@App\Cases\Infrastructure\DoctrineCaseTaskRepository'
     App\Cases\Domain\CaseWorkspaceRepository: '@App\Cases\Infrastructure\DoctrineCaseWorkspaceRepository'
+    App\Cases\Domain\CaseAuditEventRepository: '@App\Cases\Infrastructure\DoctrineCaseAuditEventRepository'
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:

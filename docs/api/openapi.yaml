@@ -117,6 +117,58 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/audit-events':
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Read the explicit audit trail for an assigned case'
+      description: 'Requires the separate case audit permission and returns no case content or target identifiers.'
+      operationId: listProfessionalCaseAuditEvents
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The minimised ordered audit events.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseAuditEventPage'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/audit-events/export':
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Export the minimal audit trail for an assigned case'
+      description: 'Requires the separate case audit permission. The CSV excludes case content, people, evidence, reasons and target identifiers.'
+      operationId: exportProfessionalCaseAuditEvents
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The minimised audit CSV.'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/reports:
     get:
       tags:
@@ -1574,6 +1626,56 @@ components:
           format: date-time
       type: object
       additionalProperties: false
+    ProfessionalCaseAuditEvent:
+      required:
+        - id
+        - action
+        - target
+        - actorName
+        - occurredAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum:
+            - case_created
+            - report_linked
+            - assignment_created
+            - assignment_revoked
+            - task_created
+            - task_completed
+            - task_marked_not_applicable
+            - evidence_download_authorised
+            - audit_exported
+        target:
+          type: string
+          enum:
+            - case
+            - triage_decision
+            - assignment
+            - task
+            - attachment
+            - audit_trail
+        actorName:
+          type: string
+          maxLength: 160
+        occurredAt:
+          type: string
+          format: date-time
+      type: object
+      additionalProperties: false
+    ProfessionalCaseAuditEventPage:
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfessionalCaseAuditEvent'
+      type: object
+      additionalProperties: false
     ProfessionalCaseTimelineEvent:
       required:
         - type
@@ -1654,10 +1756,13 @@ components:
           required:
             - manage
             - manageAssignments
+            - viewAudit
           properties:
             manage:
               type: boolean
             manageAssignments:
+              type: boolean
+            viewAudit:
               type: boolean
           type: object
           additionalProperties: false

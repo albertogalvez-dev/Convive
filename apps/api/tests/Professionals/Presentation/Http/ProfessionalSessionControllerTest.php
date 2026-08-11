@@ -30,6 +30,10 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         parent::setUp();
 
         $this->client = static::createClient();
+        // The test creates its fictional actor inside the transaction below.
+        // Keeping the kernel avoids a request booting a separate connection
+        // that cannot see that uncommitted, test-owned data.
+        $this->client->disableReboot();
         $container = self::getContainer();
         $entityManager = $container->get(EntityManagerInterface::class);
         self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
@@ -38,18 +42,12 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $rateLimiterCache = $container->get('cache.rate_limiter');
         self::assertInstanceOf(CacheItemPoolInterface::class, $rateLimiterCache);
         $rateLimiterCache->clear();
-        $this->connection->executeStatement('DELETE FROM professional_sessions');
-        $this->connection->executeStatement(
-            "DELETE FROM professionals WHERE email LIKE '%@session-test.example'",
-        );
+        $this->deleteOwnSessionsAndProfessionals();
     }
 
     protected function tearDown(): void
     {
-        $this->connection->executeStatement('DELETE FROM professional_sessions');
-        $this->connection->executeStatement(
-            "DELETE FROM professionals WHERE email LIKE '%@session-test.example'",
-        );
+        $this->deleteOwnSessionsAndProfessionals();
         $this->entityManager->clear();
 
         parent::tearDown();
@@ -93,9 +91,7 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $sessionResponse = $client->getResponse()->getContent();
         self::assertIsString($sessionResponse);
         self::assertStringContainsString('alex@session-test.example', $sessionResponse);
-        self::assertSame(1, (int) $this->connection->fetchOne(
-            'SELECT COUNT(*) FROM professional_sessions',
-        ));
+        self::assertSame(1, (int) $this->connection->fetchOne($this->ownSessionCountSql()));
     }
 
     public function testInvalidAndUnknownCredentialsHaveTheSameSafeResponse(): void
@@ -153,9 +149,9 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $this->login($client, 'fixation@session-test.example', self::PASSWORD);
 
         self::assertResponseIsSuccessful();
-        self::assertNotSame('attacker-controlled-id', $this->connection->fetchOne(
-            'SELECT sess_id FROM professional_sessions LIMIT 1',
-        ));
+        $authenticatedSessionId = $this->connection->fetchOne($this->ownSessionIdSql());
+        self::assertIsString($authenticatedSessionId);
+        self::assertNotSame('attacker-controlled-id', $authenticatedSessionId);
 
         $client->request('GET', '/api/v1/professional/session');
         self::assertResponseIsSuccessful();
@@ -231,9 +227,8 @@ final class ProfessionalSessionControllerTest extends WebTestCase
         $client = $this->client;
         $this->login($client, 'logout@session-test.example', self::PASSWORD);
         self::assertResponseIsSuccessful();
-        $authenticatedSessionId = $this->connection->fetchOne(
-            'SELECT sess_id FROM professional_sessions LIMIT 1',
-        );
+        $authenticatedSessionId = $this->connection->fetchOne($this->ownSessionIdSql());
+        self::assertIsString($authenticatedSessionId);
 
         $client->request('DELETE', '/api/v1/professional/session', server: $this->sameOriginHeaders());
 
@@ -272,6 +267,37 @@ final class ProfessionalSessionControllerTest extends WebTestCase
             ['email' => $email, 'password' => $password],
             $this->sameOriginHeaders(),
         );
+    }
+
+    private function deleteOwnSessionsAndProfessionals(): void
+    {
+        $this->connection->executeStatement(<<<'SQL'
+DELETE FROM professional_sessions
+WHERE position(convert_to('0192a5c0-3333-7000-8000-000000000030', 'UTF8') in sess_data) > 0
+SQL);
+        $this->connection->executeStatement(
+            "DELETE FROM professionals WHERE email LIKE '%@session-test.example'",
+        );
+    }
+
+    private function ownSessionCountSql(): string
+    {
+        return <<<'SQL'
+SELECT COUNT(*)
+FROM professional_sessions
+WHERE position(convert_to('0192a5c0-3333-7000-8000-000000000030', 'UTF8') in sess_data) > 0
+SQL;
+    }
+
+    private function ownSessionIdSql(): string
+    {
+        return <<<'SQL'
+SELECT sess_id
+FROM professional_sessions
+WHERE position(convert_to('0192a5c0-3333-7000-8000-000000000030', 'UTF8') in sess_data) > 0
+ORDER BY sess_time DESC, sess_id DESC
+LIMIT 1
+SQL;
     }
 
     /** @return array<string, string> */

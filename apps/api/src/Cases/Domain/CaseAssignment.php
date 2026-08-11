@@ -66,7 +66,8 @@ class CaseAssignment
 
         return match ($this->role) {
             CaseAssignmentRole::Lead => true,
-            CaseAssignmentRole::Contributor => $permission !== CasePermission::ManageAssignments,
+            CaseAssignmentRole::Contributor => $permission !== CasePermission::ManageAssignments
+                && $permission !== CasePermission::ViewAudit,
             CaseAssignmentRole::Observer => $permission === CasePermission::View,
         };
     }

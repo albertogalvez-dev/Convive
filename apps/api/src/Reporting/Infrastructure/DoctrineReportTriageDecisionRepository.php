@@ -6,6 +6,10 @@ namespace App\Reporting\Infrastructure;
 
 use App\Cases\Domain\CaseAssignment;
 use App\Cases\Domain\CaseAssignmentRole;
+use App\Cases\Domain\CaseAuditAction;
+use App\Cases\Domain\CaseAuditEvent;
+use App\Cases\Domain\CaseAuditEventRepository;
+use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CaseModality;
 use App\Cases\Domain\ManagedCase;
 use App\Professionals\Domain\Professional;
@@ -21,8 +25,10 @@ use Symfony\Component\Uid\Uuid;
 
 final readonly class DoctrineReportTriageDecisionRepository implements ReportTriageDecisionRepository
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private CaseAuditEventRepository $auditEvents,
+    ) {
     }
 
     public function record(
@@ -80,17 +86,47 @@ final readonly class DoctrineReportTriageDecisionRepository implements ReportTri
 
             if ($managedCase !== null) {
                 $this->entityManager->persist($managedCase);
-                $this->entityManager->persist(new CaseAssignment(
+                $assignment = new CaseAssignment(
                     Uuid::v7(),
                     $managedCase,
                     $professional,
                     CaseAssignmentRole::Lead,
                     $professional,
                     $decidedAt,
-                ));
+                );
+                $this->entityManager->persist($assignment);
             }
 
             $this->entityManager->persist($decision);
+            if ($managedCase !== null) {
+                $this->auditEvents->append(new CaseAuditEvent(
+                    Uuid::v7(),
+                    $managedCase,
+                    $professional,
+                    CaseAuditAction::CaseCreated,
+                    CaseAuditTarget::Case,
+                    $managedCase->id(),
+                    $decidedAt,
+                ));
+                $this->auditEvents->append(new CaseAuditEvent(
+                    Uuid::v7(),
+                    $managedCase,
+                    $professional,
+                    CaseAuditAction::ReportLinked,
+                    CaseAuditTarget::TriageDecision,
+                    $decision->id(),
+                    $decidedAt,
+                ));
+                $this->auditEvents->append(new CaseAuditEvent(
+                    Uuid::v7(),
+                    $managedCase,
+                    $professional,
+                    CaseAuditAction::AssignmentCreated,
+                    CaseAuditTarget::Assignment,
+                    $assignment->id(),
+                    $decidedAt,
+                ));
+            }
             $this->entityManager->flush();
 
             return $decision;

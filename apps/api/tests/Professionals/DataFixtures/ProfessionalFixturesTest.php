@@ -26,10 +26,15 @@ final class ProfessionalFixturesTest extends PostgreSqlTestCase
 
         $professionals = $this->entityManager
             ->getRepository(Professional::class)
-            ->findAll();
+            ->findBy([
+                'id' => [
+                    '0192a5c0-3333-7000-8000-000000000001',
+                    '0192a5c0-3333-7000-8000-000000000002',
+                ],
+            ]);
         $memberships = $this->entityManager
             ->getRepository(OrganisationMembership::class)
-            ->findAll();
+            ->findBy(['professional' => $professionals]);
 
         self::assertCount(2, $professionals);
         self::assertCount(2, $memberships);

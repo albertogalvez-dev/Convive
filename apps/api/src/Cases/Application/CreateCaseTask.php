@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Cases\Application;
 
 use App\Cases\Domain\CasePermission;
+use App\Cases\Domain\CaseAuditAction;
+use App\Cases\Domain\CaseAuditEvent;
+use App\Cases\Domain\CaseAuditEventRepository;
+use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CaseProtocolStage;
 use App\Cases\Domain\CaseTask;
 use App\Cases\Domain\CaseTaskKind;
@@ -20,6 +24,7 @@ final readonly class CreateCaseTask
     public function __construct(
         private AuthoriseCaseAccess $authorise,
         private CaseTaskRepository $tasks,
+        private CaseAuditEventRepository $auditEvents,
     ) {
     }
 
@@ -50,6 +55,15 @@ final readonly class CreateCaseTask
             $actor,
             $now,
         );
+        $this->auditEvents->append(new CaseAuditEvent(
+            Uuid::v7(),
+            $managedCase,
+            $actor,
+            CaseAuditAction::TaskCreated,
+            CaseAuditTarget::Task,
+            $task->id(),
+            $now,
+        ));
         $this->tasks->save($task);
 
         return $task;
