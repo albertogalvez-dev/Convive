@@ -177,9 +177,19 @@ proof.
 - A real deployment requires controller/DPO and processor decisions that the
   fictional demonstration cannot make.
 
+## Implementation status
+
+Issue #40 implements the decision for fictional development data with a
+PostgreSQL transactional outbox and a pinned Mailpit service. Production keeps
+the feature disabled and uses the null transport unless an independently
+reviewed runtime configuration enables it. The worker retains no plaintext
+verification token, logs only internal delivery identifiers and bounded
+outcomes, removes expired pending contacts within 24 hours, removes completed
+delivery evidence after 30 days and suppresses every reporter contact and job
+during isolated restoration. Reporters may opt in again after recovery.
+
 ## Deferred work
 
-- Implementing the verified contact and generic delivery flow in #40.
 - Selecting and contracting a production email provider.
 - Production sender-domain DNS and reputation controls.
 - A passkey or other independently enrolled recovery factor.

@@ -13,6 +13,11 @@ services:
       # attachment boundary. Restored database rows never grant object access,
       # and no production attachment volume is mounted into this environment.
       ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments
+      MAILER_DSN: "null://null"
+      REPORTER_EMAIL_ENABLED: "0"
+      REPORTER_EMAIL_FROM: no-reply@conviveaula.example
+      REPORTER_EMAIL_PUBLIC_URL: https://app.conviveaula.com/verificar-correo
+      REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
     depends_on:
       database:
         condition: service_healthy

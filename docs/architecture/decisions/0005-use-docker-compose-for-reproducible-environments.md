@@ -331,16 +331,17 @@ and verified separately.
 
 ## Development-only services
 
-A mail catcher, debugger or database administration interface may later be
-enabled through development configuration or Compose profiles when it solves a
-confirmed need.
+A pinned Mailpit mail catcher is enabled only by the development Compose
+override for the verified reporter-notification flow. It binds its web
+interface to localhost, uses reserved `.example` sender/recipient addresses and
+is not present in the production topology.
 
 Development-only services must remain disabled in production, must not receive
 real personal data and must not become dependencies of normal production
 behaviour.
 
-This ADR does not currently select Mailpit, Redis, RabbitMQ, MinIO or another
-supporting service.
+This development-only selection does not select a production email provider or
+introduce Redis, RabbitMQ, MinIO or another supporting production service.
 
 ## Continuous integration and deployment boundary
 

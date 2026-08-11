@@ -37,6 +37,13 @@ services:
       # Private named volume; never mounted by the gateway or exposed as a
       # static path. Production evidence remains fictional-only.
       ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments
+      # Email delivery is an explicit post-demonstration provider gate. Keep
+      # the feature absent even if a populated secret file is reused.
+      MAILER_DSN: "null://null"
+      REPORTER_EMAIL_ENABLED: "0"
+      REPORTER_EMAIL_FROM: no-reply@conviveaula.example
+      REPORTER_EMAIL_PUBLIC_URL: https://app.conviveaula.com/verificar-correo
+      REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
     env_file:
       - ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
     secrets: [api_env]
