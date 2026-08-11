@@ -335,6 +335,195 @@ nelmio_api_doc:
                         review:
                             $ref: '#/components/schemas/ProfessionalReportReview'
 
+                ProfessionalCaseSummary:
+                    type: object
+                    additionalProperties: false
+                    required: [id, status, modality, createdAt, organisationName, assignmentRole, pendingTasks, overdueTasks, nextDueAt]
+                    properties:
+                        id: { type: string, format: uuid }
+                        status: { type: string, enum: [assessment, active, closed] }
+                        modality: { type: string, enum: [in_person, digital, mixed, unknown] }
+                        createdAt: { type: string, format: date-time }
+                        organisationName: { type: string }
+                        assignmentRole: { type: string, enum: [lead, contributor, observer] }
+                        pendingTasks: { type: integer, minimum: 0 }
+                        overdueTasks: { type: integer, minimum: 0 }
+                        nextDueAt:
+                            oneOf:
+                                - { type: string, format: date-time }
+                                - { type: 'null' }
+
+                ProfessionalCasePage:
+                    type: object
+                    additionalProperties: false
+                    required: [items]
+                    properties:
+                        items:
+                            type: array
+                            maxItems: 50
+                            items: { $ref: '#/components/schemas/ProfessionalCaseSummary' }
+
+                ProfessionalCasePerson:
+                    type: object
+                    additionalProperties: false
+                    required: [id, name, role]
+                    properties:
+                        id: { type: string, format: uuid }
+                        name: { type: string, maxLength: 120 }
+                        role: { type: string, enum: [affected, alleged_actor, witness, guardian, other] }
+
+                ProfessionalCaseAssignment:
+                    type: object
+                    additionalProperties: false
+                    required: [id, professional, role, assignedAt]
+                    properties:
+                        id: { type: string, format: uuid }
+                        professional:
+                            type: object
+                            additionalProperties: false
+                            required: [id, name]
+                            properties:
+                                id: { type: string, format: uuid }
+                                name: { type: string }
+                        role: { type: string, enum: [lead, contributor, observer] }
+                        assignedAt: { type: string, format: date-time }
+
+                ProfessionalCaseTask:
+                    type: object
+                    additionalProperties: false
+                    required: [id, title, stage, kind, status, dueAt, overdue, owner, source, resolvedAt, resolvedBy, notApplicableReason]
+                    properties:
+                        id: { type: string, format: uuid }
+                        title: { type: string, maxLength: 160 }
+                        stage:
+                            type: string
+                            enum: [identification, immediate_actions, urgent_protection, family_communication, professional_coordination, information_collection, educational_measures, inspection_communication, assessment, action_plan, family_measures, inspection_follow_up]
+                        kind: { type: string, enum: [internal_action, external_communication] }
+                        status: { type: string, enum: [pending, completed, not_applicable] }
+                        dueAt: { type: string, format: date-time }
+                        overdue: { type: boolean }
+                        owner:
+                            type: object
+                            additionalProperties: false
+                            required: [id, name]
+                            properties:
+                                id: { type: string, format: uuid }
+                                name: { type: string }
+                        source:
+                            type: object
+                            additionalProperties: false
+                            required: [title, version, authority, territory, uri]
+                            properties:
+                                title: { type: string, maxLength: 180 }
+                                version: { type: string, maxLength: 40 }
+                                authority: { type: string, enum: [binding, recommended, internal] }
+                                territory: { type: string, maxLength: 20 }
+                                uri:
+                                    oneOf:
+                                        - { type: string, format: uri }
+                                        - { type: 'null' }
+                        resolvedAt:
+                            oneOf:
+                                - { type: string, format: date-time }
+                                - { type: 'null' }
+                        resolvedBy:
+                            oneOf:
+                                -
+                                    type: object
+                                    additionalProperties: false
+                                    required: [id, name]
+                                    properties:
+                                        id: { type: string, format: uuid }
+                                        name: { type: string }
+                                - { type: 'null' }
+                        notApplicableReason:
+                            oneOf:
+                                - { type: string, maxLength: 500 }
+                                - { type: 'null' }
+
+                ProfessionalCaseEvidence:
+                    type: object
+                    additionalProperties: false
+                    required: [id, description, mediaType, byteSize, createdAt]
+                    properties:
+                        id: { type: string, format: uuid }
+                        description:
+                            oneOf:
+                                - { type: string, maxLength: 500 }
+                                - { type: 'null' }
+                        mediaType: { type: string, enum: [application/pdf, image/jpeg, image/png] }
+                        byteSize: { type: integer, minimum: 1, maximum: 5242880 }
+                        createdAt: { type: string, format: date-time }
+
+                ProfessionalCaseTimelineEvent:
+                    type: object
+                    additionalProperties: false
+                    required: [type, occurredAt]
+                    properties:
+                        type: { type: string, enum: [case_created, assignment_added, task_created, task_resolved] }
+                        occurredAt: { type: string, format: date-time }
+
+                ProfessionalCaseDetail:
+                    type: object
+                    additionalProperties: false
+                    required: [id, status, modality, createdAt, organisationName, assignmentRole, pendingTasks, overdueTasks, nextDueAt, permissions, people, assignments, tasks, sourceReport, evidence, timeline]
+                    properties:
+                        id: { type: string, format: uuid }
+                        status: { type: string, enum: [assessment, active, closed] }
+                        modality: { type: string, enum: [in_person, digital, mixed, unknown] }
+                        createdAt: { type: string, format: date-time }
+                        organisationName: { type: string }
+                        assignmentRole: { type: string, enum: [lead, contributor, observer] }
+                        pendingTasks: { type: integer, minimum: 0 }
+                        overdueTasks: { type: integer, minimum: 0 }
+                        nextDueAt:
+                            oneOf:
+                                - { type: string, format: date-time }
+                                - { type: 'null' }
+                        permissions:
+                            type: object
+                            additionalProperties: false
+                            required: [manage, manageAssignments]
+                            properties:
+                                manage: { type: boolean }
+                                manageAssignments: { type: boolean }
+                        people:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCasePerson' }
+                        assignments:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCaseAssignment' }
+                        tasks:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCaseTask' }
+                        sourceReport:
+                            oneOf:
+                                -
+                                    type: object
+                                    additionalProperties: false
+                                    required: [id, publicReference, decision]
+                                    properties:
+                                        id: { type: string, format: uuid }
+                                        publicReference: { type: string }
+                                        decision:
+                                            oneOf:
+                                                -
+                                                    type: object
+                                                    additionalProperties: false
+                                                    required: [outcome, reason, decidedAt]
+                                                    properties:
+                                                        outcome: { type: string, enum: [link_to_case] }
+                                                        reason: { type: string, minLength: 10, maxLength: 1000 }
+                                                        decidedAt: { type: string, format: date-time }
+                                                - { type: 'null' }
+                                - { type: 'null' }
+                        evidence:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCaseEvidence' }
+                        timeline:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCaseTimelineEvent' }
+
                 ProblemDetails:
                     type: object
                     additionalProperties: false
