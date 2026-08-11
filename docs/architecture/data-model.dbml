@@ -15,7 +15,7 @@ Table reports {
   organisation_id uuid [not null]
   situation_description text [not null]
   situation_context varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
-  status varchar(20) [not null, note: 'received (initial status)']
+  status varchar(20) [not null, note: 'received | reviewed (CHECK constraint); independent from triage outcome']
   public_reference varchar(32) [not null, unique, note: 'non-sequential public tracking reference']
   access_secret_hash varchar(64) [not null, unique, note: 'lowercase hexadecimal SHA-256 lookup hash of the access secret; the secret is never stored']
   created_at timestamptz [not null, note: 'immutable UTC instant']
@@ -26,6 +26,7 @@ Table reports {
 }
 
 Ref: reports.organisation_id > organisations.id
+Ref: reports.reviewed_by_professional_id > professionals.id
 
 Table report_access_grants {
   id uuid [pk, note: 'application-generated UUIDv7']
@@ -63,6 +64,12 @@ Table managed_cases {
   organisation_id uuid [not null]
   created_by_professional_id uuid [not null]
   created_at timestamptz [not null, note: 'immutable UTC instant']
+  review_reason text [note: 'bounded initial professional assessment; null until reviewed']
+  reviewed_by_professional_id uuid [note: 'professional actor; null until reviewed']
+  reviewed_at timestamptz [note: 'immutable UTC instant; null until reviewed']
+  attachment_count int [not null, note: 'reserved attachment slots; non-negative']
+  attachment_bytes int [not null, note: 'reserved attachment bytes; non-negative']
+  version int [not null, note: 'optimistic-lock version']
 
   indexes {
     organisation_id

@@ -17,10 +17,16 @@ erDiagram
         uuid organisation_id FK
         text situation_description
         varchar situation_context "in_person | digital | mixed | unknown"
-        varchar status "received"
+        varchar status "received | reviewed; independent from triage"
         varchar public_reference UK "non-sequential"
         varchar access_secret_hash UK "64-char lowercase hex SHA-256; secret never stored"
         timestamptz created_at "immutable UTC"
+        text review_reason "nullable until reviewed"
+        uuid reviewed_by_professional_id FK "nullable until reviewed"
+        timestamptz reviewed_at "nullable; immutable UTC"
+        int attachment_count "reserved slots"
+        int attachment_bytes "reserved bytes"
+        int version "optimistic lock"
     }
     report_access_grants {
         uuid id PK "UUIDv7, application-generated"
@@ -71,6 +77,7 @@ erDiagram
         timestamptz revoked_at "nullable; row persists after revocation"
     }
     organisations ||--o{ reports : "receives"
+    professionals o|--o{ reports : "reviews"
     reports ||--o{ report_access_grants : "grants access to"
     reports ||--o{ report_follow_up_entries : "accumulates"
     reports ||--o{ report_triage_decisions : "receives decisions"
