@@ -9,6 +9,7 @@ describe('FollowUp', () => {
   const accessSecret = 'a1b2c3d4'.repeat(8);
   const grantEndpoint = '/api/v1/public/report-access-grants';
   const reportEndpoint = '/api/v1/reporter/report';
+  const attachmentEndpoint = '/api/v1/reporter/report/attachments';
   const entriesEndpoint = '/api/v1/reporter/report/follow-up-entries';
   const revocationEndpoint = '/api/v1/reporter/access-grant';
 
@@ -217,6 +218,30 @@ describe('FollowUp', () => {
     expect(page.querySelector('.status-card')).toBeNull();
   });
 
+  it('should lock the report when attachment access expires', () => {
+    writeSecret(accessSecret);
+    submitSecret();
+
+    httpTesting.expectOne(grantEndpoint).flush(null, { status: 204, statusText: 'No Content' });
+    httpTesting.expectOne(reportEndpoint).flush(reportState());
+    fixture.detectChanges();
+
+    httpTesting.expectOne(attachmentEndpoint).flush(
+      {
+        type: 'urn:convive:problem:report-access-capability-rejected',
+        title: 'Report access capability rejected',
+        status: 401,
+      },
+      { status: 401, statusText: 'Unauthorized' },
+    );
+    fixture.detectChanges();
+
+    expect(page.querySelector('.notice')?.textContent).toContain(
+      'El acceso ha caducado por seguridad.',
+    );
+    expect(page.querySelector('app-follow-up-report')).toBeNull();
+  });
+
   it('should append information to the same report', () => {
     unlockReport();
 
@@ -377,6 +402,12 @@ describe('FollowUp', () => {
     expect(request.request.method).toBe('GET');
 
     request.flush(reportState());
+    fixture.detectChanges();
+
+    const attachments = httpTesting.expectOne(attachmentEndpoint);
+
+    expect(attachments.request.method).toBe('GET');
+    attachments.flush({ items: [] });
     fixture.detectChanges();
   }
 

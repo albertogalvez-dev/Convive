@@ -1,0 +1,167 @@
+<section class="evidence" aria-labelledby="evidence-title">
+  <div class="evidence-heading">
+    <div>
+      <h2 id="evidence-title">Pruebas</h2>
+      <p class="limits">PDF, JPG o PNG · 5 MB por archivo · hasta 3 cada vez</p>
+    </div>
+
+    @if (!expanded()) {
+      <button type="button" class="secondary open-evidence" (click)="prepare()">
+        Añadir pruebas
+      </button>
+    }
+  </div>
+
+  @if (expanded()) {
+    @switch (accessState()) {
+      @case ('preparing') {
+        <p class="preparing" role="status">Preparando la subida segura…</p>
+      }
+      @case ('failed') {
+        <div class="access-failure" role="alert">
+          <p>{{ statusMessage() }}</p>
+          <button type="button" class="secondary" (click)="prepare()">Reintentar</button>
+        </div>
+      }
+      @case ('ready') {
+        <p class="privacy-note">
+          Un archivo puede contener nombres, ubicación u otros datos. Adjunta solo lo necesario.
+        </p>
+
+        @if (remoteAttachments().length > 0) {
+          <ul class="remote-list" aria-label="Pruebas enviadas">
+            @for (attachment of remoteAttachments(); track attachment.id) {
+              <li [class]="'remote-' + attachment.status">
+                <div class="item-main">
+                  <span class="item-type">{{ remoteTypeLabel(attachment) }}</span>
+                  <span class="item-description">
+                    {{ attachment.description || 'Sin descripción' }}
+                  </span>
+                </div>
+                <div class="remote-actions">
+                  <span class="state-label">{{ remoteStatusLabel(attachment) }}</span>
+                  @if (attachment.status === 'available') {
+                    <a [href]="downloadUrl(attachment.id)">Descargar</a>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        }
+
+        @if (selectionLimit() > 0) {
+          <div class="picker">
+            <input
+              #fileInput
+              id="evidence-files"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+              multiple
+              [disabled]="uploading()"
+              aria-describedby="evidence-limits evidence-selection-error"
+              (change)="selectFiles($event)"
+            />
+            <label for="evidence-files" class="file-picker" [class.disabled]="uploading()">
+              Seleccionar archivos
+            </label>
+            <span id="evidence-limits" class="remaining">
+              {{ remoteAttachments().length + drafts().length }} / 10
+            </span>
+          </div>
+        } @else {
+          <p class="capacity-message">Esta comunicación ha alcanzado el límite de 10 pruebas.</p>
+        }
+
+        @if (selectionError(); as message) {
+          <p id="evidence-selection-error" class="selection-error" role="alert">{{ message }}</p>
+        } @else {
+          <span id="evidence-selection-error" class="visually-hidden"></span>
+        }
+
+        @if (drafts().length > 0) {
+          <ul class="draft-list" aria-label="Pruebas seleccionadas">
+            @for (draft of drafts(); track draft.key) {
+              <li>
+                <div class="draft-heading">
+                  <div>
+                    <span class="item-type">{{ fileTypeLabel(draft.file) }}</span>
+                    <span class="file-size">{{ formatBytes(draft.file.size) }}</span>
+                  </div>
+                  @if (draft.status !== 'uploading') {
+                    <button
+                      type="button"
+                      class="remove"
+                      [attr.aria-label]="'Quitar ' + fileTypeLabel(draft.file)"
+                      (click)="removeDraft(draft.key)"
+                    >
+                      Quitar
+                    </button>
+                  }
+                </div>
+
+                <label [for]="'evidence-description-' + draft.key">Descripción (opcional)</label>
+                <textarea
+                  #description
+                  [id]="'evidence-description-' + draft.key"
+                  rows="2"
+                  [attr.maxlength]="maximumDescriptionLength"
+                  [value]="draft.description"
+                  [disabled]="draft.status === 'uploading'"
+                  [attr.aria-describedby]="'evidence-description-count-' + draft.key"
+                  (input)="updateDescription(draft.key, description.value)"
+                ></textarea>
+                <span class="description-count" [id]="'evidence-description-count-' + draft.key">
+                  {{ draft.description.length }} / {{ maximumDescriptionLength }}
+                </span>
+
+                @if (draft.status === 'queued') {
+                  <p class="draft-state">Preparado para enviar</p>
+                } @else if (draft.status === 'uploading') {
+                  @if (progressPercentage(draft); as percentage) {
+                    <div class="upload-progress">
+                      <progress
+                        [value]="draft.loadedBytes"
+                        [max]="draft.totalBytes || 1"
+                        [attr.aria-label]="'Subiendo ' + fileTypeLabel(draft.file)"
+                      ></progress>
+                      <span>{{ percentage }} %</span>
+                    </div>
+                  } @else {
+                    <p class="draft-state" role="status">Subiendo…</p>
+                  }
+                } @else {
+                  <div class="upload-failure" role="alert">
+                    <p>{{ draft.errorMessage }}</p>
+                    <button type="button" class="retry" (click)="retryDraft(draft.key)">
+                      Reintentar
+                    </button>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+
+        <div class="evidence-actions">
+          @if (remoteAttachments().length > 0) {
+            <button
+              type="button"
+              class="quiet"
+              [disabled]="refreshing() || uploading()"
+              (click)="refreshStatuses()"
+            >
+              {{ refreshing() ? 'Actualizando…' : 'Actualizar estados' }}
+            </button>
+          }
+          @if (hasQueuedDrafts()) {
+            <button type="button" class="primary" [disabled]="uploading()" (click)="startUploads()">
+              {{ uploading() ? 'Enviando…' : 'Enviar pruebas' }}
+            </button>
+          }
+        </div>
+
+        <p class="status-message" aria-live="polite">{{ statusMessage() }}</p>
+      }
+    }
+  }
+</section>

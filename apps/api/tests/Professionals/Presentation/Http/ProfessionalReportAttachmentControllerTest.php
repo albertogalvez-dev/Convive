@@ -11,6 +11,7 @@ use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
 use App\Professionals\Domain\ProfessionalRole;
 use App\Reporting\Application\AttachmentStorage;
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\AttachmentMediaType;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAttachment;
@@ -90,7 +91,7 @@ final class ProfessionalReportAttachmentControllerTest extends WebTestCase
         $organisation = $this->persistOrganisation('Triage Boundary School');
         $professional = $this->persistProfessional($organisation, ProfessionalRole::Triage);
         $report = $this->persistReport($organisation);
-        $attachment = $this->persistAttachment($report, true);
+        $attachment = $this->persistAttachment($report, true, 'Contexto de la prueba disponible.');
         $this->client->loginUser($professional);
 
         $this->client->request('GET', $this->attachmentPath($report));
@@ -101,6 +102,7 @@ final class ProfessionalReportAttachmentControllerTest extends WebTestCase
         self::assertSame($attachment->id()->toRfc4122(), $items[0]['id']);
         self::assertSame('application/pdf', $items[0]['mediaType']);
         self::assertSame(30, $items[0]['byteSize']);
+        self::assertSame('Contexto de la prueba disponible.', $items[0]['description']);
 
         $this->client->request('GET', $this->attachmentPath($report).'/'.$attachment->id()->toRfc4122().'/download');
 
@@ -201,7 +203,7 @@ final class ProfessionalReportAttachmentControllerTest extends WebTestCase
         return $report;
     }
 
-    private function persistAttachment(Report $report, bool $available): ReportAttachment
+    private function persistAttachment(Report $report, bool $available, ?string $description = null): ReportAttachment
     {
         $path = tempnam(sys_get_temp_dir(), 'convive-professional-attachment-');
         self::assertNotFalse($path);
@@ -217,6 +219,7 @@ final class ProfessionalReportAttachmentControllerTest extends WebTestCase
             $stored->byteSize,
             $stored->contentHash,
             new DateTimeImmutable(),
+            AttachmentDescription::fromNullable($description),
         );
         $this->attachments->saveQuarantinedWithReportCapacity([$attachment]);
 

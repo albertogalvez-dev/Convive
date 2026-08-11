@@ -1,5 +1,6 @@
 import { Component, HostListener, input, signal } from '@angular/core';
 
+import { ReportEvidence } from '../report-attachments/report-evidence';
 import { ReportSubmissionResponse } from './reporting.service';
 
 interface PasswordCredentialData {
@@ -26,6 +27,7 @@ function passwordCredentialConstructor(): PasswordCredentialConstructor | null {
 @Component({
   selector: 'app-report-result',
   standalone: true,
+  imports: [ReportEvidence],
   templateUrl: './report-result.html',
   styleUrl: './report-result.scss',
 })

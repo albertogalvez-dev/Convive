@@ -7,8 +7,11 @@ namespace App\Demo\Application;
 use App\Demo\Domain\FictionalDemoDataset;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
+use App\Reporting\Application\AttachmentStorage;
+use App\Reporting\Domain\ReportAttachment;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -17,6 +20,8 @@ final readonly class SeedFictionalDemo
     public function __construct(
         private Connection $connection,
         private UserPasswordHasherInterface $passwordHasher,
+        private EntityManagerInterface $entityManager,
+        private AttachmentStorage $attachmentStorage,
     ) {
     }
 
@@ -117,6 +122,28 @@ final readonly class SeedFictionalDemo
 
     private function removeDemoOrganisationData(): void
     {
+        /** @var list<ReportAttachment> $attachments */
+        $attachments = $this->entityManager
+            ->createQueryBuilder()
+            ->select('attachment')
+            ->from(ReportAttachment::class, 'attachment')
+            ->join('attachment.report', 'report')
+            ->join('report.organisation', 'organisation')
+            ->where('organisation.id = :organisation_id')
+            ->setParameter('organisation_id', FictionalDemoDataset::ORGANISATION_ID)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($attachments as $attachment) {
+            $this->attachmentStorage->delete($attachment);
+        }
+
+        $this->connection->executeStatement(
+            'DELETE FROM report_attachments WHERE report_id IN (
+                SELECT id FROM reports WHERE organisation_id = :organisation_id
+            )',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        );
         $this->connection->executeStatement(
             'DELETE FROM report_access_grants WHERE report_id IN (
                 SELECT id FROM reports WHERE organisation_id = :organisation_id

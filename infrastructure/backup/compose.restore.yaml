@@ -9,11 +9,16 @@ services:
       DEFAULT_URI: http://localhost
       DATABASE_URL: postgresql://convive_restore:${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}@database:5432/convive_restore?serverVersion=18.4&charset=utf8
       SESSION_DATABASE_URL: pgsql:host=database;port=5432;dbname=convive_restore;user=convive_restore;password=${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
+      # Recovery verifies the application against an isolated, disposable
+      # attachment boundary. Restored database rows never grant object access,
+      # and no production attachment volume is mounted into this environment.
+      ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments
     depends_on:
       database:
         condition: service_healthy
     tmpfs:
       - /app/var
+      - /var/lib/convive/attachments:mode=0700,uid=33,gid=33
     networks:
       - restore
 

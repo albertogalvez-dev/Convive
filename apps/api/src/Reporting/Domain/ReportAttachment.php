@@ -50,6 +50,9 @@ class ReportAttachment
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $storageKey;
 
+    #[ORM\Column(type: Types::STRING, length: AttachmentDescription::MAX_LENGTH, nullable: true)]
+    private ?string $description;
+
     #[ORM\Column(
         type: Types::STRING,
         length: 32,
@@ -79,6 +82,7 @@ class ReportAttachment
         int $byteSize,
         string $contentHash,
         DateTimeImmutable $createdAt,
+        ?AttachmentDescription $description,
     ) {
         if ($byteSize < 1 || $byteSize > ReportAttachmentPolicy::MAXIMUM_FILE_BYTES) {
             throw new InvalidArgumentException('The attachment byte size is invalid.');
@@ -94,6 +98,7 @@ class ReportAttachment
         $this->byteSize = $byteSize;
         $this->contentHash = $contentHash;
         $this->storageKey = self::quarantineStorageKey($id);
+        $this->description = $description?->toString();
         $this->status = ReportAttachmentStatus::Quarantined;
         $this->createdAt = $createdAt;
     }
@@ -105,6 +110,7 @@ class ReportAttachment
         int $byteSize,
         string $contentHash,
         DateTimeImmutable $createdAt,
+        ?AttachmentDescription $description = null,
     ): self {
         return new self(
             $id,
@@ -113,6 +119,7 @@ class ReportAttachment
             $byteSize,
             $contentHash,
             $createdAt,
+            $description,
         );
     }
 
@@ -195,6 +202,11 @@ class ReportAttachment
     public function storageKey(): string
     {
         return $this->storageKey;
+    }
+
+    public function description(): ?AttachmentDescription
+    {
+        return AttachmentDescription::fromNullable($this->description);
     }
 
     public function status(): ReportAttachmentStatus

@@ -485,6 +485,32 @@ describe('ReportForm', () => {
     expect(document.activeElement).toBe(helpButton);
   });
 
+  it('should establish attachment access only when initial evidence is opened', () => {
+    submitValidReport();
+
+    httpTesting.expectNone('/api/v1/reporter/report/attachments');
+
+    page.querySelector<HTMLButtonElement>('app-report-evidence .open-evidence')?.click();
+    fixture.detectChanges();
+
+    const grant = httpTesting.expectOne('/api/v1/public/report-access-grants');
+
+    expect(grant.request.method).toBe('POST');
+    expect(grant.request.body).toEqual({ accessSecret: 'secret-value' });
+    grant.flush(null, { status: 204, statusText: 'No Content' });
+
+    const attachments = httpTesting.expectOne('/api/v1/reporter/report/attachments');
+
+    expect(attachments.request.method).toBe('GET');
+    attachments.flush({ items: [] });
+    fixture.detectChanges();
+
+    const evidence = page.querySelector('app-report-evidence');
+
+    expect(evidence?.textContent).toContain('Seleccionar archivos');
+    expect(evidence?.textContent).not.toContain('secret-value');
+  });
+
   function createForm(): void {
     fixture = TestBed.createComponent(ReportForm);
     fixture.detectChanges();

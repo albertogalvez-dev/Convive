@@ -9,6 +9,7 @@ use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Application\AttachmentStorage;
 use App\Reporting\Application\AttachmentDownloadConcurrencyLimiter;
 use App\Reporting\Application\AttachmentDownloadPermit;
+use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\AttachmentMediaType;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAccessCapability;
@@ -110,7 +111,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
         $this->useCapability($this->issueGrant($report));
         $source = $this->upload('%PDF-1.7\nfictional evidence\n', 'misleading-name.exe', 'text/html');
 
-        $this->requestUpload([$source]);
+        $this->requestUpload([$source], ['  Captura del grupo.  ']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertResponseHeaderSame('content-type', 'application/json');
@@ -119,6 +120,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
         self::assertSame(['items'], array_keys($payload));
         self::assertCount(1, $payload['items']);
         self::assertSame('processing', $payload['items'][0]['status']);
+        self::assertSame('Captura del grupo.', $payload['items'][0]['description']);
         self::assertArrayNotHasKey('mediaType', $payload['items'][0]);
         self::assertArrayNotHasKey('byteSize', $payload['items'][0]);
         $this->storedAttachmentIds[] = $payload['items'][0]['id'];
@@ -131,6 +133,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
         self::assertInstanceOf(ReportAttachment::class, $attachment);
         self::assertSame('quarantined', $attachment->status()->value);
         self::assertSame('application/pdf', $attachment->mediaType()->value);
+        self::assertSame('Captura del grupo.', $attachment->description()?->toString());
         self::assertStringStartsWith('quarantine/', $attachment->storageKey());
         self::assertStringNotContainsString('misleading-name.exe', $attachment->storageKey());
         self::assertStringNotContainsString('misleading-name.exe', serialize($attachment));
@@ -148,6 +151,25 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
 
         $this->requestUpload([$this->oversizedUpload()]);
         $this->assertProblem(413, 'urn:convive:problem:attachment-too-large');
+    }
+
+    #[Test]
+    public function itRejectsInvalidReporterContextWithoutPersistingPrivateBytes(): void
+    {
+        $report = $this->persistReport();
+        $this->useCapability($this->issueGrant($report));
+
+        $this->requestUpload(
+            [$this->upload('%PDF-1.7\nfictional evidence\n', 'evidence.pdf')],
+            [str_repeat('a', AttachmentDescription::MAX_LENGTH + 1)],
+        );
+
+        $payload = $this->assertProblem(422, 'urn:convive:problem:invalid-attachment-upload');
+        self::assertStringNotContainsString(str_repeat('a', 20), $payload['detail']);
+        self::assertSame(0, (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT COUNT(*) FROM report_attachments WHERE report_id = ?',
+            [$report->id()->toRfc4122()],
+        ));
     }
 
     #[Test]
@@ -195,7 +217,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
     {
         $ownedReport = $this->persistReport();
         $otherReport = $this->persistReport();
-        $ownedAttachment = $this->persistAvailableAttachment($ownedReport);
+        $ownedAttachment = $this->persistAvailableAttachment($ownedReport, 'Captura disponible.');
         $this->persistAvailableAttachment($otherReport);
         $this->useCapability($this->issueGrant($ownedReport));
 
@@ -207,6 +229,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
         self::assertSame($ownedAttachment->id()->toRfc4122(), $payload['items'][0]['id']);
         self::assertSame('available', $payload['items'][0]['status']);
         self::assertSame('application/pdf', $payload['items'][0]['mediaType']);
+        self::assertSame('Captura disponible.', $payload['items'][0]['description']);
     }
 
     #[Test]
@@ -308,12 +331,16 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
         $this->client->getCookieJar()->set(new BrowserKitCookie('report_access', $capability));
     }
 
-    /** @param list<UploadedFile> $files */
-    private function requestUpload(array $files): void
+    /**
+     * @param list<UploadedFile> $files
+     * @param list<string>       $descriptions
+     */
+    private function requestUpload(array $files, array $descriptions = []): void
     {
         $this->client->request(
             'POST',
             self::UPLOAD_ENDPOINT,
+            $descriptions === [] ? [] : ['descriptions' => $descriptions],
             files: ['attachments' => $files],
             server: [
                 'CONTENT_TYPE' => 'multipart/form-data; boundary=convive',
@@ -346,7 +373,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
         return new UploadedFile($path, 'oversized.pdf', 'application/pdf', null, true);
     }
 
-    private function persistAvailableAttachment(Report $report): ReportAttachment
+    private function persistAvailableAttachment(Report $report, ?string $description = null): ReportAttachment
     {
         $source = $this->upload('%PDF-1.7\nfictional evidence\n', 'fictional-source.pdf');
         $id = Uuid::v7();
@@ -359,6 +386,7 @@ final class ReporterReportAttachmentControllerTest extends WebTestCase
             $stored->byteSize,
             $stored->contentHash,
             new DateTimeImmutable(),
+            AttachmentDescription::fromNullable($description),
         );
         $this->attachments->saveQuarantinedWithReportCapacity([$attachment]);
         $attachment->beginScanning(new DateTimeImmutable());

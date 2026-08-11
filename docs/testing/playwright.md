@@ -1,9 +1,11 @@
 # Playwright end-to-end tests
 
 Convive uses plain Playwright Test for a small number of critical browser
-journeys. The initial Chromium test submits a fictional anonymous report, opens
-its follow-up area, reads the submitted state, appends information and closes
-the report-scoped access grant.
+journeys. The initial Chromium test submits a fictional anonymous report,
+uploads a private fictional PDF with an optional description, verifies its
+quarantine state in the initial and follow-up journeys, reads the submitted
+state, exchanges messages with a professional and closes the report-scoped
+access grant.
 
 TestDino, Gherkin and other abstraction layers are intentionally not installed.
 

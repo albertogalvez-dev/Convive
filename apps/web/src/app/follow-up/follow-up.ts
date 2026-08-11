@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { ReportEvidence } from '../report-attachments/report-evidence';
 import { ReportHeader } from '../reporting/report-header';
 import { FollowUpAccess } from './follow-up-access';
 import { FollowUpReport } from './follow-up-report';
@@ -24,7 +25,7 @@ type FollowUpJourneyState =
 @Component({
   selector: 'app-follow-up',
   standalone: true,
-  imports: [FollowUpAccess, FollowUpReport, ReactiveFormsModule, ReportHeader],
+  imports: [FollowUpAccess, FollowUpReport, ReactiveFormsModule, ReportEvidence, ReportHeader],
   templateUrl: './follow-up.html',
   styleUrl: './follow-up.scss',
 })
@@ -125,6 +126,10 @@ export class FollowUp {
         this.closeError.set('No hemos podido cerrar el acceso ahora. Inténtalo de nuevo.');
       },
     });
+  }
+
+  protected attachmentAccessRejected(): void {
+    this.lockAfterExpiry();
   }
 
   private loadReport(): void {

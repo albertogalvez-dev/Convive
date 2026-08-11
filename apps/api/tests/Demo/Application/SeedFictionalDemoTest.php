@@ -92,6 +92,32 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
         );
         self::assertSame(5, $this->demoReportCount());
 
+        $attachmentId = '019fe900-0000-7000-8000-000000000100';
+        $this->connection->executeStatement(
+            'INSERT INTO report_attachments (
+                id, report_id, media_type, byte_size, content_hash, storage_key,
+                description, status, created_at
+             ) VALUES (
+                :id, :report_id, :media_type, :byte_size, :content_hash, :storage_key,
+                :description, :status, :created_at
+             )',
+            [
+                'id' => $attachmentId,
+                'report_id' => '019fe900-0000-7000-8000-000000000099',
+                'media_type' => 'application/pdf',
+                'byte_size' => 30,
+                'content_hash' => hash('sha256', '%PDF-1.7 fictional evidence'),
+                'storage_key' => 'quarantine/'.$attachmentId,
+                'description' => 'Fictional reset evidence.',
+                'status' => 'quarantined',
+                'created_at' => '2026-08-10T10:01:00+02:00',
+            ],
+        );
+        self::assertSame(1, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM report_attachments WHERE id = :id',
+            ['id' => $attachmentId],
+        ));
+
         $refusedReset = $this->command();
         self::assertSame(Command::FAILURE, $refusedReset->execute([
             '--reset' => true,
@@ -106,6 +132,10 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
         ]));
         self::assertStringContainsString('restored', $confirmedReset->getDisplay());
         $this->assertKnownDatasetCounts();
+        self::assertSame(0, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM report_attachments WHERE id = :id',
+            ['id' => $attachmentId],
+        ));
     }
 
     public function testSeedingRefusesReservedIdentifierCollisions(): void

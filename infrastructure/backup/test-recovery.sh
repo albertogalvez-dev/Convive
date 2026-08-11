@@ -152,6 +152,16 @@ PYTHON
 docker compose -p "$restore_project" "${TEST_COMPOSE_ARGUMENTS[@]}" up --detach --build --wait database
 "$SCRIPT_DIRECTORY/restore-test.sh"
 
+restore_attachment_directory="$(
+  docker compose -p "$restore_project" "${TEST_COMPOSE_ARGUMENTS[@]}" run --rm --no-deps api \
+    php -r 'echo getenv("ATTACHMENT_STORAGE_DIRECTORY");'
+)"
+
+if [[ "$restore_attachment_directory" != '/var/lib/convive/attachments' ]]; then
+  echo 'The isolated recovery environment did not provide its private attachment boundary.' >&2
+  exit 1
+fi
+
 python3 - "$CONVIVE_BACKUP_EVIDENCE_DIRECTORY" <<'PYTHON'
 import json
 import pathlib
