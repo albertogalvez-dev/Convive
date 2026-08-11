@@ -431,6 +431,22 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertSame($linked['id'], $retried['id']);
         self::assertSame($linked['caseId'], $retried['caseId']);
         self::assertSame(1, (int) $this->connection->fetchOne('SELECT COUNT(*) FROM managed_cases'));
+        $caseState = $this->connection->fetchNumeric(
+            'SELECT status, modality FROM managed_cases WHERE id = ?',
+            [$linked['caseId']],
+        );
+        self::assertNotFalse($caseState);
+        self::assertSame(['assessment', 'in_person'], $caseState);
+
+        $leadAssignment = $this->connection->fetchNumeric(
+            'SELECT role, professional_id FROM case_assignments WHERE case_id = ?',
+            [$linked['caseId']],
+        );
+        self::assertNotFalse($leadAssignment);
+        self::assertSame(
+            ['lead', $professional->id()->toRfc4122()],
+            $leadAssignment,
+        );
         self::assertSame(
             2,
             (int) $this->connection->fetchOne(
@@ -728,6 +744,8 @@ final class ProfessionalReportControllerTest extends WebTestCase
     {
         $this->connection->executeStatement('DELETE FROM professional_sessions');
         $this->connection->executeStatement('DELETE FROM report_triage_decisions');
+        $this->connection->executeStatement('DELETE FROM case_involved_people');
+        $this->connection->executeStatement('DELETE FROM case_assignments');
         $this->connection->executeStatement('DELETE FROM managed_cases');
         $this->connection->executeStatement(
             "DELETE FROM report_follow_up_entries WHERE report_id IN (
