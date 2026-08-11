@@ -302,3 +302,12 @@ button:focus-visible {
     font-weight: 750;
   }
 }
+@media (max-width: 30rem) {
+  .mobile-header nav a {
+    min-width: 0;
+    padding-inline: 0.55rem;
+  }
+  .mobile-header nav a span {
+    display: none;
+  }
+}

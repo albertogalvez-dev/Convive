@@ -1,0 +1,60 @@
+<section class="cases" aria-labelledby="cases-title">
+  <header class="cases-heading">
+    <div>
+      <p class="eyebrow">Trabajo asignado</p>
+      <h1 id="cases-title">Casos</h1>
+    </div>
+  </header>
+
+  <div class="cases-card" aria-live="polite">
+    @if (loading()) {
+      <div class="state">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Cargando casos&hellip;</p>
+      </div>
+    } @else if (errorMessage(); as message) {
+      <div class="state">
+        <p role="alert">{{ message }}</p>
+        <button type="button" (click)="retry()">Volver a intentar</button>
+      </div>
+    } @else if (items().length === 0) {
+      <div class="state empty">
+        <span aria-hidden="true">&#10003;</span>
+        <h2>No tienes casos asignados</h2>
+      </div>
+    } @else {
+      <ul>
+        @for (item of items(); track item.id) {
+          <li>
+            <a [routerLink]="['/profesionales/casos', item.id]">
+              <span class="case-copy">
+                <span class="case-title">Caso {{ item.id.slice(-8).toUpperCase() }}</span>
+                <span
+                  >{{ item.organisationName }} &middot; {{ caseModalityLabel(item.modality) }}</span
+                >
+              </span>
+              <span class="role">{{ assignmentRoleLabel(item.assignmentRole) }}</span>
+              <span class="tasks" [class.overdue]="item.overdueTasks > 0">
+                <strong>{{ item.pendingTasks }}</strong>
+                {{ item.pendingTasks === 1 ? 'tarea pendiente' : 'tareas pendientes' }}
+                @if (item.overdueTasks > 0) {
+                  <small>{{ item.overdueTasks }} fuera de plazo</small>
+                }
+              </span>
+              <span class="status" [class]="'status ' + item.status">{{
+                caseStatusLabel(item.status)
+              }}</span>
+              @if (item.nextDueAt) {
+                <time [attr.datetime]="item.nextDueAt"
+                  >Pr&oacute;xima:
+                  {{ item.nextDueAt | date: 'd MMM, HH:mm' : undefined : 'es' }}</time
+                >
+              }
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>
