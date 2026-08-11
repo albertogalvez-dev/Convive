@@ -255,6 +255,14 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'modality' => 'mixed',
             ],
         ));
+        self::assertSame(
+            '2026-08-10 07:40:00',
+            $this->connection->fetchOne(
+                "SELECT to_char(operational_updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI:SS')
+                 FROM managed_cases WHERE id = :id",
+                ['id' => FictionalDemoDataset::MANAGED_CASE_ID],
+            ),
+        );
         self::assertSame(1, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM case_assignments
              WHERE id = :assignment_id AND case_id = :case_id AND role = :role AND revoked_at IS NULL',
