@@ -35,7 +35,29 @@ Doctrine schema comparison in `apps/api/config/packages/doctrine.yaml`:
 | `reporter_notification_outbox` | Delivery worker queue managed through reviewed DBAL operations, not an ORM aggregate. It is disabled in public fictional-demo production and its schema is defined by migration `Version20260811032000`. |
 | `doctrine_migration_versions` | Doctrine migration bookkeeping, owned by the migration tool rather than Convive's domain. |
 
-## Repeatable review
+## Automated consistency check
+
+Run the source-only consistency gate from the repository root:
+
+```bash
+bash infrastructure/maintenance/check-architecture-documents.sh
+```
+
+The `check-architecture-documents.sh` gate compares the exact table-identifier
+inventory in Doctrine ORM attributes,
+`data-model.dbml` and the Mermaid data-model view. It also verifies the stable
+architecture links that lead reviewers to those three artefacts. The script
+does not boot containers, connect to PostgreSQL, read fictional records or
+call an external service. Its fixture test proves that missing documented
+tables and maintained links fail with the affected artefact in the output.
+
+Backend CI separately generates and compares the OpenAPI contract from the
+implemented route controllers, then applies committed migrations and validates
+the Doctrine schema. Those checks remain the mechanical boundary for route,
+OpenAPI and migration drift; this script deliberately does not duplicate their
+framework-aware parsing.
+
+## Human review
 
 Run this checklist whenever a mapping or migration changes, before adding a
 new table to a diagram:
@@ -51,5 +73,6 @@ Compare the three table inventories, then inspect migration constraints and
 foreign keys for every changed table. Confirm each non-ORM persisted table is
 either represented or listed above with its owner and rationale. Finally,
 preview the Mermaid block in GitHub and the DBML in dbdiagram.io; correct
-syntax, links and cardinalities before review. Automated architecture-document
-consistency enforcement belongs to issue #165.
+syntax, links and cardinalities before review. Human review remains necessary
+for field semantics, indexes, cardinalities, exclusions and whether a diagram
+is an accurate and non-speculative representation of the implemented system.
