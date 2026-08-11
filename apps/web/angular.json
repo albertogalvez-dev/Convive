@@ -23,7 +23,12 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.svg", "src/convive-logo.svg"],
+            "assets": [
+              "src/favicon.svg",
+              "src/convive-logo.svg",
+              "src/robots.txt",
+              "src/sitemap.xml"
+            ],
             "styles": ["src/styles.scss"]
           },
           "configurations": {
