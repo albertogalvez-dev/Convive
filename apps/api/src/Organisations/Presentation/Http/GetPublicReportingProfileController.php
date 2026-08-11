@@ -6,6 +6,7 @@ namespace App\Organisations\Presentation\Http;
 
 use App\Organisations\Application\GetPublicReportingProfile\GetPublicReportingProfile;
 use App\Organisations\Domain\PublicReportingIdentifier;
+use App\Reporting\Application\PublicReportingModePolicy;
 use InvalidArgumentException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +17,7 @@ final readonly class GetPublicReportingProfileController
 {
     public function __construct(
         private GetPublicReportingProfile $getPublicReportingProfile,
+        private PublicReportingModePolicy $publicReportingModePolicy,
     ) {
     }
 
@@ -49,12 +51,18 @@ final readonly class GetPublicReportingProfileController
                 response: Response::HTTP_OK,
                 description: 'The public reporting profile.',
                 content: new OA\JsonContent(
-                    required: ['name'],
+                    required: ['name', 'reportingMode'],
                     properties: [
                         new OA\Property(
                             property: 'name',
                             type: 'string',
                             example: 'IES Valle Sereno',
+                        ),
+                        new OA\Property(
+                            property: 'reportingMode',
+                            type: 'string',
+                            enum: ['operational', 'fictional_demo', 'disabled'],
+                            example: 'operational',
                         ),
                     ],
                     type: 'object',
@@ -92,6 +100,7 @@ final readonly class GetPublicReportingProfileController
         return new JsonResponse(
             [
                 'name' => $profile->name,
+                'reportingMode' => $this->publicReportingModePolicy->mode()->value,
             ],
             Response::HTTP_OK,
         );

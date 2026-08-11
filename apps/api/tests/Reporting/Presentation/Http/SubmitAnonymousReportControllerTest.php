@@ -7,6 +7,8 @@ namespace App\Tests\Reporting\Presentation\Http;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\Report;
+use App\Reporting\Application\PublicReportingMode;
+use App\Reporting\Application\PublicReportingModePolicy;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -122,6 +124,52 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
             $persistedReport->verifyAccessSecret(
                 $payload['accessSecret'],
             ),
+        );
+    }
+
+    public function testItRejectsAllReporterMutationsInFictionalDemoModeBeforePersistingContent(): void
+    {
+        $this->enableFictionalDemoMode();
+
+        $reportsBefore = $this->entityManager
+            ->getRepository(Report::class)
+            ->count([]);
+
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'This content must never be persisted in a demo.',
+                'situationContext' => 'in_person',
+            ],
+        );
+
+        $this->assertProblemDetails(
+            403,
+            'urn:convive:problem:public-reporting-unavailable',
+            'Public reporting unavailable',
+        );
+        self::assertSame(
+            $reportsBefore,
+            $this->entityManager->getRepository(Report::class)->count([]),
+        );
+
+    }
+
+    public function testItRejectsReporterFollowUpContentInFictionalDemoMode(): void
+    {
+        $this->enableFictionalDemoMode();
+
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/reporter/report/follow-up-entries',
+            ['content' => 'This follow-up must never be persisted in a demo.'],
+        );
+
+        $this->assertProblemDetails(
+            403,
+            'urn:convive:problem:public-reporting-unavailable',
+            'Public reporting unavailable',
         );
     }
 
@@ -415,6 +463,14 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
         return sprintf(
             '/api/v1/public/organisations/%s/reports',
             $identifier,
+        );
+    }
+
+    private function enableFictionalDemoMode(): void
+    {
+        self::getContainer()->set(
+            PublicReportingModePolicy::class,
+            new PublicReportingModePolicy(PublicReportingMode::FictionalDemo->value),
         );
     }
 

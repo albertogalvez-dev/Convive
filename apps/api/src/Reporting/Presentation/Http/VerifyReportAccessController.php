@@ -62,6 +62,16 @@ final readonly class VerifyReportAccessController
                 ),
             ),
             new OA\Response(
+                response: Response::HTTP_FORBIDDEN,
+                description: 'The public fictional demonstration does not issue reporter capabilities.',
+                content: new OA\MediaType(
+                    mediaType: 'application/problem+json',
+                    schema: new OA\Schema(
+                        ref: '#/components/schemas/ProblemDetails',
+                    ),
+                ),
+            ),
+            new OA\Response(
                 response: Response::HTTP_TOO_MANY_REQUESTS,
                 description: 'Too many verification attempts were made.',
                 content: new OA\MediaType(

@@ -34,6 +34,11 @@ services:
       APP_ENV: prod
       APP_DEBUG: "0"
       TRUSTED_PROXIES: 172.30.16.0/28
+      # The only approved public production mode while Convive is a
+      # fictional-data demonstration. The API rejects all reporter mutations
+      # before controller payload handling; a real-data mode needs a separate
+      # controller, privacy and pilot approval.
+      PUBLIC_REPORTING_MODE: fictional_demo
       # Private named volume; never mounted by the gateway or exposed as a
       # static path. Production evidence remains fictional-only.
       ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments

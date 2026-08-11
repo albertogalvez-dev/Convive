@@ -24,6 +24,23 @@ The password must come from the production secret mount. Never commit it, put
 it in a release manifest, pass it as a command argument or copy it into logs.
 The command never prints credentials.
 
+## Public reporting boundary
+
+The public demonstration sets `PUBLIC_REPORTING_MODE=fictional_demo` in the
+production Compose contract. Before a reporter controller or request payload is
+handled, the API rejects every reporter-facing mutation with a generic `403`
+problem response. This includes report submission, access-capability exchange,
+follow-up text, attachment upload, reporter-email changes and access-grant
+revocation. No visitor-provided content is logged or persisted through those
+paths.
+
+`operational` is an explicit development/test-only mode. It is never inferred
+from `APP_DEMO_MODE`, and an unknown configuration is treated as `disabled`.
+Do not set `operational` in a deployed environment without the separate
+controller, privacy and real-data-pilot approvals. The public profile exposes
+the active mode so the Angular form renders a truthful non-persistent
+demonstration message instead of accepting text.
+
 Application startup and database migrations never invoke the command. A release
 operator must run it deliberately after successful migrations.
 
@@ -62,7 +79,10 @@ After seeding:
 4. Open one seeded communication and verify that only fictional text appears.
 5. Verify that the managed-case tables contain only the reserved case, its
    triage lead and the two case-local fictional people.
-6. Confirm that the public page is visibly labelled as a fictional
+6. Attempt a synthetic report submission and reporter follow-up request; both
+   must return the public-reporting-unavailable problem response and no content
+   may be persisted.
+7. Confirm that the public page is visibly labelled as a fictional
    demonstration before sharing its URL.
 
 Do not record the password, session cookie, report capability or any newly

@@ -23,6 +23,11 @@ parameters:
     reporter_email.from: '%env(REPORTER_EMAIL_FROM)%'
     reporter_email.public_url: '%env(REPORTER_EMAIL_PUBLIC_URL)%'
     reporter_email.follow_up_url: '%env(REPORTER_EMAIL_FOLLOW_UP_URL)%'
+    # Public reporting accepts persistent data only in explicitly enabled
+    # local/test operational mode. An unknown value is interpreted as
+    # disabled by PublicReportingModePolicy, so incomplete production
+    # configuration cannot accidentally collect communications.
+    public_reporting.mode: '%env(string:PUBLIC_REPORTING_MODE)%'
 
 services:
     # default configuration for services in *this* file
@@ -45,6 +50,9 @@ services:
     App\Reporting\Application\AttachmentStorage: '@App\Reporting\Infrastructure\LocalPrivateAttachmentStorage'
     App\Reporting\Application\AttachmentDownloadConcurrencyLimiter: '@App\Reporting\Infrastructure\LocalPrivateAttachmentDownloadConcurrencyLimiter'
     App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\UnavailableAttachmentScanner'
+    App\Reporting\Application\PublicReportingModePolicy:
+        arguments:
+            $configuredMode: '%public_reporting.mode%'
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
     App\Cases\Domain\CaseAssignmentRepository: '@App\Cases\Infrastructure\DoctrineCaseAssignmentRepository'
@@ -80,6 +88,11 @@ when@test:
         reporter_email.enabled: true
 
     services:
+        App\Reporting\Application\PublicReportingModePolicy:
+            public: true
+            arguments:
+                $configuredMode: '%public_reporting.mode%'
+
         # The development Compose environment keeps professional sessions in
         # `convive`. Tests must use the same isolated `convive_test` database
         # as Doctrine, without mutating the development session store.

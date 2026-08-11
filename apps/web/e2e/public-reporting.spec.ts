@@ -207,6 +207,40 @@ test('keeps the public reporting form keyboard-operable and responsive', async (
   );
 });
 
+test('renders a fictional-demo reporting profile without exposing a submission form', async ({
+  page,
+}) => {
+  const reporterMutationUrls: string[] = [];
+
+  page.on('request', (request) => {
+    if (request.method() !== 'GET' && request.url().includes('/api/v1/')) {
+      reporterMutationUrls.push(request.url());
+    }
+  });
+  await page.route(
+    `**/api/v1/public/organisations/${PUBLIC_REPORTING_IDENTIFIER}`,
+    async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          name: FICTIONAL_ORGANISATION,
+          reportingMode: 'fictional_demo',
+        }),
+      });
+    },
+  );
+
+  await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
+
+  await expect(page.getByText('Demostración ficticia', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Aquí no se guardan comunicaciones' }),
+  ).toBeVisible();
+  await expect(page.locator('form')).toHaveCount(0);
+  await expectNoAccessibilityViolations(page);
+  expect(reporterMutationUrls).toEqual([]);
+});
+
 test('keeps the fictional professional case workspace assignment-scoped', async ({ browser }) => {
   test.setTimeout(240_000);
   const leadContext = await browser.newContext();

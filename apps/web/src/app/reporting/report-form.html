@@ -3,7 +3,7 @@
     <app-report-header
       [currentStep]="currentStep()"
       [totalSteps]="3"
-      [showProgress]="(profileState().status === 'ready' || showProfileLoading()) && !result()"
+      [showProgress]="profileState().status === 'ready' && !result()"
       (helpRequested)="showHelp.set(true)"
       (stepRequested)="navigateToStep($event)"
     />
@@ -92,6 +92,34 @@
             <h1 id="profile-error-title">No podemos cargar el formulario</h1>
             <p class="profile-status-message">
               Comprueba tu conexión o inténtalo de nuevo en unos segundos.
+            </p>
+          </div>
+        }
+        @case ('fictional-demo') {
+          <div
+            class="profile-status profile-status-card unavailable-status step"
+            aria-labelledby="fictional-demo-title"
+          >
+            <p class="profile-status-label">Demostración ficticia</p>
+            <h1 id="fictional-demo-title">Aquí no se guardan comunicaciones</h1>
+            <p class="profile-status-message">
+              Convive está mostrando una demostración segura. No escribas información personal,
+              situaciones reales ni datos de otras personas.
+            </p>
+            <p class="profile-status-help">
+              Este entorno sirve únicamente para conocer cómo funcionaría el proceso.
+            </p>
+          </div>
+        }
+        @case ('disabled') {
+          <div
+            class="profile-status profile-status-card unavailable-status step"
+            aria-labelledby="reporting-disabled-title"
+          >
+            <p class="profile-status-label">Canal no disponible</p>
+            <h1 id="reporting-disabled-title">Este formulario no está habilitado</h1>
+            <p class="profile-status-message">
+              No envíes información personal ni comunicaciones de convivencia por esta vía.
             </p>
           </div>
         }

@@ -77,6 +77,7 @@ final class GetPublicReportingProfileControllerTest extends WebTestCase
         self::assertSame(
             [
                 'name' => 'IES Valle Sereno',
+                'reportingMode' => 'operational',
             ],
             $this->responsePayload(),
         );
