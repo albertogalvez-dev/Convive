@@ -48,6 +48,7 @@ test('completes the fictional reporter-professional conversation loop', async ({
   const situationDescription = `Fictional E2E report ${runMarker}`;
   const followUpContent = `Fictional E2E follow-up ${runMarker}`;
   const professionalResponse = `Fictional E2E professional response ${runMarker}`;
+  const evidenceDescription = `Fictional E2E evidence ${runMarker}`;
 
   await page.goto(`/r/${PUBLIC_REPORTING_IDENTIFIER}`);
 
@@ -64,6 +65,20 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await expect(page.getByRole('heading', { name: 'Comunicación enviada' })).toBeVisible();
   const publicReference = await page.locator('.credential-value.reference code').innerText();
   const accessSecret = await page.locator('.credential-value.secret code').innerText();
+
+  await page.getByRole('button', { name: 'Añadir pruebas' }).click();
+  await page.locator('#evidence-files').setInputFiles({
+    name: `private-${runMarker}.pdf`,
+    mimeType: 'application/pdf',
+    buffer: Buffer.from('%PDF-1.7\nfictional evidence\n'),
+  });
+  await page.getByLabel('Descripción (opcional)').fill(evidenceDescription);
+  await expect(page.getByText(`private-${runMarker}.pdf`, { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Enviar pruebas' }).click();
+  await expect(page.getByText(evidenceDescription, { exact: true })).toBeVisible();
+  await expect(page.getByText('En comprobación', { exact: true })).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+
   const credentialWasAbsentAfterSubmission = await credentialIsAbsentFromBrowserState(
     page,
     context,
@@ -84,6 +99,8 @@ test('completes the fictional reporter-professional conversation loop', async ({
 
   await expect(page.getByRole('heading', { name: 'Tu comunicación' })).toBeVisible();
   await expect(page.getByText(situationDescription, { exact: true })).toBeVisible();
+  await expect(page.getByText(evidenceDescription, { exact: true })).toBeVisible();
+  await expect(page.getByText('En comprobación', { exact: true })).toBeVisible();
   await expectCredentialAbsentFromBrowserState(page, context, accessSecret);
 
   const professionalContext = await browser.newContext();
