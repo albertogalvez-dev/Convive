@@ -10,6 +10,7 @@ describe('FollowUp', () => {
   const grantEndpoint = '/api/v1/public/report-access-grants';
   const reportEndpoint = '/api/v1/reporter/report';
   const attachmentEndpoint = '/api/v1/reporter/report/attachments';
+  const emailNotificationsEndpoint = '/api/v1/reporter/report/email-notifications';
   const entriesEndpoint = '/api/v1/reporter/report/follow-up-entries';
   const revocationEndpoint = '/api/v1/reporter/access-grant';
 
@@ -225,6 +226,7 @@ describe('FollowUp', () => {
     httpTesting.expectOne(grantEndpoint).flush(null, { status: 204, statusText: 'No Content' });
     httpTesting.expectOne(reportEndpoint).flush(reportState());
     fixture.detectChanges();
+    httpTesting.expectOne(emailNotificationsEndpoint).flush({ enabled: false, status: 'none' });
 
     httpTesting.expectOne(attachmentEndpoint).flush(
       {
@@ -408,6 +410,7 @@ describe('FollowUp', () => {
 
     expect(attachments.request.method).toBe('GET');
     attachments.flush({ items: [] });
+    httpTesting.expectOne(emailNotificationsEndpoint).flush({ enabled: false, status: 'none' });
     fixture.detectChanges();
   }
 

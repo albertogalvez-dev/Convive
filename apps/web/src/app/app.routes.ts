@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { FollowUp } from './follow-up/follow-up';
+import { EmailVerification } from './email-verification/email-verification';
 import { applicationHostGuard, publicWebsiteHostGuard } from './host-boundary.guard';
 import { NotFound } from './not-found/not-found';
 import { PublicHome } from './public-home/public-home';
@@ -72,6 +73,10 @@ export const routes: Routes = [
       {
         path: 'seguimiento',
         component: FollowUp,
+      },
+      {
+        path: 'verificar-correo',
+        component: EmailVerification,
       },
       {
         path: 'profesionales/acceso',

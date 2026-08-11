@@ -14,6 +14,7 @@ use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository;
 use App\Reporting\Infrastructure\DoctrineReportRepository;
+use App\Reporting\Infrastructure\DoctrineReporterEmailNotifications;
 use App\Tests\Shared\Infrastructure\Persistence\PostgreSqlTestCase;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
@@ -36,6 +37,7 @@ final class DoctrineReportFollowUpEntryRepositoryTest extends PostgreSqlTestCase
         );
         $this->followUpEntryRepository = new DoctrineReportFollowUpEntryRepository(
             $this->entityManager,
+            new DoctrineReporterEmailNotifications($this->entityManager->getConnection()),
         );
     }
 

@@ -58,9 +58,10 @@ public API described below.
 
 The anonymous journey covers text submission, situation context, review,
 one-time presentation of access credentials and capability-based follow-up.
-Private fictional attachments are implemented. Optional email has an accepted
-notification-only privacy boundary but no delivery implementation; professional
-case-management workflows remain under development.
+Private fictional attachments and optional verified generic email notices are
+implemented for development with isolated Mailpit delivery. Production email
+remains disabled until a provider, sender identity and real-data controls are
+approved; professional case-management workflows remain under development.
 
 Development and demonstrations must use fictional data only.
 

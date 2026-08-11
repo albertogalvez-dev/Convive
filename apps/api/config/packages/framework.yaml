@@ -20,6 +20,7 @@ framework:
             [
                 'report_access_grant_revocation',
                 'report_attachment_upload',
+                'reporter_email_configuration',
                 'professional_login',
                 'professional_logout',
                 'professional_report_review',

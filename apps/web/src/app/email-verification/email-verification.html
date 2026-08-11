@@ -1,0 +1,19 @@
+<main class="verification-page">
+  <section class="verification-card" aria-labelledby="verification-title">
+    @switch (state()) {
+      @case ('verifying') {
+        <p role="status">Confirmando el correo…</p>
+      }
+      @case ('verified') {
+        <h1 id="verification-title">Avisos activados</h1>
+        <p>Recibirás un mensaje genérico cuando haya una novedad.</p>
+        <a href="/seguimiento">Ir a seguimiento</a>
+      }
+      @default {
+        <h1 id="verification-title">No hemos podido confirmar el correo</h1>
+        <p>El enlace no es válido o ha caducado. Solicita otro desde seguimiento.</p>
+        <a href="/seguimiento">Volver a seguimiento</a>
+      }
+    }
+  </section>
+</main>

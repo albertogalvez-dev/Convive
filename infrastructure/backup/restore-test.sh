@@ -103,11 +103,12 @@ docker compose "${restore_args[@]}" exec -T database sh -eu -c \
   'psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --set=ON_ERROR_STOP=1' <<'SQL'
 TRUNCATE TABLE professional_sessions;
 TRUNCATE TABLE report_access_grants;
+TRUNCATE TABLE reporter_notification_outbox, reporter_email_contacts;
 SQL
 
 stage='verification'
 unsafe_credentials="$(docker compose "${restore_args[@]}" exec -T database sh -eu -c \
-  'psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --set=ON_ERROR_STOP=1 --command="SELECT (SELECT count(*) FROM professional_sessions) + (SELECT count(*) FROM report_access_grants)"')"
+  'psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --set=ON_ERROR_STOP=1 --command="SELECT (SELECT count(*) FROM professional_sessions) + (SELECT count(*) FROM report_access_grants) + (SELECT count(*) FROM reporter_notification_outbox) + (SELECT count(*) FROM reporter_email_contacts)"')"
 
 if [[ "$unsafe_credentials" != '0' ]]; then
   echo 'Restored ephemeral credentials were not fully invalidated.' >&2
@@ -149,5 +150,5 @@ exit($valid ? 0 : 1);
 ' >/dev/null
 
 trap - ERR
-record_evidence success restore-test "generation=${generation:0:12};reports=$restored_reports;${restored_attachment_summary};credentials=0"
-echo "Isolated restore completed: ${restored_reports} reports, ${restored_attachment_summary//;/, } and no revived sessions or capabilities."
+record_evidence success restore-test "generation=${generation:0:12};reports=$restored_reports;${restored_attachment_summary};credentials=0;reporter_contacts=0"
+echo "Isolated restore completed: ${restored_reports} reports, ${restored_attachment_summary//;/, } and no revived sessions, capabilities or reporter contacts."

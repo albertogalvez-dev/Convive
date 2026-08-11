@@ -109,6 +109,38 @@ SELECT
 FROM reports
 ORDER BY id
 LIMIT 1;
+
+INSERT INTO reporter_email_contacts (
+    id, report_id, email, status, consent_notice_version, consented_at,
+    verified_at, created_at, updated_at
+)
+SELECT
+    '00000000-0000-7000-8000-00000000006a'::uuid,
+    id,
+    'off-host-recovery@example.test',
+    'verified',
+    'reporter-email-v1',
+    now(),
+    now(),
+    now(),
+    now()
+FROM reports
+ORDER BY id
+LIMIT 1;
+
+INSERT INTO reporter_notification_outbox (
+    id, contact_id, kind, deduplication_key, status, attempts, available_at, created_at
+)
+VALUES (
+    '00000000-0000-7000-8000-00000000006b'::uuid,
+    '00000000-0000-7000-8000-00000000006a'::uuid,
+    'report_update',
+    'off-host-recovery-report-update',
+    'pending',
+    0,
+    now(),
+    now()
+);
 SQL
 
 "$SCRIPT_DIRECTORY/init-repository.sh"

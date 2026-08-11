@@ -6,6 +6,7 @@ import { ReportEvidence } from '../report-attachments/report-evidence';
 import { ReportHeader } from '../reporting/report-header';
 import { FollowUpAccess } from './follow-up-access';
 import { FollowUpReport } from './follow-up-report';
+import { ReporterEmailNotifications } from './reporter-email-notifications';
 import { FollowUpEntry, FollowUpService, ReportFollowUpState } from './follow-up.service';
 
 /**
@@ -25,7 +26,14 @@ type FollowUpJourneyState =
 @Component({
   selector: 'app-follow-up',
   standalone: true,
-  imports: [FollowUpAccess, FollowUpReport, ReactiveFormsModule, ReportEvidence, ReportHeader],
+  imports: [
+    FollowUpAccess,
+    FollowUpReport,
+    ReactiveFormsModule,
+    ReportEvidence,
+    ReporterEmailNotifications,
+    ReportHeader,
+  ],
   templateUrl: './follow-up.html',
   styleUrl: './follow-up.scss',
 })
