@@ -39,6 +39,12 @@ sequenceDiagram
     Browser->>API: Submit review or response with CSRF protection
     API->>DB: Persist first review or append centre entry
     API-->>Browser: Updated review/history state
+    Browser->>API: Submit explicit triage outcome and reason
+    API->>DB: Append attributed triage decision
+    opt Outcome is link_to_case
+        API->>DB: Atomically create minimal case and unique report link
+    end
+    API-->>Browser: Decision and optional case identifier
 ```
 
 The public reference is a receipt, not authentication. The secret is never

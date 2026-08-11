@@ -377,6 +377,163 @@ final class ProfessionalReportControllerTest extends WebTestCase
         );
     }
 
+    public function testTriageRequiresReviewAndCreatesOneIdempotentCaseLink(): void
+    {
+        $organisation = $this->createOrganisation('43E', 'Triage Transition School');
+        $professional = $this->createProfessional('triage-transition', $organisation, ProfessionalRole::Triage);
+        $created = $this->createReport($organisation, 'A fictional report awaiting explicit triage.');
+        $endpoint = '/api/v1/professional/reports/'
+            .$created['report']->id()->toRfc4122().'/triage-decisions';
+        $originalDescription = $created['report']->situationDescription()->toString();
+        $this->client->loginUser($professional);
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['outcome' => 'keep', 'reason' => 'Further fictional assessment is still required.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
+
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/professional/reports/'.$created['report']->id()->toRfc4122().'/reviews',
+            ['reason' => 'Initial fictional safeguarding assessment completed.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['outcome' => 'keep', 'reason' => 'Further fictional assessment is still required.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $keep = $this->responsePayload()['decision'];
+        self::assertSame('keep', $keep['outcome']);
+        self::assertNull($keep['caseId']);
+        self::assertSame($professional->id()->toRfc4122(), $keep['decidedBy']['id']);
+
+        $linkPayload = [
+            'outcome' => 'link_to_case',
+            'reason' => 'The fictional assessment requires a managed safeguarding case.',
+        ];
+        $this->client->jsonRequest('POST', $endpoint, $linkPayload, $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $linked = $this->responsePayload()['decision'];
+        self::assertSame('link_to_case', $linked['outcome']);
+        self::assertIsString($linked['caseId']);
+
+        $this->client->jsonRequest('POST', $endpoint, $linkPayload, $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $retried = $this->responsePayload()['decision'];
+        self::assertSame($linked['id'], $retried['id']);
+        self::assertSame($linked['caseId'], $retried['caseId']);
+        self::assertSame(1, (int) $this->connection->fetchOne('SELECT COUNT(*) FROM managed_cases'));
+        self::assertSame(
+            2,
+            (int) $this->connection->fetchOne(
+                'SELECT COUNT(*) FROM report_triage_decisions WHERE report_id = ?',
+                [$created['report']->id()->toRfc4122()],
+            ),
+        );
+        self::assertSame(
+            $originalDescription,
+            $this->connection->fetchOne('SELECT situation_description FROM reports WHERE id = ?', [
+                $created['report']->id()->toRfc4122(),
+            ]),
+        );
+
+        $this->client->request('GET', '/api/v1/professional/reports/'.$created['report']->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        $history = $this->responsePayload()['triageDecisions'];
+        self::assertSame(['keep', 'link_to_case'], array_column($history, 'outcome'));
+        self::assertSame($linked['caseId'], $history[1]['caseId']);
+    }
+
+    public function testTerminalTriageCannotBeReplacedAndInvalidRequestsAreSafe(): void
+    {
+        $organisation = $this->createOrganisation('43F', 'Terminal Triage School');
+        $professional = $this->createProfessional('terminal-triage', $organisation, ProfessionalRole::Triage);
+        $created = $this->createReport($organisation, 'A fictional report that will be dismissed but retained.');
+        $endpoint = '/api/v1/professional/reports/'
+            .$created['report']->id()->toRfc4122().'/triage-decisions';
+        $this->client->loginUser($professional);
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/professional/reports/'.$created['report']->id()->toRfc4122().'/reviews',
+            ['reason' => 'Initial fictional safeguarding assessment completed.'],
+            $this->sameOriginHeaders(),
+        );
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['outcome' => 'dismiss', 'reason' => 'The documented fictional facts do not require a managed case.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['outcome' => 'keep', 'reason' => 'This must not replace the terminal fictional decision.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
+        self::assertSame(
+            'dismiss',
+            $this->connection->fetchOne(
+                'SELECT outcome FROM report_triage_decisions WHERE report_id = ?',
+                [$created['report']->id()->toRfc4122()],
+            ),
+        );
+        self::assertSame(
+            1,
+            (int) $this->connection->fetchOne('SELECT COUNT(*) FROM reports WHERE id = ?', [
+                $created['report']->id()->toRfc4122(),
+            ]),
+        );
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['outcome' => 'invented', 'reason' => 'A sufficiently long but unsupported outcome.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function testTriagePreservesRoleOrganisationAndCsrfBoundaries(): void
+    {
+        $authorised = $this->createOrganisation('43G', 'Authorised Triage School');
+        $foreign = $this->createOrganisation('43H', 'Foreign Triage School');
+        $professional = $this->createProfessional('triage-boundary', $authorised, ProfessionalRole::Triage);
+        $foreignReport = $this->createReport($foreign, 'A foreign fictional report.');
+        $this->client->loginUser($professional);
+        $endpoint = '/api/v1/professional/reports/'
+            .$foreignReport['report']->id()->toRfc4122().'/triage-decisions';
+
+        $this->client->jsonRequest(
+            'POST',
+            $endpoint,
+            ['outcome' => 'dismiss', 'reason' => 'This cross-organisation action must be denied.'],
+            $this->sameOriginHeaders(),
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $local = $this->createReport($authorised, 'A local fictional CSRF report.');
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/professional/reports/'.$local['report']->id()->toRfc4122().'/triage-decisions',
+            ['outcome' => 'keep', 'reason' => 'This cross-site action must be rejected safely.'],
+            ['HTTP_ORIGIN' => 'https://attacker.example', 'HTTP_SEC_FETCH_SITE' => 'cross-site'],
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        self::assertSame(0, (int) $this->connection->fetchOne('SELECT COUNT(*) FROM report_triage_decisions'));
+    }
+
     public function testInvalidAndAnonymousProfessionalResponsesAreRejected(): void
     {
         $organisation = $this->createOrganisation('33D', 'Response Validation School');
@@ -570,6 +727,8 @@ final class ProfessionalReportControllerTest extends WebTestCase
     private function cleanTestData(): void
     {
         $this->connection->executeStatement('DELETE FROM professional_sessions');
+        $this->connection->executeStatement('DELETE FROM report_triage_decisions');
+        $this->connection->executeStatement('DELETE FROM managed_cases');
         $this->connection->executeStatement(
             "DELETE FROM report_follow_up_entries WHERE report_id IN (
                 SELECT reports.id FROM reports

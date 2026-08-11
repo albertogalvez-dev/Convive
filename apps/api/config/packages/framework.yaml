@@ -25,6 +25,7 @@ framework:
                 'professional_logout',
                 'professional_report_review',
                 'professional_report_response',
+                'professional_report_triage',
             ]
         check_header: true
 

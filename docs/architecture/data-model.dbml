@@ -58,6 +58,43 @@ Table report_follow_up_entries {
 
 Ref: report_follow_up_entries.report_id > reports.id
 
+Table managed_cases {
+  id uuid [pk, note: 'application-generated UUIDv7; minimal case identity introduced by #43']
+  organisation_id uuid [not null]
+  created_by_professional_id uuid [not null]
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+
+  indexes {
+    organisation_id
+  }
+}
+
+Table report_triage_decisions {
+  id uuid [pk, note: 'application-generated UUIDv7; append-only']
+  report_id uuid [not null]
+  organisation_id uuid [not null, note: 'copied from the report and protected by the application invariant']
+  decided_by_professional_id uuid [not null]
+  outcome varchar(20) [not null, note: 'keep | redirect | dismiss | link_to_case (CHECK constraint)']
+  reason text [not null, note: 'trimmed 10–1000 characters (CHECK constrained)']
+  decided_at timestamptz [not null, note: 'immutable UTC instant']
+  terminal_report_id uuid [unique, note: 'null for keep; equal to report_id for the single terminal decision']
+  case_id uuid [unique, note: 'present only for link_to_case']
+
+  indexes {
+    (report_id, decided_at, id)
+    organisation_id
+    decided_by_professional_id
+  }
+}
+
+Ref: managed_cases.organisation_id > organisations.id
+Ref: managed_cases.created_by_professional_id > professionals.id
+Ref: report_triage_decisions.report_id > reports.id
+Ref: report_triage_decisions.organisation_id > organisations.id
+Ref: report_triage_decisions.decided_by_professional_id > professionals.id
+Ref: report_triage_decisions.terminal_report_id > reports.id
+Ref: report_triage_decisions.case_id > managed_cases.id
+
 Table professionals {
   id uuid [pk, note: 'application-generated UUIDv7']
   name varchar(255) [not null]
