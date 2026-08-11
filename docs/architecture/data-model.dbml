@@ -79,6 +79,22 @@ Table managed_cases {
   }
 }
 
+Table case_audit_events {
+  id uuid [pk, note: 'application-generated UUIDv7; append-only PostgreSQL record']
+  case_id uuid [not null]
+  organisation_id uuid [not null, note: 'copied from the case for scoped ordering; no organisation content']
+  actor_professional_id uuid [not null]
+  action varchar(40) [not null, note: 'minimised lifecycle | linkage | assignment | task | evidence-download | export action (CHECK constraint)']
+  target varchar(30) [not null, note: 'minimised target category only; no target content in the audit response (CHECK constraint)']
+  target_id uuid [not null, note: 'internal audit correlation only; never returned by the protected audit API']
+  occurred_at timestamptz [not null, note: 'immutable UTC instant; fictional-demo retention is explicit and bounded']
+
+  indexes {
+    (case_id, occurred_at)
+    (organisation_id, occurred_at)
+  }
+}
+
 Table case_assignments {
   id uuid [pk]
   case_id uuid [not null]
@@ -127,6 +143,9 @@ Table report_triage_decisions {
 
 Ref: managed_cases.organisation_id > organisations.id
 Ref: managed_cases.created_by_professional_id > professionals.id
+Ref: case_audit_events.case_id > managed_cases.id
+Ref: case_audit_events.organisation_id > organisations.id
+Ref: case_audit_events.actor_professional_id > professionals.id
 Ref: case_assignments.case_id > managed_cases.id
 Ref: case_assignments.professional_id > professionals.id
 Ref: case_assignments.assigned_by_professional_id > professionals.id
@@ -143,6 +162,17 @@ Table professionals {
   name varchar(255) [not null]
   email varchar(255) [not null, unique, note: 'normalised lowercase; authentication is out of scope until #30']
   created_at timestamptz [not null, note: 'immutable UTC instant']
+}
+
+Table professional_export_events {
+  id uuid [pk, note: 'application-generated UUIDv7; append-only PostgreSQL record']
+  professional_id uuid [not null]
+  kind varchar(40) [not null, note: 'operational_overview only (CHECK constraint); no exported PDF or count is persisted']
+  occurred_at timestamptz [not null, note: 'immutable UTC instant; fictional-demo retention is explicit and bounded']
+
+  indexes {
+    (professional_id, occurred_at)
+  }
 }
 
 Table organisation_memberships {
@@ -162,3 +192,4 @@ Table organisation_memberships {
 
 Ref: organisation_memberships.professional_id > professionals.id
 Ref: organisation_memberships.organisation_id > organisations.id
+Ref: professional_export_events.professional_id > professionals.id
