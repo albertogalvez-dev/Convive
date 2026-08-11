@@ -5,7 +5,8 @@ separate from development fixtures: `doctrine:fixtures:load` purges a database
 and must never be used for the public demonstration.
 
 The dataset is unmistakably fictional. It reserves one organisation, two
-professional identities, four reports and four conversation entries. It
+professional identities, four reports, four conversation entries and one
+managed case with one lead assignment and two case-local fictional people. It
 contains no real school, student, family, reporter or professional data.
 
 ## Safety contract
@@ -36,14 +37,14 @@ php bin/console app:demo:seed --env=prod --no-debug
 
 The normal mode reconciles only the reserved records. It does not delete other
 organisations or visitor-created reports in the demo organisation. Running the
-same command repeatedly produces the same four seed reports and conversation
-entries without duplicating them. Existing demo professional password hashes
-are not rotated by an ordinary repeat run.
+same command repeatedly produces the same reports, conversation entries and
+case records without duplicating them. Existing demo professional password
+hashes are not rotated by an ordinary repeat run.
 
 Expected non-secret output includes:
 
 ```text
-Fictional demo seeded: 1 organisation, 2 professionals, 4 reports and 4 conversation entries.
+Fictional demo seeded: 1 organisation, 2 professionals, 4 reports, 4 conversation entries, 1 case, 1 assignment and 2 involved people.
 Public reporting identifier: ORG_DEM0000000000000
 No credentials were printed.
 ```
@@ -59,7 +60,9 @@ After seeding:
    verify that the dashboard contains two new and two reviewed fictional
    communications.
 4. Open one seeded communication and verify that only fictional text appears.
-5. Confirm that the public page is visibly labelled as a fictional
+5. Verify that the managed-case tables contain only the reserved case, its
+   triage lead and the two case-local fictional people.
+6. Confirm that the public page is visibly labelled as a fictional
    demonstration before sharing its URL.
 
 Do not record the password, session cookie, report capability or any newly
@@ -67,11 +70,12 @@ generated anonymous access secret as verification evidence.
 
 ## Destructive restore to the known state
 
-Reset is appropriate only when visitor-created fictional reports may be
-discarded and the demonstration must return to its baseline. It deletes reports,
-capabilities, conversation entries and memberships belonging to the reserved
-demo organisation, then recreates the known dataset. It does not purge the
-database and does not delete unrelated organisations.
+Reset is appropriate only when visitor-created fictional reports and case work
+may be discarded and the demonstration must return to its baseline. It deletes
+reports, capabilities, conversation entries, triage decisions, cases,
+assignments, involved people and memberships belonging to the reserved demo
+organisation, then recreates the known dataset. It does not purge the database
+and does not delete unrelated organisations.
 
 Before reset:
 

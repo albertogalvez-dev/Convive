@@ -15,6 +15,11 @@ final class FictionalDemoDataset
     public const TRIAGE_PROFESSIONAL_EMAIL = 'lucia.demo@convive.example';
     public const ADMINISTRATOR_PROFESSIONAL_ID = '019fe900-0000-7000-8000-000000000072';
     public const ADMINISTRATOR_PROFESSIONAL_EMAIL = 'carlos.demo@convive.example';
+    public const MANAGED_CASE_ID = '019fe900-0000-7000-8000-000000000083';
+    public const CASE_ASSIGNMENT_ID = '019fe900-0000-7000-8000-000000000084';
+    public const CASE_AFFECTED_PERSON_ID = '019fe900-0000-7000-8000-000000000085';
+    public const CASE_WITNESS_PERSON_ID = '019fe900-0000-7000-8000-000000000086';
+    public const CASE_TRIAGE_DECISION_ID = '019fe900-0000-7000-8000-000000000087';
 
     /** @var list<string> */
     public const REPORT_IDS = [

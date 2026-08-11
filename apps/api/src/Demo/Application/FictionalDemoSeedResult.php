@@ -11,6 +11,9 @@ final readonly class FictionalDemoSeedResult
         public int $professionals,
         public int $reports,
         public int $conversationEntries,
+        public int $managedCases,
+        public int $caseAssignments,
+        public int $caseInvolvedPeople,
         public bool $reset,
     ) {
     }
