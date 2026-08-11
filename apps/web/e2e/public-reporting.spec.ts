@@ -284,9 +284,7 @@ test('keeps the public product homepage accessible and separate from reporting e
   );
 
   await page.goto('/demostracion/');
-  await expect(
-    page.getByRole('heading', { name: 'La demostración se está preparando.' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
   await expectNoAccessibilityViolations(page);
 
   await page.goto('/');
