@@ -221,8 +221,8 @@ describe('ReportForm', () => {
     expect(page.querySelector('#step-title')?.textContent).toContain('Comunicación enviada');
     expect(page.textContent).toContain('ABC123');
     expect(page.textContent).toContain('secret-value');
-    expect(page.textContent).toContain('Este secreto no puede recuperarse.');
-    expect(page.textContent).toContain('Guárdalo antes de cerrar o perderás el acceso.');
+    expect(page.textContent).toContain('Cualquiera que tenga este secreto puede entrar.');
+    expect(page.textContent).toContain('No puede recuperarse');
     const followUpLink = page.querySelector<HTMLAnchorElement>('.follow-up-hint a');
 
     expect(followUpLink?.getAttribute('href')).toBe('/seguimiento');
@@ -253,6 +253,33 @@ describe('ReportForm', () => {
     expect(afterCopy.defaultPrevented).toBe(false);
     expect(window.location.href).not.toContain('ABC123');
     expect(window.location.href).not.toContain('secret-value');
+  });
+
+  it('should print a minimal credential-safe receipt without replacing copy', () => {
+    const print = vi.spyOn(window, 'print').mockImplementation(() => undefined);
+
+    submitValidReport();
+
+    const receipt = page.querySelector<HTMLElement>('.print-receipt');
+    const printButton = page.querySelector<HTMLButtonElement>('.print-button');
+
+    expect(receipt?.textContent).toContain('app.conviveaula.com/seguimiento');
+    expect(receipt?.textContent).toContain('secret-value');
+    expect(receipt?.textContent).toContain('Cualquiera que tenga este secreto');
+    expect(receipt?.textContent).not.toContain('ABC123');
+    expect(document.title).not.toContain('ABC123');
+    expect(document.title).not.toContain('secret-value');
+    expect(page.querySelector('[download]')).toBeNull();
+    expect(page.querySelector('.copy-button')).not.toBeNull();
+
+    printButton?.click();
+
+    expect(print).toHaveBeenCalledOnce();
+
+    const afterPrint = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(afterPrint);
+    expect(afterPrint.defaultPrevented).toBe(true);
+    print.mockRestore();
   });
 
   it('should ask the browser to store the reference and secret when it can', async () => {

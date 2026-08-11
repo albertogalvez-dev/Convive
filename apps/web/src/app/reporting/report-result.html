@@ -12,8 +12,8 @@
     <div class="warning" role="note">
       <span aria-hidden="true">!</span>
       <p>
-        <strong>Este secreto no puede recuperarse.</strong>
-        Guárdalo antes de cerrar o perderás el acceso.
+        <strong>Cualquiera que tenga este secreto puede entrar.</strong>
+        No puede recuperarse: guárdalo antes de cerrar y no lo compartas.
       </p>
     </div>
 
@@ -40,6 +40,9 @@
           Copiar secreto
         </button>
       }
+      <button type="button" class="print-button secondary" (click)="printAccessReceipt()">
+        Imprimir o guardar en PDF
+      </button>
     </div>
 
     <p class="credential-status" aria-live="polite">{{ statusMessage() }}</p>
@@ -56,6 +59,19 @@
     </p>
   </section>
 </div>
+
+<section class="print-receipt" aria-labelledby="print-receipt-title">
+  <h2 id="print-receipt-title">Acceso a tu comunicación</h2>
+  <p>Entra en <strong>app.conviveaula.com/seguimiento</strong></p>
+  <span class="credential-label">Secreto</span>
+  <p class="print-secret">
+    <code>{{ submitted().accessSecret }}</code>
+  </p>
+  <p class="print-warning">
+    Cualquiera que tenga este secreto puede entrar en tu comunicación. Guárdalo en un lugar privado
+    y no lo compartas.
+  </p>
+</section>
 
 <div class="initial-evidence">
   <app-report-evidence [accessSecret]="submitted().accessSecret" [autoLoad]="false" />

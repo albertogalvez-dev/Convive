@@ -15,6 +15,10 @@
   margin-top: 1rem;
 }
 
+.print-receipt {
+  display: none;
+}
+
 .heading {
   display: flex;
   align-items: center;
@@ -201,5 +205,48 @@ button:focus-visible {
 
   .actions {
     display: grid;
+  }
+}
+
+@media print {
+  :host {
+    color: #000;
+  }
+
+  .result,
+  .initial-evidence {
+    display: none;
+  }
+
+  .print-receipt {
+    display: block;
+    max-width: 42rem;
+    margin: 0 auto;
+    color: #000;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  .print-receipt h2 {
+    margin: 0 0 1.5rem;
+    font-size: 18pt;
+  }
+
+  .print-secret {
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  .print-secret code {
+    display: block;
+    padding: 0.8rem;
+    overflow-wrap: anywhere;
+    font-size: 11pt;
+    border: 1px solid #000;
+  }
+
+  .print-warning {
+    padding-top: 1rem;
+    margin: 0;
+    border-top: 1px solid #777;
   }
 }

@@ -80,4 +80,8 @@ export class ReportResult {
       this.statusMessage.set('No se ha podido copiar. Selecciona y copia el secreto manualmente.');
     }
   }
+
+  protected printAccessReceipt(): void {
+    window.print();
+  }
 }

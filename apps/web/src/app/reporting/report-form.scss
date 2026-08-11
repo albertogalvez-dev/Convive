@@ -445,3 +445,18 @@ button {
     min-height: 3.5rem;
   }
 }
+
+@media print {
+  :host,
+  .report-page,
+  .report-page.completed,
+  .completed app-report-result {
+    min-height: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  app-report-header {
+    display: none;
+  }
+}
