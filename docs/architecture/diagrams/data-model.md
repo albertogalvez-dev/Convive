@@ -52,6 +52,16 @@ erDiagram
         timestamptz created_at "immutable UTC"
         timestamptz operational_updated_at "latest explicit case, assignment or task activity"
     }
+    case_audit_events {
+        uuid id PK "UUIDv7; append-only minimised event"
+        uuid case_id FK
+        uuid organisation_id FK "scope/order only; no organisation content"
+        uuid actor_professional_id FK
+        varchar action "minimised auditable action"
+        varchar target "minimised target category"
+        uuid target_id "internal correlation; never in protected response"
+        timestamptz occurred_at "immutable UTC; bounded fictional retention"
+    }
     report_triage_decisions {
         uuid id PK "UUIDv7; append-only"
         uuid report_id FK
@@ -69,6 +79,12 @@ erDiagram
         varchar email UK "normalised lowercase; no auth until #30"
         timestamptz created_at "immutable UTC"
     }
+    professional_export_events {
+        uuid id PK "UUIDv7; append-only aggregate-export event"
+        uuid professional_id FK
+        varchar kind "operational_overview only; no PDF/count persisted"
+        timestamptz occurred_at "immutable UTC; bounded fictional retention"
+    }
     organisation_memberships {
         uuid id PK "UUIDv7, application-generated"
         uuid professional_id FK
@@ -84,10 +100,14 @@ erDiagram
     reports ||--o{ report_triage_decisions : "receives decisions"
     reports o|--o| report_triage_decisions : "has terminal decision"
     organisations ||--o{ managed_cases : "owns"
+    organisations ||--o{ case_audit_events : "scopes audit"
     organisations ||--o{ report_triage_decisions : "scopes"
     professionals ||--o{ managed_cases : "creates"
+    professionals ||--o{ case_audit_events : "acts in"
+    professionals ||--o{ professional_export_events : "creates"
     professionals ||--o{ report_triage_decisions : "decides"
     managed_cases o|--o| report_triage_decisions : "is linked by"
+    managed_cases ||--o{ case_audit_events : "has minimised events"
     professionals ||--o{ organisation_memberships : "holds"
     organisations ||--o{ organisation_memberships : "grants"
 ```
