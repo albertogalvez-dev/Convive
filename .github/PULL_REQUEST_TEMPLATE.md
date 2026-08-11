@@ -1,26 +1,50 @@
 ## Summary
 
-<!-- What changed, and why. Bullet points, most important first. -->
+<!-- What changed and why. Put the most important point first. -->
+
+## Issue and acceptance criteria
+
+<!-- Link one delivery issue. Copy every relevant acceptance criterion from it,
+then replace each placeholder with concise, linked evidence before merge. Do
+not check a criterion merely because a similarly named test exists. -->
+
+Closes #
+
+- [ ] Criterion: <!-- exact issue criterion -->
+  Evidence: <!-- command, test, review result or CI URL -->
 
 ## Security and privacy
 
-<!-- Only if relevant: what this change means for anonymity, credentials, secrets, personal data or access control. Delete this section if it doesn't apply. -->
+<!-- State the relevant effect on anonymity, credentials, secrets, personal
+data, access control, deployment or supply chain. Write "Not applicable" only
+after considering those boundaries. -->
 
-## Verification
+## Verification evidence
 
-<!-- Check only what you actually ran. An honest unchecked box beats a false claim. -->
+<!-- Check only commands and checks actually run. For a narrowly scoped or
+documentation-only change, mark unrelated local checks as not applicable and
+say why. Every pull request still waits for the required GitHub checks below. -->
 
-- [ ] Backend tests pass (`vendor/bin/phpunit`)
-- [ ] Frontend tests pass (`npm test`)
-- [ ] Composer/npm validation and audit pass
-- [ ] Doctrine schema is valid; migrations apply cleanly to a clean test database (if applicable)
-- [ ] Generated OpenAPI contract matches the committed contract (if applicable)
-- [ ] `Backend` GitHub Actions check passes
-- [ ] `Frontend` GitHub Actions check passes
-- [ ] `Infrastructure` GitHub Actions check passes
+### Local
+
+- [ ] Relevant focused test or inspection: <!-- command and result -->
+- [ ] Static analysis, format, build, OpenAPI or migration checks: <!-- applicable commands and results -->
+
+### Required GitHub checks
+
+- [ ] `Backend`
+- [ ] `Frontend`
+- [ ] `Infrastructure`
+- [ ] `Dependency review` (pull-request event only)
+- [ ] `Encrypted recovery`
+- [ ] `End-to-end`
+
+<!-- Link the completed CI run and record any intentionally skipped
+push-only check after merge. Do not mark a required PR check complete without
+its actual result. -->
+
+CI run: <!-- URL -->
 
 ## Out of scope
 
-<!-- What this PR deliberately does not do, so reviewers don't expect it. -->
-
-Closes #
+<!-- What this PR deliberately does not do, so reviewers do not infer it. -->
