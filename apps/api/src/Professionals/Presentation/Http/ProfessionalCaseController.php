@@ -6,6 +6,7 @@ namespace App\Professionals\Presentation\Http;
 
 use App\Cases\Application\CaseWorkspaceDetail;
 use App\Cases\Application\CaseWorkspaceSummary;
+use App\Cases\Application\CasePdfRenderer;
 use App\Cases\Application\AuthoriseCaseAccess;
 use App\Cases\Application\ProfessionalCaseWorkspace;
 use App\Cases\Domain\CaseAccessDenied;
@@ -21,6 +22,9 @@ use App\Cases\Domain\CasePermission;
 use App\Cases\Domain\CaseStatus;
 use App\Cases\Domain\CaseTask;
 use App\Cases\Domain\CaseWorkspaceQuery;
+use App\Cases\Domain\ProfessionalExportEvent;
+use App\Cases\Domain\ProfessionalExportEventRepository;
+use App\Cases\Domain\ProfessionalExportKind;
 use App\Professionals\Domain\Professional;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Presentation\Http\PrivateReportAttachmentDownloadResponder;
@@ -50,6 +54,8 @@ final readonly class ProfessionalCaseController
         private ProfessionalCaseCursorCodec $cursorCodec,
         private AuthoriseCaseAccess $authorise,
         private CaseAuditEventRepository $auditEvents,
+        private ProfessionalExportEventRepository $professionalExportEvents,
+        private CasePdfRenderer $pdfRenderer,
         private PrivateReportAttachmentDownloadResponder $downloadResponder,
         private SecurityEventLogger $securityEventLogger,
         private RateLimitEnforcer $rateLimitEnforcer,
@@ -302,6 +308,82 @@ final readonly class ProfessionalCaseController
         );
     }
 
+    #[Route(
+        '/api/v1/professional/cases/{id}/export',
+        name: 'api_v1_professional_export_case_record',
+        methods: ['GET'],
+    )]
+    #[OA\Get(
+        operationId: 'exportProfessionalCaseRecord',
+        summary: 'Export a minimised lead-authorised case record as PDF',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The controlled PDF record.'),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
+        ],
+    )]
+    public function exportCaseRecord(string $id, #[CurrentUser] Professional $professional): Response
+    {
+        $detail = $this->resolveExportDetail($id, $professional);
+        $pdf = $this->pdfRenderer->caseRecord($detail, $this->auditEvents->findByCase($detail->managedCase));
+        $this->auditEvents->append(new CaseAuditEvent(
+            Uuid::v7(),
+            $detail->managedCase,
+            $professional,
+            CaseAuditAction::CaseRecordExported,
+            CaseAuditTarget::CaseRecord,
+            $detail->managedCase->id(),
+            DateTimeImmutable::createFromTimestamp(microtime(true)),
+        ));
+        $this->auditEvents->flush();
+
+        return $this->pdfResponse($pdf, 'case-record.pdf');
+    }
+
+    #[Route(
+        '/api/v1/professional/cases/operational-overview/export',
+        name: 'api_v1_professional_export_operational_overview',
+        methods: ['GET'],
+        priority: 10,
+    )]
+    #[OA\Get(
+        operationId: 'exportProfessionalOperationalOverview',
+        summary: 'Export non-identifying authorised operational counts as PDF',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The non-identifying PDF overview.'),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+        ],
+    )]
+    public function exportOperationalOverview(#[CurrentUser] Professional $professional): Response
+    {
+        $now = DateTimeImmutable::createFromTimestamp(microtime(true));
+        $pdf = $this->pdfRenderer->operationalOverview($this->workspace->operationalCounts($professional, $now));
+        $this->professionalExportEvents->append(new ProfessionalExportEvent(
+            Uuid::v7(),
+            $professional,
+            ProfessionalExportKind::OperationalOverview,
+            $now,
+        ));
+        $this->professionalExportEvents->flush();
+
+        return $this->pdfResponse($pdf, 'operational-overview.pdf');
+    }
+
+    private function pdfResponse(string $pdf, string $filename): Response
+    {
+        return new Response($pdf, Response::HTTP_OK, [
+            'Cache-Control' => 'no-store',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Content-Type' => 'application/pdf',
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Robots-Tag' => 'noindex, noarchive',
+        ]);
+    }
+
     private function parseWorkspaceQuery(Request $request, DateTimeImmutable $now): CaseWorkspaceQuery
     {
         $view = CaseOperationalView::tryFrom($request->query->getString('view') ?: CaseOperationalView::Assigned->value)
@@ -367,6 +449,19 @@ final readonly class ProfessionalCaseController
         return $detail;
     }
 
+    private function resolveExportDetail(string $id, Professional $professional): CaseWorkspaceDetail
+    {
+        $detail = $this->resolveDetail($id, $professional);
+
+        try {
+            $this->authorise->require($detail->managedCase, $professional, CasePermission::Export);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+
+        return $detail;
+    }
+
     /** @return array<string, mixed> */
     private function serializeSummary(CaseWorkspaceSummary $summary): array
     {
@@ -393,6 +488,7 @@ final readonly class ProfessionalCaseController
             'permissions' => [
                 'manage' => $detail->currentAssignment->permits(CasePermission::Manage),
                 'manageAssignments' => $detail->currentAssignment->permits(CasePermission::ManageAssignments),
+                'export' => $detail->currentAssignment->permits(CasePermission::Export),
                 'viewAudit' => $detail->currentAssignment->permits(CasePermission::ViewAudit),
             ],
             'people' => array_map($this->serializePerson(...), $detail->people),

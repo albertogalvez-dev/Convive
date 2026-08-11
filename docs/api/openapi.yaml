@@ -4,6 +4,20 @@ info:
   description: 'Public and professional HTTP API for the Convive school coexistence platform.'
   version: 0.1.0
 paths:
+  /api/v1/professional/cases/operational-overview/export:
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Export non-identifying authorised operational counts as PDF'
+      operationId: exportProfessionalOperationalOverview
+      responses:
+        '200':
+          description: 'The non-identifying PDF overview.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/public/organisations/{publicReportingIdentifier}':
     get:
       tags:
@@ -231,6 +245,29 @@ paths:
       responses:
         '200':
           description: 'The minimised audit CSV.'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/export':
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Export a minimised lead-authorised case record as PDF'
+      operationId: exportProfessionalCaseRecord
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The controlled PDF record.'
         '401':
           description: 'A professional session is required.'
         '404':
@@ -2034,11 +2071,11 @@ components:
       in: cookie
 tags:
   -
-    name: 'Public reporting'
-    description: 'Public reporting'
-  -
     name: 'Professional cases'
     description: 'Professional cases'
+  -
+    name: 'Public reporting'
+    description: 'Public reporting'
   -
     name: 'Professional reports'
     description: 'Professional reports'

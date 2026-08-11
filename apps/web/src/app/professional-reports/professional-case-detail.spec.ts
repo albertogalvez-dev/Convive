@@ -60,6 +60,9 @@ describe('ProfessionalCaseDetailPage', () => {
     expect(page.querySelector<HTMLAnchorElement>('.audit-panel a')?.getAttribute('href')).toBe(
       '/api/v1/professional/cases/case-1/audit-events/export',
     );
+    expect(page.querySelector<HTMLAnchorElement>('.export-panel a')?.getAttribute('href')).toBe(
+      '/api/v1/professional/cases/case-1/export',
+    );
   });
 
   it('uses the indistinguishable unavailable state and redirects expired sessions', () => {
@@ -84,7 +87,7 @@ describe('ProfessionalCaseDetailPage', () => {
       pendingTasks: 1,
       overdueTasks: 0,
       nextDueAt: '2026-08-12T09:00:00+00:00',
-      permissions: { manage: true, manageAssignments: true, viewAudit: true },
+      permissions: { manage: true, manageAssignments: true, export: true, viewAudit: true },
       people: [{ id: 'person-1', name: 'Fictional person', role: 'affected' }],
       assignments: [
         {

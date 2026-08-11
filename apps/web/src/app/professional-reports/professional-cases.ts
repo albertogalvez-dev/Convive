@@ -54,6 +54,10 @@ export class ProfessionalCases implements OnInit {
     this.loadSummary();
   }
 
+  protected operationalOverviewExportUrl(): string {
+    return this.cases.operationalOverviewExportUrl();
+  }
+
   protected selectView(view: CaseOperationalView): void {
     if (this.view() === view) {
       return;

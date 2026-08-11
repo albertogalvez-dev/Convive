@@ -6,7 +6,29 @@
   margin: 0 auto;
 }
 .cases-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.6rem;
+}
+.overview-export {
+  border: 1px solid #b8c9df;
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  color: #17366d;
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+.overview-export:hover {
+  border-color: #75c5e3;
+  background: #edf8fc;
+}
+.overview-export:focus-visible {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 2px;
 }
 .operational-summary {
   display: grid;
@@ -276,6 +298,10 @@ time {
   }
 }
 @media (max-width: 34rem) {
+  .cases-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
   .operational-summary {
     gap: 0.5rem;
   }

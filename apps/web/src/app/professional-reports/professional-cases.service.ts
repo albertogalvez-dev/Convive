@@ -46,7 +46,7 @@ export interface ProfessionalCaseFilters {
 }
 
 export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
-  permissions: { manage: boolean; manageAssignments: boolean; viewAudit: boolean };
+  permissions: { manage: boolean; manageAssignments: boolean; export: boolean; viewAudit: boolean };
   people: Array<{ id: string; name: string; role: string }>;
   assignments: Array<{
     id: string;
@@ -135,5 +135,13 @@ export class ProfessionalCasesService {
 
   auditExportUrl(caseId: string): string {
     return `${this.endpoint}/${encodeURIComponent(caseId)}/audit-events/export`;
+  }
+
+  caseRecordExportUrl(caseId: string): string {
+    return `${this.endpoint}/${encodeURIComponent(caseId)}/export`;
+  }
+
+  operationalOverviewExportUrl(): string {
+    return `${this.endpoint}/operational-overview/export`;
   }
 }

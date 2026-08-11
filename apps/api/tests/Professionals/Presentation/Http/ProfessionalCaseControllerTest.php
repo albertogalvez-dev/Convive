@@ -122,6 +122,7 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame('mixed', $detail['modality']);
         self::assertTrue($detail['permissions']['manage']);
         self::assertTrue($detail['permissions']['manageAssignments']);
+        self::assertTrue($detail['permissions']['export']);
         self::assertTrue($detail['permissions']['viewAudit']);
         self::assertSame('Fictional affected person', $detail['people'][0]['name']);
         self::assertSame('inspection_communication', $detail['tasks'][0]['stage']);
@@ -158,6 +159,35 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertStringContainsString('occurred_at,action,target,actor', $export);
         self::assertStringContainsString('audit_exported', $export);
         self::assertStringNotContainsString('Fictional case evidence.', $export);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/export');
+        self::assertResponseIsSuccessful();
+        self::assertSame('application/pdf', $this->client->getResponse()->headers->get('content-type'));
+        self::assertStringContainsString('no-store', (string) $this->client->getResponse()->headers->get('cache-control'));
+        self::assertSame('noindex, noarchive', $this->client->getResponse()->headers->get('x-robots-tag'));
+        $casePdf = $this->client->getResponse()->getContent();
+        self::assertIsString($casePdf);
+        self::assertStringStartsWith('%PDF-', $casePdf);
+        self::assertStringNotContainsString('Fictional affected person', $casePdf);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
+        self::assertResponseIsSuccessful();
+        $audit = $this->responsePayload();
+        self::assertSame('case_record_exported', $audit['items'][count($audit['items']) - 1]['action']);
+        self::assertSame('case_record', $audit['items'][count($audit['items']) - 1]['target']);
+
+        $this->client->request('GET', '/api/v1/professional/cases/operational-overview/export');
+        self::assertResponseIsSuccessful();
+        self::assertSame('application/pdf', $this->client->getResponse()->headers->get('content-type'));
+        self::assertStringStartsWith('%PDF-', (string) $this->client->getResponse()->getContent());
+        self::assertSame('noindex, noarchive', $this->client->getResponse()->headers->get('x-robots-tag'));
+        self::assertSame(1, (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT COUNT(*) FROM professional_export_events WHERE professional_id = :professionalId AND kind = :kind',
+            [
+                'professionalId' => $lead->id()->toRfc4122(),
+                'kind' => 'operational_overview',
+            ],
+        ));
     }
 
     public function testOrganisationMembershipWithoutExactCaseAssignmentCannotDiscoverTheCase(): void
@@ -233,6 +263,10 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
         self::assertResponseIsSuccessful();
         self::assertFalse($this->responsePayload()['permissions']['viewAudit']);
+        self::assertFalse($this->responsePayload()['permissions']['export']);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/export');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
 
         $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
