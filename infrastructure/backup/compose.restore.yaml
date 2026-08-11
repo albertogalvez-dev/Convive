@@ -6,6 +6,9 @@ services:
     environment:
       APP_ENV: prod
       APP_SECRET: ${CONVIVE_RESTORE_APP_SECRET:?required}
+      # Recovery runs the production kernel against restored fictional data.
+      # Keep reporter mutations fail-closed even in this isolated environment.
+      PUBLIC_REPORTING_MODE: fictional_demo
       DEFAULT_URI: http://localhost
       DATABASE_URL: postgresql://convive_restore:${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}@database:5432/convive_restore?serverVersion=18.4&charset=utf8
       SESSION_DATABASE_URL: pgsql:host=database;port=5432;dbname=convive_restore;user=convive_restore;password=${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
