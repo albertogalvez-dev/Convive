@@ -164,10 +164,31 @@ jobs:
           printf '%s\n' 'APP_SECRET=ci-only' > "$secret_dir/api.env"
           printf '%s\n' database-password > "$secret_dir/database_password"
           printf '%s\n' 'requirepass ci-only' 'appendonly yes' > "$secret_dir/redis.conf"
-          CONVIVE_SECRET_DIR="$secret_dir" \
-          CONVIVE_API_IMAGE="ghcr.io/albertogalvez-dev/convive/api@sha256:$(printf 'a%.0s' {1..64})" \
-          CONVIVE_GATEWAY_IMAGE="ghcr.io/albertogalvez-dev/convive/gateway@sha256:$(printf 'b%.0s' {1..64})" \
-            docker compose -f infrastructure/production/compose.production.yaml config --quiet
+          export CONVIVE_SECRET_DIR="$secret_dir"
+          export CONVIVE_API_IMAGE="ghcr.io/albertogalvez-dev/convive/api@sha256:$(printf 'a%.0s' {1..64})"
+          export CONVIVE_GATEWAY_IMAGE="ghcr.io/albertogalvez-dev/convive/gateway@sha256:$(printf 'b%.0s' {1..64})"
+          production_compose=(--project-name convive-production-boundary -f infrastructure/production/compose.production.yaml)
+          cleanup_production_boundary() {
+            docker compose "${production_compose[@]}" down --volumes --remove-orphans || true
+            rm -rf "$secret_dir"
+          }
+          trap cleanup_production_boundary EXIT
+          docker compose "${production_compose[@]}" config --quiet
+          mapfile -t production_images < <(docker compose "${production_compose[@]}" config --images)
+          if [[ "${#production_images[@]}" -ne 6 ]]; then
+            echo "Expected six production images, got ${#production_images[@]}." >&2
+            exit 1
+          fi
+          for image in "${production_images[@]}"; do
+            if [[ ! $image =~ ^.+@sha256:[0-9a-f]{64}$ ]]; then
+              echo "Production image is not pinned by digest: $image" >&2
+              exit 1
+            fi
+          done
+          docker compose "${production_compose[@]}" pull cloudflared database redis attachment-store-init
+          docker compose "${production_compose[@]}" up --detach --wait database redis
+          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
+          docker compose "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
           bash -n infrastructure/maintenance/*.sh
           bash infrastructure/maintenance/test-attachment-lifecycle.sh
