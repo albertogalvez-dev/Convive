@@ -161,6 +161,36 @@ describe('ReportEvidence', () => {
     expect(page.querySelectorAll('.remote-list li')).toHaveLength(1);
   });
 
+  it('re-establishes initial access before retrying after capability expiry', () => {
+    createComponent({ accessSecret: 'secret-value', autoLoad: false });
+    page.querySelector<HTMLButtonElement>('.open-evidence')?.click();
+    fixture.detectChanges();
+    httpTesting.expectOne(grantEndpoint).flush(null, { status: 204, statusText: 'No Content' });
+    resolveAttachmentList([]);
+    selectFiles([new File(['%PDF-1.7\nretry'], 'retry.pdf', { type: 'application/pdf' })]);
+
+    page.querySelector<HTMLButtonElement>('.evidence-actions .primary')?.click();
+    fixture.detectChanges();
+    httpTesting.expectOne(attachmentEndpoint).flush(null, {
+      status: 401,
+      statusText: 'Unauthorized',
+    });
+    fixture.detectChanges();
+
+    expect(page.querySelector('.access-failure')?.textContent).toContain('El acceso ha caducado.');
+
+    page.querySelector<HTMLButtonElement>('.access-failure button')?.click();
+    fixture.detectChanges();
+    const renewedGrant = httpTesting.expectOne(grantEndpoint);
+
+    expect(renewedGrant.request.body).toEqual({ accessSecret: 'secret-value' });
+    renewedGrant.flush(null, { status: 204, statusText: 'No Content' });
+    resolveAttachmentList([]);
+
+    expect(page.querySelector('.upload-failure')?.textContent).toContain('El acceso ha caducado.');
+    expect(page.querySelector<HTMLButtonElement>('.retry')).not.toBeNull();
+  });
+
   it('rejects unsupported selections before spending an upload request', () => {
     createReadyComponent();
     selectFiles([new File(['fictional'], 'notes.txt', { type: 'text/plain' })]);

@@ -200,8 +200,9 @@ export class ReportEvidence implements OnInit {
         },
         error: (error: unknown) => {
           this.refreshing.set(false);
-          this.statusMessage.set('No hemos podido actualizar los estados. Inténtalo de nuevo.');
-          this.emitIfAccessRejected(error);
+          if (!this.handleAccessRejected(error)) {
+            this.statusMessage.set('No hemos podido actualizar los estados. Inténtalo de nuevo.');
+          }
         },
       });
   }
@@ -303,7 +304,7 @@ export class ReportEvidence implements OnInit {
             status: 'failed',
             errorMessage: describeUploadError(error),
           }));
-          this.emitIfAccessRejected(error);
+          this.handleAccessRejected(error);
 
           if (!shouldStopQueue(error)) {
             this.uploadNext();
@@ -358,18 +359,24 @@ export class ReportEvidence implements OnInit {
 
   private failAccess(error: unknown): void {
     this.accessState.set('failed');
-    this.statusMessage.set('No hemos podido preparar las pruebas. Inténtalo de nuevo.');
-    this.emitIfAccessRejected(error);
+    if (!this.handleAccessRejected(error)) {
+      this.statusMessage.set('No hemos podido preparar las pruebas. Inténtalo de nuevo.');
+    }
   }
 
-  private emitIfAccessRejected(error: unknown): void {
-    if (
-      this.accessSecret() === null &&
-      error instanceof HttpErrorResponse &&
-      error.status === 401
-    ) {
-      this.accessRejected.emit();
+  private handleAccessRejected(error: unknown): boolean {
+    if (!(error instanceof HttpErrorResponse) || error.status !== 401) {
+      return false;
     }
+
+    if (this.accessSecret() === null) {
+      this.accessRejected.emit();
+    } else {
+      this.accessState.set('failed');
+      this.statusMessage.set('El acceso ha caducado. Prepáralo de nuevo para continuar.');
+    }
+
+    return true;
   }
 }
 
