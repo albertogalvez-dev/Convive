@@ -34,9 +34,10 @@ implementation exists.
 
 ## Data model
 
-The [data model diagram](diagrams/data-model.md) shows the entity–relationship
-view of the first domain schema (`organisations` and `reports`). Its
-human-readable schema source is [`data-model.dbml`](data-model.dbml). The
+The [data model diagram](diagrams/data-model.md) and its human-readable schema
+source [`data-model.dbml`](data-model.dbml) show the persisted domain model.
+The [data-model review](data-model-review.md) records the table inventory,
+explicit infrastructure/DBAL exclusions and repeatable review command. The
 authoritative sources remain the Doctrine mappings and the committed migrations.
 
 ## Main components
