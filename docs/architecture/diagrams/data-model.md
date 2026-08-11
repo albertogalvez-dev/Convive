@@ -17,10 +17,16 @@ erDiagram
         uuid organisation_id FK
         text situation_description
         varchar situation_context "in_person | digital | mixed | unknown"
-        varchar status "received"
+        varchar status "received | reviewed; independent from triage"
         varchar public_reference UK "non-sequential"
         varchar access_secret_hash UK "64-char lowercase hex SHA-256; secret never stored"
         timestamptz created_at "immutable UTC"
+        text review_reason "nullable until reviewed"
+        uuid reviewed_by_professional_id FK "nullable until reviewed"
+        timestamptz reviewed_at "nullable; immutable UTC"
+        int attachment_count "reserved slots"
+        int attachment_bytes "reserved bytes"
+        int version "optimistic lock"
     }
     report_access_grants {
         uuid id PK "UUIDv7, application-generated"
@@ -39,6 +45,23 @@ erDiagram
         text content "bounded to 2000 characters"
         timestamptz created_at "immutable UTC; append-only"
     }
+    managed_cases {
+        uuid id PK "UUIDv7; minimal case identity"
+        uuid organisation_id FK
+        uuid created_by_professional_id FK
+        timestamptz created_at "immutable UTC"
+    }
+    report_triage_decisions {
+        uuid id PK "UUIDv7; append-only"
+        uuid report_id FK
+        uuid organisation_id FK
+        uuid decided_by_professional_id FK
+        varchar outcome "keep | redirect | dismiss | link_to_case"
+        text reason "trimmed 10-1000 characters"
+        timestamptz decided_at "immutable UTC"
+        uuid terminal_report_id UK "null for keep; report id when terminal"
+        uuid case_id UK "only for link_to_case"
+    }
     professionals {
         uuid id PK "UUIDv7, application-generated"
         varchar name
@@ -54,8 +77,16 @@ erDiagram
         timestamptz revoked_at "nullable; row persists after revocation"
     }
     organisations ||--o{ reports : "receives"
+    professionals o|--o{ reports : "reviews"
     reports ||--o{ report_access_grants : "grants access to"
     reports ||--o{ report_follow_up_entries : "accumulates"
+    reports ||--o{ report_triage_decisions : "receives decisions"
+    reports o|--o| report_triage_decisions : "has terminal decision"
+    organisations ||--o{ managed_cases : "owns"
+    organisations ||--o{ report_triage_decisions : "scopes"
+    professionals ||--o{ managed_cases : "creates"
+    professionals ||--o{ report_triage_decisions : "decides"
+    managed_cases o|--o| report_triage_decisions : "is linked by"
     professionals ||--o{ organisation_memberships : "holds"
     organisations ||--o{ organisation_memberships : "grants"
 ```

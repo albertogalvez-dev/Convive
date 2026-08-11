@@ -225,6 +225,7 @@ nelmio_api_doc:
                         - situationDescription
                         - review
                         - followUpEntries
+                        - triageDecisions
                     properties:
                         id:
                             type: string
@@ -255,6 +256,52 @@ nelmio_api_doc:
                             maxItems: 100
                             items:
                                 $ref: '#/components/schemas/FollowUpEntry'
+                        triageDecisions:
+                            type: array
+                            items:
+                                $ref: '#/components/schemas/ProfessionalReportTriageDecision'
+
+                ProfessionalReportTriageDecision:
+                    type: object
+                    additionalProperties: false
+                    required: [id, outcome, reason, decidedAt, decidedBy, caseId]
+                    properties:
+                        id:
+                            type: string
+                            format: uuid
+                        outcome:
+                            type: string
+                            enum: [keep, redirect, dismiss, link_to_case]
+                        reason:
+                            type: string
+                            minLength: 10
+                            maxLength: 1000
+                        decidedAt:
+                            type: string
+                            format: date-time
+                        decidedBy:
+                            type: object
+                            additionalProperties: false
+                            required: [id, name]
+                            properties:
+                                id:
+                                    type: string
+                                    format: uuid
+                                name:
+                                    type: string
+                        caseId:
+                            oneOf:
+                                - type: string
+                                  format: uuid
+                                - type: 'null'
+
+                ProfessionalReportTriageResponse:
+                    type: object
+                    additionalProperties: false
+                    required: [decision]
+                    properties:
+                        decision:
+                            $ref: '#/components/schemas/ProfessionalReportTriageDecision'
 
                 ProfessionalReportPage:
                     type: object

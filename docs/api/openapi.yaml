@@ -217,6 +217,56 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/reports/{id}/triage-decisions':
+    post:
+      tags:
+        - 'Professional reports'
+      summary: 'Record an authorised report triage decision'
+      description: 'Appends a keep decision or records one terminal redirect, dismissal or idempotent report-to-case link. The original report is never rewritten or deleted.'
+      operationId: triageProfessionalReport
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - outcome
+                - reason
+              properties:
+                outcome:
+                  type: string
+                  enum: [keep, redirect, dismiss, link_to_case]
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 10
+              type: object
+              additionalProperties: false
+      responses:
+        '201':
+          description: 'The decision was recorded, or the existing case link was returned.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalReportTriageResponse'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The report is unavailable in this scope.'
+        '409':
+          description: 'The report is not reviewed or triage is already final.'
+        '422':
+          description: 'The triage decision is invalid.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/reports/{id}/responses':
     post:
       tags:
@@ -1029,6 +1079,7 @@ components:
         - situationDescription
         - review
         - followUpEntries
+        - triageDecisions
       properties:
         id:
           type: string
@@ -1067,6 +1118,65 @@ components:
           items:
             $ref: '#/components/schemas/FollowUpEntry'
           maxItems: 100
+        triageDecisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfessionalReportTriageDecision'
+      type: object
+      additionalProperties: false
+    ProfessionalReportTriageDecision:
+      required:
+        - id
+        - outcome
+        - reason
+        - decidedAt
+        - decidedBy
+        - caseId
+      properties:
+        id:
+          type: string
+          format: uuid
+        outcome:
+          type: string
+          enum:
+            - keep
+            - redirect
+            - dismiss
+            - link_to_case
+        reason:
+          type: string
+          maxLength: 1000
+          minLength: 10
+        decidedAt:
+          type: string
+          format: date-time
+        decidedBy:
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+          type: object
+          additionalProperties: false
+        caseId:
+          oneOf:
+            -
+              type: string
+              format: uuid
+            -
+              type: 'null'
+      type: object
+      additionalProperties: false
+    ProfessionalReportTriageResponse:
+      required:
+        - decision
+      properties:
+        decision:
+          $ref: '#/components/schemas/ProfessionalReportTriageDecision'
       type: object
       additionalProperties: false
     ProfessionalReportPage:
@@ -1145,6 +1255,20 @@ components:
       properties:
         reason:
           type: string
+      type: object
+    TriageProfessionalReportRequest:
+      properties:
+        outcome:
+          type: string
+          default: ''
+          enum:
+            - keep
+            - redirect
+            - dismiss
+            - link_to_case
+        reason:
+          type: string
+          default: ''
       type: object
     RespondToProfessionalReportRequest:
       required:

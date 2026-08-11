@@ -8,8 +8,10 @@ use App\Organisations\Application\GetPublicReportingProfile\PublicReportingOrgan
 use App\Organisations\Presentation\Http\PublicReportingOrganisationNotFoundHttpException;
 use App\Professionals\Presentation\Http\InvalidProfessionalReportRequestHttpException;
 use App\Professionals\Presentation\Http\InvalidProfessionalReportResponseHttpException;
+use App\Professionals\Presentation\Http\InvalidProfessionalReportTriageHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportAlreadyReviewedHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportNotFoundHttpException;
+use App\Professionals\Presentation\Http\ProfessionalReportTriageConflictHttpException;
 use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
 use App\Reporting\Application\AttachmentStorageLimitExceeded;
 use App\Reporting\Application\AttachmentDownloadConcurrencyLimitReached;
@@ -296,6 +298,32 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'Invalid professional report response',
                     Response::HTTP_UNPROCESSABLE_ENTITY,
                     'The submitted professional response is invalid.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof InvalidProfessionalReportTriageHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:invalid-report-triage',
+                    'Invalid report triage',
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'The submitted report triage decision is invalid.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof ProfessionalReportTriageConflictHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:report-triage-conflict',
+                    'Report triage conflict',
+                    Response::HTTP_CONFLICT,
+                    'The report cannot accept this triage decision.',
                 ),
             );
 

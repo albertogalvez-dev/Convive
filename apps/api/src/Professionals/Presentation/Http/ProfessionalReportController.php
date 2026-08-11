@@ -9,6 +9,7 @@ use App\Professionals\Domain\Professional;
 use App\Reporting\Application\AddProfessionalReportResponse\AddProfessionalReportResponse;
 use App\Reporting\Application\ProfessionalInbox\ProfessionalReportDetail;
 use App\Reporting\Application\ProfessionalInbox\ProfessionalReportInbox;
+use App\Reporting\Application\TriageReport\TriageReport;
 use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAttachment;
@@ -17,6 +18,11 @@ use App\Reporting\Domain\ReportAlreadyReviewed;
 use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\ReportStatus;
+use App\Reporting\Domain\ReportTriageAlreadyFinalised;
+use App\Reporting\Domain\ReportTriageDecision;
+use App\Reporting\Domain\ReportTriageOutcome;
+use App\Reporting\Domain\ReportTriageReason;
+use App\Reporting\Domain\ReportMustBeReviewedBeforeTriage;
 use App\Reporting\Presentation\Http\PrivateReportAttachmentDownloadResponder;
 use App\Reporting\Presentation\Http\ReportAttachmentPresenter;
 use App\Reporting\Presentation\Http\ReportAttachmentUnavailableHttpException;
@@ -45,6 +51,7 @@ final readonly class ProfessionalReportController
     public function __construct(
         private AuthorisedReportingOrganisations $authorisedOrganisations,
         private ProfessionalReportInbox $inbox,
+        private TriageReport $triageReport,
         private ProfessionalReportCursorCodec $cursorCodec,
         private AddProfessionalReportResponse $addProfessionalResponse,
         private ReportAttachmentRepository $attachments,
@@ -344,6 +351,82 @@ final readonly class ProfessionalReportController
     }
 
     #[Route(
+        '/api/v1/professional/reports/{id}/triage-decisions',
+        name: 'api_v1_professional_triage_report',
+        methods: ['POST'],
+        format: 'json',
+    )]
+    #[OA\Post(
+        operationId: 'triageProfessionalReport',
+        summary: 'Record an authorised report triage decision',
+        description: 'Appends a keep decision or records one terminal redirect, dismissal or idempotent report-to-case link. The original report is never rewritten or deleted.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional reports'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['outcome', 'reason'],
+                additionalProperties: false,
+                properties: [
+                    new OA\Property(
+                        property: 'outcome',
+                        type: 'string',
+                        enum: ['keep', 'redirect', 'dismiss', 'link_to_case'],
+                    ),
+                    new OA\Property(
+                        property: 'reason',
+                        type: 'string',
+                        minLength: ReportTriageReason::MIN_LENGTH,
+                        maxLength: ReportTriageReason::MAX_LENGTH,
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'The decision was recorded, or the existing case link was returned.',
+                content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalReportTriageResponse'),
+            ),
+            new OA\Response(response: 401, description: 'A professional session is required.'),
+            new OA\Response(response: 404, description: 'The report is unavailable in this scope.'),
+            new OA\Response(response: 409, description: 'The report is not reviewed or triage is already final.'),
+            new OA\Response(response: 422, description: 'The triage decision is invalid.'),
+        ],
+    )]
+    public function triage(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        TriageProfessionalReportRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+
+        try {
+            $outcome = ReportTriageOutcome::from($payload->outcome);
+            $reason = ReportTriageReason::fromString($payload->reason);
+        } catch (InvalidArgumentException|\ValueError $exception) {
+            throw new InvalidProfessionalReportTriageHttpException(previous: $exception);
+        }
+
+        try {
+            $decision = $this->triageReport->decide(
+                $detail->report,
+                $professional,
+                $outcome,
+                $reason,
+            );
+        } catch (ReportMustBeReviewedBeforeTriage|ReportTriageAlreadyFinalised $exception) {
+            throw new ProfessionalReportTriageConflictHttpException(previous: $exception);
+        }
+
+        return $this->json(
+            ['decision' => $this->serializeTriageDecision($decision)],
+            Response::HTTP_CREATED,
+        );
+    }
+
+    #[Route(
         '/api/v1/professional/reports/{id}/responses',
         name: 'api_v1_professional_respond_to_report',
         methods: ['POST'],
@@ -464,6 +547,26 @@ final readonly class ProfessionalReportController
                 $this->serializeFollowUpEntry(...),
                 $detail->followUpEntries,
             ),
+            'triageDecisions' => array_map(
+                $this->serializeTriageDecision(...),
+                $this->triageReport->history($report),
+            ),
+        ];
+    }
+
+    /** @return array{id: string, outcome: string, reason: string, decidedAt: string, decidedBy: array{id: string, name: string}, caseId: ?string} */
+    private function serializeTriageDecision(ReportTriageDecision $decision): array
+    {
+        return [
+            'id' => $decision->id()->toRfc4122(),
+            'outcome' => $decision->outcome()->value,
+            'reason' => $decision->reason()->toString(),
+            'decidedAt' => $decision->decidedAt()->format(DATE_RFC3339_EXTENDED),
+            'decidedBy' => [
+                'id' => $decision->decidedBy()->id()->toRfc4122(),
+                'name' => $decision->decidedBy()->name(),
+            ],
+            'caseId' => $decision->managedCase()?->id()->toRfc4122(),
         ];
     }
 

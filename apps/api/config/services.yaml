@@ -41,6 +41,7 @@ services:
     App\Reporting\Domain\ReportAccessGrantRepository: '@App\Reporting\Infrastructure\DoctrineReportAccessGrantRepository'
     App\Reporting\Domain\ReportFollowUpEntryRepository: '@App\Reporting\Infrastructure\DoctrineReportFollowUpEntryRepository'
     App\Reporting\Domain\ReportAttachmentRepository: '@App\Reporting\Infrastructure\DoctrineReportAttachmentRepository'
+    App\Reporting\Domain\ReportTriageDecisionRepository: '@App\Reporting\Infrastructure\DoctrineReportTriageDecisionRepository'
     App\Reporting\Application\AttachmentStorage: '@App\Reporting\Infrastructure\LocalPrivateAttachmentStorage'
     App\Reporting\Application\AttachmentDownloadConcurrencyLimiter: '@App\Reporting\Infrastructure\LocalPrivateAttachmentDownloadConcurrencyLimiter'
     App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\UnavailableAttachmentScanner'
