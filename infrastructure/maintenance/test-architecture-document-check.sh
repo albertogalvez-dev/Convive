@@ -26,13 +26,13 @@ create_fixture() {
         "${fixture_root}/docs/architecture/diagrams/data-model.md"
 }
 
-CONVIVE_ARCHITECTURE_CHECK_ROOT="${REPOSITORY_ROOT}" "${CHECK_COMMAND}" > /dev/null
+CONVIVE_ARCHITECTURE_CHECK_ROOT="${REPOSITORY_ROOT}" bash "${CHECK_COMMAND}" > /dev/null
 
 readonly MISSING_TABLE_FIXTURE="${TEST_DIRECTORY}/missing-table"
 create_fixture "${MISSING_TABLE_FIXTURE}"
 sed --in-place 's/^Table case_tasks {/# Table case_tasks intentionally removed/' \
     "${MISSING_TABLE_FIXTURE}/docs/architecture/data-model.dbml"
-if CONVIVE_ARCHITECTURE_CHECK_ROOT="${MISSING_TABLE_FIXTURE}" "${CHECK_COMMAND}" \
+if CONVIVE_ARCHITECTURE_CHECK_ROOT="${MISSING_TABLE_FIXTURE}" bash "${CHECK_COMMAND}" \
     > "${TEST_DIRECTORY}/missing-table.output" 2>&1; then
     echo 'The check accepted a DBML table inventory that drifts from Doctrine.' >&2
     exit 1
@@ -46,7 +46,7 @@ create_fixture "${MISSING_LINK_FIXTURE}"
 sed --in-place \
     's/\[data-model review\](data-model-review.md)/data-model review/' \
     "${MISSING_LINK_FIXTURE}/docs/architecture/README.md"
-if CONVIVE_ARCHITECTURE_CHECK_ROOT="${MISSING_LINK_FIXTURE}" "${CHECK_COMMAND}" \
+if CONVIVE_ARCHITECTURE_CHECK_ROOT="${MISSING_LINK_FIXTURE}" bash "${CHECK_COMMAND}" \
     > "${TEST_DIRECTORY}/missing-link.output" 2>&1; then
     echo 'The check accepted a missing maintained architecture link.' >&2
     exit 1
