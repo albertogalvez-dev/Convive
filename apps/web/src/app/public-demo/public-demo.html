@@ -1,0 +1,101 @@
+<main>
+  <header>
+    <a routerLink="/" aria-label="Convive, inicio"
+      ><img src="/convive-logo.svg" alt="" width="158" height="52"
+    /></a>
+    <a href="/profesionales/acceso">Área profesional</a>
+  </header>
+
+  <section class="intro" aria-labelledby="demo-title">
+    <p>DEMOSTRACIÓN FICTICIA</p>
+    <h1 id="demo-title">Así se vive el primer paso.</h1>
+    <p>
+      Explora un ejemplo seguro. No se envía ni se guarda información, y este recorrido no abre el
+      canal real de comunicaciones.
+    </p>
+  </section>
+
+  <section class="demo-layout" aria-label="Recorrido ficticio de comunicación">
+    <aside class="guide" aria-live="polite">
+      <p>RECORRIDO GUIADO</p>
+      <ol>
+        @for (step of steps; track step; let index = $index) {
+          <li [class.current]="currentStep === index" [class.done]="currentStep > index">
+            <button
+              type="button"
+              (click)="selectStep(index)"
+              [attr.aria-current]="currentStep === index ? 'step' : null"
+            >
+              <span>{{ index + 1 }}</span
+              >{{ step }}
+            </button>
+          </li>
+        }
+      </ol>
+      <div class="guide-controls">
+        @if (guideRunning) {
+          <button type="button" (click)="pauseGuide()">Pausar guía</button>
+        } @else {
+          <button type="button" (click)="restartGuide()">Reiniciar guía</button>
+        }
+        <button type="button" (click)="skipGuide()">Saltar guía</button>
+      </div>
+    </aside>
+
+    <section class="simulator" aria-labelledby="simulator-title">
+      <div class="fictional-label">EJEMPLO FICTICIO · NO OPERATIVO</div>
+      <p class="step-count">Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
+      @if (currentStep === 0) {
+        <h2 id="simulator-title">Cuéntanos qué ha ocurrido</h2>
+        <label for="fictional-situation">Ejemplo de situación ficticia</label>
+        <textarea id="fictional-situation" readonly>
+Una persona ha visto que una compañera parecía aislada durante el recreo.</textarea>
+        <p class="hint">
+          En el recorrido real, el centro explica los límites antes de pedir información.
+        </p>
+      } @else if (currentStep === 1) {
+        <h2 id="simulator-title">Sitúa el ejemplo</h2>
+        <p class="hint">Elige un contexto de muestra. Esta selección no se guarda.</p>
+        <div class="choices" role="group" aria-label="Contexto ficticio">
+          @for (context of ['En el centro', 'Online', 'En el centro y online']; track context) {
+            <button
+              type="button"
+              [class.selected]="selectedContext === context"
+              (click)="selectedContext = context"
+            >
+              {{ context }}
+            </button>
+          }
+        </div>
+      } @else {
+        <h2 id="simulator-title">Revisa antes de enviar</h2>
+        <div class="review">
+          <span>Situación</span><strong>Ejemplo ficticio de convivencia</strong><span>Contexto</span
+          ><strong>{{ selectedContext }}</strong>
+        </div>
+        <p class="hint">
+          En esta demostración, el botón final confirma el aprendizaje: no crea una comunicación.
+        </p>
+        <button class="finish" type="button" (click)="guideSkipped = true">
+          Finalizar ejemplo
+        </button>
+        @if (guideSkipped) {
+          <p class="confirmation" role="status">
+            Ejemplo finalizado. No se ha enviado ni guardado ninguna información.
+          </p>
+        }
+      }
+      <div class="step-actions">
+        <button type="button" (click)="previous()" [disabled]="currentStep === 0">Atrás</button>
+        @if (currentStep < steps.length - 1) {
+          <button type="button" class="next" (click)="next()">Continuar</button>
+        }
+      </div>
+    </section>
+  </section>
+
+  <p class="notice">
+    Para una situación real o urgente, utiliza los canales apropiados de tu centro o de emergencia.
+    Esta página es únicamente una demostración ficticia.
+  </p>
+</main>

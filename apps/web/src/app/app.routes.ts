@@ -23,16 +23,6 @@ const publicInformationRoutes: ReadonlyArray<{
   readonly content: PublicInformationContent;
 }> = [
   {
-    path: 'demostracion',
-    content: {
-      eyebrow: 'DEMOSTRACIÓN FICTICIA',
-      title: 'La demostración se está preparando.',
-      description:
-        'Mostrará recorridos ficticios para explicar Convive sin abrir el canal operativo de comunicaciones.',
-      notice: 'No utilices esta página para comunicar una situación real o urgente.',
-    },
-  },
-  {
     path: 'contacto',
     content: {
       eyebrow: 'INFORMACIÓN PARA CENTROS',
@@ -46,6 +36,11 @@ const publicInformationRoutes: ReadonlyArray<{
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: PublicHome, canMatch: [publicWebsiteHostGuard] },
+  {
+    path: 'demostracion',
+    loadComponent: () => import('./public-demo/public-demo').then((module) => module.PublicDemo),
+    canMatch: [publicWebsiteHostGuard],
+  },
   {
     path: 'blog',
     pathMatch: 'full',

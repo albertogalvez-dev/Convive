@@ -284,9 +284,7 @@ test('keeps the public product homepage accessible and separate from reporting e
   );
 
   await page.goto('/demostracion/');
-  await expect(
-    page.getByRole('heading', { name: 'La demostración se está preparando.' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
   await expectNoAccessibilityViolations(page);
 
   await page.goto('/');
@@ -333,6 +331,29 @@ test('keeps reviewed blog content accessible, responsive and attributable', asyn
     'https://conviveaula.com/blog/escuchar-y-ordenar-comunicaciones/',
   );
   await expectNoAccessibilityViolations(page);
+});
+
+test('keeps the reporter demonstration fictional, accessible and isolated', async ({ page }) => {
+  await page.route('**/api/**', (route) => route.abort());
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/demostracion/');
+
+  await expect(page.getByText('EJEMPLO FICTICIO · NO OPERATIVO')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
+  await expect(page.getByLabel('Ejemplo de situación ficticia')).toHaveAttribute('readonly', '');
+  await page.getByRole('button', { name: 'Pausar guía' }).click();
+  await expect(page.getByRole('button', { name: 'Reiniciar guía' })).toBeVisible();
+  await page.getByRole('button', { name: 'Saltar guía' }).click();
+  await expect(page.getByRole('heading', { name: 'Revisa antes de enviar' })).toBeVisible();
+  await page.getByRole('button', { name: 'Finalizar ejemplo' }).click();
+  await expect(page.getByRole('status')).toContainText('No se ha enviado ni guardado');
+  await expectNoAccessibilityViolations(page);
+  expect(page.url()).not.toContain('/r/');
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
 });
 
 test('keeps the fictional demo critical paths within performance budgets', async ({
