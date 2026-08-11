@@ -56,6 +56,7 @@ class CaseAssignment
         $this->role = $role;
         $this->assignedBy = $assignedBy;
         $this->assignedAt = $assignedAt;
+        $this->managedCase->recordOperationalActivity($assignedAt);
     }
 
     public function permits(CasePermission $permission): bool
@@ -79,6 +80,7 @@ class CaseAssignment
         }
 
         $this->revokedAt ??= $now;
+        $this->managedCase->recordOperationalActivity($now);
     }
 
     public function isActive(): bool

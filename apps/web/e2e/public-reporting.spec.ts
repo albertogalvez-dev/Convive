@@ -217,6 +217,25 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await loginAsProfessional(leadPage, TRIAGE_EMAIL);
     await leadPage.goto(absoluteUrl('/profesionales/casos'));
     await expect(leadPage.getByRole('heading', { name: 'Casos', exact: true })).toBeVisible();
+    await expect(leadPage.getByRole('button', { name: /Asignados/ })).toContainText('1');
+    await expect(leadPage.getByRole('button', { name: /Fuera de plazo/ })).toContainText('1');
+    await expect(leadPage.locator('.cases-card li a')).toHaveCount(1);
+    await leadPage.getByRole('button', { name: /Fuera de plazo/ }).click();
+    await expect(leadPage.locator('.cases-card li a')).toHaveCount(1);
+    await leadPage.getByLabel('Ámbito').selectOption('digital');
+    await leadPage.getByRole('button', { name: 'Aplicar' }).click();
+    await expect(
+      leadPage.getByRole('heading', { name: 'No hay casos que coincidan' }),
+    ).toBeVisible();
+    await expectNoAccessibilityViolations(leadPage);
+    await leadPage.setViewportSize({ width: 390, height: 844 });
+    expect(
+      await leadPage.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      ),
+    ).toBe(true);
+    await leadPage.setViewportSize({ width: 1280, height: 720 });
+    await leadPage.getByRole('button', { name: 'Limpiar' }).click();
     await expect(leadPage.locator('.cases-card li a')).toHaveCount(1);
     await leadPage.locator('.cases-card li a').click();
     await expect(leadPage.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();

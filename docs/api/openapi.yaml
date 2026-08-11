@@ -44,8 +44,57 @@ paths:
     get:
       tags:
         - 'Professional cases'
-      summary: 'List cases assigned to the current professional'
+      summary: 'List operational views of cases assigned to the current professional'
       operationId: listProfessionalCases
+      parameters:
+        -
+          name: view
+          in: query
+          schema:
+            type: string
+            enum:
+              - assigned
+              - overdue
+              - upcoming
+              - recent
+        -
+          name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - assessment
+              - active
+              - closed
+        -
+          name: modality
+          in: query
+          schema:
+            type: string
+            enum:
+              - in_person
+              - digital
+              - mixed
+              - unknown
+        -
+          name: reference
+          in: query
+          schema:
+            type: string
+            maxLength: 64
+        -
+          name: limit
+          in: query
+          schema:
+            type: integer
+            maximum: 50
+            minimum: 1
+        -
+          name: cursor
+          in: query
+          schema:
+            type: string
+            maxLength: 512
       responses:
         '200':
           description: 'The bounded case workspace overview.'
@@ -53,6 +102,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProfessionalCasePage'
+        '400':
+          description: 'A filter or cursor is invalid.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
+  /api/v1/professional/cases/operational-summary:
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Read permission-preserving case operational counts'
+      operationId: getProfessionalCaseOperationalSummary
+      responses:
+        '200':
+          description: 'Counts derived only from exact active case assignments.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseOperationalSummary'
         '401':
           description: 'A professional session is required.'
       security:
@@ -1402,12 +1471,48 @@ components:
     ProfessionalCasePage:
       required:
         - items
+        - pagination
       properties:
         items:
           type: array
           items:
             $ref: '#/components/schemas/ProfessionalCaseSummary'
           maxItems: 50
+        pagination:
+          required:
+            - limit
+            - nextCursor
+          properties:
+            limit:
+              type: integer
+              maximum: 50
+              minimum: 1
+            nextCursor:
+              oneOf:
+                -
+                  type: string
+                  maxLength: 512
+                -
+                  type: 'null'
+          type: object
+          additionalProperties: false
+      type: object
+      additionalProperties: false
+    ProfessionalCaseOperationalSummary:
+      required:
+        - assigned
+        - overdue
+        - upcoming
+      properties:
+        assigned:
+          type: integer
+          minimum: 0
+        overdue:
+          type: integer
+          minimum: 0
+        upcoming:
+          type: integer
+          minimum: 0
       type: object
       additionalProperties: false
     ProfessionalCasePerson:

@@ -395,14 +395,15 @@ final readonly class SeedFictionalDemo
     {
         $this->connection->executeStatement(
             'INSERT INTO managed_cases (
-                id, organisation_id, created_by_professional_id, created_at, status, modality
+                id, organisation_id, created_by_professional_id, created_at, operational_updated_at, status, modality
              ) VALUES (
-                :id, :organisation_id, :professional_id, :created_at, :status, :modality
+                :id, :organisation_id, :professional_id, :created_at, :operational_updated_at, :status, :modality
              )
              ON CONFLICT (id) DO UPDATE SET
                 organisation_id = EXCLUDED.organisation_id,
                 created_by_professional_id = EXCLUDED.created_by_professional_id,
                 created_at = EXCLUDED.created_at,
+                operational_updated_at = EXCLUDED.operational_updated_at,
                 status = EXCLUDED.status,
                 modality = EXCLUDED.modality',
             [
@@ -410,6 +411,7 @@ final readonly class SeedFictionalDemo
                 'organisation_id' => FictionalDemoDataset::ORGANISATION_ID,
                 'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
                 'created_at' => '2026-08-10T09:30:00+02:00',
+                'operational_updated_at' => '2026-08-10T09:40:00+02:00',
                 'status' => 'assessment',
                 'modality' => 'mixed',
             ],

@@ -50,6 +50,7 @@ erDiagram
         uuid organisation_id FK
         uuid created_by_professional_id FK
         timestamptz created_at "immutable UTC"
+        timestamptz operational_updated_at "latest explicit case, assignment or task activity"
     }
     report_triage_decisions {
         uuid id PK "UUIDv7; append-only"

@@ -5,13 +5,31 @@ declare(strict_types=1);
 namespace App\Cases\Domain;
 
 use App\Professionals\Domain\Professional;
+use App\Organisations\Domain\Organisation;
 use App\Reporting\Domain\ReportTriageDecision;
 use Symfony\Component\Uid\Uuid;
 
 interface CaseWorkspaceRepository
 {
-    /** @return list<CaseAssignment> */
-    public function findActiveAssignmentsForProfessional(Professional $professional, int $limit): array;
+    /**
+     * @param list<Organisation> $organisations
+     * @return list<CaseAssignment>
+     */
+    public function findActiveAssignmentsForProfessional(
+        Professional $professional,
+        array $organisations,
+        CaseWorkspaceQuery $query,
+    ): array;
+
+    /**
+     * @param list<Organisation> $organisations
+     * @return array{assigned: int, overdue: int, upcoming: int}
+     */
+    public function countOperationalCasesForProfessional(
+        Professional $professional,
+        array $organisations,
+        \DateTimeImmutable $now,
+    ): array;
 
     public function findCase(Uuid $id): ?ManagedCase;
 

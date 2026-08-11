@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export type CaseStatus = 'assessment' | 'active' | 'closed';
 export type CaseModality = 'in_person' | 'digital' | 'mixed' | 'unknown';
 export type CaseAssignmentRole = 'lead' | 'contributor' | 'observer';
+export type CaseOperationalView = 'assigned' | 'overdue' | 'upcoming' | 'recent';
 export type CaseTaskStatus = 'pending' | 'completed' | 'not_applicable';
 export type WorkflowSourceAuthority = 'binding' | 'recommended' | 'internal';
 export type CaseAuditAction =
@@ -28,6 +29,20 @@ export interface ProfessionalCaseSummary {
   pendingTasks: number;
   overdueTasks: number;
   nextDueAt: string | null;
+}
+
+export interface ProfessionalCasePage {
+  items: ProfessionalCaseSummary[];
+  pagination: { limit: number; nextCursor: string | null };
+}
+
+export interface ProfessionalCaseFilters {
+  view?: CaseOperationalView;
+  status?: CaseStatus | '';
+  modality?: CaseModality | '';
+  reference?: string;
+  cursor?: string;
+  limit?: number;
 }
 
 export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
@@ -87,8 +102,21 @@ export class ProfessionalCasesService {
   private readonly http = inject(HttpClient);
   private readonly endpoint = '/api/v1/professional/cases';
 
-  list(): Observable<{ items: ProfessionalCaseSummary[] }> {
-    return this.http.get<{ items: ProfessionalCaseSummary[] }>(this.endpoint);
+  list(filters: ProfessionalCaseFilters = {}): Observable<ProfessionalCasePage> {
+    let params = new HttpParams();
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== undefined && value !== '') {
+        params = params.set(key, String(value));
+      }
+    }
+
+    return this.http.get<ProfessionalCasePage>(this.endpoint, { params });
+  }
+
+  operationalSummary(): Observable<{ assigned: number; overdue: number; upcoming: number }> {
+    return this.http.get<{ assigned: number; overdue: number; upcoming: number }>(
+      `${this.endpoint}/operational-summary`,
+    );
   }
 
   detail(id: string): Observable<ProfessionalCaseDetail> {

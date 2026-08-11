@@ -7,6 +7,18 @@ import { vi } from 'vitest';
 import { ProfessionalCases } from './professional-cases';
 
 describe('ProfessionalCases', () => {
+  interface CaseSummaryFixture {
+    id: string;
+    status: 'assessment';
+    modality: 'mixed';
+    createdAt: string;
+    organisationName: string;
+    assignmentRole: 'lead';
+    pendingTasks: number;
+    overdueTasks: number;
+    nextDueAt: string;
+  }
+
   let fixture: ComponentFixture<ProfessionalCases>;
   let page: HTMLElement;
   let http: HttpTestingController;
@@ -25,7 +37,7 @@ describe('ProfessionalCases', () => {
   afterEach(() => http.verify());
 
   it('renders only API-authorised case summaries and their next action', () => {
-    http.expectOne('/api/v1/professional/cases').flush({ items: [summary()] });
+    flushInitial([summary()]);
     fixture.detectChanges();
 
     expect(page.textContent).toContain('Caso ABCD1234');
@@ -37,7 +49,7 @@ describe('ProfessionalCases', () => {
   });
 
   it('shows the accessible empty state and redirects after session expiry', () => {
-    http.expectOne('/api/v1/professional/cases').flush({ items: [] });
+    flushInitial([]);
     fixture.detectChanges();
     expect(page.textContent).toContain('No tienes casos asignados');
 
@@ -45,12 +57,64 @@ describe('ProfessionalCases', () => {
     second.detectChanges();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     http
-      .expectOne('/api/v1/professional/cases')
+      .expectOne((request) => request.url === '/api/v1/professional/cases')
       .flush(null, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne('/api/v1/professional/cases/operational-summary').flush({
+      assigned: 0,
+      overdue: 0,
+      upcoming: 0,
+    });
     expect(navigate).toHaveBeenCalledWith(['/profesionales/acceso']);
   });
 
-  function summary() {
+  it('uses operational views, filters and a continuation cursor without client-side data', () => {
+    flushInitial([summary()], { nextCursor: 'next-page' });
+    fixture.detectChanges();
+
+    page.querySelector<HTMLButtonElement>('.operational-summary button:nth-child(2)')?.click();
+    const overdue = http.expectOne(
+      (request) =>
+        request.url === '/api/v1/professional/cases' && request.params.get('view') === 'overdue',
+    );
+    overdue.flush({
+      items: [summary({ overdueTasks: 1 })],
+      pagination: { limit: 20, nextCursor: 'overdue-next' },
+    });
+    fixture.detectChanges();
+
+    page.querySelector<HTMLButtonElement>('.load-more button')?.click();
+    const next = http.expectOne(
+      (request) =>
+        request.url === '/api/v1/professional/cases' &&
+        request.params.get('view') === 'overdue' &&
+        request.params.get('cursor') === 'overdue-next',
+    );
+    next.flush({
+      items: [summary({ id: 'case-SECOND01' })],
+      pagination: { limit: 20, nextCursor: null },
+    });
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Caso SECOND01');
+  });
+
+  function flushInitial(
+    items: CaseSummaryFixture[],
+    pagination: { nextCursor: string | null } = { nextCursor: null },
+  ) {
+    const list = http.expectOne(
+      (request) =>
+        request.url === '/api/v1/professional/cases' && request.params.get('view') === 'assigned',
+    );
+    list.flush({ items, pagination: { limit: 20, nextCursor: pagination.nextCursor } });
+    http.expectOne('/api/v1/professional/cases/operational-summary').flush({
+      assigned: items.length,
+      overdue: 0,
+      upcoming: 0,
+    });
+  }
+
+  function summary(overrides: Partial<CaseSummaryFixture> = {}): CaseSummaryFixture {
     return {
       id: 'case-ABCD1234',
       status: 'assessment',
@@ -61,6 +125,7 @@ describe('ProfessionalCases', () => {
       pendingTasks: 1,
       overdueTasks: 0,
       nextDueAt: '2026-08-12T09:00:00+00:00',
+      ...overrides,
     };
   }
 });

@@ -98,6 +98,7 @@ class CaseTask
         $this->status = CaseTaskStatus::Pending;
         $this->createdBy = $createdBy;
         $this->createdAt = $createdAt;
+        $this->managedCase->recordOperationalActivity($createdAt);
     }
 
     public function complete(Professional $actor, DateTimeImmutable $at): void
@@ -133,6 +134,7 @@ class CaseTask
         $this->status = $status;
         $this->resolvedBy = $actor;
         $this->resolvedAt = $at;
+        $this->managedCase->recordOperationalActivity($at);
     }
 
     public function id(): Uuid { return $this->id; }

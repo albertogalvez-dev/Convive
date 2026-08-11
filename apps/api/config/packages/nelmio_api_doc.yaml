@@ -356,12 +356,31 @@ nelmio_api_doc:
                 ProfessionalCasePage:
                     type: object
                     additionalProperties: false
-                    required: [items]
+                    required: [items, pagination]
                     properties:
                         items:
                             type: array
                             maxItems: 50
                             items: { $ref: '#/components/schemas/ProfessionalCaseSummary' }
+                        pagination:
+                            type: object
+                            additionalProperties: false
+                            required: [limit, nextCursor]
+                            properties:
+                                limit: { type: integer, minimum: 1, maximum: 50 }
+                                nextCursor:
+                                    oneOf:
+                                        - { type: string, maxLength: 512 }
+                                        - { type: 'null' }
+
+                ProfessionalCaseOperationalSummary:
+                    type: object
+                    additionalProperties: false
+                    required: [assigned, overdue, upcoming]
+                    properties:
+                        assigned: { type: integer, minimum: 0 }
+                        overdue: { type: integer, minimum: 0 }
+                        upcoming: { type: integer, minimum: 0 }
 
                 ProfessionalCasePerson:
                     type: object
