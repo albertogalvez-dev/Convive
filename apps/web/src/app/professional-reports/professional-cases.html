@@ -6,6 +6,57 @@
     </div>
   </header>
 
+  <section class="operational-summary" aria-label="Resumen operativo de casos">
+    <button type="button" [class.selected]="view() === 'assigned'" (click)="selectView('assigned')">
+      <span>Asignados</span><strong>{{ summary().assigned }}</strong>
+    </button>
+    <button type="button" [class.selected]="view() === 'overdue'" (click)="selectView('overdue')">
+      <span>Fuera de plazo</span><strong>{{ summary().overdue }}</strong>
+    </button>
+    <button type="button" [class.selected]="view() === 'upcoming'" (click)="selectView('upcoming')">
+      <span>Próximos</span><strong>{{ summary().upcoming }}</strong>
+    </button>
+    <button type="button" [class.selected]="view() === 'recent'" (click)="selectView('recent')">
+      <span>Actividad reciente</span><strong aria-hidden="true">→</strong>
+    </button>
+  </section>
+
+  <form class="case-filters" (ngSubmit)="applyFilters()" aria-label="Filtrar casos">
+    <label>
+      <span>Referencia</span>
+      <input
+        type="search"
+        name="reference"
+        [ngModel]="reference()"
+        (ngModelChange)="reference.set($event)"
+        maxlength="64"
+      />
+    </label>
+    <label>
+      <span>Estado</span>
+      <select name="status" [ngModel]="status()" (ngModelChange)="status.set($event)">
+        <option value="">Todos</option>
+        <option value="assessment">En valoración</option>
+        <option value="active">En curso</option>
+        <option value="closed">Cerrados</option>
+      </select>
+    </label>
+    <label>
+      <span>Ámbito</span>
+      <select name="modality" [ngModel]="modality()" (ngModelChange)="modality.set($event)">
+        <option value="">Todos</option>
+        <option value="in_person">En el centro</option>
+        <option value="digital">Digital</option>
+        <option value="mixed">Mixto</option>
+        <option value="unknown">Sin concretar</option>
+      </select>
+    </label>
+    <button type="submit">Aplicar</button>
+    @if (hasFilters()) {
+      <button type="button" class="clear" (click)="clearFilters()">Limpiar</button>
+    }
+  </form>
+
   <div class="cases-card" aria-live="polite">
     @if (loading()) {
       <div class="state">
@@ -20,7 +71,7 @@
     } @else if (items().length === 0) {
       <div class="state empty">
         <span aria-hidden="true">&#10003;</span>
-        <h2>No tienes casos asignados</h2>
+        <h2>{{ hasFilters() ? 'No hay casos que coincidan' : 'No tienes casos asignados' }}</h2>
       </div>
     } @else {
       <ul>
@@ -55,6 +106,13 @@
           </li>
         }
       </ul>
+      @if (nextCursor()) {
+        <div class="load-more">
+          <button type="button" (click)="loadMore()" [disabled]="loadingMore()">
+            {{ loadingMore() ? 'Cargando…' : 'Mostrar más casos' }}
+          </button>
+        </div>
+      }
     }
   </div>
 </section>
