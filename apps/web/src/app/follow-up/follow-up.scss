@@ -48,6 +48,11 @@
   align-items: start;
 }
 
+.report-actions {
+  display: grid;
+  gap: 1rem;
+}
+
 .add-information {
   padding: 1.75rem;
   background: #fff;

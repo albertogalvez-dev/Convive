@@ -18,52 +18,58 @@
             <div class="report-workspace">
               <app-follow-up-report [report]="current.report" />
 
-              <section class="add-information" aria-labelledby="add-information-title">
-                <h2 id="add-information-title">Añadir información</h2>
+              <div class="report-actions">
+                <section class="add-information" aria-labelledby="add-information-title">
+                  <h2 id="add-information-title">Añadir información</h2>
 
-                <form [formGroup]="entryForm" (ngSubmit)="addFollowUpEntry()" novalidate>
-                  <label class="visually-hidden" for="followUpContent">Qué quieres añadir</label>
-                  <textarea
-                    id="followUpContent"
-                    formControlName="content"
-                    rows="4"
-                    [attr.maxlength]="maxLength"
-                    placeholder="Escribe aquí…"
-                    [attr.aria-describedby]="
-                      entryForm.controls.content.touched && entryForm.controls.content.invalid
-                        ? 'content-counter content-error'
-                        : 'content-counter'
-                    "
-                  ></textarea>
+                  <form [formGroup]="entryForm" (ngSubmit)="addFollowUpEntry()" novalidate>
+                    <label class="visually-hidden" for="followUpContent">Qué quieres añadir</label>
+                    <textarea
+                      id="followUpContent"
+                      formControlName="content"
+                      rows="4"
+                      [attr.maxlength]="maxLength"
+                      placeholder="Escribe aquí…"
+                      [attr.aria-describedby]="
+                        entryForm.controls.content.touched && entryForm.controls.content.invalid
+                          ? 'content-counter content-error'
+                          : 'content-counter'
+                      "
+                    ></textarea>
 
-                  <div class="field-meta">
-                    @if (entryForm.controls.content.touched && entryForm.controls.content.invalid) {
-                      <p id="content-error" class="error" role="alert">
-                        Escribe la información que quieres añadir.
-                      </p>
-                    }
-                    <span id="content-counter">
-                      {{ entryForm.controls.content.value.length }} / {{ maxLength }}
-                    </span>
-                  </div>
-
-                  @if (entryError(); as message) {
-                    <p class="error submission-error" role="alert">{{ message }}</p>
-                  }
-
-                  <p class="entry-confirmation" role="status">{{ entryConfirmation() }}</p>
-
-                  <div class="actions actions-end">
-                    <button type="submit" class="primary" [disabled]="entrySubmitting()">
-                      @if (entrySubmitting()) {
-                        Añadiendo…
-                      } @else {
-                        Añadir información
+                    <div class="field-meta">
+                      @if (
+                        entryForm.controls.content.touched && entryForm.controls.content.invalid
+                      ) {
+                        <p id="content-error" class="error" role="alert">
+                          Escribe la información que quieres añadir.
+                        </p>
                       }
-                    </button>
-                  </div>
-                </form>
-              </section>
+                      <span id="content-counter">
+                        {{ entryForm.controls.content.value.length }} / {{ maxLength }}
+                      </span>
+                    </div>
+
+                    @if (entryError(); as message) {
+                      <p class="error submission-error" role="alert">{{ message }}</p>
+                    }
+
+                    <p class="entry-confirmation" role="status">{{ entryConfirmation() }}</p>
+
+                    <div class="actions actions-end">
+                      <button type="submit" class="primary" [disabled]="entrySubmitting()">
+                        @if (entrySubmitting()) {
+                          Añadiendo…
+                        } @else {
+                          Añadir información
+                        }
+                      </button>
+                    </div>
+                  </form>
+                </section>
+
+                <app-report-evidence (accessRejected)="attachmentAccessRejected()" />
+              </div>
             </div>
           }
           @case ('loading') {
