@@ -1,0 +1,52 @@
+<main>
+  <header>
+    <a routerLink="/" aria-label="Convive, inicio"
+      ><img src="/convive-logo.svg" alt="" width="158" height="52"
+    /></a>
+    <a href="/profesionales/acceso">Área profesional</a>
+  </header>
+  @if (article(); as currentArticle) {
+    <article>
+      <header class="article-header">
+        <a class="back" routerLink="/blog/">← Blog</a>
+        <p class="eyebrow">{{ currentArticle.category }}</p>
+        <h1>{{ currentArticle.title }}</h1>
+        <p>{{ currentArticle.introduction }}</p>
+        <p class="meta">
+          {{ currentArticle.readingMinutes }} MIN DE LECTURA · ACTUALIZADO EL
+          {{ currentArticle.updatedLabel }}
+        </p>
+      </header>
+      <div class="article-copy">
+        @for (section of currentArticle.sections; track section.heading) {
+          <section>
+            <h2>{{ section.heading }}</h2>
+            @for (paragraph of section.paragraphs; track paragraph) {
+              <p>{{ paragraph }}</p>
+            }
+          </section>
+        }
+      </div>
+      <section class="sources" aria-labelledby="sources-title">
+        <h2 id="sources-title">Fuentes y límites</h2>
+        <ul class="source-list">
+          @for (source of currentArticle.sources; track source.href) {
+            <li>
+              <a [href]="source.href">{{ source.label }}</a>
+            </li>
+          }
+        </ul>
+        <p class="notice">
+          Información general revisada el {{ currentArticle.updatedLabel }}. No es asesoramiento
+          jurídico, clínico ni una guía de actuación ante emergencias.
+        </p>
+      </section>
+    </article>
+  } @else {
+    <section class="unavailable" aria-labelledby="unavailable-title">
+      <h1 id="unavailable-title">Artículo no disponible</h1>
+      <p>Puede que el enlace haya cambiado o que el contenido ya no esté publicado.</p>
+      <a class="back" routerLink="/blog/">Volver al blog</a>
+    </section>
+  }
+</main>

@@ -305,6 +305,36 @@ test('keeps the public product homepage accessible and separate from reporting e
   ).toHaveCount(0);
 });
 
+test('keeps reviewed blog content accessible, responsive and attributable', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/blog/');
+
+  await expect(
+    page.getByRole('heading', { name: 'Ideas para escuchar con más cuidado.' }),
+  ).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+
+  await page
+    .getByRole('link', { name: 'Escuchar y ordenar comunicaciones sin prometer más de lo posible' })
+    .click();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Escuchar y ordenar comunicaciones sin prometer más de lo posible',
+    }),
+  ).toBeVisible();
+  await expect(page.locator('.source-list a')).toHaveCount(2);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://conviveaula.com/blog/escuchar-y-ordenar-comunicaciones/',
+  );
+  await expectNoAccessibilityViolations(page);
+});
+
 test('keeps the fictional demo critical paths within performance budgets', async ({
   browser,
   page,

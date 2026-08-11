@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
+import { PublicSeoService } from '../public-seo.service';
 import { professionalAccessUrlFor } from '../site-hosts';
 
 @Component({
@@ -8,6 +9,16 @@ import { professionalAccessUrlFor } from '../site-hosts';
   templateUrl: './public-home.html',
   styleUrl: './public-home.scss',
 })
-export class PublicHome {
+export class PublicHome implements OnInit {
+  private readonly seo = inject(PublicSeoService);
   readonly professionalAccessUrl = professionalAccessUrlFor(globalThis.location.hostname);
+
+  ngOnInit(): void {
+    this.seo.update({
+      title: 'Convive',
+      description:
+        'Un canal seguro para que los centros educativos reciban, ordenen y respondan comunicaciones.',
+      path: '/',
+    });
+  }
 }

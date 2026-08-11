@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
-import { FollowUp } from './follow-up/follow-up';
 import { EmailVerification } from './email-verification/email-verification';
+import { FollowUp } from './follow-up/follow-up';
 import { applicationHostGuard, publicWebsiteHostGuard } from './host-boundary.guard';
 import { NotFound } from './not-found/not-found';
 import { PublicHome } from './public-home/public-home';
@@ -11,27 +11,17 @@ import {
 } from './public-information/public-information';
 import { ProfessionalAccess } from './professional-access/professional-access';
 import { professionalAuthGuard } from './professional-access/professional-auth.guard';
-import { ProfessionalDetail } from './professional-reports/professional-detail';
 import { ProfessionalDashboard } from './professional-reports/professional-dashboard';
+import { ProfessionalDetail } from './professional-reports/professional-detail';
 import { ProfessionalInbox } from './professional-reports/professional-inbox';
-import { ProfessionalShell } from './professional-reports/professional-shell';
 import { ProfessionalSettings } from './professional-reports/professional-settings';
+import { ProfessionalShell } from './professional-reports/professional-shell';
 import { ReportForm } from './reporting/report-form';
 
 const publicInformationRoutes: ReadonlyArray<{
   readonly path: string;
   readonly content: PublicInformationContent;
 }> = [
-  {
-    path: 'blog',
-    content: {
-      eyebrow: 'BLOG DE CONVIVE',
-      title: 'Contenido en preparación.',
-      description:
-        'Estamos preparando publicaciones revisadas sobre convivencia escolar y el producto Convive.',
-      notice: 'No publicamos orientación legal, clínica ni de actuación ante emergencias.',
-    },
-  },
   {
     path: 'demostracion',
     content: {
@@ -56,6 +46,17 @@ const publicInformationRoutes: ReadonlyArray<{
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: PublicHome, canMatch: [publicWebsiteHostGuard] },
+  {
+    path: 'blog',
+    pathMatch: 'full',
+    loadComponent: () => import('./blog/blog-index').then((module) => module.BlogIndex),
+    canMatch: [publicWebsiteHostGuard],
+  },
+  {
+    path: 'blog/:slug',
+    loadComponent: () => import('./blog/blog-article').then((module) => module.BlogArticle),
+    canMatch: [publicWebsiteHostGuard],
+  },
   ...publicInformationRoutes.map(({ path, content }) => ({
     path,
     component: PublicInformation,
@@ -66,22 +67,10 @@ export const routes: Routes = [
     path: '',
     canMatch: [applicationHostGuard],
     children: [
-      {
-        path: 'r/:publicReportingIdentifier',
-        component: ReportForm,
-      },
-      {
-        path: 'seguimiento',
-        component: FollowUp,
-      },
-      {
-        path: 'verificar-correo',
-        component: EmailVerification,
-      },
-      {
-        path: 'profesionales/acceso',
-        component: ProfessionalAccess,
-      },
+      { path: 'r/:publicReportingIdentifier', component: ReportForm },
+      { path: 'seguimiento', component: FollowUp },
+      { path: 'verificar-correo', component: EmailVerification },
+      { path: 'profesionales/acceso', component: ProfessionalAccess },
       {
         path: 'profesionales',
         component: ProfessionalShell,
