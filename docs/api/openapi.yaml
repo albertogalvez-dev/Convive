@@ -43,8 +43,10 @@ paths:
               schema:
                 required:
                   - name
+                  - reportingMode
                 properties:
                   name: { type: string, example: 'IES Valle Sereno' }
+                  reportingMode: { type: string, example: operational, enum: [operational, fictional_demo, disabled] }
                 type: object
                 additionalProperties: false
         '404':
@@ -1016,6 +1018,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: 'The public fictional demonstration does not accept report content.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: 'The reporting organisation does not exist.'
           content:
@@ -1060,6 +1068,12 @@ paths:
           description: 'A capability was issued and returned through a protected cookie.'
         '401':
           description: 'The access secret was not accepted.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: 'The public fictional demonstration does not issue reporter capabilities.'
           content:
             application/problem+json:
               schema:

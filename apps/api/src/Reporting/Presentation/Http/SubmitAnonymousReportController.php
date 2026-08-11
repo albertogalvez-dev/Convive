@@ -112,6 +112,16 @@ final readonly class SubmitAnonymousReportController
                 ),
             ),
             new OA\Response(
+                response: Response::HTTP_FORBIDDEN,
+                description: 'The public fictional demonstration does not accept report content.',
+                content: new OA\MediaType(
+                    mediaType: 'application/problem+json',
+                    schema: new OA\Schema(
+                        ref: '#/components/schemas/ProblemDetails',
+                    ),
+                ),
+            ),
+            new OA\Response(
                 response: Response::HTTP_NOT_FOUND,
                 description: 'The reporting organisation does not exist.',
                 content: new OA\MediaType(

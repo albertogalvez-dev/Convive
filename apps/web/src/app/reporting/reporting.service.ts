@@ -6,6 +6,7 @@ import { SituationContext } from './situation-context';
 
 export interface PublicReportingProfile {
   name: string;
+  reportingMode: 'operational' | 'fictional_demo' | 'disabled';
 }
 
 export interface SubmitReportRequest {

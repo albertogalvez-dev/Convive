@@ -17,6 +17,8 @@ import { describeSituationContext, SituationContext } from './situation-context'
 type ReportingProfileState =
   | { status: 'loading' }
   | { status: 'ready'; profile: PublicReportingProfile }
+  | { status: 'fictional-demo'; profile: PublicReportingProfile }
+  | { status: 'disabled'; profile: PublicReportingProfile }
   | { status: 'invalid' }
   | { status: 'unavailable' };
 
@@ -177,8 +179,14 @@ export class ReportForm {
     this.reporting.getPublicReportingProfile(this.publicReportingIdentifier).subscribe({
       next: (profile) => {
         this.hideProfileLoading();
+        const status =
+          profile.reportingMode === 'fictional_demo'
+            ? 'fictional-demo'
+            : profile.reportingMode === 'disabled'
+              ? 'disabled'
+              : 'ready';
         this.profileState.set({
-          status: 'ready',
+          status,
           profile,
         });
       },

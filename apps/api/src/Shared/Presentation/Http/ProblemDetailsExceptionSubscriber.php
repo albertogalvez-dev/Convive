@@ -23,6 +23,7 @@ use App\Reporting\Presentation\Http\AttachmentUploadInvalidHttpException;
 use App\Reporting\Presentation\Http\AttachmentUploadTooLargeHttpException;
 use App\Reporting\Presentation\Http\AttachmentUploadUnsupportedMediaTypeHttpException;
 use App\Reporting\Presentation\Http\InvalidFollowUpEntryHttpException;
+use App\Reporting\Presentation\Http\PublicReportingUnavailableHttpException;
 use App\Reporting\Presentation\Http\ReportAccessCapabilityRejectedHttpException;
 use App\Reporting\Presentation\Http\ReportAccessDeniedHttpException;
 use App\Reporting\Presentation\Http\ReportAttachmentUnavailableHttpException;
@@ -113,6 +114,19 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'Report access capability denied',
                     Response::HTTP_UNAUTHORIZED,
                     'The report access capability was not accepted.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof PublicReportingUnavailableHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:public-reporting-unavailable',
+                    'Public reporting unavailable',
+                    Response::HTTP_FORBIDDEN,
+                    'This fictional demonstration does not accept communications or follow-up information.',
                 ),
             );
 

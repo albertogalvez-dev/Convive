@@ -64,6 +64,17 @@ describe('ReportForm', () => {
     expect(page.querySelector('form')).not.toBeNull();
   });
 
+  it('should show a non-persistent message instead of the form in fictional demo mode', () => {
+    createForm();
+    resolveOrganisation('IES Horizonte Ficticio', 'fictional_demo');
+
+    expect(page.textContent).toContain('Demostración ficticia');
+    expect(page.textContent).toContain('Aquí no se guardan comunicaciones');
+    expect(page.textContent).toContain('No escribas información personal');
+    expect(page.querySelector('form')).toBeNull();
+    httpTesting.expectNone(`${organisationEndpoint}/reports`);
+  });
+
   it('should show the invalid-link state when the organisation cannot be found', () => {
     createForm();
 
@@ -545,12 +556,15 @@ describe('ReportForm', () => {
     page = fixture.nativeElement as HTMLElement;
   }
 
-  function resolveOrganisation(name = 'IES Valle Sereno'): void {
+  function resolveOrganisation(
+    name = 'IES Valle Sereno',
+    reportingMode: 'operational' | 'fictional_demo' | 'disabled' = 'operational',
+  ): void {
     const request = httpTesting.expectOne(organisationEndpoint);
 
     expect(request.request.method).toBe('GET');
 
-    request.flush({ name });
+    request.flush({ name, reportingMode });
     fixture.detectChanges();
   }
 
