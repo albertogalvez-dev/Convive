@@ -165,7 +165,8 @@ This ADR does not introduce:
 
 - secret recovery or a support-operated bypass;
 - passkeys or any other authenticator for anonymous follow-up;
-- optional email notifications or an email-based reminder of the reference;
+- optional email notifications, whose notification-only boundary is selected
+  in [ADR-0015](0015-use-verified-email-only-for-generic-reporter-notifications.md);
 - professional credential storage guidance, which remains owned by ADR-0008.
 
 ## Review triggers
