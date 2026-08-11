@@ -20,6 +20,8 @@ final class FictionalDemoDataset
     public const CASE_AFFECTED_PERSON_ID = '019fe900-0000-7000-8000-000000000085';
     public const CASE_WITNESS_PERSON_ID = '019fe900-0000-7000-8000-000000000086';
     public const CASE_TRIAGE_DECISION_ID = '019fe900-0000-7000-8000-000000000087';
+    public const CASE_TASK_ID = '019fe900-0000-7000-8000-000000000088';
+    public const ANDALUSIAN_PROTOCOL_SOURCE_ID = '019c4c1d-4fd4-7f6d-a0d1-000000000001';
 
     /** @var list<string> */
     public const REPORT_IDS = [

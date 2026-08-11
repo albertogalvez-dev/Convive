@@ -171,6 +171,12 @@ final readonly class SeedFictionalDemo
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         );
         $this->connection->executeStatement(
+            'DELETE FROM case_tasks WHERE case_id IN (
+                SELECT id FROM managed_cases WHERE organisation_id = :organisation_id
+            )',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        );
+        $this->connection->executeStatement(
             'DELETE FROM case_involved_people WHERE case_id IN (
                 SELECT id FROM managed_cases WHERE organisation_id = :organisation_id
             )',
@@ -491,6 +497,43 @@ final readonly class SeedFictionalDemo
                 ],
             );
         }
+
+        $this->connection->executeStatement(
+            'INSERT INTO case_tasks (
+                id, case_id, owner_professional_id, source_version_id, stage, kind, title,
+                due_at, status, created_by_professional_id, created_at,
+                resolved_by_professional_id, resolved_at, not_applicable_reason
+             ) VALUES (
+                :id, :case_id, :professional_id, :source_id, :stage, :kind, :title,
+                :due_at, :status, :professional_id, :created_at, NULL, NULL, NULL
+             )
+             ON CONFLICT (id) DO UPDATE SET
+                case_id = EXCLUDED.case_id,
+                owner_professional_id = EXCLUDED.owner_professional_id,
+                source_version_id = EXCLUDED.source_version_id,
+                stage = EXCLUDED.stage,
+                kind = EXCLUDED.kind,
+                title = EXCLUDED.title,
+                due_at = EXCLUDED.due_at,
+                status = EXCLUDED.status,
+                created_by_professional_id = EXCLUDED.created_by_professional_id,
+                created_at = EXCLUDED.created_at,
+                resolved_by_professional_id = NULL,
+                resolved_at = NULL,
+                not_applicable_reason = NULL',
+            [
+                'id' => FictionalDemoDataset::CASE_TASK_ID,
+                'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+                'source_id' => FictionalDemoDataset::ANDALUSIAN_PROTOCOL_SOURCE_ID,
+                'stage' => 'inspection_communication',
+                'kind' => 'external_communication',
+                'title' => 'Confirmar la comunicaciÃ³n ficticia con InspecciÃ³n Educativa',
+                'due_at' => '2026-08-10T10:30:00+02:00',
+                'status' => 'pending',
+                'created_at' => '2026-08-10T09:40:00+02:00',
+            ],
+        );
     }
 
     /** @return array<string, string> */
