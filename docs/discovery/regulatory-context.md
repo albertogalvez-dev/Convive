@@ -241,10 +241,10 @@ https://www.educacionfpydeportes.gob.es/prensa/actualidad/2026/04/20260415-proto
 
 ### Status inside Convive
 
-As of 15 July 2026, the cited Ministry source presents an open framework subject
-to discussion and enrichment. Convive therefore treats it as a provisional
-national reference, not as a final binding rule or a replacement for the
-applicable Andalusian protocol.
+As reviewed on 11 August 2026, the cited Ministry source describes a framework
+that may serve as a reference for autonomous communities. Convive therefore
+treats it as a national recommendation, not as a binding Andalusian rule or a
+replacement for the applicable Andalusian protocol.
 
 Its time targets may be represented as configurable recommendations, but the
 interface must not label them as binding Andalusian legal deadlines unless a
@@ -392,4 +392,26 @@ This document must be reviewed:
 - before integrating with an institutional system;
 - before processing real student data.
 
-Last reviewed: 21 July 2026.
+## Implemented source versions
+
+Case tasks reference immutable source versions rather than copying unstructured
+citations. The initial catalogue contains:
+
+| Stable code | Version | Territory | Authority |
+| --- | --- | --- | --- |
+| `ES-AN-ORDER-2011-06-20-ANNEX-I` | `BOJA-132-2011` | Andalusia | Binding |
+| `ES-AN-INSTRUCTIONS-2017-01-11-CYBERBULLYING` | `SIGNED-2017-01-11` | Andalusia | Binding |
+| `ES-MEFPD-FRAMEWORK-2026-04-15` | `PRESENTED-2026-04-15` | Spain | Recommended |
+| `CONVIVE-INTERNAL-ANDALUSIA-DEMO` | `2026-08-11` | Granada demonstration | Internal |
+
+The classification expresses how Convive may present a task's source. It is not
+an automated legal conclusion. The applicable Andalusian sources define actions
+that professionals must assess in context; except where an official source
+states a numeric period, an entered target date remains an operational planning
+decision. In particular, tasks based on the national 24-hour, 10-day and
+six-month targets identify that source as a recommendation.
+
+See [ADR-0019](../architecture/decisions/0019-version-case-workflow-sources-and-require-explicit-task-resolution.md)
+for lifecycle and external-communication rules.
+
+Last reviewed: 11 August 2026.

@@ -47,6 +47,8 @@ services:
     App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\UnavailableAttachmentScanner'
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
+    App\Cases\Domain\CaseAssignmentRepository: '@App\Cases\Infrastructure\DoctrineCaseAssignmentRepository'
+    App\Cases\Domain\CaseTaskRepository: '@App\Cases\Infrastructure\DoctrineCaseTaskRepository'
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
