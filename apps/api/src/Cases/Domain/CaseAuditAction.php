@@ -15,4 +15,5 @@ enum CaseAuditAction: string
     case TaskMarkedNotApplicable = 'task_marked_not_applicable';
     case EvidenceDownloadAuthorised = 'evidence_download_authorised';
     case AuditExported = 'audit_exported';
+    case CaseRecordExported = 'case_record_exported';
 }

@@ -10,6 +10,7 @@ use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CaseModality;
+use App\Cases\Domain\ProfessionalExportEventRepository;
 use App\Cases\Domain\ManagedCase;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
@@ -23,14 +24,18 @@ use Symfony\Component\Uid\Uuid;
 final class CaseAuditEventPersistenceTest extends PostgreSqlTestCase
 {
     private CaseAuditEventRepository $events;
+    private ProfessionalExportEventRepository $professionalExportEvents;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $events = self::getContainer()->get(CaseAuditEventRepository::class);
+        $professionalExportEvents = self::getContainer()->get(ProfessionalExportEventRepository::class);
         self::assertInstanceOf(CaseAuditEventRepository::class, $events);
+        self::assertInstanceOf(ProfessionalExportEventRepository::class, $professionalExportEvents);
         $this->events = $events;
+        $this->professionalExportEvents = $professionalExportEvents;
     }
 
     public function testEventsRoundTripInOrderWithOnlyTheMinimisedPersistentShape(): void
@@ -87,7 +92,11 @@ SQL));
         [, $expired] = $this->persistEvent(new DateTimeImmutable('2026-07-01T09:00:00+00:00'));
         [, $fresh] = $this->persistEvent(new DateTimeImmutable('2026-07-20T09:00:00+00:00'));
 
-        $cleaned = (new PurgeExpiredFictionalCaseAuditEvents($this->events, true))(
+        $cleaned = (new PurgeExpiredFictionalCaseAuditEvents(
+            $this->events,
+            $this->professionalExportEvents,
+            true,
+        ))(
             1,
             new DateTimeImmutable('2026-08-01T09:00:00+00:00'),
         );

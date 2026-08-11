@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'app:case-audit:clean-fictional',
-    description: 'Deletes expired fictional case audit events through the protected retention boundary.',
+    description: 'Deletes expired fictional case and export audit events through the protected retention boundary.',
 )]
 final class PurgeExpiredFictionalCaseAuditEventsCommand extends Command
 {
@@ -52,7 +52,7 @@ final class PurgeExpiredFictionalCaseAuditEventsCommand extends Command
             return Command::FAILURE;
         }
 
-        $output->writeln(sprintf('Cleaned %d expired fictional case audit event(s).', $cleaned));
+        $output->writeln(sprintf('Cleaned %d expired fictional audit event(s).', $cleaned));
 
         return Command::SUCCESS;
     }

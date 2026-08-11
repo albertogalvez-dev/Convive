@@ -6,6 +6,7 @@ namespace App\Cases\Application;
 
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditRetentionPolicy;
+use App\Cases\Domain\ProfessionalExportEventRepository;
 use DateInterval;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -16,6 +17,7 @@ final readonly class PurgeExpiredFictionalCaseAuditEvents
 {
     public function __construct(
         private CaseAuditEventRepository $events,
+        private ProfessionalExportEventRepository $professionalExportEvents,
         #[Autowire('%env(bool:APP_DEMO_MODE)%')]
         private bool $fictionalDemoMode,
     ) {
@@ -31,9 +33,15 @@ final readonly class PurgeExpiredFictionalCaseAuditEvents
             throw new InvalidArgumentException('The case audit cleanup limit is invalid.');
         }
 
-        return $this->events->purgeBefore(
-            $now->sub(new DateInterval(CaseAuditRetentionPolicy::FICTIONAL_RETENTION)),
-            $limit,
+        $cutoff = $now->sub(new DateInterval(CaseAuditRetentionPolicy::FICTIONAL_RETENTION));
+        $caseEvents = $this->events->purgeBefore($cutoff, $limit);
+        if ($caseEvents === $limit) {
+            return $caseEvents;
+        }
+
+        return $caseEvents + $this->professionalExportEvents->purgeBefore(
+            $cutoff,
+            $limit - $caseEvents,
         );
     }
 }
