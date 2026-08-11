@@ -263,7 +263,9 @@ final readonly class SeedFictionalDemo
                  ON CONFLICT (id) DO UPDATE SET
                     name = EXCLUDED.name,
                     email = EXCLUDED.email,
-                    active = TRUE',
+                    active = TRUE,
+                    password_hash = EXCLUDED.password_hash,
+                    security_revision = professionals.security_revision + 1',
                 [
                     ...$data,
                     'created_at' => $createdAt->format(DATE_ATOM),
