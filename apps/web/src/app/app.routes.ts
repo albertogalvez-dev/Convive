@@ -38,7 +38,14 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', component: PublicHome, canMatch: [publicWebsiteHostGuard] },
   {
     path: 'demostracion',
+    pathMatch: 'full',
     loadComponent: () => import('./public-demo/public-demo').then((module) => module.PublicDemo),
+    canMatch: [publicWebsiteHostGuard],
+  },
+  {
+    path: 'demostracion/profesional',
+    loadComponent: () =>
+      import('./professional-demo/professional-demo').then((module) => module.ProfessionalDemo),
     canMatch: [publicWebsiteHostGuard],
   },
   {
