@@ -21,6 +21,11 @@ export interface ReportFollowUpState {
   followUpEntries: FollowUpEntry[];
 }
 
+export interface ReporterEmailNotificationStatus {
+  readonly enabled: boolean;
+  readonly status: 'none' | 'pending' | 'verified';
+}
+
 @Injectable({ providedIn: 'root' })
 export class FollowUpService {
   private readonly http = inject(HttpClient);
@@ -48,5 +53,22 @@ export class FollowUpService {
 
   revokeReportAccess(): Observable<void> {
     return this.http.delete<void>('/api/v1/reporter/access-grant');
+  }
+
+  getEmailNotificationStatus(): Observable<ReporterEmailNotificationStatus> {
+    return this.http.get<ReporterEmailNotificationStatus>(
+      '/api/v1/reporter/report/email-notifications',
+    );
+  }
+
+  configureEmailNotifications(email: string): Observable<ReporterEmailNotificationStatus> {
+    return this.http.put<ReporterEmailNotificationStatus>(
+      '/api/v1/reporter/report/email-notifications',
+      { email, consentAccepted: true },
+    );
+  }
+
+  removeEmailNotifications(): Observable<void> {
+    return this.http.delete<void>('/api/v1/reporter/report/email-notifications');
   }
 }
