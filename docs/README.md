@@ -22,5 +22,7 @@ runtime evidence and meeting-specific material stay outside Git.
   critical-route regression budgets for the fictional demo.
 - [Code-quality baseline](development/code-quality.md): static analysis,
   formatting, exceptions and PhpStorm setup.
+- [Public editorial workflow](content/editorial-workflow.md): review, sources,
+  limitations and crawler controls for the public blog.
 - [Development log](development-log.md): material delivery decisions and
   evidence, without inventing history.
