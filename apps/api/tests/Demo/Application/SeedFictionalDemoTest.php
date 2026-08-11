@@ -257,6 +257,13 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'kind' => 'external_communication',
             ],
         ));
+        self::assertSame(
+            'Confirmar la comunicación ficticia con Inspección Educativa',
+            $this->connection->fetchOne(
+                'SELECT title FROM case_tasks WHERE id = :id',
+                ['id' => FictionalDemoDataset::CASE_TASK_ID],
+            ),
+        );
     }
 
     private function demoReportCount(): int

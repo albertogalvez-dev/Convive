@@ -528,7 +528,7 @@ final readonly class SeedFictionalDemo
                 'source_id' => FictionalDemoDataset::ANDALUSIAN_PROTOCOL_SOURCE_ID,
                 'stage' => 'inspection_communication',
                 'kind' => 'external_communication',
-                'title' => 'Confirmar la comunicaciÃ³n ficticia con InspecciÃ³n Educativa',
+                'title' => 'Confirmar la comunicación ficticia con Inspección Educativa',
                 'due_at' => '2026-08-10T10:30:00+02:00',
                 'status' => 'pending',
                 'created_at' => '2026-08-10T09:40:00+02:00',
