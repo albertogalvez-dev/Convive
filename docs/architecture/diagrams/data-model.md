@@ -28,6 +28,21 @@ erDiagram
         int attachment_bytes "reserved bytes"
         int version "optimistic lock"
     }
+    report_attachments {
+        uuid id PK "UUIDv7; private metadata only"
+        uuid report_id FK
+        varchar media_type "PDF | JPEG | PNG"
+        int byte_size "1 to 5 MiB"
+        varchar content_hash "64-char SHA-256"
+        varchar storage_key UK "private quarantine|available UUID key"
+        varchar status "quarantined | scanning | available | rejected | deletion_pending | deleted"
+        timestamptz created_at "immutable UTC"
+        timestamptz scan_started_at "nullable"
+        timestamptz resolved_at "nullable"
+        timestamptz deletion_requested_at "nullable"
+        timestamptz deleted_at "nullable"
+        varchar description "nullable; bounded; no filename"
+    }
     report_access_grants {
         uuid id PK "UUIDv7, application-generated"
         uuid report_id FK
@@ -51,6 +66,8 @@ erDiagram
         uuid created_by_professional_id FK
         timestamptz created_at "immutable UTC"
         timestamptz operational_updated_at "latest explicit case, assignment or task activity"
+        varchar status "assessment | active | closed"
+        varchar modality "in_person | digital | mixed | unknown"
     }
     case_audit_events {
         uuid id PK "UUIDv7; append-only minimised event"
@@ -61,6 +78,50 @@ erDiagram
         varchar target "minimised target category"
         uuid target_id "internal correlation; never in protected response"
         timestamptz occurred_at "immutable UTC; bounded fictional retention"
+    }
+    case_assignments {
+        uuid id PK
+        uuid case_id FK
+        uuid professional_id FK
+        varchar role "lead | contributor | observer"
+        uuid assigned_by_professional_id FK
+        timestamptz assigned_at
+        timestamptz revoked_at "nullable; on or after assigned_at"
+    }
+    case_involved_people {
+        uuid id PK
+        uuid case_id FK
+        varchar name "bounded case-local identity"
+        varchar role "affected | alleged_actor | witness | guardian | other"
+        uuid added_by_professional_id FK
+        timestamptz added_at
+    }
+    case_workflow_source_versions {
+        uuid id PK
+        varchar code
+        varchar version
+        varchar title
+        varchar uri "nullable only for internal source"
+        varchar territory
+        varchar authority "binding | recommended | internal"
+        date published_on
+        date reviewed_on "on or after published_on"
+    }
+    case_tasks {
+        uuid id PK
+        uuid case_id FK
+        uuid owner_professional_id FK
+        uuid source_version_id FK
+        varchar stage "bounded protocol stage"
+        varchar kind "internal_action | external_communication"
+        varchar title "bounded operational title"
+        timestamptz due_at "on or after created_at"
+        varchar status "pending | completed | not_applicable"
+        uuid created_by_professional_id FK
+        timestamptz created_at "immutable UTC"
+        uuid resolved_by_professional_id FK "nullable until resolved"
+        timestamptz resolved_at "nullable until resolved"
+        varchar not_applicable_reason "nullable; required only when not applicable"
     }
     report_triage_decisions {
         uuid id PK "UUIDv7; append-only"
@@ -96,6 +157,7 @@ erDiagram
     organisations ||--o{ reports : "receives"
     professionals o|--o{ reports : "reviews"
     reports ||--o{ report_access_grants : "grants access to"
+    reports ||--o{ report_attachments : "has private attachments"
     reports ||--o{ report_follow_up_entries : "accumulates"
     reports ||--o{ report_triage_decisions : "receives decisions"
     reports o|--o| report_triage_decisions : "has terminal decision"
@@ -108,6 +170,13 @@ erDiagram
     professionals ||--o{ report_triage_decisions : "decides"
     managed_cases o|--o| report_triage_decisions : "is linked by"
     managed_cases ||--o{ case_audit_events : "has minimised events"
+    managed_cases ||--o{ case_assignments : "has assignments"
+    managed_cases ||--o{ case_involved_people : "has minimised people"
+    managed_cases ||--o{ case_tasks : "has source-aware tasks"
+    case_workflow_source_versions ||--o{ case_tasks : "sources"
+    professionals ||--o{ case_assignments : "is assigned or assigns"
+    professionals ||--o{ case_involved_people : "adds"
+    professionals ||--o{ case_tasks : "owns, creates or resolves"
     professionals ||--o{ organisation_memberships : "holds"
     organisations ||--o{ organisation_memberships : "grants"
 ```

@@ -34,6 +34,28 @@ Table reports {
 Ref: reports.organisation_id > organisations.id
 Ref: reports.reviewed_by_professional_id > professionals.id
 
+Table report_attachments {
+  id uuid [pk, note: 'application-generated UUIDv7; private object metadata only']
+  report_id uuid [not null]
+  media_type varchar(64) [not null, note: 'application/pdf | image/jpeg | image/png (CHECK constraint)']
+  byte_size int [not null, note: '1 to 5 MiB (CHECK constraint)']
+  content_hash varchar(64) [not null, note: 'lowercase hexadecimal SHA-256 integrity digest (CHECK constrained)']
+  storage_key varchar(255) [not null, unique, note: 'private quarantine|available UUID key; never a public path']
+  status varchar(32) [not null, note: 'quarantined | scanning | available | rejected | deletion_pending | deleted (CHECK constraint)']
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+  scan_started_at timestamptz [note: 'null until scanning begins']
+  resolved_at timestamptz [note: 'null until scanning resolves']
+  deletion_requested_at timestamptz [note: 'null until deletion is requested']
+  deleted_at timestamptz [note: 'null until object deletion completes']
+  description varchar(500) [note: 'optional bounded reporter-supplied context; no filename is persisted']
+
+  indexes {
+    (report_id, status, created_at, id)
+  }
+}
+
+Ref: report_attachments.report_id > reports.id
+
 Table report_access_grants {
   id uuid [pk, note: 'application-generated UUIDv7']
   report_id uuid [not null]
@@ -123,6 +145,44 @@ Table case_involved_people {
   }
 }
 
+Table case_workflow_source_versions {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  code varchar(80) [not null]
+  version varchar(40) [not null]
+  title varchar(180) [not null]
+  uri varchar(500) [note: 'required for binding and recommended sources']
+  territory varchar(20) [not null]
+  authority varchar(20) [not null, note: 'binding | recommended | internal (CHECK constraint)']
+  published_on date [not null]
+  reviewed_on date [not null, note: 'on or after published_on (CHECK constraint)']
+
+  indexes {
+    (code, version) [unique]
+  }
+}
+
+Table case_tasks {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  case_id uuid [not null]
+  owner_professional_id uuid [not null]
+  source_version_id uuid [not null]
+  stage varchar(40) [not null, note: 'bounded protocol stage (CHECK constraint)']
+  kind varchar(30) [not null, note: 'internal_action | external_communication (CHECK constraint)']
+  title varchar(160) [not null, note: 'bounded operational title; no case narrative']
+  due_at timestamptz [not null, note: 'on or after created_at (CHECK constraint)']
+  status varchar(20) [not null, note: 'pending | completed | not_applicable (CHECK constraint)']
+  created_by_professional_id uuid [not null]
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+  resolved_by_professional_id uuid [note: 'required for completed or not_applicable']
+  resolved_at timestamptz [note: 'required for completed or not_applicable; on or after created_at']
+  not_applicable_reason varchar(500) [note: 'required only for not_applicable']
+
+  indexes {
+    (case_id, status, due_at)
+    (owner_professional_id, status, due_at)
+  }
+}
+
 Table report_triage_decisions {
   id uuid [pk, note: 'application-generated UUIDv7; append-only']
   report_id uuid [not null]
@@ -151,6 +211,11 @@ Ref: case_assignments.professional_id > professionals.id
 Ref: case_assignments.assigned_by_professional_id > professionals.id
 Ref: case_involved_people.case_id > managed_cases.id
 Ref: case_involved_people.added_by_professional_id > professionals.id
+Ref: case_tasks.case_id > managed_cases.id
+Ref: case_tasks.owner_professional_id > professionals.id
+Ref: case_tasks.source_version_id > case_workflow_source_versions.id
+Ref: case_tasks.created_by_professional_id > professionals.id
+Ref: case_tasks.resolved_by_professional_id > professionals.id
 Ref: report_triage_decisions.report_id > reports.id
 Ref: report_triage_decisions.organisation_id > organisations.id
 Ref: report_triage_decisions.decided_by_professional_id > professionals.id
