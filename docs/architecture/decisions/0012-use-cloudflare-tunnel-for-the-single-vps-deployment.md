@@ -171,9 +171,9 @@ migration as one of:
 Doctrine `down()` migrations are not assumed safe and are never executed
 automatically. An application rollback switches the release manifest back to
 the previous image digests only when schema compatibility has been established.
-Otherwise recovery restores the verified pre-release database backup and the
-previous images, with the resulting recovery point and potential data loss made
-explicit.
+Otherwise recovery restores the verified pre-release database-and-attachment
+generation and the previous images, with the resulting recovery point and
+potential data loss made explicit.
 
 The single-VPS topology does not promise zero downtime. A short, announced
 maintenance window is preferable to an unsafe online migration. Cloudflare or

@@ -1,18 +1,19 @@
-# ADR-0013: Use Restic with off-host object storage for database recovery
+# ADR-0013: Use Restic with off-host object storage for persistent-data recovery
 
 - **Status:** Accepted
 - **Date:** 10 August 2026
-- **Related issue:** [#66](https://github.com/albertogalvez-dev/Convive/issues/66)
+- **Related issues:** [#66](https://github.com/albertogalvez-dev/Convive/issues/66), [#138](https://github.com/albertogalvez-dev/Convive/issues/138)
 - **Depends on:** [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md), [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md), [ADR-0012](0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md)
 
 ## Context
 
 Convive's fictional-data demonstration will run on one VPS. PostgreSQL is its
-authoritative persistent store and also contains professional sessions and
-short-lived anonymous capability grants. A Docker volume or VPS-provider
-snapshot remains inside the primary operational failure domain, does not prove
-application-level recovery and can revive credentials that should have expired
-or been revoked.
+authoritative metadata store and also contains professional sessions and
+short-lived anonymous capability grants. Private attachment objects are the
+second authoritative persistent asset and must remain consistent with their
+database rows. A Docker volume or VPS-provider snapshot remains inside the
+primary operational failure domain, does not prove application-level recovery
+and can revive credentials that should have expired or been revoked.
 
 The release process needs a backup that can be streamed without a plaintext
 host copy, encrypted before leaving the host, retained independently and
@@ -27,8 +28,8 @@ incompatibility.
 - Avoid a plaintext database dump on VPS storage.
 - Use a failure domain independent from the VPS provider account.
 - Apply reviewable retention and integrity checks.
-- Restore with ordinary PostgreSQL tooling and verify the current Symfony
-  schema/migrations.
+- Restore with ordinary PostgreSQL tooling, recover private attachment objects
+  and verify their keys, sizes and hashes against the current database.
 - Invalidate restored professional sessions and report capabilities.
 - Remain operable by one maintainer without a second database platform.
 
@@ -72,24 +73,33 @@ be reconsidered before real data or higher availability.
 ## Decision
 
 Use a version-and-digest-pinned Restic container to receive a PostgreSQL
-custom-format dump over standard input. Store the encrypted repository in a
+custom-format dump over standard input and snapshot the private attachment
+volume read-only. Store the encrypted repository in a
 private Cloudflare R2 Standard bucket in the European Union jurisdiction. R2
 is outside the VPS provider account and primary failure domain. Use the
 jurisdiction-specific S3 endpoint, a bucket-scoped credential and an
 independent, high-entropy Restic password held in the approved operator
 password manager.
 
-Run an automated backup daily. Keep 14 daily, 8 weekly and 12 monthly snapshots
-for the fictional demonstration, checking repository metadata and a 5% data
-sample after each backup. Exercise a complete isolated restoration in CI on
-every change and against the deployed off-host repository before release and at
-least monthly while public.
+Publish the database and attachment snapshots as one randomly identified
+generation only when object metadata is unchanged and valid before, between
+and after both snapshots, and after restoring the object snapshot into a
+disposable verification volume. Partial generations are removed and never
+receive the `complete` tag used by restore selection or retention. Run an
+automated backup daily. Keep 14 daily, 8 weekly and 12 monthly complete
+generations for the fictional demonstration, checking repository metadata and
+a 5% data sample after each backup. Exercise a complete isolated restoration in
+CI on every change and against the deployed off-host repository before release
+and at least monthly while public.
 
-The restore selects a snapshot for the exact deployed Git revision, imports it
-only into a dedicated temporary Compose project, truncates
-`professional_sessions` and `report_access_grants`, validates Doctrine schema
-and migration state, and starts the Symfony health endpoint. Timestamped
-evidence records the revision, operation and non-secret outcome.
+The restore selects the latest complete paired generation for the exact
+deployed Git revision, imports PostgreSQL and attachment objects only into a
+dedicated temporary Compose project, rejects the source volumes, truncates
+`professional_sessions` and `report_access_grants`, verifies every non-deleted
+attachment object against its restored key, byte count and SHA-256 digest,
+validates Doctrine schema and migration state, and starts the Symfony health
+endpoint. Timestamped evidence records only the revision, generation prefix,
+non-sensitive counts and outcome.
 
 Cloudflare R2 was selected after reviewing the tested Restic candidate and the
 repository-versus-runtime boundary. The bucket, subscription, credentials and
@@ -102,7 +112,8 @@ cannot satisfy off-host recovery.
 
 ### Positive
 
-- Database contents are encrypted before leaving the VPS.
+- Database contents and private attachment objects are encrypted before leaving
+  the VPS.
 - Backups are independent from the VPS provider's host and volume failure.
 - No plaintext dump is persisted on host storage.
 - Retention, integrity and snapshot identity use established repository
@@ -115,8 +126,8 @@ cannot satisfy off-host recovery.
 - Loss of the Restic password makes every snapshot unrecoverable.
 - Compromise of host root or the Docker daemon can expose live data and backup
   credentials while a job runs.
-- Daily logical dumps do not provide point-in-time recovery; the fictional-demo
-  RPO is 24 hours.
+- Daily paired generations do not provide point-in-time recovery; the
+  fictional-demo RPO is 24 hours.
 - Repository checks, pruning and restore tests consume bandwidth, storage and
   operator attention.
 - The object-storage provider is an additional operational dependency.
