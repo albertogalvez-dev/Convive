@@ -36,11 +36,34 @@ All measurements use only the reserved fictional organisation
 professional. No report content, secrets or real identities are collected or
 written to performance output.
 
+## Initial-route headroom (13 August 2026)
+
+Immediately before issue #169, the production build's initial payload was
+**500.01 kB** raw (**118.35 kB** estimated transfer), which exceeded the
+500 kB warning threshold by 10 bytes. The root route eagerly imported reporter
+and professional application screens even when a visitor only opened the
+public home page.
+
+The delivered route boundary keeps the public home eager and lazy-loads public
+information, reporter, professional-access, professional-workspace and
+not-found screens. The same production build now reports **101.34 kB** raw
+(**26.47 kB** estimated transfer) for the initial payload: a **398.67 kB**
+(79.7%) raw reduction. Those route chunks remain covered by the no-retry
+isolated browser journey; this is not a claim that a complete reporting or
+professional route costs only the initial payload.
+
+The target is to retain at least the new 150 kB warning boundary and 175 kB
+error boundary for the initial shell. Any future eager dependency or public
+home addition must report its measured initial impact in its pull request and
+be lazy-loaded where it is not required for first render. Do not consume this
+headroom by raising a budget without an evidence-backed, separately reviewed
+exception.
+
 ## Enforced budgets
 
 | Risk | Measurement | Budget | Gate |
 | --- | --- | --- | --- |
-| Slow initial web payload | Angular production initial bundle | warning at 500 kB; error at 550 kB | Frontend build |
+| Slow initial web payload | Angular production initial bundle | warning at 150 kB; error at 175 kB | Frontend build |
 | API/proxy regression | five requests each to health and the fictional public profile | median <= 250 ms; every sample <= 750 ms | Isolated Chromium E2E |
 | Public-reporting readiness | navigation until the fictional organisation name is visible | <= 3,000 ms | Isolated Chromium E2E |
 | Professional-dashboard readiness | login navigation until the dashboard heading is visible | <= 3,000 ms | Isolated Chromium E2E |

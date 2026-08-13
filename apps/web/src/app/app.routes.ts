@@ -1,22 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { EmailVerification } from './email-verification/email-verification';
-import { FollowUp } from './follow-up/follow-up';
 import { applicationHostGuard, publicWebsiteHostGuard } from './host-boundary.guard';
-import { NotFound } from './not-found/not-found';
 import { PublicHome } from './public-home/public-home';
-import {
-  PublicInformation,
-  PublicInformationContent,
-} from './public-information/public-information';
-import { ProfessionalAccess } from './professional-access/professional-access';
 import { professionalAuthGuard } from './professional-access/professional-auth.guard';
-import { ProfessionalDashboard } from './professional-reports/professional-dashboard';
-import { ProfessionalDetail } from './professional-reports/professional-detail';
-import { ProfessionalInbox } from './professional-reports/professional-inbox';
-import { ProfessionalSettings } from './professional-reports/professional-settings';
-import { ProfessionalShell } from './professional-reports/professional-shell';
-import { ReportForm } from './reporting/report-form';
+import type { PublicInformationContent } from './public-information/public-information';
 
 const publicInformationRoutes: ReadonlyArray<{
   readonly path: string;
@@ -61,7 +48,8 @@ export const routes: Routes = [
   },
   ...publicInformationRoutes.map(({ path, content }) => ({
     path,
-    component: PublicInformation,
+    loadComponent: () =>
+      import('./public-information/public-information').then((module) => module.PublicInformation),
     canMatch: [publicWebsiteHostGuard],
     data: { content },
   })),
@@ -69,18 +57,58 @@ export const routes: Routes = [
     path: '',
     canMatch: [applicationHostGuard],
     children: [
-      { path: 'r/:publicReportingIdentifier', component: ReportForm },
-      { path: 'seguimiento', component: FollowUp },
-      { path: 'verificar-correo', component: EmailVerification },
-      { path: 'profesionales/acceso', component: ProfessionalAccess },
+      {
+        path: 'r/:publicReportingIdentifier',
+        loadComponent: () => import('./reporting/report-form').then((module) => module.ReportForm),
+      },
+      {
+        path: 'seguimiento',
+        loadComponent: () => import('./follow-up/follow-up').then((module) => module.FollowUp),
+      },
+      {
+        path: 'verificar-correo',
+        loadComponent: () =>
+          import('./email-verification/email-verification').then(
+            (module) => module.EmailVerification,
+          ),
+      },
+      {
+        path: 'profesionales/acceso',
+        loadComponent: () =>
+          import('./professional-access/professional-access').then(
+            (module) => module.ProfessionalAccess,
+          ),
+      },
       {
         path: 'profesionales',
-        component: ProfessionalShell,
+        loadComponent: () =>
+          import('./professional-reports/professional-shell').then(
+            (module) => module.ProfessionalShell,
+          ),
         canActivate: [professionalAuthGuard],
         children: [
-          { path: '', pathMatch: 'full', component: ProfessionalDashboard },
-          { path: 'comunicaciones', component: ProfessionalInbox },
-          { path: 'comunicaciones/:id', component: ProfessionalDetail },
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () =>
+              import('./professional-reports/professional-dashboard').then(
+                (module) => module.ProfessionalDashboard,
+              ),
+          },
+          {
+            path: 'comunicaciones',
+            loadComponent: () =>
+              import('./professional-reports/professional-inbox').then(
+                (module) => module.ProfessionalInbox,
+              ),
+          },
+          {
+            path: 'comunicaciones/:id',
+            loadComponent: () =>
+              import('./professional-reports/professional-detail').then(
+                (module) => module.ProfessionalDetail,
+              ),
+          },
           {
             path: 'casos',
             loadComponent: () =>
@@ -95,10 +123,19 @@ export const routes: Routes = [
                 (module) => module.ProfessionalCaseDetailPage,
               ),
           },
-          { path: 'ajustes', component: ProfessionalSettings },
+          {
+            path: 'ajustes',
+            loadComponent: () =>
+              import('./professional-reports/professional-settings').then(
+                (module) => module.ProfessionalSettings,
+              ),
+          },
         ],
       },
     ],
   },
-  { path: '**', component: NotFound },
+  {
+    path: '**',
+    loadComponent: () => import('./not-found/not-found').then((module) => module.NotFound),
+  },
 ];
