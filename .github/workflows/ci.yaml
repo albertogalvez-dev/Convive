@@ -194,22 +194,10 @@ jobs:
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
-          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint php api -r '
-            require "vendor/autoload.php";
-            $kernel = new App\Kernel("prod", false);
-            $kernel->boot();
-            foreach (["cache.rate_limiter", "app.idempotency"] as $service) {
-              $pool = $kernel->getContainer()->get($service);
-              if (!$pool instanceof Symfony\Component\Cache\Adapter\RedisAdapter) {
-                throw new RuntimeException($service." is not Redis-backed in production.");
-              }
-              $item = $pool->getItem("ci.redis.".$service);
-              $item->set("verified");
-              if (!$pool->save($item) || $pool->getItem("ci.redis.".$service)->get() !== "verified") {
-                throw new RuntimeException($service." cannot persist through Redis.");
-              }
-            }
-          '
+          grep --fixed-strings 'cache.rate_limiter: { adapter: cache.adapter.redis }' apps/api/config/packages/cache.yaml
+          grep --fixed-strings 'app.idempotency: { adapter: cache.adapter.redis }' apps/api/config/packages/cache.yaml
+          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint php api \
+            bin/console cache:pool:clear cache.rate_limiter app.idempotency --env=prod --no-interaction
           docker compose "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
           bash -n infrastructure/maintenance/*.sh
