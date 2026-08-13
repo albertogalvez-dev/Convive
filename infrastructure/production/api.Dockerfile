@@ -24,6 +24,13 @@ RUN composer install \
     --no-scripts \
     --classmap-authoritative
 
+COPY apps/api .
+
+RUN composer dump-autoload \
+    --no-dev \
+    --classmap-authoritative \
+    --no-scripts
+
 FROM php:8.5.9-fpm-bookworm
 
 RUN apt-get update \
