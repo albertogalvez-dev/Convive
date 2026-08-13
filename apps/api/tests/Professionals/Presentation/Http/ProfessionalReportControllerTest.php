@@ -142,6 +142,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $payload = $this->responsePayload();
         self::assertSame('new', $payload['status']);
+        self::assertSame('andalucia-v1', $payload['reporterTaxonomy']['version']);
         self::assertSame(
             'A fictional student is repeatedly excluded during break time.',
             $payload['situationDescription'],
@@ -265,8 +266,12 @@ final class ProfessionalReportControllerTest extends WebTestCase
             'Initial fictional safeguarding assessment completed.',
             $this->responsePayload()['review']['reason'],
         );
+        self::assertSame(
+            'unknown',
+            $this->responsePayload()['review']['professionalTaxonomy']['concernCategory'],
+        );
         $storedReview = $this->entityManager->getConnection()->fetchAssociative(
-            'SELECT status, review_reason, reviewed_by_professional_id, reviewed_at, version '
+            'SELECT status, review_reason, reviewed_by_professional_id, reviewed_at, professional_concern_category, version '
             .'FROM reports WHERE id = ?',
             [$created['report']->id()->toRfc4122()],
         );
@@ -281,6 +286,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
             $storedReview['reviewed_by_professional_id'],
         );
         self::assertNotNull($storedReview['reviewed_at']);
+        self::assertSame('unknown', $storedReview['professional_concern_category']);
         self::assertSame(2, (int) $storedReview['version']);
 
         $this->client->request('GET', '/api/v1/professional/reports?status=new');

@@ -87,6 +87,7 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
                 'publicReference',
                 'situationDescription',
                 'situationContext',
+                'reporterTaxonomy',
                 'status',
                 'createdAt',
                 'followUpEntries',
@@ -102,6 +103,9 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
             $payload['situationDescription'],
         );
         self::assertSame('in_person', $payload['situationContext']);
+        self::assertSame('andalucia-v1', $payload['reporterTaxonomy']['version']);
+        self::assertSame('unknown', $payload['reporterTaxonomy']['recurrence']);
+        self::assertSame('unknown', $payload['reporterTaxonomy']['attentionCue']);
         self::assertSame('received', $payload['status']);
         self::assertIsString($payload['createdAt']);
         self::assertSame([], $payload['followUpEntries']);

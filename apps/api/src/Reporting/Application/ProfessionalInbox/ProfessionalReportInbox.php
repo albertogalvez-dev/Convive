@@ -12,6 +12,9 @@ use App\Reporting\Domain\ReportPage;
 use App\Reporting\Domain\ReportRepository;
 use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\ReportStatus;
+use App\Reporting\Domain\ProfessionalConcernCategory;
+use App\Reporting\Domain\ReporterAttentionCue;
+use App\Reporting\Domain\ReporterRecurrence;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 
@@ -64,6 +67,9 @@ final readonly class ProfessionalReportInbox
         array $organisations,
         ReportReviewReason $reason,
         Uuid $professionalId,
+        ProfessionalConcernCategory $professionalConcernCategory,
+        ReporterRecurrence $professionalRecurrence,
+        ReporterAttentionCue $professionalAttentionCue,
     ): ?Report {
         $report = $this->reports->findByIdForOrganisations($id, $organisations);
 
@@ -75,6 +81,9 @@ final readonly class ProfessionalReportInbox
             $reason,
             $professionalId,
             DateTimeImmutable::createFromTimestamp(microtime(true)),
+            $professionalConcernCategory,
+            $professionalRecurrence,
+            $professionalAttentionCue,
         );
         $this->reports->save($report);
 

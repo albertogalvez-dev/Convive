@@ -321,11 +321,15 @@ final readonly class SeedFictionalDemo
             $reviewed = $report['status'] === 'reviewed';
             $this->connection->executeStatement(
                 'INSERT INTO reports (
-                    id, organisation_id, situation_description, situation_context, status,
+                    id, organisation_id, situation_description, situation_context, reporter_recurrence,
+                    reporter_attention_cue, professional_concern_category,
+                    professional_recurrence, professional_attention_cue, status,
                     public_reference, access_secret_hash, created_at, review_reason,
                     reviewed_by_professional_id, reviewed_at, version
                  ) VALUES (
-                    :id, :organisation_id, :description, :context, :status,
+                    :id, :organisation_id, :description, :context, :recurrence,
+                    :attention_cue, :professional_concern_category,
+                    :professional_recurrence, :professional_attention_cue, :status,
                     :public_reference, :access_secret_hash, :created_at, :review_reason,
                     :reviewed_by, :reviewed_at, 1
                  )
@@ -333,6 +337,11 @@ final readonly class SeedFictionalDemo
                     organisation_id = EXCLUDED.organisation_id,
                     situation_description = EXCLUDED.situation_description,
                     situation_context = EXCLUDED.situation_context,
+                    reporter_recurrence = EXCLUDED.reporter_recurrence,
+                    reporter_attention_cue = EXCLUDED.reporter_attention_cue,
+                    professional_concern_category = EXCLUDED.professional_concern_category,
+                    professional_recurrence = EXCLUDED.professional_recurrence,
+                    professional_attention_cue = EXCLUDED.professional_attention_cue,
                     status = EXCLUDED.status,
                     public_reference = EXCLUDED.public_reference,
                     access_secret_hash = EXCLUDED.access_secret_hash,
@@ -345,6 +354,11 @@ final readonly class SeedFictionalDemo
                     'organisation_id' => FictionalDemoDataset::ORGANISATION_ID,
                     'description' => $report['description'],
                     'context' => $report['context'],
+                    'recurrence' => $index === 0 || $index === 2 ? 'ongoing' : ($index === 1 ? 'repeated' : 'unknown'),
+                    'attention_cue' => $index === 0 || $index === 2 ? 'needs_prompt_attention' : ($index === 1 ? 'no_prompt_attention_indicated' : 'unknown'),
+                    'professional_concern_category' => $reviewed ? ($index === 2 ? 'digital_interaction' : 'safety_or_wellbeing_concern') : null,
+                    'professional_recurrence' => $reviewed ? ($index === 2 ? 'ongoing' : 'unknown') : null,
+                    'professional_attention_cue' => $reviewed ? ($index === 2 ? 'needs_prompt_attention' : 'unknown') : null,
                     'status' => $report['status'],
                     'public_reference' => FictionalDemoDataset::REPORT_REFERENCES[$index],
                     'access_secret_hash' => hash('sha256', 'convive-fictional-demo-report-'.($index + 1)),

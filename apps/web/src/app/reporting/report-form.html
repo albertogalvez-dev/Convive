@@ -228,6 +228,50 @@
                     </p>
                   }
 
+                  <fieldset class="context-options optional-taxonomy">
+                    <legend>¿Ha ocurrido más de una vez?</legend>
+                    <label>
+                      <input type="radio" formControlName="reporterRecurrence" value="single" />
+                      <span>Una vez</span>
+                    </label>
+                    <label>
+                      <input type="radio" formControlName="reporterRecurrence" value="repeated" />
+                      <span>Varias veces</span>
+                    </label>
+                    <label>
+                      <input type="radio" formControlName="reporterRecurrence" value="ongoing" />
+                      <span>Sigue ocurriendo</span>
+                    </label>
+                    <label class="unknown-option">
+                      <input type="radio" formControlName="reporterRecurrence" value="unknown" />
+                      <span>No lo sé / prefiero no indicarlo</span>
+                    </label>
+                  </fieldset>
+
+                  <fieldset class="context-options optional-taxonomy">
+                    <legend>¿Crees que necesita atención pronta?</legend>
+                    <label>
+                      <input
+                        type="radio"
+                        formControlName="reporterAttentionCue"
+                        value="needs_prompt_attention"
+                      />
+                      <span>Sí, agradecería una revisión pronta</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        formControlName="reporterAttentionCue"
+                        value="no_prompt_attention_indicated"
+                      />
+                      <span>No se indica atención pronta</span>
+                    </label>
+                    <label class="unknown-option">
+                      <input type="radio" formControlName="reporterAttentionCue" value="unknown" />
+                      <span>Prefiero no indicarlo</span>
+                    </label>
+                  </fieldset>
+
                   <div class="actions">
                     <button type="button" class="secondary" (click)="goBack()">Atrás</button>
                     <button type="button" class="primary" (click)="continueFromContext()">

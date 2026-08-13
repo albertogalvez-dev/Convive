@@ -9,6 +9,7 @@ export interface ProfessionalReportSummary {
   publicReference: string;
   situationPreview: string;
   situationContext: string;
+  reporterTaxonomy?: { version: string; recurrence: string; attentionCue: string };
   status: ProfessionalReportStatus;
   createdAt: string;
 }
@@ -20,12 +21,21 @@ export interface ProfessionalReportPage {
 
 export interface ProfessionalReportDetail extends ProfessionalReportSummary {
   situationDescription: string;
-  review: { reason: string; reviewedAt: string } | null;
+  review: {
+    reason: string;
+    reviewedAt: string;
+    professionalTaxonomy?: {
+      version: string;
+      concernCategory: string | null;
+      recurrence: string | null;
+      attentionCue: string | null;
+    };
+  } | null;
   followUpEntries: ProfessionalReportConversationEntry[];
 }
 
 export interface ProfessionalReportReviewResponse {
-  review: { reason: string; reviewedAt: string };
+  review: NonNullable<ProfessionalReportDetail['review']>;
 }
 
 export interface ProfessionalReportConversationEntry {
@@ -54,10 +64,18 @@ export class ProfessionalReportsService {
     return this.http.get<ProfessionalReportDetail>(`${this.endpoint}/${encodeURIComponent(id)}`);
   }
 
-  review(id: string, reason: string): Observable<ProfessionalReportReviewResponse> {
+  review(
+    id: string,
+    request: {
+      reason: string;
+      professionalConcernCategory: string;
+      professionalRecurrence: string;
+      professionalAttentionCue: string;
+    },
+  ): Observable<ProfessionalReportReviewResponse> {
     return this.http.post<ProfessionalReportReviewResponse>(
       `${this.endpoint}/${encodeURIComponent(id)}/reviews`,
-      { reason },
+      request,
     );
   }
 

@@ -12,8 +12,11 @@ use App\Reporting\Domain\ReportAttachmentQuotaExceeded;
 use App\Reporting\Domain\ReportAlreadyReviewed;
 use App\Reporting\Domain\ReportReviewReason;
 use App\Reporting\Domain\ReportStatus;
+use App\Reporting\Domain\ReporterAttentionCue;
+use App\Reporting\Domain\ReporterRecurrence;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
+use App\Reporting\Domain\TriageTaxonomy;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
@@ -48,6 +51,9 @@ final class ReportTest extends TestCase
             $report->situationContext(),
         );
         self::assertSame(ReportStatus::Received, $report->status());
+        self::assertSame(ReporterRecurrence::Unknown, $report->reporterRecurrence());
+        self::assertSame(ReporterAttentionCue::Unknown, $report->reporterAttentionCue());
+        self::assertSame(TriageTaxonomy::VERSION, $report->taxonomyVersion());
     }
 
     public function testItCreatesSecureAnonymousAccessCredentials(): void
@@ -129,6 +135,9 @@ final class ReportTest extends TestCase
         );
         self::assertTrue($professionalId->equals($report->reviewedByProfessionalId()));
         self::assertSame($reviewedAt, $report->reviewedAt());
+        self::assertSame('unknown', $report->professionalConcernCategory()?->value);
+        self::assertSame(ReporterRecurrence::Unknown, $report->professionalRecurrence());
+        self::assertSame(ReporterAttentionCue::Unknown, $report->professionalAttentionCue());
 
         $this->expectException(ReportAlreadyReviewed::class);
 

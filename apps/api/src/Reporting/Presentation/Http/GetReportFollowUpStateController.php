@@ -94,6 +94,11 @@ final readonly class GetReportFollowUpStateController
                 'publicReference' => $state->publicReference,
                 'situationDescription' => $state->situationDescription,
                 'situationContext' => $state->situationContext->value,
+                'reporterTaxonomy' => [
+                    'version' => $state->taxonomyVersion,
+                    'recurrence' => $state->reporterRecurrence->value,
+                    'attentionCue' => $state->reporterAttentionCue->value,
+                ],
                 'status' => $state->status->value,
                 'createdAt' => $state->createdAt->format(
                     DATE_RFC3339_EXTENDED,

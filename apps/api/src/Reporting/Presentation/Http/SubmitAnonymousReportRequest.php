@@ -34,6 +34,18 @@ final readonly class SubmitAnonymousReportRequest
             message: 'Situation context is not valid.',
         )]
         public string $situationContext,
+
+        #[Assert\Choice(
+            choices: ['single', 'repeated', 'ongoing', 'unknown'],
+            message: 'Reporter recurrence is not valid.',
+        )]
+        public string $reporterRecurrence = 'unknown',
+
+        #[Assert\Choice(
+            choices: ['needs_prompt_attention', 'no_prompt_attention_indicated', 'unknown'],
+            message: 'Reporter attention cue is not valid.',
+        )]
+        public string $reporterAttentionCue = 'unknown',
     ) {
     }
 }
