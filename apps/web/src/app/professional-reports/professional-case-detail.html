@@ -55,7 +55,57 @@
               <p class="section-label">Pr&oacute;ximas acciones</p>
               <h2 id="tasks-title">Tareas</h2>
             </div>
+            @if (item.permissions.manage) {
+              <button type="button" class="quiet-action" (click)="startTask(item)">
+                Nueva tarea
+              </button>
+            }
           </div>
+          @if (taskError(); as message) {
+            <p class="task-feedback error" role="alert">{{ message }}</p>
+          } @else if (taskMessage(); as message) {
+            <p class="task-feedback" role="status">{{ message }}</p>
+          }
+          @if (item.permissions.manage && newTask.sourceId) {
+            <form class="task-form" (ngSubmit)="createTask(item)">
+              <label
+                >Acci&oacute;n
+                <input name="title" [(ngModel)]="newTask.title" maxlength="160" required />
+              </label>
+              <label
+                >Responsable
+                <select name="ownerId" [(ngModel)]="newTask.ownerId" required>
+                  @for (assignment of item.assignments; track assignment.id) {
+                    <option [value]="assignment.professional.id">
+                      {{ assignment.professional.name }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label
+                >Etapa
+                <select name="stage" [(ngModel)]="newTask.stage">
+                  <option value="assessment">Valoraci&oacute;n</option>
+                  <option value="action_plan">Plan de actuaci&oacute;n</option>
+                  <option value="professional_coordination">Coordinaci&oacute;n profesional</option>
+                  <option value="family_communication">Comunicaci&oacute;n familiar</option>
+                  <option value="information_collection">Recogida de informaci&oacute;n</option>
+                </select>
+              </label>
+              <label
+                >Tipo
+                <select name="kind" [(ngModel)]="newTask.kind">
+                  <option value="internal_action">Actuaci&oacute;n interna</option>
+                  <option value="external_communication">Comunicaci&oacute;n externa</option>
+                </select>
+              </label>
+              <label
+                >Objetivo temporal
+                <input type="datetime-local" name="dueAt" [(ngModel)]="newTask.dueAt" required />
+              </label>
+              <button type="submit" [disabled]="taskSaving()">Crear tarea</button>
+            </form>
+          }
           @if (item.tasks.length === 0) {
             <p class="empty">No hay tareas registradas.</p>
           } @else {
@@ -95,6 +145,39 @@
                   </div>
                   @if (task.status === 'not_applicable' && task.notApplicableReason) {
                     <p class="resolution">{{ task.notApplicableReason }}</p>
+                  }
+                  @if (item.permissions.manage && task.status === 'pending') {
+                    <div class="task-actions">
+                      <button
+                        type="button"
+                        (click)="completeTask(item, task.id)"
+                        [disabled]="taskSaving()"
+                      >
+                        Completar
+                      </button>
+                      <button
+                        type="button"
+                        class="secondary"
+                        (click)="openNotApplicable(task.id)"
+                        [disabled]="taskSaving()"
+                      >
+                        No aplica
+                      </button>
+                    </div>
+                    @if (notApplicableTaskId === task.id) {
+                      <form class="resolution-form" (ngSubmit)="markNotApplicable(item)">
+                        <label
+                          >Motivo
+                          <textarea
+                            name="notApplicableReason"
+                            [(ngModel)]="notApplicableReason"
+                            maxlength="500"
+                            required
+                          ></textarea>
+                        </label>
+                        <button type="submit" [disabled]="taskSaving()">Confirmar motivo</button>
+                      </form>
+                    }
                   }
                 </li>
               }

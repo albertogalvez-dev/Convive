@@ -14,6 +14,11 @@ final readonly class DoctrineCaseTaskRepository implements CaseTaskRepository
     {
     }
 
+    public function find(\Symfony\Component\Uid\Uuid $id): ?CaseTask
+    {
+        return $this->entityManager->find(CaseTask::class, $id);
+    }
+
     public function save(CaseTask $task): void
     {
         $this->entityManager->persist($task);
