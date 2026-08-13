@@ -34,6 +34,10 @@ The visible responsibility is separate from the technical grant. A person may
 hold more than one visible responsibility only when each corresponding grant is
 made explicitly and is auditable.
 
+Visible responsibility labels are product terminology for the fictional
+Andalusian profile. They do not attest an appointment, qualification or legal
+authority in a real educational centre.
+
 | Visible responsibility | Initial organisation grant | Exact-case grant | Explicit boundary |
 | --- | --- | --- | --- |
 | Dirección del centro | `administrator` when centre configuration or account administration is required | None by default; a separate assignment is required | Does not automatically read, export, close or reopen any case. |
