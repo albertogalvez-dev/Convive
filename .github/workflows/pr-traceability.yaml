@@ -1,0 +1,41 @@
+name: Pull request traceability
+
+on:
+  pull_request:
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate:
+    name: PR traceability
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PR_BODY: ${{ github.event.pull_request.body }}
+
+    steps:
+      - name: Validate issue and evidence sections
+        shell: bash
+        run: |
+          set -euo pipefail
+          readonly ISSUE_REFERENCE_REGEX='(^|[[:space:]])(Closes|Fixes|Resolves)[[:space:]]+#[0-9]+([[:space:]]|$)'
+          readonly REQUIRED_HEADINGS=(
+            '## Issue and acceptance criteria'
+            '## Verification evidence'
+            '## Out of scope'
+          )
+
+          if [[ ! ${PR_BODY:-} =~ ${ISSUE_REFERENCE_REGEX} ]]; then
+            echo 'Add a closing issue reference such as "Closes #123" to the pull request body.' >&2
+            exit 1
+          fi
+
+          for heading in "${REQUIRED_HEADINGS[@]}"; do
+            if ! grep --fixed-strings --quiet -- "${heading}" <<< "${PR_BODY:-}"; then
+              echo "Add the required pull-request section: ${heading}" >&2
+              exit 1
+            fi
+          done
+
+          echo 'Pull request issue linkage and evidence sections are present.'
