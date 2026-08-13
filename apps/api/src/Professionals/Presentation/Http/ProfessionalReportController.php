@@ -294,21 +294,6 @@ final readonly class ProfessionalReportController
                         minLength: ReportReviewReason::MIN_LENGTH,
                         maxLength: ReportReviewReason::MAX_LENGTH,
                     ),
-                    new OA\Property(
-                        property: 'professionalConcernCategory',
-                        type: 'string',
-                        enum: ['peer_interaction', 'digital_interaction', 'exclusion_or_isolation', 'harmful_language_or_conduct', 'safety_or_wellbeing_concern', 'other', 'unknown'],
-                    ),
-                    new OA\Property(
-                        property: 'professionalRecurrence',
-                        type: 'string',
-                        enum: ['single', 'repeated', 'ongoing', 'unknown'],
-                    ),
-                    new OA\Property(
-                        property: 'professionalAttentionCue',
-                        type: 'string',
-                        enum: ['needs_prompt_attention', 'no_prompt_attention_indicated', 'unknown'],
-                    ),
                 ],
             ),
         ),
@@ -541,11 +526,6 @@ final readonly class ProfessionalReportController
                 $report->situationDescription()->toString(),
             ),
             'situationContext' => $report->situationContext()->value,
-            'reporterTaxonomy' => [
-                'version' => $report->taxonomyVersion(),
-                'recurrence' => $report->reporterRecurrence()->value,
-                'attentionCue' => $report->reporterAttentionCue()->value,
-            ],
             'status' => $this->professionalStatus($report->status()),
             'createdAt' => $report->createdAt()->format(DATE_RFC3339_EXTENDED),
         ];

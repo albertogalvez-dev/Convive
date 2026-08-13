@@ -9,7 +9,6 @@ export interface ProfessionalReportSummary {
   publicReference: string;
   situationPreview: string;
   situationContext: string;
-  reporterTaxonomy?: { version: string; recurrence: string; attentionCue: string };
   status: ProfessionalReportStatus;
   createdAt: string;
 }

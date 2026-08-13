@@ -437,19 +437,15 @@ paths:
                   minLength: 10
                 professionalConcernCategory:
                   type: string
-                  enum:
-                    - peer_interaction
-                    - digital_interaction
-                    - exclusion_or_isolation
-                    - harmful_language_or_conduct
-                    - safety_or_wellbeing_concern
-                    - other
-                    - unknown
+                  default: unknown
+                  enum: [peer_interaction, digital_interaction, exclusion_or_isolation, harmful_language_or_conduct, safety_or_wellbeing_concern, other, unknown]
                 professionalRecurrence:
                   type: string
+                  default: unknown
                   enum: [single, repeated, ongoing, unknown]
                 professionalAttentionCue:
                   type: string
+                  default: unknown
                   enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown]
               type: object
       responses:
@@ -1177,7 +1173,6 @@ components:
         - publicReference
         - situationDescription
         - situationContext
-        - reporterTaxonomy
         - status
         - createdAt
         - followUpEntries
@@ -1196,8 +1191,6 @@ components:
             - digital
             - mixed
             - unknown
-        reporterTaxonomy:
-          $ref: '#/components/schemas/ReporterTriageTaxonomy'
         status:
           type: string
           example: received
@@ -1288,34 +1281,68 @@ components:
       type: object
       additionalProperties: false
     ReporterTriageTaxonomy:
-      required: [version, recurrence, attentionCue]
+      required:
+        - version
+        - recurrence
+        - attentionCue
       properties:
         version:
           type: string
           example: andalucia-v1
         recurrence:
           type: string
-          enum: [single, repeated, ongoing, unknown]
+          enum:
+            - single
+            - repeated
+            - ongoing
+            - unknown
         attentionCue:
           type: string
-          enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown]
+          enum:
+            - needs_prompt_attention
+            - no_prompt_attention_indicated
+            - unknown
       type: object
       additionalProperties: false
     ProfessionalTriageTaxonomy:
-      required: [version, concernCategory, recurrence, attentionCue]
+      required:
+        - version
+        - concernCategory
+        - recurrence
+        - attentionCue
       properties:
         version:
           type: string
           example: andalucia-v1
         concernCategory:
-          type: [string, 'null']
-          enum: [peer_interaction, digital_interaction, exclusion_or_isolation, harmful_language_or_conduct, safety_or_wellbeing_concern, other, unknown, null]
+          type:
+            - string
+            - 'null'
+          enum:
+            - peer_interaction
+            - digital_interaction
+            - exclusion_or_isolation
+            - harmful_language_or_conduct
+            - safety_or_wellbeing_concern
+            - other
+            - unknown
         recurrence:
-          type: [string, 'null']
-          enum: [single, repeated, ongoing, unknown, null]
+          type:
+            - string
+            - 'null'
+          enum:
+            - single
+            - repeated
+            - ongoing
+            - unknown
         attentionCue:
-          type: [string, 'null']
-          enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown, null]
+          type:
+            - string
+            - 'null'
+          enum:
+            - needs_prompt_attention
+            - no_prompt_attention_indicated
+            - unknown
       type: object
       additionalProperties: false
     ProfessionalReportSummary:
@@ -1324,7 +1351,6 @@ components:
         - publicReference
         - situationPreview
         - situationContext
-        - reporterTaxonomy
         - status
         - createdAt
       properties:
@@ -1344,8 +1370,6 @@ components:
             - digital
             - mixed
             - unknown
-        reporterTaxonomy:
-          $ref: '#/components/schemas/ReporterTriageTaxonomy'
         status:
           type: string
           enum:
@@ -1379,7 +1403,6 @@ components:
         - publicReference
         - situationPreview
         - situationContext
-        - reporterTaxonomy
         - status
         - createdAt
         - situationDescription
@@ -1403,8 +1426,6 @@ components:
             - digital
             - mixed
             - unknown
-        reporterTaxonomy:
-          $ref: '#/components/schemas/ReporterTriageTaxonomy'
         status:
           type: string
           enum:
@@ -2061,6 +2082,32 @@ components:
       properties:
         reason:
           type: string
+        professionalConcernCategory:
+          type: string
+          default: unknown
+          enum:
+            - peer_interaction
+            - digital_interaction
+            - exclusion_or_isolation
+            - harmful_language_or_conduct
+            - safety_or_wellbeing_concern
+            - other
+            - unknown
+        professionalRecurrence:
+          type: string
+          default: unknown
+          enum:
+            - single
+            - repeated
+            - ongoing
+            - unknown
+        professionalAttentionCue:
+          type: string
+          default: unknown
+          enum:
+            - needs_prompt_attention
+            - no_prompt_attention_indicated
+            - unknown
       type: object
     TriageProfessionalReportRequest:
       properties:
@@ -2126,11 +2173,18 @@ components:
         reporterRecurrence:
           type: string
           default: unknown
-          enum: [single, repeated, ongoing, unknown]
+          enum:
+            - single
+            - repeated
+            - ongoing
+            - unknown
         reporterAttentionCue:
           type: string
           default: unknown
-          enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown]
+          enum:
+            - needs_prompt_attention
+            - no_prompt_attention_indicated
+            - unknown
       type: object
     VerifyReportAccessRequest:
       required:
