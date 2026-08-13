@@ -20,7 +20,7 @@ final readonly class CreateProfessionalCaseTaskRequest
         #[Assert\Length(min: 1, max: 160)]
         public string $title,
         #[Assert\NotBlank]
-        #[Assert\DateTime]
+        #[Assert\DateTime(format: 'Y-m-d\TH:i:sP')]
         public string $dueAt,
     ) {
     }
