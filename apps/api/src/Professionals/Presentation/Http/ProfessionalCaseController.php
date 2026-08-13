@@ -8,6 +8,9 @@ use App\Cases\Application\CaseWorkspaceDetail;
 use App\Cases\Application\CaseWorkspaceSummary;
 use App\Cases\Application\CasePdfRenderer;
 use App\Cases\Application\AuthoriseCaseAccess;
+use App\Cases\Application\CompleteCaseTask;
+use App\Cases\Application\CreateCaseTask;
+use App\Cases\Application\MarkCaseTaskNotApplicable;
 use App\Cases\Application\ProfessionalCaseWorkspace;
 use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
@@ -21,7 +24,11 @@ use App\Cases\Domain\CaseOperationalView;
 use App\Cases\Domain\CasePermission;
 use App\Cases\Domain\CaseStatus;
 use App\Cases\Domain\CaseTask;
+use App\Cases\Domain\CaseTaskKind;
+use App\Cases\Domain\CaseTaskRepository;
 use App\Cases\Domain\CaseWorkspaceQuery;
+use App\Cases\Domain\CaseProtocolStage;
+use App\Cases\Domain\WorkflowSourceVersionRepository;
 use App\Cases\Domain\ProfessionalExportEvent;
 use App\Cases\Domain\ProfessionalExportEventRepository;
 use App\Cases\Domain\ProfessionalExportKind;
@@ -32,6 +39,9 @@ use App\Reporting\Presentation\Http\ReportAttachmentUnavailableHttpException;
 use App\Shared\Infrastructure\Logging\SecurityEventLogger;
 use App\Shared\Presentation\Http\RateLimitEnforcer;
 use DateTimeImmutable;
+use DateMalformedStringException;
+use InvalidArgumentException;
+use LogicException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +49,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -53,6 +64,11 @@ final readonly class ProfessionalCaseController
         private ProfessionalCaseWorkspace $workspace,
         private ProfessionalCaseCursorCodec $cursorCodec,
         private AuthoriseCaseAccess $authorise,
+        private CreateCaseTask $createCaseTask,
+        private CompleteCaseTask $completeCaseTask,
+        private MarkCaseTaskNotApplicable $markCaseTaskNotApplicable,
+        private CaseTaskRepository $tasks,
+        private WorkflowSourceVersionRepository $workflowSources,
         private CaseAuditEventRepository $auditEvents,
         private ProfessionalExportEventRepository $professionalExportEvents,
         private CasePdfRenderer $pdfRenderer,
@@ -144,6 +160,119 @@ final readonly class ProfessionalCaseController
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
 
         return $this->json($this->serializeDetail($detail, $now));
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/tasks', name: 'api_v1_professional_create_case_task', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'createProfessionalCaseTask',
+        summary: 'Create an explicit source-aware task in an assigned case',
+        description: 'Requires exact-case manage permission. This does not apply a protocol or confirm an external communication.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/CreateProfessionalCaseTaskRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_CREATED, description: 'The explicit task was created.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseTask')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The task request is invalid.'),
+        ],
+    )]
+    public function createTask(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        CreateProfessionalCaseTaskRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $owner = $this->assignedProfessional($detail, $payload->ownerId);
+        $source = Uuid::isValid($payload->sourceId) ? $this->workflowSources->find(Uuid::fromString($payload->sourceId)) : null;
+        if ($owner === null || $source === null) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+
+        try {
+            $task = $this->createCaseTask->create(
+                Uuid::v7(),
+                $detail->managedCase,
+                $owner,
+                $source,
+                CaseProtocolStage::from($payload->stage),
+                CaseTaskKind::from($payload->kind),
+                $payload->title,
+                new DateTimeImmutable($payload->dueAt),
+                $professional,
+                DateTimeImmutable::createFromTimestamp(microtime(true)),
+            );
+        } catch (InvalidArgumentException|DateMalformedStringException $exception) {
+            throw new InvalidProfessionalCaseTaskHttpException(previous: $exception);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeTask($task, DateTimeImmutable::createFromTimestamp(microtime(true))), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/tasks/{taskId}/complete', name: 'api_v1_professional_complete_case_task', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'completeProfessionalCaseTask',
+        summary: 'Explicitly complete a pending case task',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The task was completed.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseTask')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or task is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The task has already reached a terminal state.'),
+        ],
+    )]
+    public function completeTask(string $id, string $taskId, #[CurrentUser] Professional $professional): JsonResponse
+    {
+        $task = $this->resolveTask($id, $taskId, $professional);
+        $now = DateTimeImmutable::createFromTimestamp(microtime(true));
+        try {
+            $this->completeCaseTask->complete($task, $professional, $now);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (LogicException $exception) {
+            throw new ProfessionalCaseTaskConflictHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeTask($task, $now));
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/tasks/{taskId}/not-applicable', name: 'api_v1_professional_mark_case_task_not_applicable', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'markProfessionalCaseTaskNotApplicable',
+        summary: 'Explicitly mark a pending case task not applicable with a reason',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/MarkProfessionalCaseTaskNotApplicableRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The task was marked not applicable.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseTask')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or task is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The task has already reached a terminal state.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The resolution reason is invalid.'),
+        ],
+    )]
+    public function markTaskNotApplicable(
+        string $id,
+        string $taskId,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        MarkProfessionalCaseTaskNotApplicableRequest $payload,
+    ): JsonResponse {
+        $task = $this->resolveTask($id, $taskId, $professional);
+        $now = DateTimeImmutable::createFromTimestamp(microtime(true));
+        try {
+            $this->markCaseTaskNotApplicable->mark($task, $professional, $now, $payload->reason);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (LogicException $exception) {
+            throw new ProfessionalCaseTaskConflictHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeTask($task, $now));
     }
 
     #[Route(
@@ -436,6 +565,36 @@ final readonly class ProfessionalCaseController
             ?? throw new ProfessionalCaseNotFoundHttpException();
     }
 
+    private function resolveTask(string $caseId, string $taskId, Professional $professional): CaseTask
+    {
+        $detail = $this->resolveDetail($caseId, $professional);
+        if (!Uuid::isValid($taskId)) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+
+        $task = $this->tasks->find(Uuid::fromString($taskId));
+        if (!$task instanceof CaseTask || !$task->managedCase()->id()->equals($detail->managedCase->id())) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+
+        return $task;
+    }
+
+    private function assignedProfessional(CaseWorkspaceDetail $detail, string $professionalId): ?Professional
+    {
+        if (!Uuid::isValid($professionalId)) {
+            return null;
+        }
+
+        foreach ($detail->assignments as $assignment) {
+            if ($assignment->professional()->id()->equals(Uuid::fromString($professionalId))) {
+                return $assignment->professional();
+            }
+        }
+
+        return null;
+    }
+
     private function resolveAuditDetail(string $id, Professional $professional): CaseWorkspaceDetail
     {
         $detail = $this->resolveDetail($id, $professional);
@@ -557,6 +716,7 @@ final readonly class ProfessionalCaseController
             'overdue' => $task->isOverdue($now),
             'owner' => ['id' => $task->owner()->id()->toRfc4122(), 'name' => $task->owner()->name()],
             'source' => [
+                'id' => $task->source()->id()->toRfc4122(),
                 'title' => $task->source()->title(),
                 'version' => $task->source()->version(),
                 'authority' => $task->source()->authority()->value,
@@ -629,8 +789,8 @@ final readonly class ProfessionalCaseController
     }
 
     /** @param array<string, mixed> $data */
-    private function json(array $data): JsonResponse
+    private function json(array $data, int $status = Response::HTTP_OK): JsonResponse
     {
-        return new JsonResponse($data, Response::HTTP_OK, ['Cache-Control' => 'no-store']);
+        return new JsonResponse($data, $status, ['Cache-Control' => 'no-store']);
     }
 }

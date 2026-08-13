@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe, DecimalPipe, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import {
@@ -25,7 +26,7 @@ registerLocaleData(localeEs);
 @Component({
   selector: 'app-professional-case-detail',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, RouterLink],
+  imports: [DatePipe, DecimalPipe, FormsModule, RouterLink],
   templateUrl: './professional-case-detail.html',
   styleUrl: './professional-case-detail.scss',
 })
@@ -41,6 +42,19 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected readonly auditEvents = signal<ProfessionalCaseAuditEvent[]>([]);
   protected readonly auditLoading = signal(false);
   protected readonly auditUnavailable = signal(false);
+  protected readonly taskMessage = signal<string | null>(null);
+  protected readonly taskError = signal<string | null>(null);
+  protected readonly taskSaving = signal(false);
+  protected readonly newTask = {
+    ownerId: '',
+    sourceId: '',
+    stage: 'assessment',
+    kind: 'internal_action' as const,
+    title: '',
+    dueAt: '',
+  };
+  protected notApplicableTaskId: string | null = null;
+  protected notApplicableReason = '';
   protected readonly caseStatusLabel = caseStatusLabel;
   protected readonly caseModalityLabel = caseModalityLabel;
   protected readonly assignmentRoleLabel = assignmentRoleLabel;
@@ -67,6 +81,78 @@ export class ProfessionalCaseDetailPage implements OnInit {
 
   protected caseRecordExportUrl(caseId: string): string {
     return this.cases.caseRecordExportUrl(caseId);
+  }
+
+  protected startTask(item: ProfessionalCaseDetail): void {
+    const source = item.tasks[0]?.source;
+    this.newTask.ownerId = item.assignments[0]?.professional.id ?? '';
+    this.newTask.sourceId = source?.id ?? '';
+    this.newTask.dueAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+    this.taskError.set(null);
+    this.taskMessage.set(null);
+  }
+
+  protected createTask(item: ProfessionalCaseDetail): void {
+    this.taskSaving.set(true);
+    this.taskError.set(null);
+    this.cases
+      .createTask(item.id, { ...this.newTask, dueAt: new Date(this.newTask.dueAt).toISOString() })
+      .subscribe({
+        next: () => {
+          this.taskMessage.set('La tarea se ha creado. No confirma ninguna comunicación externa.');
+          this.taskSaving.set(false);
+          this.load();
+        },
+        error: () => {
+          this.taskSaving.set(false);
+          this.taskError.set(
+            'No hemos podido crear la tarea. Revisa los datos e inténtalo de nuevo.',
+          );
+        },
+      });
+  }
+
+  protected completeTask(item: ProfessionalCaseDetail, taskId: string): void {
+    this.taskSaving.set(true);
+    this.taskError.set(null);
+    this.cases.completeTask(item.id, taskId).subscribe({
+      next: () => {
+        this.taskMessage.set('La tarea se ha marcado como completada.');
+        this.taskSaving.set(false);
+        this.load();
+      },
+      error: () => {
+        this.taskSaving.set(false);
+        this.taskError.set('La tarea ya no se puede actualizar o no tienes permiso.');
+      },
+    });
+  }
+
+  protected openNotApplicable(taskId: string): void {
+    this.notApplicableTaskId = taskId;
+    this.notApplicableReason = '';
+  }
+
+  protected markNotApplicable(item: ProfessionalCaseDetail): void {
+    if (this.notApplicableTaskId === null) {
+      return;
+    }
+    this.taskSaving.set(true);
+    this.taskError.set(null);
+    this.cases
+      .markTaskNotApplicable(item.id, this.notApplicableTaskId, this.notApplicableReason)
+      .subscribe({
+        next: () => {
+          this.notApplicableTaskId = null;
+          this.taskMessage.set('La tarea se ha marcado como no aplicable con su motivo.');
+          this.taskSaving.set(false);
+          this.load();
+        },
+        error: () => {
+          this.taskSaving.set(false);
+          this.taskError.set('Indica un motivo válido o vuelve a intentarlo.');
+        },
+      });
   }
 
   protected auditActionLabel(action: CaseAuditAction): string {

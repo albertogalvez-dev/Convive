@@ -206,6 +206,11 @@ final class CompleteCaseTaskTest extends TestCase
     private function tasks(): CaseTaskRepository
     {
         return new class implements CaseTaskRepository {
+            public function find(Uuid $id): ?CaseTask
+            {
+                return null;
+            }
+
             public function save(CaseTask $task): void
             {
             }

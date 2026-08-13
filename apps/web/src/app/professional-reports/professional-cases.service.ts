@@ -64,6 +64,7 @@ export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
     overdue: boolean;
     owner: { id: string; name: string };
     source: {
+      id: string;
       title: string;
       version: string;
       authority: WorkflowSourceAuthority;
@@ -121,6 +122,41 @@ export class ProfessionalCasesService {
 
   detail(id: string): Observable<ProfessionalCaseDetail> {
     return this.http.get<ProfessionalCaseDetail>(`${this.endpoint}/${encodeURIComponent(id)}`);
+  }
+
+  createTask(
+    id: string,
+    payload: {
+      ownerId: string;
+      sourceId: string;
+      stage: string;
+      kind: 'internal_action' | 'external_communication';
+      title: string;
+      dueAt: string;
+    },
+  ): Observable<ProfessionalCaseDetail['tasks'][number]> {
+    return this.http.post<ProfessionalCaseDetail['tasks'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/tasks`,
+      payload,
+    );
+  }
+
+  completeTask(id: string, taskId: string): Observable<ProfessionalCaseDetail['tasks'][number]> {
+    return this.http.post<ProfessionalCaseDetail['tasks'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/tasks/${encodeURIComponent(taskId)}/complete`,
+      {},
+    );
+  }
+
+  markTaskNotApplicable(
+    id: string,
+    taskId: string,
+    reason: string,
+  ): Observable<ProfessionalCaseDetail['tasks'][number]> {
+    return this.http.post<ProfessionalCaseDetail['tasks'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/tasks/${encodeURIComponent(taskId)}/not-applicable`,
+      { reason },
+    );
   }
 
   auditEvents(id: string): Observable<{ items: ProfessionalCaseAuditEvent[] }> {

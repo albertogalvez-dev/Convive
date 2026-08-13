@@ -245,6 +245,71 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame($deniedAudit, $this->client->getResponse()->getContent());
     }
 
+    public function testLeadCanCreateAndExplicitlyResolveCaseTasks(): void
+    {
+        [$managedCase, $lead] = $this->createCaseWorkspace();
+        $this->client->loginUser($lead);
+        $detailUrl = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122();
+        $this->client->request('GET', $detailUrl);
+        $detail = $this->responsePayload();
+        $sourceId = $detail['tasks'][0]['source']['id'];
+
+        $this->client->jsonRequest('POST', $detailUrl.'/tasks', [
+            'ownerId' => $lead->id()->toRfc4122(),
+            'sourceId' => $sourceId,
+            'stage' => 'assessment',
+            'kind' => 'internal_action',
+            'title' => 'Record the fictional follow-up action.',
+            'dueAt' => '2030-01-02T10:00:00+00:00',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $created = $this->responsePayload();
+        self::assertSame('pending', $created['status']);
+        self::assertSame($sourceId, $created['source']['id']);
+
+        $this->client->jsonRequest('POST', $detailUrl.'/tasks/'.$created['id'].'/not-applicable', [
+            'reason' => 'The fictional action is not needed for this case.',
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertSame('not_applicable', $this->responsePayload()['status']);
+
+        $this->client->request('POST', $detailUrl.'/tasks/'.$created['id'].'/complete');
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
+    }
+
+    public function testObserverCannotCreateOrResolveCaseTasks(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $observer = $this->createProfessional('case-observer', $organisation, ProfessionalRole::Triage);
+        $assignment = new CaseAssignment(
+            Uuid::v7(),
+            $managedCase,
+            $observer,
+            CaseAssignmentRole::Observer,
+            $lead,
+            new DateTimeImmutable(),
+        );
+        $this->entityManager->persist($assignment);
+        $this->entityManager->flush();
+        $this->client->loginUser($observer);
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122();
+        $this->client->request('GET', $url);
+        $detail = $this->responsePayload();
+
+        $this->client->jsonRequest('POST', $url.'/tasks', [
+            'ownerId' => $lead->id()->toRfc4122(),
+            'sourceId' => $detail['tasks'][0]['source']['id'],
+            'stage' => 'assessment',
+            'kind' => 'internal_action',
+            'title' => 'Denied fictional action.',
+            'dueAt' => '2030-01-02T10:00:00+00:00',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->client->request('POST', $url.'/tasks/'.$detail['tasks'][0]['id'].'/complete');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testContributorCanReadTheCaseButCannotDiscoverItsProtectedAuditTrail(): void
     {
         [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();

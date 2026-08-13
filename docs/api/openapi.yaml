@@ -170,6 +170,120 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/tasks':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Create an explicit source-aware task in an assigned case'
+      description: 'Requires exact-case manage permission. This does not apply a protocol or confirm an external communication.'
+      operationId: createProfessionalCaseTask
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProfessionalCaseTaskRequest'
+      responses:
+        '201':
+          description: 'The explicit task was created.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseTask'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case is unavailable in this scope.'
+        '422':
+          description: 'The task request is invalid.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/tasks/{taskId}/complete':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Explicitly complete a pending case task'
+      operationId: completeProfessionalCaseTask
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The task was completed.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseTask'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or task is unavailable in this scope.'
+        '409':
+          description: 'The task has already reached a terminal state.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/tasks/{taskId}/not-applicable':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Explicitly mark a pending case task not applicable with a reason'
+      operationId: markProfessionalCaseTaskNotApplicable
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkProfessionalCaseTaskNotApplicableRequest'
+      responses:
+        '200':
+          description: 'The task was marked not applicable.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseTask'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or task is unavailable in this scope.'
+        '409':
+          description: 'The task has already reached a terminal state.'
+        '422':
+          description: 'The resolution reason is invalid.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/cases/{id}/evidence/{attachmentId}/download':
     get:
       tags:
@@ -1772,12 +1886,16 @@ components:
           additionalProperties: false
         source:
           required:
+            - id
             - title
             - version
             - authority
             - territory
             - uri
           properties:
+            id:
+              type: string
+              format: uuid
             title:
               type: string
               maxLength: 180
@@ -2081,6 +2199,55 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    CreateProfessionalCaseTaskRequest:
+      required:
+        - ownerId
+        - sourceId
+        - stage
+        - kind
+        - title
+        - dueAt
+      properties:
+        ownerId:
+          type: string
+        sourceId:
+          type: string
+        stage:
+          type: string
+          enum:
+            - identification
+            - immediate_actions
+            - urgent_protection
+            - family_communication
+            - professional_coordination
+            - information_collection
+            - educational_measures
+            - inspection_communication
+            - assessment
+            - action_plan
+            - family_measures
+            - inspection_follow_up
+        kind:
+          type: string
+          enum:
+            - internal_action
+            - external_communication
+        title:
+          type: string
+          maxLength: 160
+          minLength: 1
+        dueAt:
+          type: string
+      type: object
+    MarkProfessionalCaseTaskNotApplicableRequest:
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+      type: object
     ReviewProfessionalReportRequest:
       required:
         - reason
