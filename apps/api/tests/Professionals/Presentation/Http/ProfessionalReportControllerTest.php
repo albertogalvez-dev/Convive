@@ -142,6 +142,7 @@ final class ProfessionalReportControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $payload = $this->responsePayload();
         self::assertSame('new', $payload['status']);
+        self::assertSame('andalucia-v1', $payload['reporterTaxonomy']['version']);
         self::assertSame(
             'A fictional student is repeatedly excluded during break time.',
             $payload['situationDescription'],
