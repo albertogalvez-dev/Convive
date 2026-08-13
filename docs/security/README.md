@@ -15,6 +15,8 @@ as a one-time compliance claim.
   still pending.
 - [Dependency management](dependency-management.md): supply-chain ownership
   and verification.
+- [Code scanning and finding triage](code-scanning.md): CodeQL TypeScript
+  coverage, PHP assurance boundary and alert handling.
 - [GitHub security governance](github-governance.md): reviewed branch rules,
   repository controls, ownership and reproducible settings inventory.
 
