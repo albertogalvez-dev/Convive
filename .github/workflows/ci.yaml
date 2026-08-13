@@ -194,8 +194,8 @@ jobs:
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
-          grep --fixed-strings 'cache.rate_limiter: { adapter: cache.adapter.redis }' apps/api/config/packages/cache.yaml
-          grep --fixed-strings 'app.idempotency: { adapter: cache.adapter.redis }' apps/api/config/packages/cache.yaml
+          grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
+          grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint php api \
             bin/console cache:pool:clear cache.rate_limiter app.idempotency --env=prod --no-interaction
           docker compose "${production_compose[@]}" down --volumes --remove-orphans
