@@ -364,7 +364,10 @@ Access must consider:
 - the sensitivity of the requested action;
 - the need to separate administration from case access.
 
-Detailed permissions will be defined during the security and domain design.
+The initial Andalusian visible responsibilities and their least-privilege
+technical grants are defined in
+[ADR-0023](../architecture/decisions/0023-map-andalusian-centre-responsibilities-to-least-privilege-grants.md).
+They do not infer case access from an institutional title.
 
 ### 11. Search, filters and dashboards
 
