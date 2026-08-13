@@ -12,6 +12,7 @@ services:
       DEFAULT_URI: http://localhost
       DATABASE_URL: postgresql://convive_restore:${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}@database:5432/convive_restore?serverVersion=18.4&charset=utf8
       SESSION_DATABASE_URL: pgsql:host=database;port=5432;dbname=convive_restore;user=convive_restore;password=${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
+      REDIS_DSN: redis://redis:6379
       # Recovery verifies the application against an isolated, disposable
       # attachment boundary. Restored database rows never grant object access,
       # and no production attachment volume is mounted into this environment.
@@ -24,6 +25,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      redis:
+        condition: service_started
     tmpfs:
       - /app/var
     volumes:
@@ -46,6 +49,14 @@ services:
       start_period: 5s
     tmpfs:
       - /var/lib/postgresql
+    networks:
+      - restore
+
+  redis:
+    image: redis:8.2.1-alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
+    read_only: true
+    tmpfs:
+      - /tmp
     networks:
       - restore
 
