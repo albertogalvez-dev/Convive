@@ -90,8 +90,9 @@ record the follow-up before the pull request can claim the journey is covered.
 ## Local and CI workflow
 
 Run the relevant local commands before opening a pull request. The
-`Backend`, `Frontend`, `Infrastructure`, `Encrypted recovery` and `End-to-end`
-CI jobs then reproduce their respective boundary on a clean runner. Treat a
+`Backend`, `Frontend`, `Infrastructure`, `Dependency review`, `Encrypted
+recovery` and `End-to-end` CI jobs then reproduce their respective boundary on
+a clean runner. Treat a
 local/CI mismatch as a defect in configuration or isolation, not as evidence to
 be ignored. Contributor commands and the required PR evidence are maintained
 in [CONTRIBUTING.md](../../CONTRIBUTING.md).

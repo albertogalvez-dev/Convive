@@ -53,9 +53,13 @@ will fit the project's current direction or delivery order.
    why, referencing the issue it closes. Fill in the pull request
    template's verification checklist honestly — an unchecked item is
    better than a false claim.
-6. **Continuous integration must pass.** The `Backend`, `Frontend` and
-   `Infrastructure` GitHub Actions checks are required status checks on
-   `main`; a pull request cannot merge until all three succeed.
+6. **Continuous integration must pass.** The `Backend`, `Frontend`,
+   `Infrastructure`, `Dependency review`, `Encrypted recovery` and
+   `End-to-end` GitHub Actions checks are required status checks on `main`; a
+   pull request cannot merge until all six succeed. `Dependency review` is
+   intentionally pull-request-only and is skipped on the post-merge push.
+   The additional `PR traceability` workflow must also pass and validates the
+   closing issue reference plus its evidence sections.
 7. Once merged, the source branch is deleted. If the merged issue has
    an acceptance checklist, it should be checked off against the
    actual merged evidence, not assumed complete because a pull request
