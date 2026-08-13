@@ -270,8 +270,6 @@ final readonly class ProfessionalCaseController
             throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
         } catch (LogicException $exception) {
             throw new ProfessionalCaseTaskConflictHttpException(previous: $exception);
-        } catch (InvalidArgumentException $exception) {
-            throw new InvalidProfessionalCaseTaskHttpException(previous: $exception);
         }
 
         return $this->json($this->serializeTask($task, $now));
