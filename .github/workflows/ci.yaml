@@ -197,7 +197,7 @@ jobs:
           grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint /bin/sh api -ec \
-            'APP_ENV=prod APP_DEBUG=0 APP_RUNTIME_OPTIONS={"disable_dotenv":true} exec php bin/console cache:pool:clear cache.rate_limiter app.idempotency --no-interaction'
+            'APP_ENV=prod APP_DEBUG=0 APP_RUNTIME_OPTIONS="{\"disable_dotenv\":true}" exec php bin/console cache:pool:clear cache.rate_limiter app.idempotency --no-interaction'
           docker compose "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
           bash -n infrastructure/maintenance/*.sh
