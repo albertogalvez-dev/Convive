@@ -15,8 +15,11 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
-        #my.dedicated.cache: null
+        pools:
+            # The service must exist in development and tests too; production
+            # overrides its adapter below with authenticated Redis.
+            app.idempotency:
+                adapter: cache.app
 
 when@prod:
     framework:
