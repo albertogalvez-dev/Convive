@@ -68,6 +68,7 @@ final class GetReportFollowUpStateTest extends TestCase
             $state->situationDescription,
         );
         self::assertSame(SituationContext::InPerson, $state->situationContext);
+        self::assertSame('andalucia-v1', $state->taxonomyVersion);
         self::assertSame(ReportStatus::Received, $state->status);
         self::assertSame($report->createdAt(), $state->createdAt);
         self::assertSame($entries, $state->followUpEntries);

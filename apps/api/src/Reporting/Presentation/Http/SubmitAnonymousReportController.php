@@ -11,6 +11,8 @@ use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportRepository;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
+use App\Reporting\Domain\ReporterAttentionCue;
+use App\Reporting\Domain\ReporterRecurrence;
 use App\Shared\Infrastructure\Idempotency\IdempotencyStore;
 use App\Shared\Infrastructure\Logging\SecurityEventLogger;
 use App\Shared\Presentation\Http\RateLimitEnforcer;
@@ -214,6 +216,12 @@ final readonly class SubmitAnonymousReportController
             $situationContext = SituationContext::from(
                 $payload->situationContext,
             );
+            $reporterRecurrence = ReporterRecurrence::from(
+                $payload->reporterRecurrence,
+            );
+            $reporterAttentionCue = ReporterAttentionCue::from(
+                $payload->reporterAttentionCue,
+            );
         } catch (InvalidArgumentException|ValueError $exception) {
             throw new UnprocessableEntityHttpException(
                 'The request contains invalid report information.',
@@ -226,6 +234,8 @@ final readonly class SubmitAnonymousReportController
                 $organisationIdentifier,
                 $situationDescription,
                 $situationContext,
+                $reporterRecurrence,
+                $reporterAttentionCue,
             ),
         );
 

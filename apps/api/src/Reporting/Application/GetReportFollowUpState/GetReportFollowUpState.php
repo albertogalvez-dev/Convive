@@ -21,6 +21,9 @@ final readonly class GetReportFollowUpState
             $report->publicReference(),
             $report->situationDescription()->toString(),
             $report->situationContext(),
+            $report->reporterRecurrence(),
+            $report->reporterAttentionCue(),
+            $report->taxonomyVersion(),
             $report->status(),
             $report->createdAt(),
             $this->followUpEntryRepository

@@ -81,6 +81,7 @@ nelmio_api_doc:
                         - publicReference
                         - situationDescription
                         - situationContext
+                        - reporterTaxonomy
                         - status
                         - createdAt
                         - followUpEntries
@@ -99,6 +100,8 @@ nelmio_api_doc:
                                 - digital
                                 - mixed
                                 - unknown
+                        reporterTaxonomy:
+                            $ref: '#/components/schemas/ReporterTriageTaxonomy'
                         status:
                             type: string
                             enum:
@@ -169,6 +172,42 @@ nelmio_api_doc:
                             maxLength: 500
                             description: Optional reporter-supplied context. The original client filename is never stored or returned.
 
+                ReporterTriageTaxonomy:
+                    type: object
+                    additionalProperties: false
+                    required: [version, recurrence, attentionCue]
+                    properties:
+                        version:
+                            type: string
+                            example: andalucia-v1
+                        recurrence:
+                            type: string
+                            enum: [single, repeated, ongoing, unknown]
+                        attentionCue:
+                            type: string
+                            enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown]
+
+                ProfessionalTriageTaxonomy:
+                    type: object
+                    additionalProperties: false
+                    required: [version, concernCategory, recurrence, attentionCue]
+                    properties:
+                        version:
+                            type: string
+                            example: andalucia-v1
+                        concernCategory:
+                            type: string
+                            nullable: true
+                            enum: [peer_interaction, digital_interaction, exclusion_or_isolation, harmful_language_or_conduct, safety_or_wellbeing_concern, other, unknown]
+                        recurrence:
+                            type: string
+                            nullable: true
+                            enum: [single, repeated, ongoing, unknown]
+                        attentionCue:
+                            type: string
+                            nullable: true
+                            enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown]
+
                 ProfessionalReportSummary:
                     type: object
                     additionalProperties: false
@@ -177,6 +216,7 @@ nelmio_api_doc:
                         - publicReference
                         - situationPreview
                         - situationContext
+                        - reporterTaxonomy
                         - status
                         - createdAt
                     properties:
@@ -192,6 +232,8 @@ nelmio_api_doc:
                         situationContext:
                             type: string
                             enum: [in_person, digital, mixed, unknown]
+                        reporterTaxonomy:
+                            $ref: '#/components/schemas/ReporterTriageTaxonomy'
                         status:
                             type: string
                             enum: [new, reviewed]
@@ -202,7 +244,7 @@ nelmio_api_doc:
                 ProfessionalReportReview:
                     type: object
                     additionalProperties: false
-                    required: [reason, reviewedAt]
+                    required: [reason, reviewedAt, professionalTaxonomy]
                     properties:
                         reason:
                             type: string
@@ -211,6 +253,8 @@ nelmio_api_doc:
                         reviewedAt:
                             type: string
                             format: date-time
+                        professionalTaxonomy:
+                            $ref: '#/components/schemas/ProfessionalTriageTaxonomy'
 
                 ProfessionalReportDetail:
                     type: object
@@ -220,6 +264,7 @@ nelmio_api_doc:
                         - publicReference
                         - situationPreview
                         - situationContext
+                        - reporterTaxonomy
                         - status
                         - createdAt
                         - situationDescription

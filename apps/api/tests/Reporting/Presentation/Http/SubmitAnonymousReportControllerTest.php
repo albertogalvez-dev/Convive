@@ -80,6 +80,8 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
                 'situationDescription' =>
                     'A student is being excluded repeatedly.',
                 'situationContext' => 'in_person',
+                'reporterRecurrence' => 'repeated',
+                'reporterAttentionCue' => 'needs_prompt_attention',
             ],
         );
 
@@ -108,6 +110,15 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
         );
         self::assertSame('received', $payload['status']);
         self::assertIsString($payload['createdAt']);
+
+        $storedTaxonomy = $this->entityManager->getConnection()->fetchAssociative(
+            'SELECT reporter_recurrence, reporter_attention_cue, taxonomy_version FROM reports WHERE public_reference = ?',
+            [$payload['publicReference']],
+        );
+        self::assertIsArray($storedTaxonomy);
+        self::assertSame('repeated', $storedTaxonomy['reporter_recurrence']);
+        self::assertSame('needs_prompt_attention', $storedTaxonomy['reporter_attention_cue']);
+        self::assertSame('andalucia-v1', $storedTaxonomy['taxonomy_version']);
 
         $persistedReport = $this->entityManager
             ->getRepository(Report::class)

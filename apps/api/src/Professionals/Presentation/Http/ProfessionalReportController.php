@@ -12,6 +12,9 @@ use App\Reporting\Application\ProfessionalInbox\ProfessionalReportInbox;
 use App\Reporting\Application\TriageReport\TriageReport;
 use App\Reporting\Domain\FollowUpEntryContent;
 use App\Reporting\Domain\Report;
+use App\Reporting\Domain\ProfessionalConcernCategory;
+use App\Reporting\Domain\ReporterAttentionCue;
+use App\Reporting\Domain\ReporterRecurrence;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Domain\ReportAttachmentRepository;
 use App\Reporting\Domain\ReportAlreadyReviewed;
@@ -290,6 +293,21 @@ final readonly class ProfessionalReportController
                         minLength: ReportReviewReason::MIN_LENGTH,
                         maxLength: ReportReviewReason::MAX_LENGTH,
                     ),
+                    new OA\Property(
+                        property: 'professionalConcernCategory',
+                        type: 'string',
+                        enum: ['peer_interaction', 'digital_interaction', 'exclusion_or_isolation', 'harmful_language_or_conduct', 'safety_or_wellbeing_concern', 'other', 'unknown'],
+                    ),
+                    new OA\Property(
+                        property: 'professionalRecurrence',
+                        type: 'string',
+                        enum: ['single', 'repeated', 'ongoing', 'unknown'],
+                    ),
+                    new OA\Property(
+                        property: 'professionalAttentionCue',
+                        type: 'string',
+                        enum: ['needs_prompt_attention', 'no_prompt_attention_indicated', 'unknown'],
+                    ),
                 ],
             ),
         ),
@@ -319,7 +337,10 @@ final readonly class ProfessionalReportController
 
         try {
             $reason = ReportReviewReason::fromString($payload->reason);
-        } catch (InvalidArgumentException $exception) {
+            $professionalConcernCategory = ProfessionalConcernCategory::from($payload->professionalConcernCategory);
+            $professionalRecurrence = ReporterRecurrence::from($payload->professionalRecurrence);
+            $professionalAttentionCue = ReporterAttentionCue::from($payload->professionalAttentionCue);
+        } catch (InvalidArgumentException|ValueError $exception) {
             throw new InvalidProfessionalReportRequestHttpException(previous: $exception);
         }
 
@@ -335,6 +356,9 @@ final readonly class ProfessionalReportController
                 $organisations,
                 $reason,
                 $professional->id(),
+                $professionalConcernCategory,
+                $professionalRecurrence,
+                $professionalAttentionCue,
             );
         } catch (ReportAlreadyReviewed|OptimisticLockException $exception) {
             throw new ProfessionalReportAlreadyReviewedHttpException(previous: $exception);
@@ -516,6 +540,11 @@ final readonly class ProfessionalReportController
                 $report->situationDescription()->toString(),
             ),
             'situationContext' => $report->situationContext()->value,
+            'reporterTaxonomy' => [
+                'version' => $report->taxonomyVersion(),
+                'recurrence' => $report->reporterRecurrence()->value,
+                'attentionCue' => $report->reporterAttentionCue()->value,
+            ],
             'status' => $this->professionalStatus($report->status()),
             'createdAt' => $report->createdAt()->format(DATE_RFC3339_EXTENDED),
         ];
@@ -583,6 +612,12 @@ final readonly class ProfessionalReportController
         return [
             'reason' => $reason->toString(),
             'reviewedAt' => $reviewedAt->format(DATE_RFC3339_EXTENDED),
+            'professionalTaxonomy' => [
+                'version' => $report->taxonomyVersion(),
+                'concernCategory' => $report->professionalConcernCategory()?->value,
+                'recurrence' => $report->professionalRecurrence()?->value,
+                'attentionCue' => $report->professionalAttentionCue()?->value,
+            ],
         ];
     }
 

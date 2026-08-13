@@ -44,6 +44,38 @@ class Report
 
     #[ORM\Column(
         type: Types::STRING,
+        length: 24,
+        enumType: ReporterRecurrence::class,
+        options: ['default' => 'unknown'],
+    )]
+    private ReporterRecurrence $reporterRecurrence;
+
+    #[ORM\Column(
+        type: Types::STRING,
+        length: 32,
+        enumType: ReporterAttentionCue::class,
+        options: ['default' => 'unknown'],
+    )]
+    private ReporterAttentionCue $reporterAttentionCue;
+
+    #[ORM\Column(
+        type: Types::STRING,
+        length: 32,
+        options: ['default' => TriageTaxonomy::VERSION],
+    )]
+    private string $taxonomyVersion = TriageTaxonomy::VERSION;
+
+    #[ORM\Column(type: Types::STRING, length: 40, nullable: true, enumType: ProfessionalConcernCategory::class)]
+    private ?ProfessionalConcernCategory $professionalConcernCategory = null;
+
+    #[ORM\Column(type: Types::STRING, length: 24, nullable: true, enumType: ReporterRecurrence::class)]
+    private ?ReporterRecurrence $professionalRecurrence = null;
+
+    #[ORM\Column(type: Types::STRING, length: 32, nullable: true, enumType: ReporterAttentionCue::class)]
+    private ?ReporterAttentionCue $professionalAttentionCue = null;
+
+    #[ORM\Column(
+        type: Types::STRING,
         length: 20,
         enumType: ReportStatus::class,
     )]
@@ -86,6 +118,8 @@ class Report
         Organisation $organisation,
         SituationDescription $situationDescription,
         SituationContext $situationContext,
+        ReporterRecurrence $reporterRecurrence,
+        ReporterAttentionCue $reporterAttentionCue,
         string $publicReference,
         string $accessSecretHash,
         DateTimeImmutable $createdAt,
@@ -94,6 +128,8 @@ class Report
         $this->organisation = $organisation;
         $this->situationDescription = $situationDescription->toString();
         $this->situationContext = $situationContext;
+        $this->reporterRecurrence = $reporterRecurrence;
+        $this->reporterAttentionCue = $reporterAttentionCue;
         $this->status = ReportStatus::Received;
         $this->publicReference = $publicReference;
         $this->accessSecretHash = $accessSecretHash;
@@ -104,6 +140,8 @@ class Report
         Organisation $organisation,
         SituationDescription $situationDescription,
         SituationContext $situationContext,
+        ReporterRecurrence $reporterRecurrence = ReporterRecurrence::Unknown,
+        ReporterAttentionCue $reporterAttentionCue = ReporterAttentionCue::Unknown,
     ): ReportCreationResult {
         try {
             $publicReferenceBytes = random_bytes(10);
@@ -123,6 +161,8 @@ class Report
             $organisation,
             $situationDescription,
             $situationContext,
+            $reporterRecurrence,
+            $reporterAttentionCue,
             $publicReference,
             $accessSecret->lookupHash(),
             DateTimeImmutable::createFromTimestamp(microtime(true)),
@@ -164,6 +204,36 @@ class Report
         return $this->situationContext;
     }
 
+    public function reporterRecurrence(): ReporterRecurrence
+    {
+        return $this->reporterRecurrence;
+    }
+
+    public function reporterAttentionCue(): ReporterAttentionCue
+    {
+        return $this->reporterAttentionCue;
+    }
+
+    public function taxonomyVersion(): string
+    {
+        return $this->taxonomyVersion;
+    }
+
+    public function professionalConcernCategory(): ?ProfessionalConcernCategory
+    {
+        return $this->professionalConcernCategory;
+    }
+
+    public function professionalRecurrence(): ?ReporterRecurrence
+    {
+        return $this->professionalRecurrence;
+    }
+
+    public function professionalAttentionCue(): ?ReporterAttentionCue
+    {
+        return $this->professionalAttentionCue;
+    }
+
     public function status(): ReportStatus
     {
         return $this->status;
@@ -183,6 +253,9 @@ class Report
         ReportReviewReason $reason,
         Uuid $reviewedByProfessionalId,
         DateTimeImmutable $reviewedAt,
+        ProfessionalConcernCategory $professionalConcernCategory = ProfessionalConcernCategory::Unknown,
+        ReporterRecurrence $professionalRecurrence = ReporterRecurrence::Unknown,
+        ReporterAttentionCue $professionalAttentionCue = ReporterAttentionCue::Unknown,
     ): void {
         if ($this->status === ReportStatus::Reviewed) {
             throw new ReportAlreadyReviewed();
@@ -192,6 +265,9 @@ class Report
         $this->reviewReason = $reason->toString();
         $this->reviewedByProfessionalId = $reviewedByProfessionalId;
         $this->reviewedAt = $reviewedAt;
+        $this->professionalConcernCategory = $professionalConcernCategory;
+        $this->professionalRecurrence = $professionalRecurrence;
+        $this->professionalAttentionCue = $professionalAttentionCue;
     }
 
     public function reviewReason(): ?ReportReviewReason

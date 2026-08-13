@@ -34,6 +34,8 @@ final readonly class SubmitAnonymousReport
             $organisation,
             $command->situationDescription,
             $command->situationContext,
+            $command->reporterRecurrence,
+            $command->reporterAttentionCue,
         );
 
         $report = $creationResult->report;

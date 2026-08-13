@@ -7,6 +7,8 @@ namespace App\Reporting\Application\GetReportFollowUpState;
 use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportStatus;
 use App\Reporting\Domain\SituationContext;
+use App\Reporting\Domain\ReporterAttentionCue;
+use App\Reporting\Domain\ReporterRecurrence;
 use DateTimeImmutable;
 
 final readonly class ReportFollowUpState
@@ -21,6 +23,9 @@ final readonly class ReportFollowUpState
         public string $publicReference,
         public string $situationDescription,
         public SituationContext $situationContext,
+        public ReporterRecurrence $reporterRecurrence,
+        public ReporterAttentionCue $reporterAttentionCue,
+        public string $taxonomyVersion,
         public ReportStatus $status,
         public DateTimeImmutable $createdAt,
         public array $followUpEntries,
