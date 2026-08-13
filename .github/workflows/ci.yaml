@@ -161,7 +161,11 @@ jobs:
           secret_dir="$(mktemp -d)"
           trap 'rm -rf "$secret_dir"' EXIT
           printf '%s\n' tunnel-token > "$secret_dir/cloudflare_tunnel_token"
-          printf '%s\n' 'APP_SECRET=ci-only' > "$secret_dir/api.env"
+          printf '%s\n' \
+            'APP_SECRET=ci-only' \
+            'DATABASE_URL=postgresql://convive:database-password@database:5432/convive?serverVersion=18.4&charset=utf8' \
+            'SESSION_DATABASE_URL=pgsql:host=database;port=5432;dbname=convive;user=convive;password=database-password' \
+            'REDIS_DSN=redis://:ci-only@redis:6379' > "$secret_dir/api.env"
           printf '%s\n' database-password > "$secret_dir/database_password"
           printf '%s\n' 'requirepass ci-only' 'appendonly yes' > "$secret_dir/redis.conf"
           export CONVIVE_SECRET_DIR="$secret_dir"
@@ -188,6 +192,12 @@ jobs:
           docker compose "${production_compose[@]}" pull cloudflared database redis attachment-store-init
           docker compose "${production_compose[@]}" up --detach --wait database redis
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
+          docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
+          export CONVIVE_API_IMAGE=convive-production-cache-check:ci
+          grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
+          grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
+          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint /bin/sh api -ec \
+            'APP_ENV=prod APP_DEBUG=0 APP_RUNTIME_OPTIONS="{\"disable_dotenv\":true}" exec php bin/console cache:pool:clear cache.rate_limiter app.idempotency --no-interaction'
           docker compose "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
           bash -n infrastructure/maintenance/*.sh

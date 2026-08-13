@@ -63,7 +63,11 @@ services:
     read_only: true
     cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
-    tmpfs: ["/tmp"]
+    # Symfony cache and logs are runtime-only. Keep them writable without
+    # weakening the read-only application filesystem or persisting data.
+    tmpfs:
+      - /tmp
+      - /app/var:uid=33,gid=33,mode=0770
     volumes: [attachment-data:/var/lib/convive/attachments]
     restart: unless-stopped
     networks: [application, data, cache]
