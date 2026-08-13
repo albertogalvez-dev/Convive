@@ -5,8 +5,11 @@ FROM php:8.5.9-cli-bookworm AS dependencies-runtime
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends libicu-dev libpq-dev unzip \
+    && apt-get install --yes --no-install-recommends $PHPIZE_DEPS libicu-dev libpq-dev unzip \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && docker-php-ext-install intl pdo_pgsql \
+    && apt-get purge --yes --auto-remove $PHPIZE_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=dependencies /usr/bin/composer /usr/local/bin/composer
@@ -24,8 +27,11 @@ RUN composer install \
 FROM php:8.5.9-fpm-bookworm
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends libicu-dev libpq-dev \
+    && apt-get install --yes --no-install-recommends $PHPIZE_DEPS libicu-dev libpq-dev \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && docker-php-ext-install intl pdo_pgsql \
+    && apt-get purge --yes --auto-remove $PHPIZE_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

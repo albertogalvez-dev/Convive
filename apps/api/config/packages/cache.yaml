@@ -16,4 +16,18 @@ framework:
 
         # Namespaced pools use the above "app" backend by default
         #pools:
-            #my.dedicated.cache: null
+        #my.dedicated.cache: null
+
+when@prod:
+    framework:
+        cache:
+            # Security-sensitive public-request state must survive a process
+            # replacement and be shared by every API replica. The DSN includes
+            # Redis authentication at runtime and is never committed.
+            default_redis_provider: "%env(REDIS_DSN)%"
+            app: cache.adapter.redis
+            pools:
+                cache.rate_limiter:
+                    adapter: cache.adapter.redis
+                app.idempotency:
+                    adapter: cache.adapter.redis

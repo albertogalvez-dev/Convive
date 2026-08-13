@@ -161,7 +161,11 @@ jobs:
           secret_dir="$(mktemp -d)"
           trap 'rm -rf "$secret_dir"' EXIT
           printf '%s\n' tunnel-token > "$secret_dir/cloudflare_tunnel_token"
-          printf '%s\n' 'APP_SECRET=ci-only' > "$secret_dir/api.env"
+          printf '%s\n' \
+            'APP_SECRET=ci-only' \
+            'DATABASE_URL=postgresql://convive:database-password@database:5432/convive?serverVersion=18.4&charset=utf8' \
+            'SESSION_DATABASE_URL=pgsql:host=database;port=5432;dbname=convive;user=convive;password=database-password' \
+            'REDIS_DSN=redis://:ci-only@redis:6379' > "$secret_dir/api.env"
           printf '%s\n' database-password > "$secret_dir/database_password"
           printf '%s\n' 'requirepass ci-only' 'appendonly yes' > "$secret_dir/redis.conf"
           export CONVIVE_SECRET_DIR="$secret_dir"
@@ -188,6 +192,24 @@ jobs:
           docker compose "${production_compose[@]}" pull cloudflared database redis attachment-store-init
           docker compose "${production_compose[@]}" up --detach --wait database redis
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
+          docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
+          export CONVIVE_API_IMAGE=convive-production-cache-check:ci
+          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint php api -r '
+            require "vendor/autoload.php";
+            $kernel = new App\Kernel("prod", false);
+            $kernel->boot();
+            foreach (["cache.rate_limiter", "app.idempotency"] as $service) {
+              $pool = $kernel->getContainer()->get($service);
+              if (!$pool instanceof Symfony\Component\Cache\Adapter\RedisAdapter) {
+                throw new RuntimeException($service." is not Redis-backed in production.");
+              }
+              $item = $pool->getItem("ci.redis.".$service);
+              $item->set("verified");
+              if (!$pool->save($item) || $pool->getItem("ci.redis.".$service)->get() !== "verified") {
+                throw new RuntimeException($service." cannot persist through Redis.");
+              }
+            }
+          '
           docker compose "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
           bash -n infrastructure/maintenance/*.sh

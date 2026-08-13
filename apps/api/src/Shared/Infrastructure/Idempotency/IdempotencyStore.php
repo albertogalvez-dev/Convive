@@ -23,7 +23,7 @@ final readonly class IdempotencyStore
     private const TTL_SECONDS = 86_400; // 24 hours
 
     public function __construct(
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.idempotency')]
         private CacheItemPoolInterface $cache,
     ) {
     }
