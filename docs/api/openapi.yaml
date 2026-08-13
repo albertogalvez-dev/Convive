@@ -1370,6 +1370,8 @@ components:
             - digital
             - mixed
             - unknown
+        reporterTaxonomy:
+          $ref: '#/components/schemas/ReporterTriageTaxonomy'
         status:
           type: string
           enum:

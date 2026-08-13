@@ -215,6 +215,7 @@ nelmio_api_doc:
                         - publicReference
                         - situationPreview
                         - situationContext
+                        - reporterTaxonomy
                         - status
                         - createdAt
                     properties:
@@ -282,6 +283,8 @@ nelmio_api_doc:
                         situationContext:
                             type: string
                             enum: [in_person, digital, mixed, unknown]
+                        reporterTaxonomy:
+                            $ref: '#/components/schemas/ReporterTriageTaxonomy'
                         status:
                             type: string
                             enum: [new, reviewed]
