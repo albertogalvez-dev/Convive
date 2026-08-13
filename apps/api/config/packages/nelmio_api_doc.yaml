@@ -477,8 +477,9 @@ nelmio_api_doc:
                         source:
                             type: object
                             additionalProperties: false
-                            required: [title, version, authority, territory, uri]
+                            required: [id, title, version, authority, territory, uri]
                             properties:
+                                id: { type: string, format: uuid }
                                 title: { type: string, maxLength: 180 }
                                 version: { type: string, maxLength: 40 }
                                 authority: { type: string, enum: [binding, recommended, internal] }
