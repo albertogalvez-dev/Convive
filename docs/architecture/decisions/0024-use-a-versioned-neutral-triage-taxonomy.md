@@ -35,6 +35,9 @@ an attention cue (`needs_prompt_attention`, `no_prompt_attention_indicated`,
 `unknown`). Both fields default to `unknown` for compatibility and to avoid
 forcing an inference.
 
+`andalucia-v1` identifies this bounded product vocabulary; it is not a legal
+classification, a statement of institutional applicability or legal advice.
+
 During the initial review, an authorised professional separately records a
 concern category, recurrence and attention cue. The category is one of peer
 interaction, digital interaction, exclusion or isolation, harmful language or
