@@ -206,6 +206,8 @@ describe('ReportForm', () => {
     expect(request.request.body).toEqual({
       situationDescription: 'Una situación ocurrió durante el recreo.',
       situationContext: 'in_person',
+      reporterRecurrence: 'unknown',
+      reporterAttentionCue: 'unknown',
     });
     expect(page.querySelector('#step-title')?.textContent).toContain(
       'Estamos enviando tu comunicación',
@@ -455,6 +457,8 @@ describe('ReportForm', () => {
     expect(request.request.body).toEqual({
       situationDescription: 'Una situación ocurrió en el centro y continuó en internet.',
       situationContext: 'mixed',
+      reporterRecurrence: 'unknown',
+      reporterAttentionCue: 'unknown',
     });
 
     request.flush(

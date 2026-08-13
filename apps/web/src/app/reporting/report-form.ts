@@ -9,6 +9,8 @@ import { ReportResult } from './report-result';
 import { ReportSending } from './report-sending';
 import {
   PublicReportingProfile,
+  ReporterAttentionCue,
+  ReporterRecurrence,
   ReportingService,
   ReportSubmissionResponse,
 } from './reporting.service';
@@ -45,6 +47,8 @@ export class ReportForm {
       [Validators.required, Validators.pattern(/\S/), Validators.maxLength(5000)],
     ],
     situationContext: ['', [Validators.required]],
+    reporterRecurrence: ['unknown' as ReporterRecurrence],
+    reporterAttentionCue: ['unknown' as ReporterAttentionCue],
   });
 
   protected readonly submitting = signal(false);
@@ -159,6 +163,8 @@ export class ReportForm {
       .submitReport(this.publicReportingIdentifier, {
         situationDescription: value.situationDescription,
         situationContext: value.situationContext as SituationContext,
+        reporterRecurrence: value.reporterRecurrence,
+        reporterAttentionCue: value.reporterAttentionCue,
       })
       .subscribe({
         next: (response) => {

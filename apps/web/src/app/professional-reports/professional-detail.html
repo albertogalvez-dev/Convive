@@ -113,6 +113,9 @@
             <span class="review-mark" aria-hidden="true">&#10003;</span>
             <h2>Revisi&oacute;n registrada</h2>
             <p class="reason">{{ review.reason }}</p>
+            @if (review.professionalTaxonomy?.concernCategory; as category) {
+              <p class="reason">Valoración registrada: {{ concernCategoryLabel(category) }}</p>
+            }
             <time [attr.datetime]="review.reviewedAt">{{
               review.reviewedAt | date: 'd MMMM y, HH:mm' : undefined : 'es'
             }}</time>
@@ -137,6 +140,32 @@
                 }
                 <span>{{ reviewForm.controls.reason.value.length }} / 1000</span>
               </div>
+              <label for="professional-concern-category">Ámbito de valoración</label>
+              <select
+                id="professional-concern-category"
+                formControlName="professionalConcernCategory"
+              >
+                <option value="unknown">No determinado</option>
+                <option value="peer_interaction">Interacción entre iguales</option>
+                <option value="digital_interaction">Entorno digital</option>
+                <option value="exclusion_or_isolation">Exclusión o aislamiento</option>
+                <option value="harmful_language_or_conduct">Lenguaje o conducta dañina</option>
+                <option value="safety_or_wellbeing_concern">Bienestar o posible seguridad</option>
+                <option value="other">Otro</option>
+              </select>
+              <label for="professional-recurrence">Recurrencia según la valoración</label>
+              <select id="professional-recurrence" formControlName="professionalRecurrence">
+                <option value="unknown">No determinado</option>
+                <option value="single">Una vez</option>
+                <option value="repeated">Repetida</option>
+                <option value="ongoing">En curso</option>
+              </select>
+              <label for="professional-attention-cue">Atención según la valoración</label>
+              <select id="professional-attention-cue" formControlName="professionalAttentionCue">
+                <option value="unknown">No determinado</option>
+                <option value="needs_prompt_attention">Requiere atención pronta</option>
+                <option value="no_prompt_attention_indicated">No se indica atención pronta</option>
+              </select>
               @if (reviewError(); as message) {
                 <p class="submit-error" role="alert">{{ message }}</p>
               }

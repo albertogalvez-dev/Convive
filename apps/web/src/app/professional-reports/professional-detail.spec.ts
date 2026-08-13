@@ -52,7 +52,12 @@ describe('ProfessionalDetail', () => {
     fixture.detectChanges();
     page.querySelector<HTMLFormElement>('.review-card form')?.dispatchEvent(new Event('submit'));
     const request = http.expectOne(`${endpoint}/reviews`);
-    expect(request.request.body).toEqual({ reason: textarea.value });
+    expect(request.request.body).toEqual({
+      reason: textarea.value,
+      professionalConcernCategory: 'unknown',
+      professionalRecurrence: 'unknown',
+      professionalAttentionCue: 'unknown',
+    });
     request.flush({
       review: { reason: textarea.value, reviewedAt: '2026-08-09T19:00:00+00:00' },
     });

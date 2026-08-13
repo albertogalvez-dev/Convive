@@ -12,7 +12,13 @@ export interface PublicReportingProfile {
 export interface SubmitReportRequest {
   situationDescription: string;
   situationContext: SituationContext;
+  reporterRecurrence: ReporterRecurrence;
+  reporterAttentionCue: ReporterAttentionCue;
 }
+
+export type ReporterRecurrence = 'single' | 'repeated' | 'ongoing' | 'unknown';
+export type ReporterAttentionCue =
+  'needs_prompt_attention' | 'no_prompt_attention_indicated' | 'unknown';
 
 export interface ReportSubmissionResponse {
   publicReference: string;

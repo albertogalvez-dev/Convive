@@ -37,8 +37,21 @@ export class ProfessionalDetail implements OnInit {
   protected readonly responseConfirmation = signal<string | null>(null);
   protected readonly responseField = viewChild<ElementRef<HTMLTextAreaElement>>('responseField');
   protected readonly contextLabel = reportContextLabel;
+  protected readonly concernCategoryLabel = (category: string): string =>
+    ({
+      peer_interaction: 'Interacción entre iguales',
+      digital_interaction: 'Entorno digital',
+      exclusion_or_isolation: 'Exclusión o aislamiento',
+      harmful_language_or_conduct: 'Lenguaje o conducta dañina',
+      safety_or_wellbeing_concern: 'Bienestar o posible seguridad',
+      other: 'Otro',
+      unknown: 'No determinado',
+    })[category] ?? 'No determinado';
   protected readonly reviewForm = this.formBuilder.nonNullable.group({
     reason: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+    professionalConcernCategory: ['unknown'],
+    professionalRecurrence: ['unknown'],
+    professionalAttentionCue: ['unknown'],
   });
   protected readonly responseForm = this.formBuilder.nonNullable.group({
     content: ['', [Validators.required, Validators.maxLength(2000)]],
@@ -53,24 +66,33 @@ export class ProfessionalDetail implements OnInit {
     if (this.reviewForm.invalid || this.submitting() || !this.report()) return;
     this.submitting.set(true);
     this.reviewError.set(null);
-    this.reports.review(this.id, this.reviewForm.controls.reason.value.trim()).subscribe({
-      next: ({ review }) => {
-        this.report.update((report) => (report ? { ...report, status: 'reviewed', review } : null));
-        this.submitting.set(false);
-      },
-      error: (error: unknown) => {
-        this.submitting.set(false);
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          void this.router.navigate(['/profesionales/acceso']);
-          return;
-        }
-        this.reviewError.set(
-          error instanceof HttpErrorResponse && error.status === 409
-            ? 'Esta comunicaci\u00f3n ya ha sido revisada.'
-            : 'No hemos podido guardar la revisi\u00f3n.',
-        );
-      },
-    });
+    this.reports
+      .review(this.id, {
+        reason: this.reviewForm.controls.reason.value.trim(),
+        professionalConcernCategory: this.reviewForm.controls.professionalConcernCategory.value,
+        professionalRecurrence: this.reviewForm.controls.professionalRecurrence.value,
+        professionalAttentionCue: this.reviewForm.controls.professionalAttentionCue.value,
+      })
+      .subscribe({
+        next: ({ review }) => {
+          this.report.update((report) =>
+            report ? { ...report, status: 'reviewed', review } : null,
+          );
+          this.submitting.set(false);
+        },
+        error: (error: unknown) => {
+          this.submitting.set(false);
+          if (error instanceof HttpErrorResponse && error.status === 401) {
+            void this.router.navigate(['/profesionales/acceso']);
+            return;
+          }
+          this.reviewError.set(
+            error instanceof HttpErrorResponse && error.status === 409
+              ? 'Esta comunicaci\u00f3n ya ha sido revisada.'
+              : 'No hemos podido guardar la revisi\u00f3n.',
+          );
+        },
+      });
   }
 
   protected respond(): void {
