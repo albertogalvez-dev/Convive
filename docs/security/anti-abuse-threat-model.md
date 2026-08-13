@@ -7,12 +7,12 @@ exist today. Attachment upload is out of scope; it doesn't exist yet
 
 ## Endpoints in scope
 
-| Endpoint | Method | Sensitivity |
-|---|---|---|
-| `/api/v1/public/organisations/{id}/reports` | `POST` | Creates a report; low-entropy path parameter (organisation identifier) |
-| `/api/v1/public/report-access-grants` | `POST` | Verifies a high-entropy secret; the primary brute-force target |
-| `/api/v1/reporter/report` | `GET` | Reads confidential report and follow-up content through a capability cookie |
-| `/api/v1/reporter/report/follow-up-entries` | `POST` | Appends reporter-authored content through a capability cookie |
+| Endpoint                                    | Method | Sensitivity                                                                 |
+| ------------------------------------------- | ------ | --------------------------------------------------------------------------- |
+| `/api/v1/public/organisations/{id}/reports` | `POST` | Creates a report; low-entropy path parameter (organisation identifier)      |
+| `/api/v1/public/report-access-grants`       | `POST` | Verifies a high-entropy secret; the primary brute-force target              |
+| `/api/v1/reporter/report`                   | `GET`  | Reads confidential report and follow-up content through a capability cookie |
+| `/api/v1/reporter/report/follow-up-entries` | `POST` | Appends reporter-authored content through a capability cookie               |
 
 ## Threats and mitigations
 
@@ -139,9 +139,9 @@ single capability holder to amplify database, response-memory and storage work.
   This preserves the 15-minute idle window while bounding write amplification;
   persisted activity can be at most one minute behind after an unexpected
   process failure.
-- **Deployment boundary**: #63 remains the production gate for shared,
-  restart-resistant limiter storage.
-- **Status**: delivered by #99, subject to #63 before public production.
+- **Deployment boundary**: #205 owns authenticated Redis-backed, shared and
+  restart-resistant limiter and idempotency storage before public production.
+- **Status**: delivered by #99, subject to #205 before public production.
 
 ## Explicitly out of scope
 

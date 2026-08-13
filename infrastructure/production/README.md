@@ -23,13 +23,13 @@ The comments next to static Compose references and this table retain the reviewe
 upstream version for human inspection; the application image digests are emitted
 by the release workflow for the reviewed commit.
 
-| Service | Reviewed upstream version | Immutable reference |
-| --- | --- | --- |
-| Cloudflare Tunnel | `cloudflare/cloudflared:2025.7.0` | `sha256:803b17adb5326a38ce397b9c9f374289ad290ee5526d204b5879a1423b6f5c3e` |
-| PostgreSQL | `postgres:18.4-bookworm` | `sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382` |
-| Redis | `redis:8.2.1-alpine` | `sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232` |
-| Attachment volume initializer | `busybox:1.37.0` | `sha256:9db7b59979c38555a39def84a31fb98b5296952f9e3afd4f6f11f05b07adfab0` |
-| API and gateway | Release workflow output for the reviewed commit | Release-recorded `ghcr.io/...@sha256:...` values |
+| Service                       | Reviewed upstream version                       | Immutable reference                                                       |
+| ----------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------- |
+| Cloudflare Tunnel             | `cloudflare/cloudflared:2025.7.0`               | `sha256:803b17adb5326a38ce397b9c9f374289ad290ee5526d204b5879a1423b6f5c3e` |
+| PostgreSQL                    | `postgres:18.4-bookworm`                        | `sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382` |
+| Redis                         | `redis:8.2.1-alpine`                            | `sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232` |
+| Attachment volume initializer | `busybox:1.37.0`                                | `sha256:9db7b59979c38555a39def84a31fb98b5296952f9e3afd4f6f11f05b07adfab0` |
+| API and gateway               | Release workflow output for the reviewed commit | Release-recorded `ghcr.io/...@sha256:...` values                          |
 
 The isolated encrypted recovery Compose file uses the identical PostgreSQL
 reference, so its database exercise covers the reviewed production runtime.
@@ -77,6 +77,14 @@ named volume. A network-isolated one-shot initializer assigns that volume to
 the unprivileged PHP user before the API starts; the gateway never mounts it or
 serves it as a static path. This local store is a fictional-demo boundary, not
 a selected real-data storage provider.
+
+Redis is a private production dependency for security-sensitive cache state.
+`api.env` must set `REDIS_DSN` with the same non-empty password as
+`redis.conf`; the DSN is a root-only runtime secret, never a repository value.
+Symfony uses it for rate-limit and public-report idempotency pools, which must
+be shared across API replacements and replicas. CI boots the production API
+image against authenticated Redis and proves both pools persist a non-secret
+test value.
 
 The public demonstration remains fictional-data only. A real-data deployment
 requires the legal, privacy, security and operational approvals described in
