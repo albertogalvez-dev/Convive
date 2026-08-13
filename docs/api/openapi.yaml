@@ -2090,12 +2090,29 @@ components:
         professionalConcernCategory:
           type: string
           default: unknown
+          enum:
+            - peer_interaction
+            - digital_interaction
+            - exclusion_or_isolation
+            - harmful_language_or_conduct
+            - safety_or_wellbeing_concern
+            - other
+            - unknown
         professionalRecurrence:
           type: string
           default: unknown
+          enum:
+            - single
+            - repeated
+            - ongoing
+            - unknown
         professionalAttentionCue:
           type: string
           default: unknown
+          enum:
+            - needs_prompt_attention
+            - no_prompt_attention_indicated
+            - unknown
       type: object
     TriageProfessionalReportRequest:
       properties:
