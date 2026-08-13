@@ -15,6 +15,8 @@ as a one-time compliance claim.
   still pending.
 - [Dependency management](dependency-management.md): supply-chain ownership
   and verification.
+- [GitHub security governance](github-governance.md): reviewed branch rules,
+  repository controls, ownership and reproducible settings inventory.
 
 These documents describe the fictional-data demonstration as it exists. They
 do not claim GDPR, ENS or real-school deployment compliance. The repository
