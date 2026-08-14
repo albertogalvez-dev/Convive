@@ -355,7 +355,7 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testLeadCanAssignAndExplicitlyRevokeAContributor(): void
+    public function testLeadCanAssignChangeAndExplicitlyRevokeAContributor(): void
     {
         [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
         $contributor = $this->createProfessional('assignment-contributor', $organisation, ProfessionalRole::Triage);
