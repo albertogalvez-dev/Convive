@@ -29,7 +29,7 @@ describe('ProfessionalShell', () => {
 
   afterEach(() => http.verify());
 
-  it('shows a compact identity, a real new-report notification and an accessible collapse action', () => {
+  it('shows a compact identity, a real notification count and an accessible collapse action', () => {
     const requests = http.match((request) => request.url === '/api/v1/professional/reports');
     requests
       .find((request) => request.request.params.get('status') === 'new')
@@ -37,6 +37,7 @@ describe('ProfessionalShell', () => {
     requests
       .find((request) => request.request.params.get('status') === 'reviewed')
       ?.flush(pageOf([]));
+    http.expectOne('/api/v1/professional/notifications').flush({ items: [], unreadCount: 1 });
     fixture.detectChanges();
 
     const profile = page.querySelector('.sidebar-profile');
@@ -44,7 +45,7 @@ describe('ProfessionalShell', () => {
     expect(profile?.textContent).not.toContain('laura@example.com');
     expect(
       page.querySelector<HTMLAnchorElement>('.notification-button')?.getAttribute('href'),
-    ).toBe('/profesionales/comunicaciones?estado=new');
+    ).toBe('/profesionales/avisos');
     expect(page.querySelector('.notification-button span')?.textContent).toBe('1');
     expect(page.querySelectorAll('.mobile-header nav a[aria-label]')).toHaveLength(5);
     expect(

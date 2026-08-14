@@ -131,6 +131,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'avisos',
+            loadComponent: () =>
+              import('./professional-reports/professional-notifications').then(
+                (module) => module.ProfessionalNotifications,
+              ),
+          },
+          {
             path: 'ajustes',
             loadComponent: () =>
               import('./professional-reports/professional-settings').then(

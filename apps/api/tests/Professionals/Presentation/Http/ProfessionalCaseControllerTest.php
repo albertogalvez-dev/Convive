@@ -22,6 +22,8 @@ use App\Professionals\Domain\OrganisationMembership;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
 use App\Professionals\Domain\ProfessionalRole;
+use App\Professionals\Domain\ProfessionalNotification;
+use App\Professionals\Domain\ProfessionalNotificationType;
 use App\Reporting\Application\AttachmentStorage;
 use App\Reporting\Domain\AttachmentDescription;
 use App\Reporting\Domain\AttachmentMediaType;
@@ -677,6 +679,33 @@ final class ProfessionalCaseControllerTest extends WebTestCase
             'no-store',
             (string) $this->client->getResponse()->headers->get('Cache-Control'),
         );
+    }
+
+    public function testNotificationIsReadOnlyForItsRecipientAndDisappearsAfterCaseAccessIsRevoked(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $recipient = $this->createProfessional('notification-recipient', $organisation, ProfessionalRole::Triage);
+        $assignment = new CaseAssignment(Uuid::v7(), $managedCase, $recipient, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable());
+        $notification = new ProfessionalNotification(Uuid::v7(), $recipient, $managedCase, ProfessionalNotificationType::CaseAssigned, new DateTimeImmutable());
+        $this->entityManager->persist($assignment);
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+        $this->client->loginUser($recipient);
+        $this->client->request('GET', '/api/v1/professional/notifications');
+        self::assertResponseIsSuccessful();
+        self::assertSame(1, $this->responsePayload()['unreadCount']);
+        self::assertSame('/profesionales/casos/'.$managedCase->id()->toRfc4122(), $this->responsePayload()['items'][0]['href']);
+        $this->client->request('POST', '/api/v1/professional/notifications/'.$notification->id()->toRfc4122().'/read', server: $this->sameOriginHeaders());
+        self::assertResponseIsSuccessful();
+        self::assertNotNull($this->responsePayload()['readAt']);
+        $activeAssignment = $this->entityManager->find(CaseAssignment::class, $assignment->id());
+        self::assertInstanceOf(CaseAssignment::class, $activeAssignment);
+        $activeAssignment->revokeAt(new DateTimeImmutable('+1 minute'), 'Fictional access change for notification boundary coverage.');
+        $this->entityManager->flush();
+        $this->client->request('GET', '/api/v1/professional/notifications');
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+        self::assertSame(0, $this->responsePayload()['unreadCount']);
     }
 
     /** @return array{ManagedCase, Professional, Organisation, ReportAttachment, Report} */

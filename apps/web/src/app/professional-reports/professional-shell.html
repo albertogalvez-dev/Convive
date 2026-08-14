@@ -88,17 +88,12 @@
 
   <section class="portal-content">
     <div class="desktop-topbar">
-      <a
-        class="notification-button"
-        routerLink="/profesionales/comunicaciones"
-        [queryParams]="{ estado: 'new' }"
-        aria-label="Ver comunicaciones nuevas"
-      >
+      <a class="notification-button" routerLink="/profesionales/avisos" aria-label="Ver avisos">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
         </svg>
         @if (newNotificationCount(); as count) {
-          @if (count !== '0') {
+          @if (count !== 0) {
             <span>{{ count }}</span>
           }
         }

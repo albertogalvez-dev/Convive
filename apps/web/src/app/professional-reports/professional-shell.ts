@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { ProfessionalPortalStore } from './professional-portal.store';
+import { ProfessionalNotificationsService } from './professional-notifications.service';
 
 @Component({
   selector: 'app-professional-shell',
@@ -15,14 +16,18 @@ export class ProfessionalShell implements OnInit {
   private readonly sessions = inject(ProfessionalSessionService);
   private readonly router = inject(Router);
   private readonly portal = inject(ProfessionalPortalStore);
+  private readonly notifications = inject(ProfessionalNotificationsService);
 
   protected readonly professional = this.sessions.professional;
   protected readonly loggingOut = signal(false);
   protected readonly sidebarCollapsed = signal(false);
-  protected readonly newNotificationCount = this.portal.newNotificationCount;
+  protected readonly newNotificationCount = signal<number | null>(null);
 
   ngOnInit(): void {
     this.portal.load();
+    this.notifications
+      .list()
+      .subscribe({ next: ({ unreadCount }) => this.newNotificationCount.set(unreadCount) });
   }
 
   protected toggleSidebar(): void {
