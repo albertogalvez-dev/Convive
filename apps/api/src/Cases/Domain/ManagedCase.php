@@ -40,6 +40,15 @@ class ManagedCase
     #[ORM\Column(type: Types::STRING, length: 20, enumType: CaseModality::class)]
     private CaseModality $modality;
 
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $statusReason = null;
+
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $statusEvidence = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $statusChangedAt = null;
+
     public function __construct(
         Uuid $id,
         Organisation $organisation,
@@ -100,5 +109,41 @@ class ManagedCase
     public function modality(): CaseModality
     {
         return $this->modality;
+    }
+
+    public function transitionTo(CaseStatus $status, string $reason, string $evidence, DateTimeImmutable $now): void
+    {
+        if ($now < $this->createdAt || $status === $this->status || !self::permitsTransition($this->status, $status)) {
+            throw new \LogicException('The requested case lifecycle transition is not permitted.');
+        }
+
+        $this->status = $status;
+        $this->statusReason = self::requiredRecord($reason, 'reason');
+        $this->statusEvidence = self::requiredRecord($evidence, 'evidence');
+        $this->statusChangedAt = $now;
+        $this->recordOperationalActivity($now);
+    }
+
+    public function statusReason(): ?string { return $this->statusReason; }
+    public function statusEvidence(): ?string { return $this->statusEvidence; }
+    public function statusChangedAt(): ?DateTimeImmutable { return $this->statusChangedAt; }
+
+    private static function permitsTransition(CaseStatus $from, CaseStatus $to): bool
+    {
+        return match ($from) {
+            CaseStatus::Assessment => $to === CaseStatus::Active || $to === CaseStatus::Closed,
+            CaseStatus::Active => $to === CaseStatus::Closed,
+            CaseStatus::Closed => $to === CaseStatus::Active,
+        };
+    }
+
+    private static function requiredRecord(string $value, string $field): string
+    {
+        $value = trim($value);
+        if ($value === '' || mb_strlen($value) > 500) {
+            throw new \InvalidArgumentException(sprintf('The lifecycle %s must contain between 1 and 500 characters.', $field));
+        }
+
+        return $value;
     }
 }

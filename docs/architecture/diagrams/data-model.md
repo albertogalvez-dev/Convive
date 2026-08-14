@@ -67,6 +67,9 @@ erDiagram
         timestamptz created_at "immutable UTC"
         timestamptz operational_updated_at "latest explicit case, assignment or task activity"
         varchar status "assessment | active | closed"
+        varchar status_reason "nullable; latest explicit lifecycle record"
+        varchar status_evidence "nullable; latest operational evidence record"
+        timestamptz status_changed_at "nullable"
         varchar modality "in_person | digital | mixed | unknown"
     }
     case_audit_events {

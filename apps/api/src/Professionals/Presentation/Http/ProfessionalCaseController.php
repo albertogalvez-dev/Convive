@@ -13,6 +13,7 @@ use App\Cases\Application\CreateCaseTask;
 use App\Cases\Application\MarkCaseTaskNotApplicable;
 use App\Cases\Application\ManageCaseAssignment;
 use App\Cases\Application\ManageCaseInvolvedPeople;
+use App\Cases\Application\TransitionManagedCase;
 use App\Cases\Application\ProfessionalCaseWorkspace;
 use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
@@ -57,6 +58,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
@@ -77,6 +79,7 @@ final readonly class ProfessionalCaseController
         private MarkCaseTaskNotApplicable $markCaseTaskNotApplicable,
         private ManageCaseAssignment $manageCaseAssignment,
         private ManageCaseInvolvedPeople $manageCasePeople,
+        private TransitionManagedCase $transitionManagedCase,
         private CaseInvolvedPersonRepository $people,
         private ProfessionalRepository $professionals,
         private OrganisationMembershipRepository $memberships,
@@ -742,6 +745,22 @@ final readonly class ProfessionalCaseController
             throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
         }
         return $this->json($this->serializePerson($person), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/lifecycle', name: 'api_v1_professional_transition_case_lifecycle', methods: ['POST'])]
+    #[OA\Post(operationId: 'transitionManagedCaseLifecycle', summary: 'Record an explicit managed-case lifecycle transition', security: [['professionalSession' => []]], tags: ['Professional cases'])]
+    public function transitionLifecycle(string $id, #[CurrentUser] Professional $professional, #[MapRequestPayload(acceptFormat: 'json')] TransitionManagedCaseRequest $payload): JsonResponse
+    {
+        $detail = $this->resolveDetail($id, $professional);
+        try {
+            $this->transitionManagedCase->transition($detail->managedCase, CaseStatus::from($payload->status), $payload->reason, $payload->evidence, $professional, new DateTimeImmutable());
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (InvalidArgumentException|LogicException $exception) {
+            throw new ConflictHttpException('The lifecycle transition conflicts with the current case state.', $exception);
+        }
+
+        return $this->json($this->serializeDetail($this->resolveDetail($id, $professional), new DateTimeImmutable()));
     }
 
     #[Route('/api/v1/professional/cases/{id}/people/{personId}', name: 'api_v1_professional_correct_case_person', methods: ['PATCH'])]

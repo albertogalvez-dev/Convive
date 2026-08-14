@@ -6,12 +6,14 @@ namespace App\Tests\Cases\Application;
 
 use App\Cases\Application\AuthoriseCaseAccess;
 use App\Cases\Application\ManageCaseAssignment;
+use App\Cases\Application\TransitionManagedCase;
 use App\Cases\Domain\CaseAssignment;
 use App\Cases\Domain\CaseAssignmentRepository;
 use App\Cases\Domain\CaseAssignmentRole;
 use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseModality;
+use App\Cases\Domain\CaseStatus;
 use App\Cases\Domain\ManagedCase;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
@@ -77,6 +79,18 @@ final class ManageCaseAssignmentTest extends TestCase
         self::assertSame(CaseAssignmentRole::Observer, $assignment->role());
         self::assertSame('Fictional consultation-only access.', $assignment->roleChangeReason());
         self::assertSame(['assignment_changed'], array_map(static fn (CaseAuditEvent $event): string => $event->action()->value, $audit->events));
+    }
+
+    public function testOnlyTheLeadCanRecordAnExplicitLifecycleTransition(): void
+    {
+        [$case, $lead, $membership, $leadAssignment] = $this->scope();
+        $audit = new InMemoryAssignmentAuditEvents();
+        $service = new TransitionManagedCase(new AuthoriseCaseAccess($this->memberships([$membership]), new InMemoryAssignments([$leadAssignment])), $audit);
+
+        $service->transition($case, CaseStatus::Active, 'Fictional assessment is continuing.', 'Fictional review record is available.', $lead, new DateTimeImmutable('2026-08-11T12:00:00+00:00'));
+
+        self::assertSame(CaseStatus::Active, $case->status());
+        self::assertSame(['status_changed'], array_map(static fn (CaseAuditEvent $event): string => $event->action()->value, $audit->events));
     }
 
     /** @return array{ManagedCase, Professional, OrganisationMembership, CaseAssignment} */

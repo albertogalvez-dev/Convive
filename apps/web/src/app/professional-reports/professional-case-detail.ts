@@ -75,6 +75,12 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected readonly newPerson = { name: '', role: 'affected' };
   protected correctingPersonId: string | null = null;
   protected correctingPerson = { name: '', role: 'affected' };
+  protected readonly lifecycleMessage = signal<string | null>(null);
+  protected readonly lifecycleError = signal<string | null>(null);
+  protected readonly lifecycleSaving = signal(false);
+  protected lifecycleStatus: 'active' | 'closed' = 'active';
+  protected lifecycleReason = '';
+  protected lifecycleEvidence = '';
   protected readonly caseStatusLabel = caseStatusLabel;
   protected readonly caseModalityLabel = caseModalityLabel;
   protected readonly assignmentRoleLabel = assignmentRoleLabel;
@@ -89,6 +95,34 @@ export class ProfessionalCaseDetailPage implements OnInit {
 
   protected retry(): void {
     this.load();
+  }
+
+  protected transitionLifecycle(item: ProfessionalCaseDetail): void {
+    this.lifecycleSaving.set(true);
+    this.lifecycleError.set(null);
+    this.cases
+      .transitionLifecycle(item.id, {
+        status: this.lifecycleStatus,
+        reason: this.lifecycleReason,
+        evidence: this.lifecycleEvidence,
+      })
+      .subscribe({
+        next: (detail) => {
+          this.detail.set(detail);
+          this.lifecycleMessage.set(
+            'El estado operativo se ha actualizado. No determina hechos ni confirma comunicaciones externas.',
+          );
+          this.lifecycleReason = '';
+          this.lifecycleEvidence = '';
+          this.lifecycleSaving.set(false);
+        },
+        error: () => {
+          this.lifecycleSaving.set(false);
+          this.lifecycleError.set(
+            'No se puede registrar esta transición. Revisa el estado y el registro operativo.',
+          );
+        },
+      });
   }
 
   protected evidenceUrl(caseId: string, evidenceId: string): string {
@@ -377,6 +411,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
         person_added: 'Persona vinculada',
         person_corrected: 'Vinculación corregida',
         person_removed: 'Vinculación retirada',
+        status_changed: 'Estado del caso actualizado',
       }[action] ?? 'Acción registrada'
     );
   }

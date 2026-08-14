@@ -277,6 +277,45 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
     }
 
+    public function testLeadCanCloseAndReopenCaseWithAnExplicitRecordButObserverCannot(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/lifecycle';
+        $this->client->loginUser($lead);
+        $this->client->jsonRequest('POST', $url, ['status' => 'closed', 'reason' => 'Fictional case review is complete.', 'evidence' => 'Fictional closure record reviewed.'], $this->sameOriginHeaders());
+        self::assertResponseIsSuccessful();
+        self::assertSame('closed', $this->responsePayload()['status']);
+
+        $this->client->jsonRequest('POST', $url, ['status' => 'active', 'reason' => 'Fictional review needs to continue.', 'evidence' => 'Fictional continuation record reviewed.'], $this->sameOriginHeaders());
+        self::assertResponseIsSuccessful();
+        self::assertSame('active', $this->responsePayload()['status']);
+
+        $managedOrganisation = $this->entityManager->getReference(Organisation::class, $organisation->id());
+        $managedCase = $this->entityManager->getReference(ManagedCase::class, $managedCase->id());
+        $managedLead = $this->entityManager->getReference(Professional::class, $lead->id());
+        self::assertInstanceOf(Organisation::class, $managedOrganisation);
+        self::assertInstanceOf(ManagedCase::class, $managedCase);
+        self::assertInstanceOf(Professional::class, $managedLead);
+
+        $observer = $this->createProfessional(
+            'case-lifecycle-observer',
+            $managedOrganisation,
+            ProfessionalRole::Triage,
+        );
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $managedCase,
+            $observer,
+            CaseAssignmentRole::Observer,
+            $managedLead,
+            new DateTimeImmutable(),
+        ));
+        $this->entityManager->flush();
+        $this->client->loginUser($observer);
+        $this->client->jsonRequest('POST', $url, ['status' => 'closed', 'reason' => 'Fictional denied closure.', 'evidence' => 'Fictional record.'], $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testLeadCanAddCorrectAndLogicallyRemoveAMinimisedCasePerson(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
