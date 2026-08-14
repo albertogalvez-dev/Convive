@@ -30,6 +30,7 @@ final class DoctrineOrganisationMembershipRepository implements OrganisationMemb
             ->findBy([
                 'professional' => $professional,
                 'revokedAt' => null,
+                'suspendedAt' => null,
             ]);
     }
 
@@ -39,6 +40,7 @@ final class DoctrineOrganisationMembershipRepository implements OrganisationMemb
             'professional' => $professional,
             'organisation' => $organisation,
             'revokedAt' => null,
+            'suspendedAt' => null,
         ]) > 0;
     }
 
@@ -47,7 +49,15 @@ final class DoctrineOrganisationMembershipRepository implements OrganisationMemb
         return $this->entityManager->getRepository(OrganisationMembership::class)->findBy([
             'organisation' => $organisation,
             'revokedAt' => null,
+            'suspendedAt' => null,
         ]);
+    }
+
+    public function findByOrganisation(Organisation $organisation): array
+    {
+        return $this->entityManager->getRepository(OrganisationMembership::class)->findBy([
+            'organisation' => $organisation,
+        ], ['grantedAt' => 'ASC']);
     }
 
     public function findActiveByProfessionalAndOrganisation(
@@ -62,6 +72,7 @@ final class DoctrineOrganisationMembershipRepository implements OrganisationMemb
                 'organisation' => $organisation,
                 'role' => $role,
                 'revokedAt' => null,
+                'suspendedAt' => null,
             ]);
     }
 }

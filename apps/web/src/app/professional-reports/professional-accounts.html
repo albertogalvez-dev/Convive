@@ -89,5 +89,40 @@
         }
       </ul>
     </section>
+    <section class="card" aria-labelledby="memberships-title">
+      <h2 id="memberships-title">Membresías del centro</h2>
+      <p>
+        Una membresía permite tareas de centro; nunca muestra casos existentes. Cada caso requiere
+        una asignación explícita.
+      </p>
+      <ul class="account-list">
+        @for (membership of memberships(); track membership.id) {
+          <li>
+            <div>
+              <strong>{{ membership.name }}</strong
+              ><span>{{ membership.role }} · {{ membership.state }}</span>
+            </div>
+            <div class="actions">
+              @if (membership.state === 'active') {
+                <button type="button" (click)="changeMembership(membership, 'suspend')">
+                  Suspender membresía</button
+                ><button
+                  type="button"
+                  class="danger"
+                  (click)="changeMembership(membership, 'remove')"
+                >
+                  Eliminar membresía
+                </button>
+              }
+              @if (membership.state === 'suspended') {
+                <button type="button" (click)="changeMembership(membership, 'resume')">
+                  Reanudar membresía
+                </button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
   }
 </section>

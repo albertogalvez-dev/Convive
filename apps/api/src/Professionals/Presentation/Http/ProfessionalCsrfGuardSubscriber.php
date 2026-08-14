@@ -24,6 +24,8 @@ final readonly class ProfessionalCsrfGuardSubscriber implements EventSubscriberI
         'api_v1_professional_invite_account' => 'professional_account_invitation',
         'api_v1_professional_reset_account_password' => 'professional_account_password_reset',
         'api_v1_professional_change_account_status' => 'professional_account_status_change',
+        'api_v1_professional_grant_membership' => 'professional_membership_grant',
+        'api_v1_professional_change_membership' => 'professional_membership_change',
     ];
 
     public function __construct(

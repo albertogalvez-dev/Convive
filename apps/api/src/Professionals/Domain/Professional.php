@@ -164,6 +164,11 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
         return $this->securityRevision;
     }
 
+    public function invalidateSessions(): void
+    {
+        ++$this->securityRevision;
+    }
+
     public function isEqualTo(UserInterface $user): bool
     {
         if (!$user instanceof self) {

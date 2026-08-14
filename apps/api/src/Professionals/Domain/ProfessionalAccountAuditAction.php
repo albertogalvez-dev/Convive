@@ -12,4 +12,9 @@ enum ProfessionalAccountAuditAction: string
     case Suspended = 'suspended';
     case Reactivated = 'reactivated';
     case Deactivated = 'deactivated';
+    case MembershipGranted = 'membership_granted';
+    case MembershipRoleChanged = 'membership_role_changed';
+    case MembershipSuspended = 'membership_suspended';
+    case MembershipResumed = 'membership_resumed';
+    case MembershipRemoved = 'membership_removed';
 }

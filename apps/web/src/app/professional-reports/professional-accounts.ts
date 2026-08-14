@@ -7,6 +7,7 @@ import {
   ProfessionalAccount,
   ProfessionalAccountRole,
   ProfessionalAccountsService,
+  OrganisationMembership,
 } from './professional-accounts.service';
 
 @Component({
@@ -21,6 +22,7 @@ export class ProfessionalAccounts {
   protected readonly loading = signal(true);
   protected readonly organisations = signal<AccountAdministrationOrganisation[]>([]);
   protected readonly accounts = signal<ProfessionalAccount[]>([]);
+  protected readonly memberships = signal<OrganisationMembership[]>([]);
   protected readonly error = signal<string | null>(null);
   protected readonly message = signal<string | null>(null);
   protected readonly credential = signal<{ secret: string; expiresAt: string } | null>(null);
@@ -82,6 +84,22 @@ export class ProfessionalAccounts {
     });
   }
 
+  protected changeMembership(
+    membership: OrganisationMembership,
+    action: 'suspend' | 'resume' | 'remove',
+  ): void {
+    if (!this.selectedOrganisationId) return;
+    this.accountsApi
+      .changeMembership(this.selectedOrganisationId, membership.id, { action })
+      .subscribe({
+        next: () => {
+          this.message.set('La membresía ha cambiado. No concede acceso automático a ningún caso.');
+          this.loadMemberships();
+        },
+        error: () => this.error.set('No se puede cambiar esta membresía.'),
+      });
+  }
+
   protected statusLabel(status: ProfessionalAccount['status']): string {
     return {
       invited: 'Pendiente de activación',
@@ -114,6 +132,15 @@ export class ProfessionalAccounts {
     this.accountsApi.accounts(this.selectedOrganisationId).subscribe({
       next: ({ items }) => this.accounts.set(items),
       error: () => this.error.set('No se puede cargar las cuentas de este centro.'),
+    });
+    this.loadMemberships();
+  }
+
+  private loadMemberships(): void {
+    if (!this.selectedOrganisationId) return;
+    this.accountsApi.memberships(this.selectedOrganisationId).subscribe({
+      next: ({ items }) => this.memberships.set(items),
+      error: () => this.error.set('No se pueden cargar las membresías.'),
     });
   }
 }

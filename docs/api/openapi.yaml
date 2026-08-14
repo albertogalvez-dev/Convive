@@ -56,6 +56,87 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  '/api/v1/professional/organisations/{id}/memberships':
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'List organisation memberships without case content'
+      operationId: listOrganisationMemberships
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/organisations/{id}/memberships/{professionalId}':
+    post:
+      tags:
+        - 'Professional access'
+      summary: 'Grant a role without assigning any case'
+      operationId: grantOrganisationMembership
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: professionalId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageOrganisationMembershipRequest'
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/organisations/{id}/memberships/{membershipId}':
+    patch:
+      tags:
+        - 'Professional access'
+      summary: 'Change, suspend, resume or remove an organisation membership without changing case assignments'
+      operationId: changeOrganisationMembership
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: membershipId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeOrganisationMembershipRequest'
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/account-credentials/accept:
     post:
       tags:
@@ -2519,6 +2600,36 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    ManageOrganisationMembershipRequest:
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          enum:
+            - triage
+            - administrator
+      type: object
+    ChangeOrganisationMembershipRequest:
+      properties:
+        role:
+          type:
+            - string
+            - 'null'
+          default: null
+          enum:
+            - triage
+            - administrator
+        action:
+          type:
+            - string
+            - 'null'
+          default: null
+          enum:
+            - suspend
+            - resume
+            - remove
+      type: object
     AcceptProfessionalCredentialRequest:
       required:
         - secret

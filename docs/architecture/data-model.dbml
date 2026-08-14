@@ -275,6 +275,7 @@ Table organisation_memberships {
   organisation_id uuid [not null]
   role varchar(20) [not null, note: 'triage | administrator (CHECK constraint)']
   granted_at timestamptz [not null]
+  suspended_at timestamptz [note: 'temporary removal from every organisation-scoped action; preserves the historical row']
   revoked_at timestamptz [null, note: 'one row per (professional, organisation, role) forever; revocation clears this rather than deleting the row']
 
   indexes {
