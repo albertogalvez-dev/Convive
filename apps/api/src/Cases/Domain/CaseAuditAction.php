@@ -17,4 +17,7 @@ enum CaseAuditAction: string
     case EvidenceDownloadAuthorised = 'evidence_download_authorised';
     case AuditExported = 'audit_exported';
     case CaseRecordExported = 'case_record_exported';
+    case PersonAdded = 'person_added';
+    case PersonCorrected = 'person_corrected';
+    case PersonRemoved = 'person_removed';
 }

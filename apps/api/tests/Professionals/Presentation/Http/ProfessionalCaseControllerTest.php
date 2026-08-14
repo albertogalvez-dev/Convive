@@ -277,6 +277,45 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
     }
 
+    public function testLeadCanAddCorrectAndLogicallyRemoveAMinimisedCasePerson(): void
+    {
+        [$managedCase, $lead] = $this->createCaseWorkspace();
+        $this->client->loginUser($lead);
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/people';
+
+        $this->client->jsonRequest('POST', $url, ['name' => 'Fictional witness', 'role' => 'witness'], $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $person = $this->responsePayload();
+        self::assertSame('Fictional witness', $person['name']);
+        self::assertSame('active', $person['state']);
+
+        $this->client->jsonRequest('PATCH', $url.'/'.$person['id'], ['name' => 'Corrected fictional witness', 'role' => 'guardian'], $this->sameOriginHeaders());
+        self::assertResponseIsSuccessful();
+        self::assertSame('guardian', $this->responsePayload()['role']);
+
+        $this->client->request('DELETE', $url.'/'.$person['id'], [], [], $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        self::assertSame('removed', array_values(array_filter($this->responsePayload()['people'], static fn (array $item): bool => $item['id'] === $person['id']))[0]['state']);
+    }
+
+    public function testObserverCannotManageCasePeopleAndUnapprovedFieldsAreRejected(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/people';
+        $this->client->loginUser($lead);
+        $this->client->jsonRequest('POST', $url, ['name' => 'Fictional person', 'role' => 'affected', 'academicRecord' => 'not permitted'], $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $observer = $this->createProfessional('case-people-observer', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $observer, CaseAssignmentRole::Observer, $lead, new DateTimeImmutable()));
+        $this->entityManager->flush();
+        $this->client->loginUser($observer);
+        $this->client->jsonRequest('POST', $url, ['name' => 'Fictional person', 'role' => 'affected'], $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testObserverCannotCreateOrResolveCaseTasks(): void
     {
         [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
@@ -680,6 +719,12 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $organisation;
+    }
+
+    /** @return array<string, string> */
+    private function sameOriginHeaders(): array
+    {
+        return ['HTTP_ORIGIN' => 'http://localhost', 'HTTP_SEC_FETCH_SITE' => 'same-origin'];
     }
 
     private function activeAssignmentId(ManagedCase $managedCase, Professional $professional): string

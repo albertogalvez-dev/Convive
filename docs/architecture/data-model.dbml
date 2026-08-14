@@ -142,6 +142,8 @@ Table case_involved_people {
   role varchar(20) [not null, note: 'affected | alleged_actor | witness | guardian | other (CHECK constraint)']
   added_by_professional_id uuid [not null]
   added_at timestamptz [not null]
+  corrected_at timestamptz [note: 'nullable; latest explicit correction']
+  removed_at timestamptz [note: 'nullable; logical removal retained for audit history']
 
   indexes {
     case_id

@@ -119,6 +119,22 @@ final class ManagedCaseTest extends TestCase
         CaseInvolvedPersonName::fromString('  ');
     }
 
+    public function testAnInvolvedPersonCanBeCorrectedAndLogicallyRemovedButNotChangedAfterwards(): void
+    {
+        $professional = $this->professional('person-history');
+        $person = new CaseInvolvedPerson(Uuid::v7(), $this->managedCase($professional), CaseInvolvedPersonName::fromString('Initial fictional person'), CaseInvolvedPersonRole::Affected, $professional, new DateTimeImmutable('2026-08-11T10:00:00+00:00'));
+
+        $person->correct(CaseInvolvedPersonName::fromString('Corrected fictional person'), CaseInvolvedPersonRole::Witness, new DateTimeImmutable('2026-08-11T10:05:00+00:00'));
+        $person->removeAt(new DateTimeImmutable('2026-08-11T10:10:00+00:00'));
+
+        self::assertSame('Corrected fictional person', $person->name()->toString());
+        self::assertSame(CaseInvolvedPersonRole::Witness, $person->role());
+        self::assertFalse($person->isActive());
+        self::assertSame('2026-08-11T10:10:00+00:00', $person->removedAt()?->format(DATE_ATOM));
+        $this->expectException(LogicException::class);
+        $person->correct(CaseInvolvedPersonName::fromString('Not allowed'), CaseInvolvedPersonRole::Other, new DateTimeImmutable());
+    }
+
     private function managedCase(Professional $professional, CaseModality $modality = CaseModality::Unknown): ManagedCase
     {
         return new ManagedCase(

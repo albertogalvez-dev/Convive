@@ -98,6 +98,8 @@ erDiagram
         varchar role "affected | alleged_actor | witness | guardian | other"
         uuid added_by_professional_id FK
         timestamptz added_at
+        timestamptz corrected_at "nullable; latest correction"
+        timestamptz removed_at "nullable; retained logical removal"
     }
     case_workflow_source_versions {
         uuid id PK

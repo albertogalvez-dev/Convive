@@ -12,6 +12,7 @@ use App\Cases\Application\CompleteCaseTask;
 use App\Cases\Application\CreateCaseTask;
 use App\Cases\Application\MarkCaseTaskNotApplicable;
 use App\Cases\Application\ManageCaseAssignment;
+use App\Cases\Application\ManageCaseInvolvedPeople;
 use App\Cases\Application\ProfessionalCaseWorkspace;
 use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
@@ -21,6 +22,8 @@ use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CaseInvolvedPerson;
+use App\Cases\Domain\CaseInvolvedPersonRepository;
+use App\Cases\Domain\CaseInvolvedPersonRole;
 use App\Cases\Domain\CaseModality;
 use App\Cases\Domain\CaseOperationalView;
 use App\Cases\Domain\CasePermission;
@@ -73,6 +76,8 @@ final readonly class ProfessionalCaseController
         private CompleteCaseTask $completeCaseTask,
         private MarkCaseTaskNotApplicable $markCaseTaskNotApplicable,
         private ManageCaseAssignment $manageCaseAssignment,
+        private ManageCaseInvolvedPeople $manageCasePeople,
+        private CaseInvolvedPersonRepository $people,
         private ProfessionalRepository $professionals,
         private OrganisationMembershipRepository $memberships,
         private CaseTaskRepository $tasks,
@@ -725,6 +730,45 @@ final readonly class ProfessionalCaseController
         return new CaseWorkspaceQuery($view, $status, $modality, $reference, $cursor, $limit, $now);
     }
 
+    #[Route('/api/v1/professional/cases/{id}/people', name: 'api_v1_professional_add_case_person', methods: ['POST'])]
+    #[OA\Post(operationId: 'addCaseInvolvedPerson', summary: 'Add a minimised case-local person', security: [['professionalSession' => []]], tags: ['Professional cases'])]
+    public function addPerson(string $id, #[CurrentUser] Professional $professional, Request $request, #[MapRequestPayload(acceptFormat: 'json')] ManageCaseInvolvedPersonRequest $payload): JsonResponse
+    {
+        $detail = $this->resolveDetail($id, $professional);
+        $this->requireMinimisedPersonPayload($request);
+        try {
+            $person = $this->manageCasePeople->add($detail->managedCase, $payload->name, CaseInvolvedPersonRole::from($payload->role), $professional, new DateTimeImmutable());
+        } catch (CaseAccessDenied|InvalidArgumentException|LogicException $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+        return $this->json($this->serializePerson($person), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/people/{personId}', name: 'api_v1_professional_correct_case_person', methods: ['PATCH'])]
+    #[OA\Patch(operationId: 'correctCaseInvolvedPerson', summary: 'Correct a minimised case-local person', security: [['professionalSession' => []]], tags: ['Professional cases'])]
+    public function correctPerson(string $id, string $personId, #[CurrentUser] Professional $professional, Request $request, #[MapRequestPayload(acceptFormat: 'json')] ManageCaseInvolvedPersonRequest $payload): JsonResponse
+    {
+        $detail = $this->resolveDetail($id, $professional);
+        $this->requireMinimisedPersonPayload($request);
+        $person = Uuid::isValid($personId) ? $this->people->find(Uuid::fromString($personId)) : null;
+        if (!$person instanceof CaseInvolvedPerson || !$person->managedCase()->id()->equals($detail->managedCase->id())) throw new ProfessionalCaseNotFoundHttpException();
+        try {
+            $this->manageCasePeople->correct($person, $payload->name, CaseInvolvedPersonRole::from($payload->role), $professional, new DateTimeImmutable());
+        } catch (CaseAccessDenied|InvalidArgumentException|LogicException $exception) { throw new ProfessionalCaseNotFoundHttpException(previous: $exception); }
+        return $this->json($this->serializePerson($person));
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/people/{personId}', name: 'api_v1_professional_remove_case_person', methods: ['DELETE'])]
+    #[OA\Delete(operationId: 'removeCaseInvolvedPerson', summary: 'Logically remove a case-local person without deleting history', security: [['professionalSession' => []]], tags: ['Professional cases'])]
+    public function removePerson(string $id, string $personId, #[CurrentUser] Professional $professional): JsonResponse
+    {
+        $detail = $this->resolveDetail($id, $professional);
+        $person = Uuid::isValid($personId) ? $this->people->find(Uuid::fromString($personId)) : null;
+        if (!$person instanceof CaseInvolvedPerson || !$person->managedCase()->id()->equals($detail->managedCase->id())) throw new ProfessionalCaseNotFoundHttpException();
+        try { $this->manageCasePeople->remove($person, $professional, new DateTimeImmutable()); } catch (CaseAccessDenied|LogicException $exception) { throw new ProfessionalCaseNotFoundHttpException(previous: $exception); }
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT, ['Cache-Control' => 'no-store, private']);
+    }
+
     private function resolveDetail(string $id, Professional $professional): CaseWorkspaceDetail
     {
         if (!Uuid::isValid($id)) {
@@ -733,6 +777,19 @@ final readonly class ProfessionalCaseController
 
         return $this->workspace->detail(Uuid::fromString($id), $professional)
             ?? throw new ProfessionalCaseNotFoundHttpException();
+    }
+
+    private function requireMinimisedPersonPayload(Request $request): void
+    {
+        try {
+            $payload = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            throw new BadRequestHttpException('The person payload is invalid.');
+        }
+
+        if (!is_array($payload) || array_diff(array_keys($payload), ['name', 'role']) !== []) {
+            throw new BadRequestHttpException('The person payload contains unsupported fields.');
+        }
     }
 
     private function resolveTask(string $caseId, string $taskId, Professional $professional): CaseTask
@@ -856,10 +913,15 @@ final readonly class ProfessionalCaseController
         );
     }
 
-    /** @return array{id: string, name: string, role: string} */
+    /** @return array{id: string, name: string, role: string, state: string} */
     private function serializePerson(CaseInvolvedPerson $person): array
     {
-        return ['id' => $person->id()->toRfc4122(), 'name' => $person->name()->toString(), 'role' => $person->role()->value];
+        return [
+            'id' => $person->id()->toRfc4122(),
+            'name' => $person->name()->toString(),
+            'role' => $person->role()->value,
+            'state' => $person->isActive() ? 'active' : 'removed',
+        ];
     }
 
     /** @return array<string, mixed> */

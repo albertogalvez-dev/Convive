@@ -191,23 +191,95 @@
               <p class="section-label">Alcance del caso</p>
               <h2 id="people-title">Personas vinculadas</h2>
             </div>
-            @if (item.permissions.manageAssignments) {
-              <button type="button" class="quiet-action" (click)="openAssignment(item)">
-                Asignar
-              </button>
+            @if (item.permissions.manage) {
+              <span class="section-label">Datos mínimos</span>
             }
           </div>
+          @if (peopleError(); as message) {
+            <p class="task-feedback error" role="alert">{{ message }}</p>
+          } @else if (peopleMessage(); as message) {
+            <p class="task-feedback" role="status">{{ message }}</p>
+          }
+          @if (item.permissions.manage) {
+            <form class="resolution-form" (ngSubmit)="addPerson(item)">
+              <p class="empty">
+                Solo nombre y vinculación funcional. Estas etiquetas no determinan hechos.
+              </p>
+              <label
+                >Nombre<input
+                  name="newPersonName"
+                  [(ngModel)]="newPerson.name"
+                  maxlength="120"
+                  required
+              /></label>
+              <label
+                >Vinculación<select name="newPersonRole" [(ngModel)]="newPerson.role">
+                  <option value="affected">Persona afectada</option>
+                  <option value="alleged_actor">Persona presuntamente implicada</option>
+                  <option value="witness">Testigo</option>
+                  <option value="guardian">Responsable legal</option>
+                  <option value="other">Otra vinculación</option>
+                </select></label
+              >
+              <button type="submit" [disabled]="peopleSaving()">Añadir persona</button>
+            </form>
+          }
           @if (item.people.length === 0) {
             <p class="empty">No hay personas vinculadas.</p>
           } @else {
             <ul class="people-list">
               @for (person of item.people; track person.id) {
-                <li>
+                <li [class.removed]="person.state === 'removed'">
                   <span class="person-avatar" aria-hidden="true">{{ person.name.charAt(0) }}</span
                   ><span
                     ><strong>{{ person.name }}</strong
-                    ><small>{{ personRoleLabel(person.role) }}</small></span
+                    ><small
+                      >{{ personRoleLabel(person.role)
+                      }}{{ person.state === 'removed' ? ' · Retirada' : '' }}</small
+                    ></span
                   >
+                  @if (item.permissions.manage && person.state === 'active') {
+                    <span class="person-actions"
+                      ><button
+                        type="button"
+                        class="secondary"
+                        (click)="openPersonCorrection(person)"
+                      >
+                        Corregir</button
+                      ><button
+                        type="button"
+                        class="secondary"
+                        (click)="removePerson(item, person.id)"
+                        [disabled]="peopleSaving()"
+                      >
+                        Retirar
+                      </button></span
+                    >
+                  }
+                  @if (correctingPersonId === person.id) {
+                    <form class="resolution-form" (ngSubmit)="correctPerson(item)">
+                      <label
+                        >Nombre<input
+                          name="correctingPersonName"
+                          [(ngModel)]="correctingPerson.name"
+                          maxlength="120"
+                          required
+                      /></label>
+                      <label
+                        >Vinculación<select
+                          name="correctingPersonRole"
+                          [(ngModel)]="correctingPerson.role"
+                        >
+                          <option value="affected">Persona afectada</option>
+                          <option value="alleged_actor">Persona presuntamente implicada</option>
+                          <option value="witness">Testigo</option>
+                          <option value="guardian">Responsable legal</option>
+                          <option value="other">Otra vinculación</option>
+                        </select></label
+                      >
+                      <button type="submit" [disabled]="peopleSaving()">Guardar corrección</button>
+                    </form>
+                  }
                 </li>
               }
             </ul>
