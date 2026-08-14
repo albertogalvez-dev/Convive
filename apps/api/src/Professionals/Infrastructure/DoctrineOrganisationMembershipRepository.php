@@ -33,6 +33,23 @@ final class DoctrineOrganisationMembershipRepository implements OrganisationMemb
             ]);
     }
 
+    public function hasActiveMembership(Professional $professional, Organisation $organisation): bool
+    {
+        return $this->entityManager->getRepository(OrganisationMembership::class)->count([
+            'professional' => $professional,
+            'organisation' => $organisation,
+            'revokedAt' => null,
+        ]) > 0;
+    }
+
+    public function findActiveByOrganisation(Organisation $organisation): array
+    {
+        return $this->entityManager->getRepository(OrganisationMembership::class)->findBy([
+            'organisation' => $organisation,
+            'revokedAt' => null,
+        ]);
+    }
+
     public function findActiveByProfessionalAndOrganisation(
         Professional $professional,
         Organisation $organisation,

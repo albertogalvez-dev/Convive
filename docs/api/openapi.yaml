@@ -170,6 +170,172 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/assignments':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Explicitly assign a contributor or observer to an exact case'
+      description: 'Requires exact-case assignment management. Lead responsibility changes require the explicit handover endpoint.'
+      operationId: assignProfessionalCaseCollaborator
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageProfessionalCaseAssignmentRequest'
+      responses:
+        '201':
+          description: 'The explicit assignment was recorded.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseAssignment'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or target professional is unavailable in this scope.'
+        '409':
+          description: 'The assignment conflicts with the current case access.'
+        '422':
+          description: 'The assignment request is invalid.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/assignments/{assignmentId}/handover':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Atomically hand over exact-case lead responsibility'
+      description: 'Requires exact-case assignment management and a recorded reason. The former lead is revoked as the new lead is created.'
+      operationId: handoverProfessionalCaseLead
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HandoverProfessionalCaseAssignmentRequest'
+      responses:
+        '201':
+          description: 'The lead handover was recorded.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseAssignment'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case, assignment or target professional is unavailable in this scope.'
+        '409':
+          description: 'The handover conflicts with the current case access.'
+        '422':
+          description: 'The handover request is invalid.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/assignments/{assignmentId}/role':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Change a contributor or observer exact-case assignment'
+      description: 'Requires exact-case assignment management and a recorded reason. Lead responsibility can only change through the explicit handover endpoint.'
+      operationId: changeProfessionalCaseAssignmentRole
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeProfessionalCaseAssignmentRoleRequest'
+      responses:
+        '200':
+          description: 'The assignment role was changed.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseAssignment'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or assignment is unavailable in this scope.'
+        '409':
+          description: 'The requested role change conflicts with the current case access.'
+        '422':
+          description: 'The assignment role request is invalid.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/assignments/{assignmentId}/revoke':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Explicitly revoke a non-lead exact-case assignment'
+      description: 'Requires exact-case assignment management and a recorded reason. The final lead must use the explicit handover endpoint.'
+      operationId: revokeProfessionalCaseAssignment
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeProfessionalCaseAssignmentRequest'
+      responses:
+        '200':
+          description: 'The assignment was revoked.'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or assignment is unavailable in this scope.'
+        '409':
+          description: 'The final lead requires an explicit handover.'
+        '422':
+          description: 'The revocation request is invalid.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/cases/{id}/tasks':
     post:
       tags:
@@ -2002,6 +2168,7 @@ components:
             - case_created
             - report_linked
             - assignment_created
+            - assignment_changed
             - assignment_revoked
             - task_created
             - task_completed
@@ -2064,6 +2231,7 @@ components:
         - overdueTasks
         - nextDueAt
         - permissions
+        - assignableProfessionals
         - people
         - assignments
         - tasks
@@ -2125,6 +2293,20 @@ components:
               type: boolean
           type: object
           additionalProperties: false
+        assignableProfessionals:
+          type: array
+          items:
+            required:
+              - id
+              - name
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+            type: object
+            additionalProperties: false
         people:
           type: array
           items:
@@ -2199,6 +2381,61 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    ManageProfessionalCaseAssignmentRequest:
+      required:
+        - professionalId
+        - role
+        - reason
+      properties:
+        professionalId:
+          type: string
+        role:
+          type: string
+          enum:
+            - lead
+            - contributor
+            - observer
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+      type: object
+    HandoverProfessionalCaseAssignmentRequest:
+      required:
+        - professionalId
+        - reason
+      properties:
+        professionalId:
+          type: string
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+      type: object
+    ChangeProfessionalCaseAssignmentRoleRequest:
+      required:
+        - role
+        - reason
+      properties:
+        role:
+          type: string
+          enum:
+            - contributor
+            - observer
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+      type: object
+    RevokeProfessionalCaseAssignmentRequest:
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          maxLength: 500
+          minLength: 1
+      type: object
     CreateProfessionalCaseTaskRequest:
       required:
         - ownerId

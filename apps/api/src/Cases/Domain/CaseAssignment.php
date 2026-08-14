@@ -39,8 +39,17 @@ class CaseAssignment
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private DateTimeImmutable $assignedAt;
 
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $assignmentReason;
+
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $roleChangeReason = null;
+
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $revokedAt = null;
+
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $revocationReason = null;
 
     public function __construct(
         Uuid $id,
@@ -49,6 +58,7 @@ class CaseAssignment
         CaseAssignmentRole $role,
         Professional $assignedBy,
         DateTimeImmutable $assignedAt,
+        ?string $assignmentReason = null,
     ) {
         $this->id = $id;
         $this->managedCase = $managedCase;
@@ -56,6 +66,7 @@ class CaseAssignment
         $this->role = $role;
         $this->assignedBy = $assignedBy;
         $this->assignedAt = $assignedAt;
+        $this->assignmentReason = self::reason($assignmentReason);
         $this->managedCase->recordOperationalActivity($assignedAt);
     }
 
@@ -74,13 +85,35 @@ class CaseAssignment
         };
     }
 
-    public function revokeAt(DateTimeImmutable $now): void
+    public function revokeAt(DateTimeImmutable $now, string $reason): void
     {
         if ($now < $this->assignedAt) {
             throw new LogicException('A case assignment cannot be revoked before it was assigned.');
         }
 
-        $this->revokedAt ??= $now;
+        if ($this->revokedAt !== null) {
+            throw new LogicException('A case assignment has already been revoked.');
+        }
+
+        $this->revokedAt = $now;
+        $this->revocationReason = self::requiredReason($reason);
+        $this->managedCase->recordOperationalActivity($now);
+    }
+
+    public function changeRole(CaseAssignmentRole $role, DateTimeImmutable $now, string $reason): void
+    {
+        if (!$this->isActive()) {
+            throw new LogicException('A revoked case assignment cannot be changed.');
+        }
+        if ($this->role === CaseAssignmentRole::Lead || $role === CaseAssignmentRole::Lead) {
+            throw new LogicException('Lead responsibility can only change through an explicit handover.');
+        }
+        if ($this->role === $role) {
+            throw new LogicException('The case assignment already has this role.');
+        }
+
+        $this->role = $role;
+        $this->roleChangeReason = self::requiredReason($reason);
         $this->managedCase->recordOperationalActivity($now);
     }
 
@@ -122,5 +155,39 @@ class CaseAssignment
     public function revokedAt(): ?DateTimeImmutable
     {
         return $this->revokedAt;
+    }
+
+    public function assignmentReason(): ?string
+    {
+        return $this->assignmentReason;
+    }
+
+    public function revocationReason(): ?string
+    {
+        return $this->revocationReason;
+    }
+
+    public function roleChangeReason(): ?string
+    {
+        return $this->roleChangeReason;
+    }
+
+    private static function reason(?string $reason): ?string
+    {
+        if ($reason === null) {
+            return null;
+        }
+
+        return self::requiredReason($reason);
+    }
+
+    private static function requiredReason(string $reason): string
+    {
+        $reason = trim($reason);
+        if ($reason === '' || mb_strlen($reason) > 500) {
+            throw new \InvalidArgumentException('An assignment reason must contain between 1 and 500 characters.');
+        }
+
+        return $reason;
     }
 }

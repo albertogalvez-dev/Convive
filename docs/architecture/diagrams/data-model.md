@@ -86,7 +86,10 @@ erDiagram
         varchar role "lead | contributor | observer"
         uuid assigned_by_professional_id FK
         timestamptz assigned_at
+        varchar assignment_reason "nullable; minimised explicit reason"
+        varchar role_change_reason "nullable; latest minimised role-change reason"
         timestamptz revoked_at "nullable; on or after assigned_at"
+        varchar revocation_reason "nullable; required on explicit revocation"
     }
     case_involved_people {
         uuid id PK

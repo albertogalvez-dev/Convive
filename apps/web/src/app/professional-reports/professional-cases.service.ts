@@ -80,6 +80,7 @@ export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
     publicReference: string;
     decision: { outcome: 'link_to_case'; reason: string; decidedAt: string } | null;
   } | null;
+  assignableProfessionals: Array<{ id: string; name: string }>;
   evidence: Array<{
     id: string;
     description: string | null;
@@ -156,6 +157,49 @@ export class ProfessionalCasesService {
     return this.http.post<ProfessionalCaseDetail['tasks'][number]>(
       `${this.endpoint}/${encodeURIComponent(id)}/tasks/${encodeURIComponent(taskId)}/not-applicable`,
       { reason },
+    );
+  }
+
+  revokeAssignment(
+    id: string,
+    assignmentId: string,
+    reason: string,
+  ): Observable<{ id: string; revoked: boolean }> {
+    return this.http.post<{ id: string; revoked: boolean }>(
+      `${this.endpoint}/${encodeURIComponent(id)}/assignments/${encodeURIComponent(assignmentId)}/revoke`,
+      { reason },
+    );
+  }
+
+  assignProfessional(
+    id: string,
+    payload: { professionalId: string; role: CaseAssignmentRole; reason: string },
+  ): Observable<ProfessionalCaseDetail['assignments'][number]> {
+    return this.http.post<ProfessionalCaseDetail['assignments'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/assignments`,
+      payload,
+    );
+  }
+
+  handoverAssignment(
+    id: string,
+    assignmentId: string,
+    payload: { professionalId: string; reason: string },
+  ): Observable<ProfessionalCaseDetail['assignments'][number]> {
+    return this.http.post<ProfessionalCaseDetail['assignments'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/assignments/${encodeURIComponent(assignmentId)}/handover`,
+      payload,
+    );
+  }
+
+  changeAssignmentRole(
+    id: string,
+    assignmentId: string,
+    payload: { role: 'contributor' | 'observer'; reason: string },
+  ): Observable<ProfessionalCaseDetail['assignments'][number]> {
+    return this.http.post<ProfessionalCaseDetail['assignments'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/assignments/${encodeURIComponent(assignmentId)}/role`,
+      payload,
     );
   }
 

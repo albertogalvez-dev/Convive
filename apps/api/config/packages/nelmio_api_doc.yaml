@@ -529,7 +529,7 @@ nelmio_api_doc:
                         id: { type: string, format: uuid }
                         action:
                             type: string
-                            enum: [case_created, report_linked, assignment_created, assignment_revoked, task_created, task_completed, task_marked_not_applicable, evidence_download_authorised, audit_exported]
+                            enum: [case_created, report_linked, assignment_created, assignment_changed, assignment_revoked, task_created, task_completed, task_marked_not_applicable, evidence_download_authorised, audit_exported]
                         target:
                             type: string
                             enum: [case, triage_decision, assignment, task, attachment, audit_trail]
@@ -556,7 +556,7 @@ nelmio_api_doc:
                 ProfessionalCaseDetail:
                     type: object
                     additionalProperties: false
-                    required: [id, status, modality, createdAt, organisationName, assignmentRole, pendingTasks, overdueTasks, nextDueAt, permissions, people, assignments, tasks, sourceReport, evidence, timeline]
+                    required: [id, status, modality, createdAt, organisationName, assignmentRole, pendingTasks, overdueTasks, nextDueAt, permissions, assignableProfessionals, people, assignments, tasks, sourceReport, evidence, timeline]
                     properties:
                         id: { type: string, format: uuid }
                         status: { type: string, enum: [assessment, active, closed] }
@@ -578,6 +578,15 @@ nelmio_api_doc:
                                 manage: { type: boolean }
                                 manageAssignments: { type: boolean }
                                 viewAudit: { type: boolean }
+                        assignableProfessionals:
+                            type: array
+                            items:
+                                type: object
+                                additionalProperties: false
+                                required: [id, name]
+                                properties:
+                                    id: { type: string, format: uuid }
+                                    name: { type: string }
                         people:
                             type: array
                             items: { $ref: '#/components/schemas/ProfessionalCasePerson' }

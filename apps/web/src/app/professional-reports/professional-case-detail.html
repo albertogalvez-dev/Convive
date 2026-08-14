@@ -191,6 +191,11 @@
               <p class="section-label">Alcance del caso</p>
               <h2 id="people-title">Personas vinculadas</h2>
             </div>
+            @if (item.permissions.manageAssignments) {
+              <button type="button" class="quiet-action" (click)="openAssignment(item)">
+                Asignar
+              </button>
+            }
           </div>
           @if (item.people.length === 0) {
             <p class="empty">No hay personas vinculadas.</p>
@@ -265,16 +270,153 @@
               <h2 id="team-title">Equipo</h2>
             </div>
           </div>
+          @if (assignmentError(); as message) {
+            <p class="task-feedback error" role="alert">{{ message }}</p>
+          } @else if (assignmentMessage(); as message) {
+            <p class="task-feedback" role="status">{{ message }}</p>
+          }
+          @if (item.permissions.manageAssignments && assignmentProfessionalId) {
+            <form class="resolution-form" (ngSubmit)="assignProfessional(item)">
+              <label
+                >Profesional
+                <select name="assignmentProfessionalId" [(ngModel)]="assignmentProfessionalId">
+                  @for (candidate of item.assignableProfessionals; track candidate.id) {
+                    @if (
+                      !item.assignments.some(
+                        (assignment) => assignment.professional.id === candidate.id
+                      )
+                    ) {
+                      <option [value]="candidate.id">{{ candidate.name }}</option>
+                    }
+                  }
+                </select>
+              </label>
+              <label
+                >Acceso
+                <select name="assignmentRole" [(ngModel)]="assignmentRole">
+                  <option value="contributor">Colabora</option>
+                  <option value="observer">Consulta</option>
+                </select>
+              </label>
+              <label
+                >Motivo
+                <textarea
+                  name="assignmentReason"
+                  [(ngModel)]="assignmentReason"
+                  maxlength="500"
+                  required
+                ></textarea>
+              </label>
+              <button type="submit" [disabled]="assignmentSaving()">Confirmar asignación</button>
+            </form>
+          }
           <ul class="team-list">
             @for (assignment of item.assignments; track assignment.id) {
               <li>
                 <span
                   ><strong>{{ assignment.professional.name }}</strong
                   ><small>{{ assignmentRoleLabel(assignment.role) }}</small></span
-                ><time [attr.datetime]="assignment.assignedAt">{{
+                >
+                @if (item.permissions.manageAssignments) {
+                  @if (assignment.role === 'lead') {
+                    <button
+                      type="button"
+                      class="quiet-action"
+                      (click)="openHandover(item, assignment.id)"
+                    >
+                      Traspasar
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="quiet-action"
+                      (click)="openChangeAssignmentRole(assignment.id, assignment.role)"
+                    >
+                      Cambiar acceso
+                    </button>
+                    <button
+                      type="button"
+                      class="quiet-action"
+                      (click)="openRevokeAssignment(assignment.id)"
+                    >
+                      Retirar
+                    </button>
+                  }
+                }
+                <time [attr.datetime]="assignment.assignedAt">{{
                   assignment.assignedAt | date: 'd MMM y' : undefined : 'es'
                 }}</time>
               </li>
+              @if (revokeAssignmentId === assignment.id) {
+                <li>
+                  <form class="resolution-form" (ngSubmit)="revokeAssignment(item)">
+                    <label
+                      >Motivo del traspaso o retirada<textarea
+                        name="revokeReason"
+                        [(ngModel)]="revokeReason"
+                        maxlength="500"
+                        required
+                      ></textarea>
+                    </label>
+                    <button type="submit" [disabled]="assignmentSaving()">
+                      Confirmar retirada
+                    </button>
+                  </form>
+                </li>
+              }
+              @if (changeAssignmentId === assignment.id) {
+                <li>
+                  <form class="resolution-form" (ngSubmit)="updateAssignmentRole(item)">
+                    <label
+                      >Nuevo acceso
+                      <select name="changeAssignmentRole" [(ngModel)]="changeAssignmentRole">
+                        <option value="contributor">Colabora</option>
+                        <option value="observer">Consulta</option>
+                      </select>
+                    </label>
+                    <label
+                      >Motivo del cambio<textarea
+                        name="changeAssignmentReason"
+                        [(ngModel)]="changeAssignmentReason"
+                        maxlength="500"
+                        required
+                      ></textarea>
+                    </label>
+                    <button type="submit" [disabled]="assignmentSaving()">Confirmar cambio</button>
+                  </form>
+                </li>
+              }
+              @if (handoverAssignmentId === assignment.id && handoverProfessionalId) {
+                <li>
+                  <form class="resolution-form" (ngSubmit)="handoverAssignment(item)">
+                    <label
+                      >Nuevo responsable
+                      <select name="handoverProfessionalId" [(ngModel)]="handoverProfessionalId">
+                        @for (candidate of item.assignableProfessionals; track candidate.id) {
+                          @if (
+                            !item.assignments.some(
+                              (current) => current.professional.id === candidate.id
+                            )
+                          ) {
+                            <option [value]="candidate.id">{{ candidate.name }}</option>
+                          }
+                        }
+                      </select>
+                    </label>
+                    <label
+                      >Motivo del traspaso<textarea
+                        name="handoverReason"
+                        [(ngModel)]="handoverReason"
+                        maxlength="500"
+                        required
+                      ></textarea>
+                    </label>
+                    <button type="submit" [disabled]="assignmentSaving()">
+                      Confirmar traspaso
+                    </button>
+                  </form>
+                </li>
+              }
             }
           </ul>
         </section>

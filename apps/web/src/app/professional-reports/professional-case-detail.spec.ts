@@ -76,6 +76,41 @@ describe('ProfessionalCaseDetailPage', () => {
     expect(navigate).toHaveBeenCalledWith(['/profesionales/acceso']);
   });
 
+  it('records a reasoned contributor or observer access change through the exact-case endpoint', () => {
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      openChangeAssignmentRole(id: string, role: 'contributor' | 'observer'): void;
+      changeAssignmentReason: string;
+      updateAssignmentRole(item: ReturnType<typeof detail>): void;
+    };
+    component.openChangeAssignmentRole('assignment-2', 'observer');
+    component.changeAssignmentReason = 'Fictional collaboration scope changed.';
+    component.updateAssignmentRole(detail());
+
+    const request = http.expectOne(`${endpoint}/assignments/assignment-2/role`);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      role: 'contributor',
+      reason: 'Fictional collaboration scope changed.',
+    });
+    request.flush({
+      id: 'assignment-2',
+      professional: { id: 'professional-2', name: 'Fictional collaborator' },
+      role: 'contributor',
+      assignedAt: '2026-08-11T09:00:00+00:00',
+    });
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain(
+      'El nivel de acceso se ha actualizado con un motivo registrado.',
+    );
+  });
+
   function detail() {
     return {
       id: 'case-1',
@@ -88,12 +123,22 @@ describe('ProfessionalCaseDetailPage', () => {
       overdueTasks: 0,
       nextDueAt: '2026-08-12T09:00:00+00:00',
       permissions: { manage: true, manageAssignments: true, export: true, viewAudit: true },
+      assignableProfessionals: [
+        { id: 'professional-1', name: 'Fictional Professional' },
+        { id: 'professional-2', name: 'Fictional collaborator' },
+      ],
       people: [{ id: 'person-1', name: 'Fictional person', role: 'affected' }],
       assignments: [
         {
           id: 'assignment-1',
           professional: { id: 'professional-1', name: 'Fictional Professional' },
           role: 'lead',
+          assignedAt: '2026-08-11T09:00:00+00:00',
+        },
+        {
+          id: 'assignment-2',
+          professional: { id: 'professional-2', name: 'Fictional collaborator' },
+          role: 'observer',
           assignedAt: '2026-08-11T09:00:00+00:00',
         },
       ],
@@ -108,6 +153,7 @@ describe('ProfessionalCaseDetailPage', () => {
           overdue: false,
           owner: { id: 'professional-1', name: 'Fictional Professional' },
           source: {
+            id: 'source-1',
             title: 'Fictional protocol source',
             version: '2026.1',
             authority: 'binding',
