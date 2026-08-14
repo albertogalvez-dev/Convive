@@ -68,6 +68,13 @@ The initial product also intentionally withholds automatic legal/protocol
 conclusions, automatic family contact, automatic deadlines, universal case
 search, public professional account creation and public professional mutation.
 
+Organisation membership administration may grant, change, suspend, resume or
+remove an explicit technical grant only within the administrator's own centre.
+It records a minimised account-audit action and invalidates the affected
+professional's stale session. It neither creates, revokes nor alters a case
+assignment: an active membership remains only one of the three independent
+requirements for access to a managed case.
+
 ## Consequences
 
 ### Positive

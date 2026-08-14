@@ -7,6 +7,7 @@ namespace App\Tests\Professionals\Application;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Professionals\Application\ManageProfessionalAccount;
+use App\Professionals\Application\ManageOrganisationMembership;
 use App\Professionals\Domain\OrganisationMembership;
 use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
@@ -88,6 +89,27 @@ final class ManageProfessionalAccountTest extends TestCase
         self::assertTrue($target->isActive());
     }
 
+    public function testMembershipSuspensionInvalidatesSessionsWithoutRevokingCaseHistory(): void
+    {
+        [$organisation, $administrator, $memberships] = $this->administratorScope();
+        $secondAdministrator = $this->professional('second-administrator');
+        $target = $this->professional('membership-target');
+        $memberships->save(new OrganisationMembership(Uuid::v7(), $secondAdministrator, $organisation, ProfessionalRole::Administrator, new DateTimeImmutable()));
+        $membership = new OrganisationMembership(Uuid::v7(), $target, $organisation, ProfessionalRole::Triage, new DateTimeImmutable());
+        $memberships->save($membership);
+        $manager = new ManageOrganisationMembership($memberships, new InMemoryProfessionals([$administrator, $secondAdministrator, $target]), new InMemoryProfessionalAccountAuditEvents());
+        $before = $target->securityRevision();
+
+        $manager->suspend($membership, $administrator, new DateTimeImmutable());
+
+        self::assertFalse($membership->isActive());
+        self::assertNull($membership->revokedAt());
+        self::assertSame($before + 1, $target->securityRevision());
+        self::assertFalse($memberships->hasActiveMembership($target, $organisation));
+        $manager->resume($membership, $administrator, new DateTimeImmutable());
+        self::assertTrue($membership->isActive());
+    }
+
     /** @return array{Organisation, Professional, InMemoryMemberships} */
     private function administratorScope(): array
     {
@@ -126,6 +148,7 @@ final class InMemoryMemberships implements OrganisationMembershipRepository
     public function findActiveByProfessional(Professional $professional): array { return array_values(array_filter($this->memberships, static fn (OrganisationMembership $membership): bool => $membership->professional()->id()->equals($professional->id()) && $membership->isActive())); }
     public function hasActiveMembership(Professional $professional, Organisation $organisation): bool { foreach ($this->findActiveByProfessional($professional) as $membership) if ($membership->organisation()->id()->equals($organisation->id())) return true; return false; }
     public function findActiveByOrganisation(Organisation $organisation): array { return array_values(array_filter($this->memberships, static fn (OrganisationMembership $membership): bool => $membership->organisation()->id()->equals($organisation->id()) && $membership->isActive())); }
+    public function findByOrganisation(Organisation $organisation): array { return array_values(array_filter($this->memberships, static fn (OrganisationMembership $membership): bool => $membership->organisation()->id()->equals($organisation->id()))); }
     public function findActiveByProfessionalAndOrganisation(Professional $professional, Organisation $organisation, ProfessionalRole $role): ?OrganisationMembership { foreach ($this->findActiveByProfessional($professional) as $membership) if ($membership->organisation()->id()->equals($organisation->id()) && $membership->role() === $role) return $membership; return null; }
 }
 

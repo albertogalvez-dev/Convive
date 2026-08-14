@@ -175,6 +175,7 @@ erDiagram
         uuid organisation_id FK
         varchar role "triage | administrator"
         timestamptz granted_at "immutable UTC"
+        timestamptz suspended_at "nullable; membership has no organisation action while set"
         timestamptz revoked_at "nullable; row persists after revocation"
     }
     organisations ||--o{ reports : "receives"

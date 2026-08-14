@@ -20,6 +20,9 @@ interface OrganisationMembershipRepository
     /** @return list<OrganisationMembership> */
     public function findActiveByOrganisation(Organisation $organisation): array;
 
+    /** @return list<OrganisationMembership> */
+    public function findByOrganisation(Organisation $organisation): array;
+
     public function findActiveByProfessionalAndOrganisation(
         Professional $professional,
         Organisation $organisation,

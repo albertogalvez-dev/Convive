@@ -18,6 +18,14 @@ export interface ProfessionalAccount {
   role?: ProfessionalAccountRole;
 }
 
+export interface OrganisationMembership {
+  id: string;
+  professionalId: string;
+  name: string;
+  role: ProfessionalAccountRole;
+  state: 'active' | 'suspended' | 'removed';
+}
+
 export interface OneTimeCredential {
   professional: ProfessionalAccount;
   credential: { secret: string; expiresAt: string };
@@ -43,6 +51,23 @@ export class ProfessionalAccountsService {
   accounts(organisationId: string): Observable<{ items: ProfessionalAccount[] }> {
     return this.http.get<{ items: ProfessionalAccount[] }>(
       `/api/v1/professional/organisations/${encodeURIComponent(organisationId)}/accounts`,
+    );
+  }
+
+  memberships(organisationId: string): Observable<{ items: OrganisationMembership[] }> {
+    return this.http.get<{ items: OrganisationMembership[] }>(
+      `/api/v1/professional/organisations/${encodeURIComponent(organisationId)}/memberships`,
+    );
+  }
+
+  changeMembership(
+    organisationId: string,
+    membershipId: string,
+    payload: { role?: ProfessionalAccountRole; action?: 'suspend' | 'resume' | 'remove' },
+  ): Observable<OrganisationMembership> {
+    return this.http.patch<OrganisationMembership>(
+      `/api/v1/professional/organisations/${encodeURIComponent(organisationId)}/memberships/${encodeURIComponent(membershipId)}`,
+      payload,
     );
   }
 

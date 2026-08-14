@@ -30,6 +30,8 @@ framework:
                 'professional_account_invitation',
                 'professional_account_password_reset',
                 'professional_account_status_change',
+                'professional_membership_grant',
+                'professional_membership_change',
             ]
         check_header: true
 
