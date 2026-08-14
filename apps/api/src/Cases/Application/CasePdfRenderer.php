@@ -223,6 +223,7 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditAction::CaseCreated => 'Caso creado',
             CaseAuditAction::ReportLinked => 'Comunicación vinculada',
             CaseAuditAction::AssignmentCreated => 'Asignación creada',
+            CaseAuditAction::AssignmentChanged => 'Asignación modificada',
             CaseAuditAction::AssignmentRevoked => 'Asignación retirada',
             CaseAuditAction::TaskCreated => 'Tarea creada',
             CaseAuditAction::TaskCompleted => 'Tarea completada',

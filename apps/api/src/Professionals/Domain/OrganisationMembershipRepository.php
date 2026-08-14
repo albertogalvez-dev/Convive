@@ -15,6 +15,11 @@ interface OrganisationMembershipRepository
      */
     public function findActiveByProfessional(Professional $professional): array;
 
+    public function hasActiveMembership(Professional $professional, Organisation $organisation): bool;
+
+    /** @return list<OrganisationMembership> */
+    public function findActiveByOrganisation(Organisation $organisation): array;
+
     public function findActiveByProfessionalAndOrganisation(
         Professional $professional,
         Organisation $organisation,

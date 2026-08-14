@@ -9,6 +9,7 @@ enum CaseAuditAction: string
     case CaseCreated = 'case_created';
     case ReportLinked = 'report_linked';
     case AssignmentCreated = 'assignment_created';
+    case AssignmentChanged = 'assignment_changed';
     case AssignmentRevoked = 'assignment_revoked';
     case TaskCreated = 'task_created';
     case TaskCompleted = 'task_completed';

@@ -75,7 +75,7 @@ final class ManagedCaseTest extends TestCase
             $professional,
             new DateTimeImmutable('2026-08-11T10:00:00+00:00'),
         );
-        $assignment->revokeAt(new DateTimeImmutable('2026-08-11T11:00:00+00:00'));
+        $assignment->revokeAt(new DateTimeImmutable('2026-08-11T11:00:00+00:00'), 'Fictional reassignment.');
 
         self::assertFalse($assignment->permits(CasePermission::View));
     }
@@ -93,7 +93,7 @@ final class ManagedCaseTest extends TestCase
         );
 
         $this->expectException(LogicException::class);
-        $assignment->revokeAt(new DateTimeImmutable('2026-08-11T09:59:59+00:00'));
+        $assignment->revokeAt(new DateTimeImmutable('2026-08-11T09:59:59+00:00'), 'Fictional reassignment.');
     }
 
     public function testAnInvolvedPersonStoresOnlyBoundedOperationalIdentity(): void

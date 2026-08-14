@@ -24,6 +24,11 @@ final class DoctrineProfessionalRepository implements ProfessionalRepository, Pa
         $this->entityManager->flush();
     }
 
+    public function find(\Symfony\Component\Uid\Uuid $id): ?Professional
+    {
+        return $this->entityManager->find(Professional::class, $id);
+    }
+
     public function findByEmail(ProfessionalEmail $email): ?Professional
     {
         return $this->entityManager

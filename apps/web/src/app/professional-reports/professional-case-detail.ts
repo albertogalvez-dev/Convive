@@ -55,6 +55,20 @@ export class ProfessionalCaseDetailPage implements OnInit {
   };
   protected notApplicableTaskId: string | null = null;
   protected notApplicableReason = '';
+  protected readonly assignmentMessage = signal<string | null>(null);
+  protected readonly assignmentError = signal<string | null>(null);
+  protected readonly assignmentSaving = signal(false);
+  protected assignmentProfessionalId = '';
+  protected assignmentRole: 'lead' | 'contributor' | 'observer' = 'contributor';
+  protected assignmentReason = '';
+  protected revokeAssignmentId: string | null = null;
+  protected revokeReason = '';
+  protected handoverAssignmentId: string | null = null;
+  protected handoverProfessionalId = '';
+  protected handoverReason = '';
+  protected changeAssignmentId: string | null = null;
+  protected changeAssignmentRole: 'contributor' | 'observer' = 'contributor';
+  protected changeAssignmentReason = '';
   protected readonly caseStatusLabel = caseStatusLabel;
   protected readonly caseModalityLabel = caseModalityLabel;
   protected readonly assignmentRoleLabel = assignmentRoleLabel;
@@ -133,6 +147,132 @@ export class ProfessionalCaseDetailPage implements OnInit {
     this.notApplicableReason = '';
   }
 
+  protected openRevokeAssignment(id: string): void {
+    this.revokeAssignmentId = id;
+    this.revokeReason = '';
+    this.assignmentError.set(null);
+  }
+
+  protected openChangeAssignmentRole(id: string, role: 'contributor' | 'observer'): void {
+    this.changeAssignmentId = id;
+    this.changeAssignmentRole = role === 'contributor' ? 'observer' : 'contributor';
+    this.changeAssignmentReason = '';
+    this.assignmentError.set(null);
+  }
+
+  protected updateAssignmentRole(item: ProfessionalCaseDetail): void {
+    if (this.changeAssignmentId === null) return;
+    this.assignmentSaving.set(true);
+    this.cases
+      .changeAssignmentRole(item.id, this.changeAssignmentId, {
+        role: this.changeAssignmentRole,
+        reason: this.changeAssignmentReason,
+      })
+      .subscribe({
+        next: () => {
+          this.assignmentMessage.set(
+            'El nivel de acceso se ha actualizado con un motivo registrado.',
+          );
+          this.assignmentSaving.set(false);
+          this.changeAssignmentId = null;
+          this.load();
+        },
+        error: () => {
+          this.assignmentError.set('No se puede actualizar este nivel de acceso.');
+          this.assignmentSaving.set(false);
+        },
+      });
+  }
+
+  protected openHandover(item: ProfessionalCaseDetail, assignmentId: string): void {
+    this.handoverAssignmentId = assignmentId;
+    this.handoverProfessionalId =
+      item.assignableProfessionals.find(
+        (candidate) =>
+          !item.assignments.some((assignment) => assignment.professional.id === candidate.id),
+      )?.id ?? '';
+    this.handoverReason = '';
+    this.assignmentError.set(null);
+  }
+
+  protected handoverAssignment(item: ProfessionalCaseDetail): void {
+    if (this.handoverAssignmentId === null) return;
+    this.assignmentSaving.set(true);
+    this.cases
+      .handoverAssignment(item.id, this.handoverAssignmentId, {
+        professionalId: this.handoverProfessionalId,
+        reason: this.handoverReason,
+      })
+      .subscribe({
+        next: () => {
+          this.assignmentMessage.set('El traspaso de responsabilidad se ha registrado.');
+          this.assignmentSaving.set(false);
+          this.handoverAssignmentId = null;
+          this.load();
+        },
+        error: () => {
+          this.assignmentError.set(
+            'No se puede completar el traspaso. Revisa el profesional y el motivo.',
+          );
+          this.assignmentSaving.set(false);
+        },
+      });
+  }
+
+  protected openAssignment(item: ProfessionalCaseDetail): void {
+    this.assignmentProfessionalId =
+      item.assignableProfessionals.find(
+        (candidate) =>
+          !item.assignments.some((assignment) => assignment.professional.id === candidate.id),
+      )?.id ?? '';
+    this.assignmentReason = '';
+    this.assignmentError.set(null);
+  }
+
+  protected assignProfessional(item: ProfessionalCaseDetail): void {
+    this.assignmentSaving.set(true);
+    this.cases
+      .assignProfessional(item.id, {
+        professionalId: this.assignmentProfessionalId,
+        role: this.assignmentRole,
+        reason: this.assignmentReason,
+      })
+      .subscribe({
+        next: () => {
+          this.assignmentMessage.set('La asignación se ha registrado de forma explícita.');
+          this.assignmentSaving.set(false);
+          this.load();
+        },
+        error: () => {
+          this.assignmentError.set(
+            'No se puede crear esta asignación. Revisa el profesional y el motivo.',
+          );
+          this.assignmentSaving.set(false);
+        },
+      });
+  }
+
+  protected revokeAssignment(item: ProfessionalCaseDetail): void {
+    if (this.revokeAssignmentId === null) {
+      return;
+    }
+    this.assignmentSaving.set(true);
+    this.cases.revokeAssignment(item.id, this.revokeAssignmentId, this.revokeReason).subscribe({
+      next: () => {
+        this.assignmentMessage.set('El acceso se ha retirado con un motivo registrado.');
+        this.assignmentSaving.set(false);
+        this.revokeAssignmentId = null;
+        this.load();
+      },
+      error: () => {
+        this.assignmentError.set(
+          'No se puede retirar el último responsable sin un traspaso explícito.',
+        );
+        this.assignmentSaving.set(false);
+      },
+    });
+  }
+
   protected markNotApplicable(item: ProfessionalCaseDetail): void {
     if (this.notApplicableTaskId === null) {
       return;
@@ -161,6 +301,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
         case_created: 'Caso creado',
         report_linked: 'Comunicación vinculada',
         assignment_created: 'Acceso asignado',
+        assignment_changed: 'Acceso modificado',
         assignment_revoked: 'Acceso retirado',
         task_created: 'Tarea creada',
         task_completed: 'Tarea completada',

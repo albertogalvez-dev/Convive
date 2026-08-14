@@ -11,9 +11,11 @@ use App\Cases\Application\AuthoriseCaseAccess;
 use App\Cases\Application\CompleteCaseTask;
 use App\Cases\Application\CreateCaseTask;
 use App\Cases\Application\MarkCaseTaskNotApplicable;
+use App\Cases\Application\ManageCaseAssignment;
 use App\Cases\Application\ProfessionalCaseWorkspace;
 use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
+use App\Cases\Domain\CaseAssignmentRole;
 use App\Cases\Domain\CaseAuditAction;
 use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
@@ -33,12 +35,15 @@ use App\Cases\Domain\ProfessionalExportEvent;
 use App\Cases\Domain\ProfessionalExportEventRepository;
 use App\Cases\Domain\ProfessionalExportKind;
 use App\Professionals\Domain\Professional;
+use App\Professionals\Domain\ProfessionalRepository;
+use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Reporting\Domain\ReportAttachment;
 use App\Reporting\Presentation\Http\PrivateReportAttachmentDownloadResponder;
 use App\Reporting\Presentation\Http\ReportAttachmentUnavailableHttpException;
 use App\Shared\Infrastructure\Logging\SecurityEventLogger;
 use App\Shared\Presentation\Http\RateLimitEnforcer;
 use DateTimeImmutable;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use DateMalformedStringException;
 use InvalidArgumentException;
 use LogicException;
@@ -67,6 +72,9 @@ final readonly class ProfessionalCaseController
         private CreateCaseTask $createCaseTask,
         private CompleteCaseTask $completeCaseTask,
         private MarkCaseTaskNotApplicable $markCaseTaskNotApplicable,
+        private ManageCaseAssignment $manageCaseAssignment,
+        private ProfessionalRepository $professionals,
+        private OrganisationMembershipRepository $memberships,
         private CaseTaskRepository $tasks,
         private WorkflowSourceVersionRepository $workflowSources,
         private CaseAuditEventRepository $auditEvents,
@@ -160,6 +168,168 @@ final readonly class ProfessionalCaseController
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
 
         return $this->json($this->serializeDetail($detail, $now));
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/assignments', name: 'api_v1_professional_assign_case_professional', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'assignProfessionalCaseCollaborator',
+        summary: 'Explicitly assign a contributor or observer to an exact case',
+        description: 'Requires exact-case assignment management. Lead responsibility changes require the explicit handover endpoint.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/ManageProfessionalCaseAssignmentRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_CREATED, description: 'The explicit assignment was recorded.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseAssignment')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or target professional is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The assignment conflicts with the current case access.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The assignment request is invalid.'),
+        ],
+    )]
+    public function assignProfessional(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        ManageProfessionalCaseAssignmentRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $target = Uuid::isValid($payload->professionalId) ? $this->professionals->find(Uuid::fromString($payload->professionalId)) : null;
+        if (!$target instanceof Professional) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+        try {
+            $assignment = $this->manageCaseAssignment->assign($detail->managedCase, $target, CaseAssignmentRole::from($payload->role), $payload->reason, $professional, DateTimeImmutable::createFromTimestamp(microtime(true)));
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (InvalidArgumentException|LogicException|UniqueConstraintViolationException $exception) {
+            throw new ProfessionalCaseAssignmentConflictHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeAssignment($assignment), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/assignments/{assignmentId}/handover', name: 'api_v1_professional_handover_case_lead', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'handoverProfessionalCaseLead',
+        summary: 'Atomically hand over exact-case lead responsibility',
+        description: 'Requires exact-case assignment management and a recorded reason. The former lead is revoked as the new lead is created.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/HandoverProfessionalCaseAssignmentRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_CREATED, description: 'The lead handover was recorded.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseAssignment')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case, assignment or target professional is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The handover conflicts with the current case access.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The handover request is invalid.'),
+        ],
+    )]
+    public function handoverAssignment(
+        string $id,
+        string $assignmentId,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        HandoverProfessionalCaseAssignmentRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $formerLead = $this->findAssignment($detail, $assignmentId);
+        $target = Uuid::isValid($payload->professionalId) ? $this->professionals->find(Uuid::fromString($payload->professionalId)) : null;
+        if (!$target instanceof Professional) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+        try {
+            $assignment = $this->manageCaseAssignment->handover($formerLead, $target, $payload->reason, $professional, DateTimeImmutable::createFromTimestamp(microtime(true)));
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (LogicException|UniqueConstraintViolationException $exception) {
+            throw new ProfessionalCaseAssignmentConflictHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeAssignment($assignment), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/assignments/{assignmentId}/role', name: 'api_v1_professional_change_case_assignment_role', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'changeProfessionalCaseAssignmentRole',
+        summary: 'Change a contributor or observer exact-case assignment',
+        description: 'Requires exact-case assignment management and a recorded reason. Lead responsibility can only change through the explicit handover endpoint.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/ChangeProfessionalCaseAssignmentRoleRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The assignment role was changed.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseAssignment')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or assignment is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The requested role change conflicts with the current case access.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The assignment role request is invalid.'),
+        ],
+    )]
+    public function changeAssignmentRole(
+        string $id,
+        string $assignmentId,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        ChangeProfessionalCaseAssignmentRoleRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $assignment = $this->findAssignment($detail, $assignmentId);
+        try {
+            $this->manageCaseAssignment->changeRole($assignment, CaseAssignmentRole::from($payload->role), $payload->reason, $professional, DateTimeImmutable::createFromTimestamp(microtime(true)));
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (InvalidArgumentException|LogicException|UniqueConstraintViolationException $exception) {
+            throw new ProfessionalCaseAssignmentConflictHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeAssignment($assignment));
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/assignments/{assignmentId}/revoke', name: 'api_v1_professional_revoke_case_assignment', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'revokeProfessionalCaseAssignment',
+        summary: 'Explicitly revoke a non-lead exact-case assignment',
+        description: 'Requires exact-case assignment management and a recorded reason. The final lead must use the explicit handover endpoint.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/RevokeProfessionalCaseAssignmentRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The assignment was revoked.'),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or assignment is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The final lead requires an explicit handover.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The revocation request is invalid.'),
+        ],
+    )]
+    public function revokeAssignment(
+        string $id,
+        string $assignmentId,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        RevokeProfessionalCaseAssignmentRequest $payload,
+    ): JsonResponse
+    {
+        $detail = $this->resolveDetail($id, $professional);
+        $assignment = $this->findAssignment($detail, $assignmentId);
+        try {
+            $this->manageCaseAssignment->revoke($assignment, $payload->reason, $professional, DateTimeImmutable::createFromTimestamp(microtime(true)));
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        } catch (LogicException|UniqueConstraintViolationException $exception) {
+            throw new ProfessionalCaseAssignmentConflictHttpException(previous: $exception);
+        }
+
+        return $this->json(['id' => $assignment->id()->toRfc4122(), 'revoked' => true]);
+    }
+
+    private function findAssignment(CaseWorkspaceDetail $detail, string $assignmentId): CaseAssignment
+    {
+        foreach ($detail->assignments as $assignment) {
+            if ($assignment->id()->toRfc4122() === $assignmentId) {
+                return $assignment;
+            }
+        }
+
+        throw new ProfessionalCaseNotFoundHttpException();
     }
 
     #[Route('/api/v1/professional/cases/{id}/tasks', name: 'api_v1_professional_create_case_task', methods: ['POST'])]
@@ -650,6 +820,9 @@ final readonly class ProfessionalCaseController
                 'export' => $detail->currentAssignment->permits(CasePermission::Export),
                 'viewAudit' => $detail->currentAssignment->permits(CasePermission::ViewAudit),
             ],
+            'assignableProfessionals' => $detail->currentAssignment->permits(CasePermission::ManageAssignments)
+                ? $this->serializeAssignableProfessionals($detail)
+                : [],
             'people' => array_map($this->serializePerson(...), $detail->people),
             'assignments' => array_map($this->serializeAssignment(...), $detail->assignments),
             'tasks' => array_map(fn (CaseTask $task): array => $this->serializeTask($task, $now), $detail->tasks),
@@ -701,6 +874,25 @@ final readonly class ProfessionalCaseController
             'role' => $assignment->role()->value,
             'assignedAt' => $assignment->assignedAt()->format(DATE_RFC3339_EXTENDED),
         ];
+    }
+
+    /** @return list<array{id: string, name: string}> */
+    private function serializeAssignableProfessionals(CaseWorkspaceDetail $detail): array
+    {
+        $professionals = [];
+        foreach ($this->memberships->findActiveByOrganisation($detail->managedCase->organisation()) as $membership) {
+            $professional = $membership->professional();
+            if ($professional->isActive()) {
+                $professionals[$professional->id()->toRfc4122()] = [
+                    'id' => $professional->id()->toRfc4122(),
+                    'name' => $professional->name(),
+                ];
+            }
+        }
+
+        uasort($professionals, static fn (array $left, array $right): int => strcasecmp($left['name'], $right['name']));
+
+        return array_values($professionals);
     }
 
     /** @return array<string, mixed> */

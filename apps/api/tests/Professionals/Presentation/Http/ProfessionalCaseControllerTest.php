@@ -310,6 +310,121 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
+    public function testLeadCanHandoverBeforeRevokingTheFormerLead(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $nextLead = $this->createProfessional('next-case-lead', $organisation, ProfessionalRole::Triage);
+        $this->client->loginUser($lead);
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122();
+
+        $this->client->jsonRequest('POST', $url.'/assignments/'.$this->activeAssignmentId($managedCase, $lead).'/handover', [
+            'professionalId' => $nextLead->id()->toRfc4122(),
+            'reason' => 'Fictional planned handover.',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $newAssignment = $this->responsePayload();
+        self::assertSame('lead', $newAssignment['role']);
+
+        $this->client->request('GET', $url);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->client->loginUser($nextLead);
+        $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+        self::assertCount(1, array_filter($this->responsePayload()['assignments'], static fn (array $assignment): bool => $assignment['role'] === 'lead'));
+    }
+
+    public function testLeadCannotRevokeTheFinalLeadAndObserverCannotChangeAssignments(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122();
+        $this->client->loginUser($lead);
+        $this->client->jsonRequest('POST', $url.'/assignments/'.$this->activeAssignmentId($managedCase, $lead).'/revoke', [
+            'reason' => 'Fictional unsupported removal.',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
+
+        $observer = $this->createProfessional('assignment-observer', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $observer, CaseAssignmentRole::Observer, $lead, new DateTimeImmutable()));
+        $this->entityManager->flush();
+        $this->client->loginUser($observer);
+        $this->client->jsonRequest('POST', $url.'/assignments', [
+            'professionalId' => $lead->id()->toRfc4122(),
+            'role' => 'contributor',
+            'reason' => 'Fictional denied assignment.',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testLeadCanAssignAndExplicitlyRevokeAContributor(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $contributor = $this->createProfessional('assignment-contributor', $organisation, ProfessionalRole::Triage);
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122();
+        $this->client->loginUser($lead);
+
+        $this->client->jsonRequest('POST', $url.'/assignments', [
+            'professionalId' => $contributor->id()->toRfc4122(),
+            'role' => 'contributor',
+            'reason' => 'Fictional collaboration needed for follow-up.',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $assignment = $this->responsePayload();
+        self::assertSame('contributor', $assignment['role']);
+
+        $this->client->jsonRequest('POST', $url.'/assignments/'.$assignment['id'].'/role', [
+            'role' => 'observer',
+            'reason' => 'Fictional collaboration is now limited to consultation.',
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertSame('observer', $this->responsePayload()['role']);
+
+        $this->client->loginUser($contributor);
+        $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+
+        $this->client->loginUser($lead);
+        $this->client->jsonRequest('POST', $url.'/assignments/'.$assignment['id'].'/revoke', [
+            'reason' => 'Fictional collaboration is no longer required.',
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertTrue($this->responsePayload()['revoked']);
+
+        $this->client->loginUser($contributor);
+        $this->client->request('GET', $url);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testAssignmentIdentifierFromAnotherCaseCannotBeUsed(): void
+    {
+        [$firstCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $secondCase = new ManagedCase(
+            Uuid::v7(),
+            $organisation,
+            $lead,
+            new DateTimeImmutable(),
+            CaseModality::Mixed,
+        );
+        $observer = $this->createProfessional('cross-case-observer', $organisation, ProfessionalRole::Triage);
+        $secondAssignment = new CaseAssignment(
+            Uuid::v7(),
+            $secondCase,
+            $observer,
+            CaseAssignmentRole::Observer,
+            $lead,
+            new DateTimeImmutable(),
+        );
+        $this->entityManager->persist($secondCase);
+        $this->entityManager->persist($secondAssignment);
+        $this->entityManager->flush();
+        $this->client->loginUser($lead);
+
+        $this->client->jsonRequest('POST', '/api/v1/professional/cases/'.$firstCase->id()->toRfc4122().'/assignments/'.$secondAssignment->id()->toRfc4122().'/revoke', [
+            'reason' => 'Fictional cross-case attempt.',
+        ]);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testContributorCanReadTheCaseButCannotDiscoverItsProtectedAuditTrail(): void
     {
         [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
@@ -565,6 +680,17 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $organisation;
+    }
+
+    private function activeAssignmentId(ManagedCase $managedCase, Professional $professional): string
+    {
+        $id = $this->entityManager->getConnection()->fetchOne(
+            'SELECT id FROM case_assignments WHERE case_id = :caseId AND professional_id = :professionalId AND revoked_at IS NULL',
+            ['caseId' => $managedCase->id()->toRfc4122(), 'professionalId' => $professional->id()->toRfc4122()],
+        );
+        self::assertIsString($id);
+
+        return $id;
     }
 
     private function createProfessional(

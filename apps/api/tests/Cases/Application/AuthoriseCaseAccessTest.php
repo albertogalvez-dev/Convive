@@ -178,6 +178,19 @@ final class AuthoriseCaseAccessTest extends TestCase
 
                 return null;
             }
+
+            public function findActiveByCase(ManagedCase $managedCase): array
+            {
+                return array_values(array_filter($this->assignments, static fn (CaseAssignment $assignment): bool => $assignment->managedCase()->id()->equals($managedCase->id()) && $assignment->isActive()));
+            }
+
+            public function save(CaseAssignment $assignment): void
+            {
+            }
+
+            public function replaceLead(CaseAssignment $formerLead, CaseAssignment $newLead): void
+            {
+            }
         };
     }
 
