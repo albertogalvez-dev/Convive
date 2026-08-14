@@ -32,6 +32,47 @@
       </div>
     </header>
 
+    @if (item.permissions.manageAssignments) {
+      <section class="panel" aria-labelledby="lifecycle-title">
+        <div class="panel-heading">
+          <div>
+            <p class="section-label">Estado operativo</p>
+            <h2 id="lifecycle-title">Transición del caso</h2>
+          </div>
+        </div>
+        @if (lifecycleError(); as message) {
+          <p class="task-feedback error" role="alert">{{ message }}</p>
+        } @else if (lifecycleMessage(); as message) {
+          <p class="task-feedback" role="status">{{ message }}</p>
+        }
+        <form class="resolution-form" (ngSubmit)="transitionLifecycle(item)">
+          <label
+            >Nuevo estado<select name="lifecycleStatus" [(ngModel)]="lifecycleStatus">
+              <option value="active">Activo</option>
+              <option value="closed">Cerrado</option>
+            </select></label
+          >
+          <label
+            >Motivo<textarea
+              name="lifecycleReason"
+              [(ngModel)]="lifecycleReason"
+              maxlength="500"
+              required
+            ></textarea>
+          </label>
+          <label
+            >Constancia operativa<textarea
+              name="lifecycleEvidence"
+              [(ngModel)]="lifecycleEvidence"
+              maxlength="500"
+              required
+            ></textarea>
+          </label>
+          <button type="submit" [disabled]="lifecycleSaving()">Registrar transición</button>
+        </form>
+      </section>
+    }
+
     <div class="summary-grid">
       <article>
         <span>Tareas pendientes</span><strong>{{ item.pendingTasks }}</strong>

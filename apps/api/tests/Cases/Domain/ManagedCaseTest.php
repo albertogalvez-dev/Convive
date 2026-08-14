@@ -135,6 +135,19 @@ final class ManagedCaseTest extends TestCase
         $person->correct(CaseInvolvedPersonName::fromString('Not allowed'), CaseInvolvedPersonRole::Other, new DateTimeImmutable());
     }
 
+    public function testLifecycleTransitionsRequireAReasonAndOperationalEvidence(): void
+    {
+        $professional = $this->professional('lifecycle');
+        $managedCase = $this->managedCase($professional);
+        $managedCase->transitionTo(CaseStatus::Active, 'Fictional coordination is continuing.', 'Fictional review record is complete.', new DateTimeImmutable('2026-08-11T11:00:00+00:00'));
+        $managedCase->transitionTo(CaseStatus::Closed, 'No further fictional case action is planned.', 'Fictional closure review recorded.', new DateTimeImmutable('2026-08-11T12:00:00+00:00'));
+
+        self::assertSame(CaseStatus::Closed, $managedCase->status());
+        self::assertSame('Fictional closure review recorded.', $managedCase->statusEvidence());
+        $this->expectException(LogicException::class);
+        $managedCase->transitionTo(CaseStatus::Assessment, 'Invalid return.', 'Invalid return record.', new DateTimeImmutable('2026-08-11T13:00:00+00:00'));
+    }
+
     private function managedCase(Professional $professional, CaseModality $modality = CaseModality::Unknown): ManagedCase
     {
         return new ManagedCase(

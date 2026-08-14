@@ -29,6 +29,7 @@ final readonly class ProfessionalCsrfGuardSubscriber implements EventSubscriberI
         'api_v1_professional_add_case_person' => 'professional_case_person_add',
         'api_v1_professional_correct_case_person' => 'professional_case_person_correct',
         'api_v1_professional_remove_case_person' => 'professional_case_person_remove',
+        'api_v1_professional_transition_case_lifecycle' => 'professional_case_lifecycle_transition',
     ];
 
     public function __construct(

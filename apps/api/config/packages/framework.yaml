@@ -35,6 +35,7 @@ framework:
                 'professional_case_person_add',
                 'professional_case_person_correct',
                 'professional_case_person_remove',
+                'professional_case_lifecycle_transition',
             ]
         check_header: true
 

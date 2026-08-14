@@ -94,6 +94,9 @@ Table managed_cases {
   created_at timestamptz [not null, note: 'immutable UTC instant']
   operational_updated_at timestamptz [not null, note: 'latest explicit case, assignment or task activity; deterministic operational ordering']
   status varchar(20) [not null, note: 'assessment | active | closed (CHECK constraint)']
+  status_reason varchar(500) [note: 'nullable until the first explicit lifecycle transition']
+  status_evidence varchar(500) [note: 'nullable until the first explicit lifecycle transition']
+  status_changed_at timestamptz [note: 'nullable until the first explicit lifecycle transition']
   modality varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
 
   indexes {

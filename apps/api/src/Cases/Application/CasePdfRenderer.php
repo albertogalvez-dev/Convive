@@ -234,6 +234,7 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditAction::PersonAdded => 'Persona vinculada',
             CaseAuditAction::PersonCorrected => 'Vinculación corregida',
             CaseAuditAction::PersonRemoved => 'Vinculación retirada',
+            CaseAuditAction::StatusChanged => 'Estado del caso actualizado',
         };
     }
 

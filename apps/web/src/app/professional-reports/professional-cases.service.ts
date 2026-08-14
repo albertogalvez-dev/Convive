@@ -17,7 +17,8 @@ export type CaseAuditAction =
   | 'task_completed'
   | 'task_marked_not_applicable'
   | 'evidence_download_authorised'
-  | 'audit_exported';
+  | 'audit_exported'
+  | 'status_changed';
 
 export interface ProfessionalCaseSummary {
   id: string;
@@ -123,6 +124,16 @@ export class ProfessionalCasesService {
 
   detail(id: string): Observable<ProfessionalCaseDetail> {
     return this.http.get<ProfessionalCaseDetail>(`${this.endpoint}/${encodeURIComponent(id)}`);
+  }
+
+  transitionLifecycle(
+    id: string,
+    payload: { status: 'active' | 'closed'; reason: string; evidence: string },
+  ): Observable<ProfessionalCaseDetail> {
+    return this.http.post<ProfessionalCaseDetail>(
+      `${this.endpoint}/${encodeURIComponent(id)}/lifecycle`,
+      payload,
+    );
   }
 
   addPerson(

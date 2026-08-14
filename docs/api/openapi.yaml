@@ -801,6 +801,31 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/lifecycle':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Record an explicit managed-case lifecycle transition'
+      operationId: transitionManagedCaseLifecycle
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransitionManagedCaseRequest'
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/cases/{id}/people/{personId}':
     delete:
       tags:
@@ -2871,6 +2896,24 @@ components:
             - witness
             - guardian
             - other
+      type: object
+    TransitionManagedCaseRequest:
+      required:
+        - status
+        - reason
+        - evidence
+      properties:
+        status:
+          type: string
+          enum:
+            - active
+            - closed
+        reason:
+          type: string
+          maxLength: 500
+        evidence:
+          type: string
+          maxLength: 500
       type: object
     ReviewProfessionalReportRequest:
       required:
