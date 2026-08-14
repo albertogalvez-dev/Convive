@@ -171,6 +171,14 @@ firewall and a JSON login endpoint suitable for the Angular client.
 Professional accounts are provisioned by an authorised administrator or through
 a controlled invitation. Public self-registration is not allowed.
 
+The fictional demonstration uses administrator-issued, local one-time
+activation and password-reset credentials. They are high-entropy values,
+persisted only as hashes, expire after 24 hours, may be accepted once and are
+rate-limited without an email-address lookup. The raw credential is shown only
+in the authorised creation/reset response and is neither logged nor exported.
+Real email delivery, institutional identity federation and any provider-backed
+onboarding remain separately gated.
+
 The first deployment administrator will be created through an explicit
 deployment command or equivalent controlled bootstrap process. Default shared
 credentials must not exist in source code, fixtures or container images.

@@ -97,3 +97,18 @@ framework:
             policy: sliding_window
             limit: 25
             interval: '15 minutes'
+
+        # One-time activation and password-reset credentials are opaque
+        # high-entropy secrets. Limit guesses per network and presented secret
+        # without recording or looking up an email address.
+        professional_credential_acceptance:
+            policy: sliding_window
+            limit: 5
+            interval: '1 minute'
+
+        # An authenticated centre administrator may issue only a bounded
+        # number of replacement credentials in a short window.
+        professional_password_reset:
+            policy: sliding_window
+            limit: 10
+            interval: '15 minutes'

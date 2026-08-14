@@ -256,14 +256,15 @@ final readonly class SeedFictionalDemo
 
             $this->connection->executeStatement(
                 'INSERT INTO professionals (
-                    id, name, email, created_at, password_hash, active, security_revision
+                    id, name, email, created_at, password_hash, active, account_status, security_revision
                  ) VALUES (
-                    :id, :name, :email, :created_at, :password_hash, TRUE, 1
+                    :id, :name, :email, :created_at, :password_hash, TRUE, \'active\', 1
                  )
                  ON CONFLICT (id) DO UPDATE SET
                     name = EXCLUDED.name,
                     email = EXCLUDED.email,
                     active = TRUE,
+                    account_status = \'active\',
                     password_hash = EXCLUDED.password_hash,
                     security_revision = professionals.security_revision + 1',
                 [

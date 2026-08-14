@@ -56,6 +56,144 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  /api/v1/professional/account-credentials/accept:
+    post:
+      tags:
+        - 'Professional access'
+      summary: 'Activate a professional account or set a replacement password'
+      operationId: acceptProfessionalCredential
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptProfessionalCredentialRequest'
+      responses:
+        '204':
+          description: 'The one-time credential was accepted.'
+        '404':
+          description: 'The credential is unavailable.'
+        '429':
+          description: 'Too many credential attempts were made.'
+        '422':
+          description: 'The credential request is invalid.'
+  /api/v1/professional/account-administration:
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'List organisations whose professional accounts the current user administers'
+      operationId: listProfessionalAccountAdministrations
+      responses:
+        '200':
+          description: 'The administered organisation list.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/organisations/{id}/accounts':
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'List professional accounts in an administered organisation'
+      operationId: listOrganisationProfessionalAccounts
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The account lifecycle list.'
+      security:
+        -
+          professionalSession: []
+    post:
+      tags:
+        - 'Professional access'
+      summary: 'Create a fictional professional account and one-time activation credential'
+      operationId: inviteOrganisationProfessional
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteProfessionalRequest'
+      responses:
+        '201':
+          description: 'The account and activation credential were created.'
+        '404':
+          description: 'The organisation is unavailable in this scope.'
+        '409':
+          description: 'The account request conflicts with existing lifecycle state.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/organisations/{id}/accounts/{professionalId}/password-reset':
+    post:
+      tags:
+        - 'Professional access'
+      summary: 'Issue a one-time local password-reset credential'
+      operationId: issueProfessionalPasswordReset
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: professionalId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: 'The reset credential was created.'
+        '429':
+          description: 'Too many reset credentials were issued.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/organisations/{id}/accounts/{professionalId}/status':
+    patch:
+      tags:
+        - 'Professional access'
+      summary: 'Suspend, reactivate or deactivate a professional account'
+      operationId: changeProfessionalAccountStatus
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: professionalId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeProfessionalAccountStatusRequest'
+      responses:
+        '200':
+          description: 'The lifecycle state was changed.'
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/cases:
     get:
       tags:
@@ -2381,6 +2519,47 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    AcceptProfessionalCredentialRequest:
+      required:
+        - secret
+        - password
+      properties:
+        secret:
+          type: string
+        password:
+          type: string
+          maxLength: 255
+          minLength: 15
+      type: object
+    InviteProfessionalRequest:
+      required:
+        - name
+        - email
+        - role
+      properties:
+        name:
+          type: string
+          maxLength: 160
+        email:
+          type: string
+          maxLength: 255
+        role:
+          type: string
+          enum:
+            - triage
+            - administrator
+      type: object
+    ChangeProfessionalAccountStatusRequest:
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - suspend
+            - reactivate
+            - deactivate
+      type: object
     ManageProfessionalCaseAssignmentRequest:
       required:
         - professionalId
@@ -2621,8 +2800,8 @@ tags:
     name: 'Public reporting'
     description: 'Public reporting'
   -
-    name: 'Professional reports'
-    description: 'Professional reports'
-  -
     name: 'Professional access'
     description: 'Professional access'
+  -
+    name: 'Professional reports'
+    description: 'Professional reports'

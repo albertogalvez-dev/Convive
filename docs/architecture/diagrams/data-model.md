@@ -140,8 +140,28 @@ erDiagram
     professionals {
         uuid id PK "UUIDv7, application-generated"
         varchar name
-        varchar email UK "normalised lowercase; no auth until #30"
+        varchar email UK "normalised lowercase; never publicly discoverable"
         timestamptz created_at "immutable UTC"
+        varchar password_hash "Argon2id hash only"
+        boolean active
+        varchar account_status "invited | active | suspended | deactivated"
+        int security_revision "invalidates stale sessions after lifecycle changes"
+    }
+    professional_credential_invitations {
+        uuid id PK "UUIDv7"
+        uuid professional_id FK
+        uuid issued_by_professional_id FK
+        varchar purpose "activation | password_reset"
+        varchar secret_hash UK "SHA-256; plaintext code is never stored"
+        timestamptz expires_at
+        timestamptz used_at "nullable; set once after use"
+    }
+    professional_account_audit_events {
+        uuid id PK "UUIDv7; no credentials or content"
+        uuid target_professional_id FK
+        uuid actor_professional_id FK
+        varchar action "minimised lifecycle action"
+        timestamptz occurred_at
     }
     professional_export_events {
         uuid id PK "UUIDv7; append-only aggregate-export event"
@@ -181,5 +201,7 @@ erDiagram
     professionals ||--o{ case_involved_people : "adds"
     professionals ||--o{ case_tasks : "owns, creates or resolves"
     professionals ||--o{ organisation_memberships : "holds"
+    professionals ||--o{ professional_credential_invitations : "receives or issues"
+    professionals ||--o{ professional_account_audit_events : "is target or actor"
     organisations ||--o{ organisation_memberships : "grants"
 ```

@@ -228,8 +228,34 @@ Ref: report_triage_decisions.case_id > managed_cases.id
 Table professionals {
   id uuid [pk, note: 'application-generated UUIDv7']
   name varchar(255) [not null]
-  email varchar(255) [not null, unique, note: 'normalised lowercase; authentication is out of scope until #30']
+  email varchar(255) [not null, unique, note: 'normalised lowercase; never publicly discoverable']
   created_at timestamptz [not null, note: 'immutable UTC instant']
+  password_hash varchar(255) [not null, note: 'Argon2id hash only; plaintext is never persisted']
+  active boolean [not null]
+  account_status varchar(20) [not null, note: 'invited | active | suspended | deactivated (CHECK constraint)']
+  security_revision int [not null, note: 'increments on credential and lifecycle changes so stale sessions cannot continue']
+}
+
+Table professional_credential_invitations {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  professional_id uuid [not null]
+  issued_by_professional_id uuid [not null]
+  purpose varchar(20) [not null, note: 'activation | password_reset (CHECK constraint)']
+  secret_hash varchar(64) [not null, unique, note: 'SHA-256 lookup hash; plaintext one-time code is never persisted']
+  expires_at timestamptz [not null]
+  used_at timestamptz [note: 'set once after accepted before expiry']
+
+  indexes { secret_hash }
+}
+
+Table professional_account_audit_events {
+  id uuid [pk, note: 'application-generated UUIDv7; no credentials or content']
+  target_professional_id uuid [not null]
+  actor_professional_id uuid [not null]
+  action varchar(32) [not null, note: 'invited | credential_accepted | password_reset_issued | suspended | reactivated | deactivated']
+  occurred_at timestamptz [not null]
+
+  indexes { (target_professional_id, occurred_at) }
 }
 
 Table professional_export_events {
@@ -261,3 +287,7 @@ Table organisation_memberships {
 Ref: organisation_memberships.professional_id > professionals.id
 Ref: organisation_memberships.organisation_id > organisations.id
 Ref: professional_export_events.professional_id > professionals.id
+Ref: professional_credential_invitations.professional_id > professionals.id
+Ref: professional_credential_invitations.issued_by_professional_id > professionals.id
+Ref: professional_account_audit_events.target_professional_id > professionals.id
+Ref: professional_account_audit_events.actor_professional_id > professionals.id
