@@ -248,6 +248,129 @@
             </ul>
           }
         </section>
+        <section class="panel tasks-panel" aria-labelledby="communications-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Registro operativo</p>
+              <h2 id="communications-title">Comunicaciones</h2>
+            </div>
+            @if (item.permissions.manage) {
+              <button type="button" class="quiet-action" (click)="startCommunication(item)">
+                Registrar comunicación
+              </button>
+            }
+          </div>
+          @if (communicationError(); as message) {
+            <p class="task-feedback error" role="alert">{{ message }}</p>
+          }
+          @if (communicationMessage(); as message) {
+            <p class="task-feedback" role="status">{{ message }}</p>
+          }
+          @if (item.permissions.manage && newCommunication().occurredAt) {
+            <form class="task-form" (ngSubmit)="recordCommunication(item)">
+              <label
+                >Destinatario<select
+                  name="communicationRecipient"
+                  [value]="newCommunication().recipient"
+                  (change)="updateCommunication('recipient', $any($event.target).value)"
+                >
+                  <option value="family">Familia</option>
+                  <option value="external_service">Servicio externo</option>
+                  <option value="education_inspectorate">Inspección educativa</option>
+                  <option value="other">Otro</option>
+                </select></label
+              >
+              <label
+                >Canal<select
+                  name="communicationChannel"
+                  [value]="newCommunication().channel"
+                  (change)="updateCommunication('channel', $any($event.target).value)"
+                >
+                  <option value="in_person">Presencial</option>
+                  <option value="telephone">Teléfono</option>
+                  <option value="secure_portal">Canal seguro</option>
+                  <option value="written_record">Registro escrito</option>
+                  <option value="other">Otro</option>
+                </select></label
+              >
+              <label
+                >Estado explícito<select
+                  name="communicationStatus"
+                  [value]="newCommunication().status"
+                  (change)="updateCommunication('status', $any($event.target).value)"
+                >
+                  <option value="planned">Prevista</option>
+                  <option value="recorded">Acción registrada</option>
+                  <option value="not_applicable">No procede</option>
+                </select></label
+              >
+              <label
+                >Responsable<select
+                  name="communicationResponsible"
+                  [value]="newCommunication().responsibleId"
+                  (change)="updateCommunication('responsibleId', $any($event.target).value)"
+                >
+                  @for (assignment of item.assignments; track assignment.id) {
+                    <option [value]="assignment.professional.id">
+                      {{ assignment.professional.name }}
+                    </option>
+                  }
+                </select></label
+              >
+              <label
+                >Fecha y hora<input
+                  type="datetime-local"
+                  name="communicationOccurredAt"
+                  [value]="newCommunication().occurredAt"
+                  (input)="updateCommunication('occurredAt', $any($event.target).value)"
+                  required
+              /></label>
+              <label
+                >Nota operativa breve<input
+                  name="communicationNote"
+                  [value]="newCommunication().note"
+                  (input)="updateCommunication('note', $any($event.target).value)"
+                  maxlength="500"
+                  required
+              /></label>
+              <p class="empty">
+                Este registro no envía nada ni acredita entrega, recepción o una notificación legal.
+                Las correcciones quedarán como un registro posterior.
+              </p>
+              <button type="submit" [disabled]="communicationSaving()">
+                {{ correctingCommunicationId === null ? 'Añadir registro' : 'Añadir corrección' }}
+              </button>
+            </form>
+          }
+          @if (item.communications.length === 0) {
+            <p class="empty">No hay comunicaciones registradas.</p>
+          } @else {
+            <ol class="team-list">
+              @for (communication of item.communications; track communication.id) {
+                <li>
+                  <span
+                    ><strong>{{ communication.recipient }} · {{ communication.channel }}</strong
+                    ><small>{{ communication.note }}</small>
+                    @if (communication.supersedesId !== null) {
+                      <small>Corrección trazable de un registro anterior</small>
+                    }
+                    @if (item.permissions.manage) {
+                      <button
+                        type="button"
+                        class="quiet-action"
+                        (click)="startCommunicationCorrection(communication)"
+                      >
+                        Corregir
+                      </button>
+                    }</span
+                  ><time [attr.datetime]="communication.occurredAt">{{
+                    communication.occurredAt | date: 'd MMM y, HH:mm' : undefined : 'es'
+                  }}</time>
+                </li>
+              }
+            </ol>
+          }
+        </section>
 
         <section class="panel" aria-labelledby="people-title">
           <div class="panel-heading">

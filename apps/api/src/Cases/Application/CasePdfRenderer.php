@@ -235,6 +235,8 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditAction::PersonCorrected => 'Vinculación corregida',
             CaseAuditAction::PersonRemoved => 'Vinculación retirada',
             CaseAuditAction::StatusChanged => 'Estado del caso actualizado',
+            CaseAuditAction::CommunicationRecorded => 'Comunicación registrada',
+            CaseAuditAction::CommunicationCorrected => 'Comunicación corregida',
         };
     }
 
@@ -249,6 +251,7 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditTarget::AuditTrail => 'Registro de actividad',
             CaseAuditTarget::CaseRecord => 'Expediente',
             CaseAuditTarget::Person => 'Persona vinculada',
+            CaseAuditTarget::Communication => 'Comunicación',
         };
     }
 

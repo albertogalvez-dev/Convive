@@ -539,6 +539,49 @@ nelmio_api_doc:
                                                     - { type: string, format: uri }
                                                     - { type: 'null' }
 
+                ProfessionalCaseCommunication:
+                    type: object
+                    additionalProperties: false
+                    required: [id, recipient, channel, status, occurredAt, note, responsible, createdBy, createdAt, supersedesId]
+                    properties:
+                        id: { type: string, format: uuid }
+                        recipient: { type: string, enum: [family, external_service, education_inspectorate, other] }
+                        channel: { type: string, enum: [in_person, telephone, secure_portal, written_record, other] }
+                        status: { type: string, enum: [planned, recorded, not_applicable] }
+                        occurredAt: { type: string, format: date-time }
+                        note: { type: string, minLength: 1, maxLength: 500 }
+                        responsible:
+                            type: object
+                            additionalProperties: false
+                            required: [id, name]
+                            properties:
+                                id: { type: string, format: uuid }
+                                name: { type: string }
+                        createdBy:
+                            type: object
+                            additionalProperties: false
+                            required: [id, name]
+                            properties:
+                                id: { type: string, format: uuid }
+                                name: { type: string }
+                        createdAt: { type: string, format: date-time }
+                        supersedesId:
+                            oneOf:
+                                - { type: string, format: uuid }
+                                - { type: 'null' }
+
+                RecordProfessionalCaseCommunicationRequest:
+                    type: object
+                    additionalProperties: false
+                    required: [responsibleId, recipient, channel, status, occurredAt, note]
+                    properties:
+                        responsibleId: { type: string, format: uuid }
+                        recipient: { type: string, enum: [family, external_service, education_inspectorate, other] }
+                        channel: { type: string, enum: [in_person, telephone, secure_portal, written_record, other] }
+                        status: { type: string, enum: [planned, recorded, not_applicable] }
+                        occurredAt: { type: string, format: date-time }
+                        note: { type: string, minLength: 1, maxLength: 500 }
+
                 ProfessionalCaseEvidence:
                     type: object
                     additionalProperties: false
@@ -561,10 +604,10 @@ nelmio_api_doc:
                         id: { type: string, format: uuid }
                         action:
                             type: string
-                            enum: [case_created, report_linked, assignment_created, assignment_changed, assignment_revoked, task_created, task_completed, task_marked_not_applicable, evidence_download_authorised, audit_exported]
+                            enum: [case_created, report_linked, assignment_created, assignment_changed, assignment_revoked, task_created, task_completed, task_marked_not_applicable, evidence_download_authorised, audit_exported, communication_recorded, communication_corrected]
                         target:
                             type: string
-                            enum: [case, triage_decision, assignment, task, attachment, audit_trail]
+                            enum: [case, triage_decision, assignment, task, attachment, audit_trail, communication]
                         actorName: { type: string, maxLength: 160 }
                         occurredAt: { type: string, format: date-time }
 
@@ -588,7 +631,7 @@ nelmio_api_doc:
                 ProfessionalCaseDetail:
                     type: object
                     additionalProperties: false
-                    required: [id, status, modality, createdAt, organisationName, assignmentRole, pendingTasks, overdueTasks, nextDueAt, permissions, assignableProfessionals, people, assignments, tasks, sourceReport, evidence, timeline]
+                    required: [id, status, modality, createdAt, organisationName, assignmentRole, pendingTasks, overdueTasks, nextDueAt, permissions, assignableProfessionals, people, assignments, tasks, communications, sourceReport, evidence, timeline]
                     properties:
                         id: { type: string, format: uuid }
                         status: { type: string, enum: [assessment, active, closed] }
@@ -628,6 +671,9 @@ nelmio_api_doc:
                         tasks:
                             type: array
                             items: { $ref: '#/components/schemas/ProfessionalCaseTask' }
+                        communications:
+                            type: array
+                            items: { $ref: '#/components/schemas/ProfessionalCaseCommunication' }
                         sourceReport:
                             oneOf:
                                 -

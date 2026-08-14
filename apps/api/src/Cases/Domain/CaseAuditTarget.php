@@ -14,4 +14,5 @@ enum CaseAuditTarget: string
     case AuditTrail = 'audit_trail';
     case CaseRecord = 'case_record';
     case Person = 'person';
+    case Communication = 'communication';
 }

@@ -16,6 +16,9 @@ import {
 } from './case-labels';
 import {
   CaseAuditAction,
+  CaseCommunicationChannel,
+  CaseCommunicationRecipient,
+  CaseCommunicationStatus,
   ProfessionalCaseAuditEvent,
   ProfessionalCaseDetail,
   ProfessionalCasesService,
@@ -47,6 +50,25 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected readonly taskError = signal<string | null>(null);
   protected readonly taskSaving = signal(false);
   protected readonly taskTemplates = signal<ProfessionalCaseTaskPlanningTemplate[]>([]);
+  protected readonly communicationMessage = signal<string | null>(null);
+  protected readonly communicationError = signal<string | null>(null);
+  protected readonly communicationSaving = signal(false);
+  protected readonly newCommunication = signal<{
+    responsibleId: string;
+    recipient: CaseCommunicationRecipient;
+    channel: CaseCommunicationChannel;
+    status: CaseCommunicationStatus;
+    occurredAt: string;
+    note: string;
+  }>({
+    responsibleId: '',
+    recipient: 'family',
+    channel: 'in_person',
+    status: 'planned',
+    occurredAt: '',
+    note: '',
+  });
+  protected correctingCommunicationId: string | null = null;
   protected readonly newTask = signal({
     ownerId: '',
     templateId: '',
@@ -203,6 +225,72 @@ export class ProfessionalCaseDetailPage implements OnInit {
           );
         },
       });
+  }
+
+  protected startCommunication(item: ProfessionalCaseDetail): void {
+    this.correctingCommunicationId = null;
+    this.newCommunication.set({
+      responsibleId: item.assignments[0]?.professional.id ?? '',
+      recipient: 'family',
+      channel: 'in_person',
+      status: 'planned',
+      occurredAt: new Date().toISOString().slice(0, 16),
+      note: '',
+    });
+    this.communicationMessage.set(null);
+    this.communicationError.set(null);
+  }
+
+  protected startCommunicationCorrection(
+    communication: ProfessionalCaseDetail['communications'][number],
+  ): void {
+    this.correctingCommunicationId = communication.id;
+    this.newCommunication.set({
+      responsibleId: communication.responsible.id,
+      recipient: communication.recipient,
+      channel: communication.channel,
+      status: communication.status,
+      occurredAt: new Date(communication.occurredAt).toISOString().slice(0, 16),
+      note: communication.note,
+    });
+    this.communicationMessage.set(null);
+    this.communicationError.set(null);
+  }
+
+  protected updateCommunication(field: string, value: string): void {
+    this.newCommunication.update((communication) => ({ ...communication, [field]: value }));
+  }
+
+  protected recordCommunication(item: ProfessionalCaseDetail): void {
+    this.communicationSaving.set(true);
+    this.communicationError.set(null);
+    const communication = this.newCommunication();
+    const request =
+      this.correctingCommunicationId === null
+        ? this.cases.recordCommunication(item.id, {
+            ...communication,
+            occurredAt: new Date(communication.occurredAt).toISOString(),
+          })
+        : this.cases.correctCommunication(item.id, this.correctingCommunicationId, {
+            ...communication,
+            occurredAt: new Date(communication.occurredAt).toISOString(),
+          });
+    request.subscribe({
+      next: () => {
+        this.communicationSaving.set(false);
+        this.correctingCommunicationId = null;
+        this.communicationMessage.set(
+          'El registro se ha añadido. No acredita entrega, recepción ni notificación legal.',
+        );
+        this.load();
+      },
+      error: () => {
+        this.communicationSaving.set(false);
+        this.communicationError.set(
+          'No se puede registrar la comunicación. Revisa los datos mínimos.',
+        );
+      },
+    });
   }
 
   protected completeTask(item: ProfessionalCaseDetail, taskId: string): void {
@@ -451,6 +539,8 @@ export class ProfessionalCaseDetailPage implements OnInit {
         person_corrected: 'Vinculación corregida',
         person_removed: 'Vinculación retirada',
         status_changed: 'Estado del caso actualizado',
+        communication_recorded: 'Comunicación registrada',
+        communication_corrected: 'Comunicación corregida',
       }[action] ?? 'Acción registrada'
     );
   }

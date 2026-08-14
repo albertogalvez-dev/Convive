@@ -200,6 +200,22 @@ Table case_tasks {
   }
 }
 
+Table case_communications {
+  id uuid [pk, note: 'append-only minimised communication record']
+  case_id uuid [not null]
+  responsible_professional_id uuid [not null]
+  recipient varchar(30) [not null, note: 'family | external_service | education_inspectorate | other']
+  channel varchar(30) [not null, note: 'in_person | telephone | secure_portal | written_record | other; does not send']
+  status varchar(20) [not null, note: 'planned | recorded | not_applicable; never proves delivery or receipt']
+  occurred_at timestamptz [not null]
+  note varchar(500) [not null, note: 'bounded non-sensitive operational note']
+  created_by_professional_id uuid [not null]
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+  supersedes_communication_id uuid [note: 'traceable correction; original record is not edited']
+
+  indexes { (case_id, occurred_at, id) }
+}
+
 Table report_triage_decisions {
   id uuid [pk, note: 'application-generated UUIDv7; append-only']
   report_id uuid [not null]
@@ -234,6 +250,10 @@ Ref: case_tasks.source_version_id > case_workflow_source_versions.id
 Ref: case_workflow_task_templates.source_version_id > case_workflow_source_versions.id
 Ref: case_tasks.created_by_professional_id > professionals.id
 Ref: case_tasks.resolved_by_professional_id > professionals.id
+Ref: case_communications.case_id > managed_cases.id
+Ref: case_communications.responsible_professional_id > professionals.id
+Ref: case_communications.created_by_professional_id > professionals.id
+Ref: case_communications.supersedes_communication_id > case_communications.id
 Ref: report_triage_decisions.report_id > reports.id
 Ref: report_triage_decisions.organisation_id > organisations.id
 Ref: report_triage_decisions.decided_by_professional_id > professionals.id
