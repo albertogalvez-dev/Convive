@@ -231,6 +231,9 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditAction::EvidenceDownloadAuthorised => 'Descarga de evidencia autorizada',
             CaseAuditAction::AuditExported => 'Registro exportado',
             CaseAuditAction::CaseRecordExported => 'Expediente exportado',
+            CaseAuditAction::PersonAdded => 'Persona vinculada',
+            CaseAuditAction::PersonCorrected => 'Vinculación corregida',
+            CaseAuditAction::PersonRemoved => 'Vinculación retirada',
         };
     }
 
@@ -244,6 +247,7 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditTarget::Attachment => 'Evidencia',
             CaseAuditTarget::AuditTrail => 'Registro de actividad',
             CaseAuditTarget::CaseRecord => 'Expediente',
+            CaseAuditTarget::Person => 'Persona vinculada',
         };
     }
 

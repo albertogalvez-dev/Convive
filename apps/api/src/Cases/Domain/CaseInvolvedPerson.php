@@ -36,6 +36,12 @@ class CaseInvolvedPerson
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private DateTimeImmutable $addedAt;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $correctedAt = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $removedAt = null;
+
     public function __construct(
         Uuid $id,
         ManagedCase $managedCase,
@@ -55,6 +61,34 @@ class CaseInvolvedPerson
     public function id(): Uuid
     {
         return $this->id;
+    }
+
+    public function correct(CaseInvolvedPersonName $name, CaseInvolvedPersonRole $role, DateTimeImmutable $now): void
+    {
+        if ($this->removedAt !== null) {
+            throw new \LogicException('A removed involved person cannot be corrected.');
+        }
+        $this->name = $name->toString();
+        $this->role = $role;
+        $this->correctedAt = $now;
+        $this->managedCase->recordOperationalActivity($now);
+    }
+
+    public function removeAt(DateTimeImmutable $now): void
+    {
+        if ($this->removedAt !== null) throw new \LogicException('An involved person has already been removed.');
+        $this->removedAt = $now;
+        $this->managedCase->recordOperationalActivity($now);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->removedAt === null;
+    }
+
+    public function removedAt(): ?DateTimeImmutable
+    {
+        return $this->removedAt;
     }
 
     public function managedCase(): ManagedCase

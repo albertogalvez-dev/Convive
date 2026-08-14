@@ -32,6 +32,9 @@ framework:
                 'professional_account_status_change',
                 'professional_membership_grant',
                 'professional_membership_change',
+                'professional_case_person_add',
+                'professional_case_person_correct',
+                'professional_case_person_remove',
             ]
         check_header: true
 

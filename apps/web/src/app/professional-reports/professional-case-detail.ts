@@ -69,6 +69,12 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected changeAssignmentId: string | null = null;
   protected changeAssignmentRole: 'contributor' | 'observer' = 'contributor';
   protected changeAssignmentReason = '';
+  protected readonly peopleMessage = signal<string | null>(null);
+  protected readonly peopleError = signal<string | null>(null);
+  protected readonly peopleSaving = signal(false);
+  protected readonly newPerson = { name: '', role: 'affected' };
+  protected correctingPersonId: string | null = null;
+  protected correctingPerson = { name: '', role: 'affected' };
   protected readonly caseStatusLabel = caseStatusLabel;
   protected readonly caseModalityLabel = caseModalityLabel;
   protected readonly assignmentRoleLabel = assignmentRoleLabel;
@@ -295,6 +301,66 @@ export class ProfessionalCaseDetailPage implements OnInit {
       });
   }
 
+  protected addPerson(item: ProfessionalCaseDetail): void {
+    this.peopleSaving.set(true);
+    this.peopleError.set(null);
+    this.cases.addPerson(item.id, this.newPerson).subscribe({
+      next: () => {
+        this.newPerson.name = '';
+        this.newPerson.role = 'affected';
+        this.peopleMessage.set('La persona vinculada se ha registrado con datos mínimos.');
+        this.peopleSaving.set(false);
+        this.load();
+      },
+      error: () => {
+        this.peopleSaving.set(false);
+        this.peopleError.set(
+          'No se puede registrar esta persona. Revisa el nombre y la vinculación.',
+        );
+      },
+    });
+  }
+
+  protected openPersonCorrection(person: ProfessionalCaseDetail['people'][number]): void {
+    this.correctingPersonId = person.id;
+    this.correctingPerson = { name: person.name, role: person.role };
+    this.peopleError.set(null);
+  }
+
+  protected correctPerson(item: ProfessionalCaseDetail): void {
+    if (this.correctingPersonId === null) return;
+    this.peopleSaving.set(true);
+    this.peopleError.set(null);
+    this.cases.correctPerson(item.id, this.correctingPersonId, this.correctingPerson).subscribe({
+      next: () => {
+        this.correctingPersonId = null;
+        this.peopleMessage.set('La vinculación se ha corregido y queda registrada.');
+        this.peopleSaving.set(false);
+        this.load();
+      },
+      error: () => {
+        this.peopleSaving.set(false);
+        this.peopleError.set('No se puede corregir esta vinculación.');
+      },
+    });
+  }
+
+  protected removePerson(item: ProfessionalCaseDetail, personId: string): void {
+    this.peopleSaving.set(true);
+    this.peopleError.set(null);
+    this.cases.removePerson(item.id, personId).subscribe({
+      next: () => {
+        this.peopleMessage.set('La retirada se ha registrado; no se ha borrado el historial.');
+        this.peopleSaving.set(false);
+        this.load();
+      },
+      error: () => {
+        this.peopleSaving.set(false);
+        this.peopleError.set('No se puede retirar esta vinculación.');
+      },
+    });
+  }
+
   protected auditActionLabel(action: CaseAuditAction): string {
     return (
       {
@@ -308,6 +374,9 @@ export class ProfessionalCaseDetailPage implements OnInit {
         task_marked_not_applicable: 'Tarea marcada como no aplicable',
         evidence_download_authorised: 'Descarga de evidencia autorizada',
         audit_exported: 'Registro exportado',
+        person_added: 'Persona vinculada',
+        person_corrected: 'Vinculación corregida',
+        person_removed: 'Vinculación retirada',
       }[action] ?? 'Acción registrada'
     );
   }

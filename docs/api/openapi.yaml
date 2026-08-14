@@ -776,6 +776,86 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/people':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Add a minimised case-local person'
+      operationId: addCaseInvolvedPerson
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageCaseInvolvedPersonRequest'
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/people/{personId}':
+    delete:
+      tags:
+        - 'Professional cases'
+      summary: 'Logically remove a case-local person without deleting history'
+      operationId: removeCaseInvolvedPerson
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: personId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+    patch:
+      tags:
+        - 'Professional cases'
+      summary: 'Correct a minimised case-local person'
+      operationId: correctCaseInvolvedPerson
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: personId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageCaseInvolvedPersonRequest'
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/reports:
     get:
       tags:
@@ -2774,6 +2854,23 @@ components:
           type: string
           maxLength: 500
           minLength: 1
+      type: object
+    ManageCaseInvolvedPersonRequest:
+      required:
+        - name
+        - role
+      properties:
+        name:
+          type: string
+          maxLength: 120
+        role:
+          type: string
+          enum:
+            - affected
+            - alleged_actor
+            - witness
+            - guardian
+            - other
       type: object
     ReviewProfessionalReportRequest:
       required:

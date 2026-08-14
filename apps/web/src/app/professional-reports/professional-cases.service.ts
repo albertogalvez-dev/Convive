@@ -47,7 +47,7 @@ export interface ProfessionalCaseFilters {
 
 export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
   permissions: { manage: boolean; manageAssignments: boolean; export: boolean; viewAudit: boolean };
-  people: Array<{ id: string; name: string; role: string }>;
+  people: Array<{ id: string; name: string; role: string; state: 'active' | 'removed' }>;
   assignments: Array<{
     id: string;
     professional: { id: string; name: string };
@@ -123,6 +123,33 @@ export class ProfessionalCasesService {
 
   detail(id: string): Observable<ProfessionalCaseDetail> {
     return this.http.get<ProfessionalCaseDetail>(`${this.endpoint}/${encodeURIComponent(id)}`);
+  }
+
+  addPerson(
+    id: string,
+    payload: { name: string; role: string },
+  ): Observable<ProfessionalCaseDetail['people'][number]> {
+    return this.http.post<ProfessionalCaseDetail['people'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/people`,
+      payload,
+    );
+  }
+
+  correctPerson(
+    id: string,
+    personId: string,
+    payload: { name: string; role: string },
+  ): Observable<ProfessionalCaseDetail['people'][number]> {
+    return this.http.patch<ProfessionalCaseDetail['people'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/people/${encodeURIComponent(personId)}`,
+      payload,
+    );
+  }
+
+  removePerson(id: string, personId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.endpoint}/${encodeURIComponent(id)}/people/${encodeURIComponent(personId)}`,
+    );
   }
 
   createTask(

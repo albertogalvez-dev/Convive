@@ -32,7 +32,7 @@ export function personRoleLabel(role: string): string {
   return (
     {
       affected: 'Persona afectada',
-      alleged_actor: 'Persona señalada',
+      alleged_actor: 'Persona presuntamente implicada',
       witness: 'Testigo',
       guardian: 'Responsable legal',
       other: 'Otra vinculación',
