@@ -92,6 +92,20 @@ export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
   timeline: Array<{ type: string; occurredAt: string }>;
 }
 
+export interface ProfessionalCaseTaskPlanningTemplate {
+  id: string;
+  title: string;
+  stage: string;
+  kind: 'internal_action' | 'external_communication';
+  source: {
+    title: string;
+    version: string;
+    authority: WorkflowSourceAuthority;
+    territory: string;
+    uri: string | null;
+  };
+}
+
 export interface ProfessionalCaseAuditEvent {
   id: string;
   action: CaseAuditAction;
@@ -167,9 +181,7 @@ export class ProfessionalCasesService {
     id: string,
     payload: {
       ownerId: string;
-      sourceId: string;
-      stage: string;
-      kind: 'internal_action' | 'external_communication';
+      templateId: string;
       title: string;
       dueAt: string;
     },
@@ -177,6 +189,12 @@ export class ProfessionalCasesService {
     return this.http.post<ProfessionalCaseDetail['tasks'][number]>(
       `${this.endpoint}/${encodeURIComponent(id)}/tasks`,
       payload,
+    );
+  }
+
+  taskPlanningCatalogue(id: string): Observable<{ items: ProfessionalCaseTaskPlanningTemplate[] }> {
+    return this.http.get<{ items: ProfessionalCaseTaskPlanningTemplate[] }>(
+      `${this.endpoint}/${encodeURIComponent(id)}/task-planning-catalogue`,
     );
   }
 

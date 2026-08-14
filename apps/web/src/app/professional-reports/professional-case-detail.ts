@@ -19,6 +19,7 @@ import {
   ProfessionalCaseAuditEvent,
   ProfessionalCaseDetail,
   ProfessionalCasesService,
+  ProfessionalCaseTaskPlanningTemplate,
 } from './professional-cases.service';
 
 registerLocaleData(localeEs);
@@ -45,14 +46,13 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected readonly taskMessage = signal<string | null>(null);
   protected readonly taskError = signal<string | null>(null);
   protected readonly taskSaving = signal(false);
-  protected readonly newTask = {
+  protected readonly taskTemplates = signal<ProfessionalCaseTaskPlanningTemplate[]>([]);
+  protected readonly newTask = signal({
     ownerId: '',
-    sourceId: '',
-    stage: 'assessment',
-    kind: 'internal_action' as const,
+    templateId: '',
     title: '',
     dueAt: '',
-  };
+  });
   protected notApplicableTaskId: string | null = null;
   protected notApplicableReason = '';
   protected readonly assignmentMessage = signal<string | null>(null);
@@ -138,19 +138,58 @@ export class ProfessionalCaseDetailPage implements OnInit {
   }
 
   protected startTask(item: ProfessionalCaseDetail): void {
-    const source = item.tasks[0]?.source;
-    this.newTask.ownerId = item.assignments[0]?.professional.id ?? '';
-    this.newTask.sourceId = source?.id ?? '';
-    this.newTask.dueAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+    this.newTask.set({
+      ownerId: item.assignments[0]?.professional.id ?? '',
+      templateId: '',
+      title: '',
+      dueAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+    });
     this.taskError.set(null);
     this.taskMessage.set(null);
+    this.cases.taskPlanningCatalogue(item.id).subscribe({
+      next: ({ items }) => {
+        this.newTask.update((task) => ({
+          ...task,
+          templateId: items[0]?.id ?? '',
+          title: items[0]?.title ?? '',
+        }));
+        this.taskTemplates.set(items);
+      },
+      error: () => this.taskError.set('No se puede cargar el catÃ¡logo de tareas revisadas.'),
+    });
+  }
+
+  protected selectTaskTemplate(templateId: string): void {
+    const template = this.taskTemplates().find((candidate) => candidate.id === templateId);
+    this.newTask.update((task) => ({ ...task, templateId, title: template?.title ?? task.title }));
+  }
+
+  protected selectedTaskTemplate(): ProfessionalCaseTaskPlanningTemplate | null {
+    return (
+      this.taskTemplates().find((template) => template.id === this.newTask().templateId) ?? null
+    );
+  }
+
+  protected updateTaskTitle(title: string): void {
+    this.newTask.update((task) => ({ ...task, title }));
+  }
+
+  protected updateTaskOwner(ownerId: string): void {
+    this.newTask.update((task) => ({ ...task, ownerId }));
+  }
+
+  protected updateTaskDueAt(dueAt: string): void {
+    this.newTask.update((task) => ({ ...task, dueAt }));
   }
 
   protected createTask(item: ProfessionalCaseDetail): void {
     this.taskSaving.set(true);
     this.taskError.set(null);
     this.cases
-      .createTask(item.id, { ...this.newTask, dueAt: new Date(this.newTask.dueAt).toISOString() })
+      .createTask(item.id, {
+        ...this.newTask(),
+        dueAt: new Date(this.newTask().dueAt).toISOString(),
+      })
       .subscribe({
         next: () => {
           this.taskMessage.set('La tarea se ha creado. No confirma ninguna comunicación externa.');

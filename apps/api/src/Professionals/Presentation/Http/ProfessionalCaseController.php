@@ -30,11 +30,10 @@ use App\Cases\Domain\CaseOperationalView;
 use App\Cases\Domain\CasePermission;
 use App\Cases\Domain\CaseStatus;
 use App\Cases\Domain\CaseTask;
-use App\Cases\Domain\CaseTaskKind;
 use App\Cases\Domain\CaseTaskRepository;
 use App\Cases\Domain\CaseWorkspaceQuery;
-use App\Cases\Domain\CaseProtocolStage;
-use App\Cases\Domain\WorkflowSourceVersionRepository;
+use App\Cases\Domain\WorkflowTaskTemplate;
+use App\Cases\Domain\WorkflowTaskTemplateRepository;
 use App\Cases\Domain\ProfessionalExportEvent;
 use App\Cases\Domain\ProfessionalExportEventRepository;
 use App\Cases\Domain\ProfessionalExportKind;
@@ -69,6 +68,7 @@ final readonly class ProfessionalCaseController
 {
     private const DEFAULT_PAGE_LIMIT = 20;
     private const MAXIMUM_PAGE_LIMIT = 50;
+    private const FICTIONAL_ANDALUSIAN_TERRITORIES = ['ES-AN', 'ES-AN-GR'];
 
     public function __construct(
         private ProfessionalCaseWorkspace $workspace,
@@ -84,7 +84,7 @@ final readonly class ProfessionalCaseController
         private ProfessionalRepository $professionals,
         private OrganisationMembershipRepository $memberships,
         private CaseTaskRepository $tasks,
-        private WorkflowSourceVersionRepository $workflowSources,
+        private WorkflowTaskTemplateRepository $workflowTemplates,
         private CaseAuditEventRepository $auditEvents,
         private ProfessionalExportEventRepository $professionalExportEvents,
         private CasePdfRenderer $pdfRenderer,
@@ -176,6 +176,41 @@ final readonly class ProfessionalCaseController
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
 
         return $this->json($this->serializeDetail($detail, $now));
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/task-planning-catalogue', name: 'api_v1_professional_case_task_planning_catalogue', methods: ['GET'])]
+    #[OA\Get(
+        operationId: 'getProfessionalCaseTaskPlanningCatalogue',
+        summary: 'Read approved source-versioned task templates for an accessible case',
+        description: 'Templates are guidance only. The professional must explicitly choose and adapt every task, owner and target date.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The approved fictional Andalusian planning catalogue.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseTaskPlanningCatalogue')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
+        ],
+    )]
+    public function taskPlanningCatalogue(string $id, #[CurrentUser] Professional $professional): JsonResponse
+    {
+        $this->resolveDetail($id, $professional);
+
+        return $this->json(['items' => array_map(
+            fn (WorkflowTaskTemplate $template): array => [
+                'id' => $template->id()->toRfc4122(),
+                'title' => $template->title(),
+                'stage' => $template->stage()->value,
+                'kind' => $template->kind()->value,
+                'source' => [
+                    'title' => $template->source()->title(),
+                    'version' => $template->source()->version(),
+                    'authority' => $template->source()->authority()->value,
+                    'territory' => $template->source()->territory(),
+                    'uri' => $template->source()->uri(),
+                ],
+            ],
+            $this->workflowTemplates->findApprovedForTerritoriesCatalogue(self::FICTIONAL_ANDALUSIAN_TERRITORIES),
+        )]);
     }
 
     #[Route('/api/v1/professional/cases/{id}/assignments', name: 'api_v1_professional_assign_case_professional', methods: ['POST'])]
@@ -363,8 +398,10 @@ final readonly class ProfessionalCaseController
     ): JsonResponse {
         $detail = $this->resolveDetail($id, $professional);
         $owner = $this->assignedProfessional($detail, $payload->ownerId);
-        $source = Uuid::isValid($payload->sourceId) ? $this->workflowSources->find(Uuid::fromString($payload->sourceId)) : null;
-        if ($owner === null || $source === null) {
+        $template = Uuid::isValid($payload->templateId)
+            ? $this->workflowTemplates->findApprovedForTerritories(Uuid::fromString($payload->templateId), self::FICTIONAL_ANDALUSIAN_TERRITORIES)
+            : null;
+        if ($owner === null || $template === null) {
             throw new ProfessionalCaseNotFoundHttpException();
         }
 
@@ -373,9 +410,9 @@ final readonly class ProfessionalCaseController
                 Uuid::v7(),
                 $detail->managedCase,
                 $owner,
-                $source,
-                CaseProtocolStage::from($payload->stage),
-                CaseTaskKind::from($payload->kind),
+                $template->source(),
+                $template->stage(),
+                $template->kind(),
                 $payload->title,
                 new DateTimeImmutable($payload->dueAt),
                 $professional,

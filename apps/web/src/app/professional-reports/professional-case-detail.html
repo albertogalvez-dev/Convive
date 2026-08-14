@@ -107,15 +107,49 @@
           } @else if (taskMessage(); as message) {
             <p class="task-feedback" role="status">{{ message }}</p>
           }
-          @if (item.permissions.manage && newTask.sourceId) {
+          @if (item.permissions.manage && taskTemplates().length > 0) {
             <form class="task-form" (ngSubmit)="createTask(item)">
               <label
+                >Plantilla revisada
+                <select
+                  name="templateId"
+                  [value]="newTask().templateId"
+                  (change)="selectTaskTemplate($any($event.target).value)"
+                  required
+                >
+                  @for (template of taskTemplates(); track template.id) {
+                    <option [value]="template.id">
+                      {{ template.title }} · {{ sourceAuthorityLabel(template.source.authority) }}
+                    </option>
+                  }
+                </select>
+              </label>
+              @if (selectedTaskTemplate(); as template) {
+                <p class="empty">
+                  {{ sourceAuthorityLabel(template.source.authority) }}:
+                  {{ template.source.title }} ({{ template.source.version }}). Esta gu&iacute;a no
+                  decide una obligaci&oacute;n ni calcula un plazo: revisa y adapta la
+                  acci&oacute;n, responsable y objetivo temporal antes de guardarla.
+                </p>
+              }
+              <label
                 >Acci&oacute;n
-                <input name="title" [(ngModel)]="newTask.title" maxlength="160" required />
+                <input
+                  name="title"
+                  [value]="newTask().title"
+                  (input)="updateTaskTitle($any($event.target).value)"
+                  maxlength="160"
+                  required
+                />
               </label>
               <label
                 >Responsable
-                <select name="ownerId" [(ngModel)]="newTask.ownerId" required>
+                <select
+                  name="ownerId"
+                  [value]="newTask().ownerId"
+                  (change)="updateTaskOwner($any($event.target).value)"
+                  required
+                >
                   @for (assignment of item.assignments; track assignment.id) {
                     <option [value]="assignment.professional.id">
                       {{ assignment.professional.name }}
@@ -124,25 +158,14 @@
                 </select>
               </label>
               <label
-                >Etapa
-                <select name="stage" [(ngModel)]="newTask.stage">
-                  <option value="assessment">Valoraci&oacute;n</option>
-                  <option value="action_plan">Plan de actuaci&oacute;n</option>
-                  <option value="professional_coordination">Coordinaci&oacute;n profesional</option>
-                  <option value="family_communication">Comunicaci&oacute;n familiar</option>
-                  <option value="information_collection">Recogida de informaci&oacute;n</option>
-                </select>
-              </label>
-              <label
-                >Tipo
-                <select name="kind" [(ngModel)]="newTask.kind">
-                  <option value="internal_action">Actuaci&oacute;n interna</option>
-                  <option value="external_communication">Comunicaci&oacute;n externa</option>
-                </select>
-              </label>
-              <label
                 >Objetivo temporal
-                <input type="datetime-local" name="dueAt" [(ngModel)]="newTask.dueAt" required />
+                <input
+                  type="datetime-local"
+                  name="dueAt"
+                  [value]="newTask().dueAt"
+                  (input)="updateTaskDueAt($any($event.target).value)"
+                  required
+                />
               </label>
               <button type="submit" [disabled]="taskSaving()">Crear tarea</button>
             </form>

@@ -252,20 +252,24 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         $detailUrl = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122();
         $this->client->request('GET', $detailUrl);
         $detail = $this->responsePayload();
-        $sourceId = $detail['tasks'][0]['source']['id'];
+        $this->client->request('GET', $detailUrl.'/task-planning-catalogue');
+        self::assertResponseIsSuccessful();
+        $templates = $this->responsePayload()['items'];
+        self::assertCount(3, $templates);
+        self::assertSame(['binding', 'binding', 'internal'], array_column(array_column($templates, 'source'), 'authority'));
+        self::assertSame(['ES-AN', 'ES-AN', 'ES-AN-GR'], array_column(array_column($templates, 'source'), 'territory'));
+        $templateId = $templates[0]['id'];
 
         $this->client->jsonRequest('POST', $detailUrl.'/tasks', [
             'ownerId' => $lead->id()->toRfc4122(),
-            'sourceId' => $sourceId,
-            'stage' => 'assessment',
-            'kind' => 'internal_action',
+            'templateId' => $templateId,
             'title' => 'Record the fictional follow-up action.',
             'dueAt' => '2030-01-02T10:00:00+00:00',
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $created = $this->responsePayload();
         self::assertSame('pending', $created['status']);
-        self::assertSame($sourceId, $created['source']['id']);
+        self::assertSame($templates[0]['source']['title'], $created['source']['title']);
 
         $this->client->jsonRequest('POST', $detailUrl.'/tasks/'.$created['id'].'/not-applicable', [
             'reason' => 'The fictional action is not needed for this case.',
@@ -376,9 +380,7 @@ final class ProfessionalCaseControllerTest extends WebTestCase
 
         $this->client->jsonRequest('POST', $url.'/tasks', [
             'ownerId' => $lead->id()->toRfc4122(),
-            'sourceId' => $detail['tasks'][0]['source']['id'],
-            'stage' => 'assessment',
-            'kind' => 'internal_action',
+            'templateId' => Uuid::v7()->toRfc4122(),
             'title' => 'Denied fictional action.',
             'dueAt' => '2030-01-02T10:00:00+00:00',
         ]);

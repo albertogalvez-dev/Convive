@@ -169,6 +169,15 @@ Table case_workflow_source_versions {
   }
 }
 
+Table case_workflow_task_templates {
+  id uuid [pk, note: 'reviewed catalogue entry; application-generated UUIDv7']
+  source_version_id uuid [not null]
+  stage varchar(40) [not null, note: 'bounded protocol stage (CHECK constraint)']
+  kind varchar(30) [not null, note: 'internal_action | external_communication (CHECK constraint)']
+  title varchar(160) [not null, note: 'bounded editable task starting point; no case narrative']
+  approved boolean [not null, note: 'only approved templates are selectable in the fictional Andalusian profile']
+}
+
 Table case_tasks {
   id uuid [pk, note: 'application-generated UUIDv7']
   case_id uuid [not null]
@@ -222,6 +231,7 @@ Ref: case_involved_people.added_by_professional_id > professionals.id
 Ref: case_tasks.case_id > managed_cases.id
 Ref: case_tasks.owner_professional_id > professionals.id
 Ref: case_tasks.source_version_id > case_workflow_source_versions.id
+Ref: case_workflow_task_templates.source_version_id > case_workflow_source_versions.id
 Ref: case_tasks.created_by_professional_id > professionals.id
 Ref: case_tasks.resolved_by_professional_id > professionals.id
 Ref: report_triage_decisions.report_id > reports.id

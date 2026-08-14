@@ -76,6 +76,44 @@ describe('ProfessionalCaseDetailPage', () => {
     expect(navigate).toHaveBeenCalledWith(['/profesionales/acceso']);
   });
 
+  it('uses a reviewed template as an editable task starting point without deriving a deadline', () => {
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      startTask(item: ReturnType<typeof detail>): void;
+    };
+    component.startTask(detail());
+    const catalogue = http.expectOne(`${endpoint}/task-planning-catalogue`);
+    expect(catalogue.request.method).toBe('GET');
+    catalogue.flush({
+      items: [
+        {
+          id: 'template-1',
+          title: 'Review fictional immediate protection plan',
+          stage: 'immediate_actions',
+          kind: 'internal_action',
+          source: {
+            title: 'Andalusian fictional protocol',
+            version: '2011.1',
+            authority: 'binding',
+            territory: 'ES-AN',
+            uri: 'https://example.invalid/source',
+          },
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain(
+      'Esta gu\u00eda no decide una obligaci\u00f3n ni calcula un plazo',
+    );
+    expect(page.querySelector<HTMLInputElement>('input[name="title"]')?.value).toBe(
+      'Review fictional immediate protection plan',
+    );
+  });
+
   it('records a reasoned contributor or observer access change through the exact-case endpoint', () => {
     http.expectOne(endpoint).flush(detail());
     http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
