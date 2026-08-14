@@ -130,6 +130,7 @@ final readonly class ProfessionalCaseWorkspace
             $this->cases->findPeople($managedCase),
             $this->cases->findActiveAssignments($managedCase),
             $this->cases->findTasks($managedCase),
+            $this->cases->findCommunications($managedCase),
             $sourceReport,
             $sourceDecision,
             $evidence,

@@ -203,6 +203,7 @@ describe('ProfessionalCaseDetailPage', () => {
           notApplicableReason: null,
         },
       ],
+      communications: [],
       sourceReport: {
         id: 'report-1',
         publicReference: 'ABCDEF0123456789',

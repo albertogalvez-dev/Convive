@@ -21,4 +21,6 @@ enum CaseAuditAction: string
     case PersonCorrected = 'person_corrected';
     case PersonRemoved = 'person_removed';
     case StatusChanged = 'status_changed';
+    case CommunicationRecorded = 'communication_recorded';
+    case CommunicationCorrected = 'communication_corrected';
 }

@@ -15,6 +15,7 @@ use App\Cases\Application\ManageCaseAssignment;
 use App\Cases\Application\ManageCaseInvolvedPeople;
 use App\Cases\Application\TransitionManagedCase;
 use App\Cases\Application\ProfessionalCaseWorkspace;
+use App\Cases\Application\RecordCaseCommunication;
 use App\Cases\Domain\CaseAccessDenied;
 use App\Cases\Domain\CaseAssignment;
 use App\Cases\Domain\CaseAssignmentRole;
@@ -22,6 +23,11 @@ use App\Cases\Domain\CaseAuditAction;
 use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditTarget;
+use App\Cases\Domain\CaseCommunication;
+use App\Cases\Domain\CaseCommunicationChannel;
+use App\Cases\Domain\CaseCommunicationRecipient;
+use App\Cases\Domain\CaseCommunicationRepository;
+use App\Cases\Domain\CaseCommunicationStatus;
 use App\Cases\Domain\CaseInvolvedPerson;
 use App\Cases\Domain\CaseInvolvedPersonRepository;
 use App\Cases\Domain\CaseInvolvedPersonRole;
@@ -84,7 +90,9 @@ final readonly class ProfessionalCaseController
         private ProfessionalRepository $professionals,
         private OrganisationMembershipRepository $memberships,
         private CaseTaskRepository $tasks,
+        private CaseCommunicationRepository $communications,
         private WorkflowTaskTemplateRepository $workflowTemplates,
+        private RecordCaseCommunication $recordCaseCommunication,
         private CaseAuditEventRepository $auditEvents,
         private ProfessionalExportEventRepository $professionalExportEvents,
         private CasePdfRenderer $pdfRenderer,
@@ -425,6 +433,91 @@ final readonly class ProfessionalCaseController
         }
 
         return $this->json($this->serializeTask($task, DateTimeImmutable::createFromTimestamp(microtime(true))), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/communications', name: 'api_v1_professional_record_case_communication', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'recordProfessionalCaseCommunication',
+        summary: 'Record an explicit managed-case communication without sending it',
+        description: 'Requires exact-case manage permission. The selected state never proves delivery, receipt or legal notification.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/RecordProfessionalCaseCommunicationRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_CREATED, description: 'The explicit communication record was appended.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseCommunication')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or responsible professional is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The communication request is invalid.'),
+        ],
+    )]
+    public function recordCommunication(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        RecordProfessionalCaseCommunicationRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $responsible = $this->assignedProfessional($detail, $payload->responsibleId);
+        if ($responsible === null) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+
+        try {
+            $communication = $this->recordCaseCommunication->record(
+                Uuid::v7(), $detail->managedCase, $responsible,
+                CaseCommunicationRecipient::from($payload->recipient), CaseCommunicationChannel::from($payload->channel),
+                CaseCommunicationStatus::from($payload->status), new DateTimeImmutable($payload->occurredAt),
+                $payload->note, $professional, DateTimeImmutable::createFromTimestamp(microtime(true)),
+            );
+        } catch (InvalidArgumentException|DateMalformedStringException $exception) {
+            throw new InvalidProfessionalCaseTaskHttpException(previous: $exception);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeCommunication($communication), Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/v1/professional/cases/{id}/communications/{communicationId}/corrections', name: 'api_v1_professional_correct_case_communication', methods: ['POST'])]
+    #[OA\Post(
+        operationId: 'correctProfessionalCaseCommunication',
+        summary: 'Append a traceable correction to a managed-case communication record',
+        description: 'Creates a new record that references the original; it never silently edits history or sends a communication.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/RecordProfessionalCaseCommunicationRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_CREATED, description: 'The correction record was appended.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseCommunication')),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case, communication or responsible professional is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The correction request is invalid.'),
+        ],
+    )]
+    public function correctCommunication(
+        string $id, string $communicationId, #[CurrentUser] Professional $professional,
+        #[MapRequestPayload(acceptFormat: 'json')] RecordProfessionalCaseCommunicationRequest $payload,
+    ): JsonResponse {
+        $detail = $this->resolveDetail($id, $professional);
+        $supersedes = Uuid::isValid($communicationId) ? $this->communications->find(Uuid::fromString($communicationId)) : null;
+        $responsible = $this->assignedProfessional($detail, $payload->responsibleId);
+        if (!$supersedes instanceof CaseCommunication || !$supersedes->managedCase()->id()->equals($detail->managedCase->id()) || $responsible === null) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+
+        try {
+            $communication = $this->recordCaseCommunication->record(
+                Uuid::v7(), $detail->managedCase, $responsible,
+                CaseCommunicationRecipient::from($payload->recipient), CaseCommunicationChannel::from($payload->channel),
+                CaseCommunicationStatus::from($payload->status), new DateTimeImmutable($payload->occurredAt),
+                $payload->note, $professional, DateTimeImmutable::createFromTimestamp(microtime(true)), $supersedes,
+            );
+        } catch (InvalidArgumentException|DateMalformedStringException $exception) {
+            throw new InvalidProfessionalCaseTaskHttpException(previous: $exception);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+
+        return $this->json($this->serializeCommunication($communication), Response::HTTP_CREATED);
     }
 
     #[Route('/api/v1/professional/cases/{id}/tasks/{taskId}/complete', name: 'api_v1_professional_complete_case_task', methods: ['POST'])]
@@ -939,6 +1032,7 @@ final readonly class ProfessionalCaseController
             'people' => array_map($this->serializePerson(...), $detail->people),
             'assignments' => array_map($this->serializeAssignment(...), $detail->assignments),
             'tasks' => array_map(fn (CaseTask $task): array => $this->serializeTask($task, $now), $detail->tasks),
+            'communications' => array_map($this->serializeCommunication(...), $detail->communications),
             'sourceReport' => $detail->sourceReport === null ? null : [
                 'id' => $detail->sourceReport->id()->toRfc4122(),
                 'publicReference' => $detail->sourceReport->publicReference(),
@@ -1039,6 +1133,23 @@ final readonly class ProfessionalCaseController
                 'name' => $task->resolvedBy()->name(),
             ],
             'notApplicableReason' => $task->notApplicableReason(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function serializeCommunication(CaseCommunication $communication): array
+    {
+        return [
+            'id' => $communication->id()->toRfc4122(),
+            'recipient' => $communication->recipient()->value,
+            'channel' => $communication->channel()->value,
+            'status' => $communication->status()->value,
+            'occurredAt' => $communication->occurredAt()->format(DATE_RFC3339_EXTENDED),
+            'note' => $communication->note(),
+            'responsible' => ['id' => $communication->responsible()->id()->toRfc4122(), 'name' => $communication->responsible()->name()],
+            'createdBy' => ['id' => $communication->createdBy()->id()->toRfc4122(), 'name' => $communication->createdBy()->name()],
+            'createdAt' => $communication->createdAt()->format(DATE_RFC3339_EXTENDED),
+            'supersedesId' => $communication->supersedes()?->id()->toRfc4122(),
         ];
     }
 

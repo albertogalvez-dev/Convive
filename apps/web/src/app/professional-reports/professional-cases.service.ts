@@ -7,6 +7,11 @@ export type CaseModality = 'in_person' | 'digital' | 'mixed' | 'unknown';
 export type CaseAssignmentRole = 'lead' | 'contributor' | 'observer';
 export type CaseOperationalView = 'assigned' | 'overdue' | 'upcoming' | 'recent';
 export type CaseTaskStatus = 'pending' | 'completed' | 'not_applicable';
+export type CaseCommunicationRecipient =
+  'family' | 'external_service' | 'education_inspectorate' | 'other';
+export type CaseCommunicationChannel =
+  'in_person' | 'telephone' | 'secure_portal' | 'written_record' | 'other';
+export type CaseCommunicationStatus = 'planned' | 'recorded' | 'not_applicable';
 export type WorkflowSourceAuthority = 'binding' | 'recommended' | 'internal';
 export type CaseAuditAction =
   | 'case_created'
@@ -18,7 +23,9 @@ export type CaseAuditAction =
   | 'task_marked_not_applicable'
   | 'evidence_download_authorised'
   | 'audit_exported'
-  | 'status_changed';
+  | 'status_changed'
+  | 'communication_recorded'
+  | 'communication_corrected';
 
 export interface ProfessionalCaseSummary {
   id: string;
@@ -76,6 +83,18 @@ export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
     resolvedBy: { id: string; name: string } | null;
     notApplicableReason: string | null;
   }>;
+  communications: Array<{
+    id: string;
+    recipient: CaseCommunicationRecipient;
+    channel: CaseCommunicationChannel;
+    status: CaseCommunicationStatus;
+    occurredAt: string;
+    note: string;
+    responsible: { id: string; name: string };
+    createdBy: { id: string; name: string };
+    createdAt: string;
+    supersedesId: string | null;
+  }>;
   sourceReport: {
     id: string;
     publicReference: string;
@@ -109,7 +128,14 @@ export interface ProfessionalCaseTaskPlanningTemplate {
 export interface ProfessionalCaseAuditEvent {
   id: string;
   action: CaseAuditAction;
-  target: 'case' | 'triage_decision' | 'assignment' | 'task' | 'attachment' | 'audit_trail';
+  target:
+    | 'case'
+    | 'triage_decision'
+    | 'assignment'
+    | 'task'
+    | 'attachment'
+    | 'audit_trail'
+    | 'communication';
   actorName: string;
   occurredAt: string;
 }
@@ -213,6 +239,41 @@ export class ProfessionalCasesService {
     return this.http.post<ProfessionalCaseDetail['tasks'][number]>(
       `${this.endpoint}/${encodeURIComponent(id)}/tasks/${encodeURIComponent(taskId)}/not-applicable`,
       { reason },
+    );
+  }
+
+  recordCommunication(
+    id: string,
+    payload: {
+      responsibleId: string;
+      recipient: CaseCommunicationRecipient;
+      channel: CaseCommunicationChannel;
+      status: CaseCommunicationStatus;
+      occurredAt: string;
+      note: string;
+    },
+  ): Observable<ProfessionalCaseDetail['communications'][number]> {
+    return this.http.post<ProfessionalCaseDetail['communications'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/communications`,
+      payload,
+    );
+  }
+
+  correctCommunication(
+    id: string,
+    communicationId: string,
+    payload: {
+      responsibleId: string;
+      recipient: CaseCommunicationRecipient;
+      channel: CaseCommunicationChannel;
+      status: CaseCommunicationStatus;
+      occurredAt: string;
+      note: string;
+    },
+  ): Observable<ProfessionalCaseDetail['communications'][number]> {
+    return this.http.post<ProfessionalCaseDetail['communications'][number]>(
+      `${this.endpoint}/${encodeURIComponent(id)}/communications/${encodeURIComponent(communicationId)}/corrections`,
+      payload,
     );
   }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Cases\Infrastructure;
 
 use App\Cases\Domain\CaseAssignment;
+use App\Cases\Domain\CaseCommunication;
 use App\Cases\Domain\CaseInvolvedPerson;
 use App\Cases\Domain\CaseTask;
 use App\Cases\Domain\CaseTaskStatus;
@@ -214,6 +215,23 @@ final readonly class DoctrineCaseWorkspaceRepository implements CaseWorkspaceRep
             ->setParameter('managedCase', $managedCase)
             ->orderBy('task.dueAt', 'ASC')
             ->addOrderBy('task.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCommunications(ManagedCase $managedCase): array
+    {
+        /** @var list<CaseCommunication> */
+        return $this->entityManager->createQueryBuilder()
+            ->select('communication', 'responsible', 'creator', 'supersedes')
+            ->from(CaseCommunication::class, 'communication')
+            ->join('communication.responsible', 'responsible')
+            ->join('communication.createdBy', 'creator')
+            ->leftJoin('communication.supersedes', 'supersedes')
+            ->where('communication.managedCase = :managedCase')
+            ->setParameter('managedCase', $managedCase)
+            ->orderBy('communication.occurredAt', 'ASC')
+            ->addOrderBy('communication.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

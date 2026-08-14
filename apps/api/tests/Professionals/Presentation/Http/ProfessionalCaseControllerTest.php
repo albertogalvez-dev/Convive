@@ -281,6 +281,35 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
     }
 
+    public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
+    {
+        [$managedCase, $lead] = $this->createCaseWorkspace();
+        $this->client->loginUser($lead);
+        $url = '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/communications';
+        $payload = [
+            'responsibleId' => $lead->id()->toRfc4122(),
+            'recipient' => 'family',
+            'channel' => 'telephone',
+            'status' => 'recorded',
+            'occurredAt' => '2030-01-02T10:00:00+00:00',
+            'note' => 'Fictional family contact was recorded without delivery evidence.',
+        ];
+        $this->client->jsonRequest('POST', $url, $payload);
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $created = $this->responsePayload();
+        self::assertSame('recorded', $created['status']);
+        self::assertNull($created['supersedesId']);
+
+        $payload['note'] = 'Fictional corrected communication record.';
+        $this->client->jsonRequest('POST', $url.'/'.$created['id'].'/corrections', $payload);
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertSame($created['id'], $this->responsePayload()['supersedesId']);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        self::assertCount(2, $this->responsePayload()['communications']);
+    }
+
     public function testLeadCanCloseAndReopenCaseWithAnExplicitRecordButObserverCannot(): void
     {
         [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
@@ -383,6 +412,16 @@ final class ProfessionalCaseControllerTest extends WebTestCase
             'templateId' => Uuid::v7()->toRfc4122(),
             'title' => 'Denied fictional action.',
             'dueAt' => '2030-01-02T10:00:00+00:00',
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->client->jsonRequest('POST', $url.'/communications', [
+            'responsibleId' => $lead->id()->toRfc4122(),
+            'recipient' => 'family',
+            'channel' => 'telephone',
+            'status' => 'planned',
+            'occurredAt' => '2030-01-02T10:00:00+00:00',
+            'note' => 'Denied fictional communication record.',
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
 

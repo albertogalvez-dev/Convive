@@ -42,5 +42,8 @@ interface CaseWorkspaceRepository
     /** @return list<CaseTask> */
     public function findTasks(ManagedCase $managedCase): array;
 
+    /** @return list<CaseCommunication> */
+    public function findCommunications(ManagedCase $managedCase): array;
+
     public function findSourceDecision(ManagedCase $managedCase): ?ReportTriageDecision;
 }

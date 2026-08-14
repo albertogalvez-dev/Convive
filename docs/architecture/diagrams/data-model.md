@@ -139,6 +139,19 @@ erDiagram
         timestamptz resolved_at "nullable until resolved"
         varchar not_applicable_reason "nullable; required only when not applicable"
     }
+    case_communications {
+        uuid id PK "append-only minimised record"
+        uuid case_id FK
+        uuid responsible_professional_id FK
+        varchar recipient "bounded category only"
+        varchar channel "does not send"
+        varchar status "never proves delivery or receipt"
+        timestamptz occurred_at
+        varchar note "bounded non-sensitive operational note"
+        uuid created_by_professional_id FK
+        timestamptz created_at "immutable UTC"
+        uuid supersedes_communication_id FK "nullable traceable correction"
+    }
     report_triage_decisions {
         uuid id PK "UUIDv7; append-only"
         uuid report_id FK
@@ -210,11 +223,13 @@ erDiagram
     managed_cases ||--o{ case_assignments : "has assignments"
     managed_cases ||--o{ case_involved_people : "has minimised people"
     managed_cases ||--o{ case_tasks : "has source-aware tasks"
+    managed_cases ||--o{ case_communications : "has explicit communication records"
     case_workflow_source_versions ||--o{ case_tasks : "sources"
     case_workflow_source_versions ||--o{ case_workflow_task_templates : "grounds reviewed templates"
     professionals ||--o{ case_assignments : "is assigned or assigns"
     professionals ||--o{ case_involved_people : "adds"
     professionals ||--o{ case_tasks : "owns, creates or resolves"
+    professionals ||--o{ case_communications : "is responsible or creates"
     professionals ||--o{ organisation_memberships : "holds"
     professionals ||--o{ professional_credential_invitations : "receives or issues"
     professionals ||--o{ professional_account_audit_events : "is target or actor"

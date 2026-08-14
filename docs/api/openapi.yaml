@@ -619,6 +619,84 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/communications':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Record an explicit managed-case communication without sending it'
+      description: 'Requires exact-case manage permission. The selected state never proves delivery, receipt or legal notification.'
+      operationId: recordProfessionalCaseCommunication
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordProfessionalCaseCommunicationRequest'
+      responses:
+        '201':
+          description: 'The explicit communication record was appended.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseCommunication'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or responsible professional is unavailable in this scope.'
+        '422':
+          description: 'The communication request is invalid.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/cases/{id}/communications/{communicationId}/corrections':
+    post:
+      tags:
+        - 'Professional cases'
+      summary: 'Append a traceable correction to a managed-case communication record'
+      description: 'Creates a new record that references the original; it never silently edits history or sends a communication.'
+      operationId: correctProfessionalCaseCommunication
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordProfessionalCaseCommunicationRequest'
+      responses:
+        '201':
+          description: 'The correction record was appended.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseCommunication'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case, communication or responsible professional is unavailable in this scope.'
+        '422':
+          description: 'The correction request is invalid.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/cases/{id}/tasks/{taskId}/complete':
     post:
       tags:
@@ -2529,6 +2607,128 @@ components:
             additionalProperties: false
       type: object
       additionalProperties: false
+    ProfessionalCaseCommunication:
+      required:
+        - id
+        - recipient
+        - channel
+        - status
+        - occurredAt
+        - note
+        - responsible
+        - createdBy
+        - createdAt
+        - supersedesId
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipient:
+          type: string
+          enum:
+            - family
+            - external_service
+            - education_inspectorate
+            - other
+        channel:
+          type: string
+          enum:
+            - in_person
+            - telephone
+            - secure_portal
+            - written_record
+            - other
+        status:
+          type: string
+          enum:
+            - planned
+            - recorded
+            - not_applicable
+        occurredAt:
+          type: string
+          format: date-time
+        note:
+          type: string
+          maxLength: 500
+          minLength: 1
+        responsible:
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+          type: object
+          additionalProperties: false
+        createdBy:
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+          type: object
+          additionalProperties: false
+        createdAt:
+          type: string
+          format: date-time
+        supersedesId:
+          oneOf:
+            -
+              type: string
+              format: uuid
+            -
+              type: 'null'
+      type: object
+      additionalProperties: false
+    RecordProfessionalCaseCommunicationRequest:
+      required:
+        - responsibleId
+        - recipient
+        - channel
+        - status
+        - occurredAt
+        - note
+      properties:
+        responsibleId:
+          type: string
+          format: uuid
+        recipient:
+          type: string
+          enum:
+            - family
+            - external_service
+            - education_inspectorate
+            - other
+        channel:
+          type: string
+          enum:
+            - in_person
+            - telephone
+            - secure_portal
+            - written_record
+            - other
+        status:
+          type: string
+          enum:
+            - planned
+            - recorded
+            - not_applicable
+        occurredAt:
+          type: string
+          format: date-time
+        note:
+          type: string
+          maxLength: 500
+          minLength: 1
+      type: object
+      additionalProperties: false
     ProfessionalCaseEvidence:
       required:
         - id
@@ -2586,6 +2786,8 @@ components:
             - task_marked_not_applicable
             - evidence_download_authorised
             - audit_exported
+            - communication_recorded
+            - communication_corrected
         target:
           type: string
           enum:
@@ -2595,6 +2797,7 @@ components:
             - task
             - attachment
             - audit_trail
+            - communication
         actorName:
           type: string
           maxLength: 160
@@ -2646,6 +2849,7 @@ components:
         - people
         - assignments
         - tasks
+        - communications
         - sourceReport
         - evidence
         - timeline
@@ -2730,6 +2934,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProfessionalCaseTask'
+        communications:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfessionalCaseCommunication'
         sourceReport:
           oneOf:
             -
@@ -2935,6 +3143,45 @@ components:
           minLength: 1
         dueAt:
           type: string
+      type: object
+    RecordProfessionalCaseCommunicationRequest2:
+      required:
+        - responsibleId
+        - recipient
+        - channel
+        - status
+        - occurredAt
+        - note
+      properties:
+        responsibleId:
+          type: string
+        recipient:
+          type: string
+          enum:
+            - family
+            - external_service
+            - education_inspectorate
+            - other
+        channel:
+          type: string
+          enum:
+            - in_person
+            - telephone
+            - secure_portal
+            - written_record
+            - other
+        status:
+          type: string
+          enum:
+            - planned
+            - recorded
+            - not_applicable
+        occurredAt:
+          type: string
+        note:
+          type: string
+          maxLength: 500
+          minLength: 1
       type: object
     MarkProfessionalCaseTaskNotApplicableRequest:
       required:
