@@ -80,6 +80,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'profesionales/activar',
+        loadComponent: () =>
+          import('./professional-access/professional-credential-activation').then(
+            (module) => module.ProfessionalCredentialActivation,
+          ),
+      },
+      {
         path: 'profesionales',
         loadComponent: () =>
           import('./professional-reports/professional-shell').then(
@@ -128,6 +135,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./professional-reports/professional-settings').then(
                 (module) => module.ProfessionalSettings,
+              ),
+          },
+          {
+            path: 'cuentas',
+            loadComponent: () =>
+              import('./professional-reports/professional-accounts').then(
+                (module) => module.ProfessionalAccounts,
               ),
           },
         ],

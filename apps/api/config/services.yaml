@@ -55,6 +55,8 @@ services:
             $configuredMode: '%public_reporting.mode%'
     App\Professionals\Domain\ProfessionalRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalRepository'
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
+    App\Professionals\Domain\ProfessionalCredentialInvitationRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalCredentialInvitationRepository'
+    App\Professionals\Domain\ProfessionalAccountAuditEventRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalAccountAuditEventRepository'
     App\Cases\Domain\CaseAssignmentRepository: '@App\Cases\Infrastructure\DoctrineCaseAssignmentRepository'
     App\Cases\Domain\CaseTaskRepository: '@App\Cases\Infrastructure\DoctrineCaseTaskRepository'
     App\Cases\Domain\WorkflowSourceVersionRepository: '@App\Cases\Infrastructure\DoctrineWorkflowSourceVersionRepository'

@@ -36,6 +36,9 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $active;
 
+    #[ORM\Column(type: Types::STRING, length: 20, enumType: ProfessionalAccountStatus::class)]
+    private ProfessionalAccountStatus $accountStatus;
+
     #[ORM\Column(type: Types::INTEGER)]
     private int $securityRevision;
 
@@ -47,6 +50,7 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
         string $passwordHash = '!unavailable',
         bool $active = true,
         int $securityRevision = 1,
+        ProfessionalAccountStatus $accountStatus = ProfessionalAccountStatus::Active,
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -55,6 +59,7 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
         $this->passwordHash = $passwordHash;
         $this->active = $active;
         $this->securityRevision = $securityRevision;
+        $this->accountStatus = $accountStatus;
     }
 
     public function id(): Uuid
@@ -106,7 +111,52 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
 
     public function isActive(): bool
     {
-        return $this->active;
+        return $this->active && $this->accountStatus->permitsAuthentication();
+    }
+
+    public function accountStatus(): ProfessionalAccountStatus
+    {
+        return $this->accountStatus;
+    }
+
+    public function activate(string $passwordHash): void
+    {
+        $this->replacePasswordHash($passwordHash);
+        $this->accountStatus = ProfessionalAccountStatus::Active;
+        $this->active = true;
+    }
+
+    public function suspend(): void
+    {
+        if ($this->accountStatus === ProfessionalAccountStatus::Deactivated) {
+            throw new \LogicException('A deactivated professional cannot be suspended.');
+        }
+
+        $this->accountStatus = ProfessionalAccountStatus::Suspended;
+        $this->active = false;
+        ++$this->securityRevision;
+    }
+
+    public function reactivate(): void
+    {
+        if ($this->accountStatus !== ProfessionalAccountStatus::Suspended) {
+            throw new \LogicException('Only a suspended professional can be reactivated.');
+        }
+
+        $this->accountStatus = ProfessionalAccountStatus::Active;
+        $this->active = true;
+        ++$this->securityRevision;
+    }
+
+    public function deactivate(): void
+    {
+        if ($this->accountStatus === ProfessionalAccountStatus::Deactivated) {
+            throw new \LogicException('A professional is already deactivated.');
+        }
+
+        $this->accountStatus = ProfessionalAccountStatus::Deactivated;
+        $this->active = false;
+        ++$this->securityRevision;
     }
 
     public function securityRevision(): int

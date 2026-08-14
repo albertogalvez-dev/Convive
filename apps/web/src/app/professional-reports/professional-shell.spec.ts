@@ -46,7 +46,10 @@ describe('ProfessionalShell', () => {
       page.querySelector<HTMLAnchorElement>('.notification-button')?.getAttribute('href'),
     ).toBe('/profesionales/comunicaciones?estado=new');
     expect(page.querySelector('.notification-button span')?.textContent).toBe('1');
-    expect(page.querySelectorAll('.mobile-header nav a[aria-label]')).toHaveLength(4);
+    expect(page.querySelectorAll('.mobile-header nav a[aria-label]')).toHaveLength(5);
+    expect(
+      page.querySelector<HTMLAnchorElement>('.mobile-header nav a[href="/profesionales/cuentas"]'),
+    )?.not.toBeNull();
 
     page.querySelector<HTMLButtonElement>('.collapse-button')?.click();
     fixture.detectChanges();

@@ -26,6 +26,10 @@ framework:
                 'professional_report_review',
                 'professional_report_response',
                 'professional_report_triage',
+                'professional_account_credential_acceptance',
+                'professional_account_invitation',
+                'professional_account_password_reset',
+                'professional_account_status_change',
             ]
         check_header: true
 
