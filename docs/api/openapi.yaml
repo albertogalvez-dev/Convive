@@ -389,6 +389,34 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/task-planning-catalogue':
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Read approved source-versioned task templates for an accessible case'
+      description: 'Templates are guidance only. The professional must explicitly choose and adapt every task, owner and target date.'
+      operationId: getProfessionalCaseTaskPlanningCatalogue
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The approved fictional Andalusian planning catalogue.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfessionalCaseTaskPlanningCatalogue'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/cases/{id}/assignments':
     post:
       tags:
@@ -2442,6 +2470,65 @@ components:
               type: 'null'
       type: object
       additionalProperties: false
+    ProfessionalCaseTaskPlanningCatalogue:
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            required:
+              - id
+              - title
+              - stage
+              - kind
+              - source
+            properties:
+              id:
+                type: string
+                format: uuid
+              title:
+                type: string
+                maxLength: 160
+              stage:
+                type: string
+                enum:
+                  - identification
+                  - immediate_actions
+                  - urgent_protection
+                  - family_communication
+                  - professional_coordination
+                  - information_collection
+                  - educational_measures
+                  - inspection_communication
+                  - assessment
+                  - action_plan
+                  - family_measures
+                  - inspection_follow_up
+              kind:
+                type: string
+                enum:
+                  - internal_action
+                  - external_communication
+              source:
+                required:
+                  - title
+                  - version
+                  - authority
+                  - territory
+                  - uri
+                properties:
+                  title: { type: string, maxLength: 180 }
+                  version: { type: string, maxLength: 40 }
+                  authority: { type: string, enum: [binding, recommended, internal] }
+                  territory: { type: string, maxLength: 20 }
+                  uri: { oneOf: [{ type: string, format: uri }, { type: 'null' }] }
+                type: object
+                additionalProperties: false
+            type: object
+            additionalProperties: false
+      type: object
+      additionalProperties: false
     ProfessionalCaseEvidence:
       required:
         - id
@@ -2834,36 +2921,14 @@ components:
     CreateProfessionalCaseTaskRequest:
       required:
         - ownerId
-        - sourceId
-        - stage
-        - kind
+        - templateId
         - title
         - dueAt
       properties:
         ownerId:
           type: string
-        sourceId:
+        templateId:
           type: string
-        stage:
-          type: string
-          enum:
-            - identification
-            - immediate_actions
-            - urgent_protection
-            - family_communication
-            - professional_coordination
-            - information_collection
-            - educational_measures
-            - inspection_communication
-            - assessment
-            - action_plan
-            - family_measures
-            - inspection_follow_up
-        kind:
-          type: string
-          enum:
-            - internal_action
-            - external_communication
         title:
           type: string
           maxLength: 160

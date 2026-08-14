@@ -79,6 +79,22 @@ authorised professional confirms completion. Convive does not infer delivery
 from task creation, due-date passage, another task, a case transition or a
 future integration attempt.
 
+### Controlled catalogue maintenance
+
+Approved task-planning templates are reviewed, source-versioned catalogue
+entries. They provide a selectable starting point for the fictional Andalusian
+profile, but a professional must still explicitly choose the template, adapt
+the task title, select the owner and set the target date. They neither select
+or apply a protocol nor calculate a legal deadline.
+
+Neither the normal professional API nor the workspace provides free-text
+editing of regulatory sources, authority, territory or source version. Adding
+or retiring a source or template is a deliberately reviewed, versioned
+implementation change: it records the official or internal provenance and
+review date, adds a new immutable source version where needed, and does not
+rewrite historical tasks. A retired template is made unavailable for new work;
+already-created tasks retain their immutable source reference.
+
 ## Consequences
 
 ### Positive

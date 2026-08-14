@@ -115,6 +115,14 @@ erDiagram
         date published_on
         date reviewed_on "on or after published_on"
     }
+    case_workflow_task_templates {
+        uuid id PK "reviewed catalogue entry"
+        uuid source_version_id FK
+        varchar stage "bounded protocol stage"
+        varchar kind "internal_action | external_communication"
+        varchar title "bounded editable task starting point"
+        boolean approved "selectable only while approved"
+    }
     case_tasks {
         uuid id PK
         uuid case_id FK
@@ -203,6 +211,7 @@ erDiagram
     managed_cases ||--o{ case_involved_people : "has minimised people"
     managed_cases ||--o{ case_tasks : "has source-aware tasks"
     case_workflow_source_versions ||--o{ case_tasks : "sources"
+    case_workflow_source_versions ||--o{ case_workflow_task_templates : "grounds reviewed templates"
     professionals ||--o{ case_assignments : "is assigned or assigns"
     professionals ||--o{ case_involved_people : "adds"
     professionals ||--o{ case_tasks : "owns, creates or resolves"

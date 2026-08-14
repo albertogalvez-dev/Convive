@@ -507,6 +507,38 @@ nelmio_api_doc:
                                 - { type: string, maxLength: 500 }
                                 - { type: 'null' }
 
+                ProfessionalCaseTaskPlanningCatalogue:
+                    type: object
+                    additionalProperties: false
+                    required: [items]
+                    properties:
+                        items:
+                            type: array
+                            items:
+                                type: object
+                                additionalProperties: false
+                                required: [id, title, stage, kind, source]
+                                properties:
+                                    id: { type: string, format: uuid }
+                                    title: { type: string, maxLength: 160 }
+                                    stage:
+                                        type: string
+                                        enum: [identification, immediate_actions, urgent_protection, family_communication, professional_coordination, information_collection, educational_measures, inspection_communication, assessment, action_plan, family_measures, inspection_follow_up]
+                                    kind: { type: string, enum: [internal_action, external_communication] }
+                                    source:
+                                        type: object
+                                        additionalProperties: false
+                                        required: [title, version, authority, territory, uri]
+                                        properties:
+                                            title: { type: string, maxLength: 180 }
+                                            version: { type: string, maxLength: 40 }
+                                            authority: { type: string, enum: [binding, recommended, internal] }
+                                            territory: { type: string, maxLength: 20 }
+                                            uri:
+                                                oneOf:
+                                                    - { type: string, format: uri }
+                                                    - { type: 'null' }
+
                 ProfessionalCaseEvidence:
                     type: object
                     additionalProperties: false
