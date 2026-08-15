@@ -13,11 +13,12 @@ Both artefacts represent these Doctrine-owned domain tables:
 - `organisations`, `reports`, `report_access_grants`,
   `report_follow_up_entries`, `report_attachments` and
   `report_triage_decisions`;
-- `professionals`, `organisation_memberships`, `professional_credential_invitations`
-  and `professional_account_audit_events`;
+- `professionals`, `organisation_memberships`, `professional_credential_invitations`,
+  `professional_account_audit_events`, `professional_notifications` and
+  `professional_notification_preferences`;
 - `managed_cases`, `case_assignments`, `case_involved_people`,
-  `case_workflow_source_versions`, `case_tasks`, `case_audit_events` and
-  `professional_export_events`.
+  `case_workflow_source_versions`, `case_workflow_task_templates`, `case_tasks`,
+  `case_communications`, `case_audit_events` and `professional_export_events`.
 
 The diagram records identifiers, relationships, database uniqueness/index
 intent and lifecycle-relevant state only. It deliberately omits unbounded

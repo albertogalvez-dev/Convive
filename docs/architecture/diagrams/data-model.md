@@ -204,6 +204,19 @@ erDiagram
         timestamptz suspended_at "nullable; membership has no organisation action while set"
         timestamptz revoked_at "nullable; row persists after revocation"
     }
+    professional_notifications {
+        uuid id PK "UUIDv7, application-generated"
+        uuid recipient_professional_id FK "sole reader; delivery is never broadcast"
+        uuid case_id FK "deep-link target re-authorised on every read"
+        varchar type "case_assigned | case_lifecycle_changed"
+        timestamptz created_at "immutable UTC"
+        timestamptz read_at "nullable; set once on acknowledgement"
+    }
+    professional_notification_preferences {
+        uuid professional_id PK "composite key with notification_type"
+        varchar notification_type PK "case_lifecycle_changed only; required types are never stored"
+        boolean enabled "opt-out for optional types only"
+    }
     organisations ||--o{ reports : "receives"
     professionals o|--o{ reports : "reviews"
     reports ||--o{ report_access_grants : "grants access to"
@@ -234,4 +247,7 @@ erDiagram
     professionals ||--o{ professional_credential_invitations : "receives or issues"
     professionals ||--o{ professional_account_audit_events : "is target or actor"
     organisations ||--o{ organisation_memberships : "grants"
+    professionals ||--o{ professional_notifications : "receives"
+    professionals ||--o{ professional_notification_preferences : "sets"
+    managed_cases ||--o{ professional_notifications : "is the deep-link target of"
 ```
