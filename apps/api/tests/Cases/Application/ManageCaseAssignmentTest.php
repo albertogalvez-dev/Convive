@@ -19,8 +19,13 @@ use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Professionals\Domain\OrganisationMembership;
 use App\Professionals\Domain\OrganisationMembershipRepository;
+use App\Professionals\Application\IssueProfessionalNotification;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
+use App\Professionals\Domain\ProfessionalNotification;
+use App\Professionals\Domain\ProfessionalNotificationPreference;
+use App\Professionals\Domain\ProfessionalNotificationRepository;
+use App\Professionals\Domain\ProfessionalNotificationType;
 use App\Professionals\Domain\ProfessionalRole;
 use DateTimeImmutable;
 use LogicException;
@@ -36,11 +41,13 @@ final class ManageCaseAssignmentTest extends TestCase
         $nextMembership = new OrganisationMembership(Uuid::v7(), $nextLead, $case->organisation(), ProfessionalRole::Triage, new DateTimeImmutable('2026-08-11T08:00:00+00:00'));
         $assignments = new InMemoryAssignments([$formerAssignment]);
         $audit = new InMemoryAssignmentAuditEvents();
+        $notifications = new InMemoryProfessionalNotifications();
         $service = new ManageCaseAssignment(
             new AuthoriseCaseAccess($this->memberships([$membership, $nextMembership]), $assignments),
             $assignments,
             $this->memberships([$membership, $nextMembership]),
             $audit,
+            new IssueProfessionalNotification($notifications),
         );
 
         $newLead = $service->handover($formerAssignment, $nextLead, 'Fictional planned absence handover.', $formerLead, new DateTimeImmutable('2026-08-11T12:00:00+00:00'));
@@ -50,6 +57,9 @@ final class ManageCaseAssignmentTest extends TestCase
         self::assertCount(1, $assignments->findActiveByCase($case));
         self::assertSame($nextLead, $assignments->findActiveByCase($case)[0]->professional());
         self::assertSame(['assignment_created', 'assignment_revoked'], array_map(static fn (CaseAuditEvent $event): string => $event->action()->value, $audit->events));
+        self::assertCount(1, $notifications->saved);
+        self::assertSame($nextLead, $notifications->saved[0]->recipient());
+        self::assertSame(ProfessionalNotificationType::CaseAssigned, $notifications->saved[0]->type());
     }
 
     public function testOrdinaryAssignmentCannotCreateAnotherLead(): void
@@ -58,7 +68,7 @@ final class ManageCaseAssignmentTest extends TestCase
         $candidate = $this->professional('candidate');
         $candidateMembership = new OrganisationMembership(Uuid::v7(), $candidate, $case->organisation(), ProfessionalRole::Triage, new DateTimeImmutable());
         $assignments = new InMemoryAssignments([$assignment]);
-        $service = new ManageCaseAssignment(new AuthoriseCaseAccess($this->memberships([$membership, $candidateMembership]), $assignments), $assignments, $this->memberships([$membership, $candidateMembership]), new InMemoryAssignmentAuditEvents());
+        $service = new ManageCaseAssignment(new AuthoriseCaseAccess($this->memberships([$membership, $candidateMembership]), $assignments), $assignments, $this->memberships([$membership, $candidateMembership]), new InMemoryAssignmentAuditEvents(), new IssueProfessionalNotification(new InMemoryProfessionalNotifications()));
 
         $this->expectException(LogicException::class);
         $service->assign($case, $candidate, CaseAssignmentRole::Lead, 'Fictional duplicate lead.', $lead, new DateTimeImmutable());
@@ -72,7 +82,7 @@ final class ManageCaseAssignmentTest extends TestCase
         $assignment = new CaseAssignment(Uuid::v7(), $case, $contributor, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable());
         $assignments = new InMemoryAssignments([$leadAssignment, $assignment]);
         $audit = new InMemoryAssignmentAuditEvents();
-        $service = new ManageCaseAssignment(new AuthoriseCaseAccess($this->memberships([$membership, $contributorMembership]), $assignments), $assignments, $this->memberships([$membership, $contributorMembership]), $audit);
+        $service = new ManageCaseAssignment(new AuthoriseCaseAccess($this->memberships([$membership, $contributorMembership]), $assignments), $assignments, $this->memberships([$membership, $contributorMembership]), $audit, new IssueProfessionalNotification(new InMemoryProfessionalNotifications()));
 
         $service->changeRole($assignment, CaseAssignmentRole::Observer, 'Fictional consultation-only access.', $lead, new DateTimeImmutable());
 
@@ -85,12 +95,67 @@ final class ManageCaseAssignmentTest extends TestCase
     {
         [$case, $lead, $membership, $leadAssignment] = $this->scope();
         $audit = new InMemoryAssignmentAuditEvents();
-        $service = new TransitionManagedCase(new AuthoriseCaseAccess($this->memberships([$membership]), new InMemoryAssignments([$leadAssignment])), $audit);
+        $assignments = new InMemoryAssignments([$leadAssignment]);
+        $service = new TransitionManagedCase(
+            new AuthoriseCaseAccess($this->memberships([$membership]), $assignments),
+            $assignments,
+            $audit,
+            new IssueProfessionalNotification(new InMemoryProfessionalNotifications()),
+        );
 
         $service->transition($case, CaseStatus::Active, 'Fictional assessment is continuing.', 'Fictional review record is available.', $lead, new DateTimeImmutable('2026-08-11T12:00:00+00:00'));
 
         self::assertSame(CaseStatus::Active, $case->status());
         self::assertSame(['status_changed'], array_map(static fn (CaseAuditEvent $event): string => $event->action()->value, $audit->events));
+    }
+
+    public function testLifecycleTransitionNotifiesTheOtherAssignedProfessionalsButNotTheActor(): void
+    {
+        [$case, $lead, $membership, $leadAssignment] = $this->scope();
+        $contributor = $this->professional('contributor');
+        $contributorMembership = new OrganisationMembership(Uuid::v7(), $contributor, $case->organisation(), ProfessionalRole::Triage, new DateTimeImmutable());
+        $contributorAssignment = new CaseAssignment(Uuid::v7(), $case, $contributor, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable());
+        $assignments = new InMemoryAssignments([$leadAssignment, $contributorAssignment]);
+        $notifications = new InMemoryProfessionalNotifications();
+        $service = new TransitionManagedCase(
+            new AuthoriseCaseAccess($this->memberships([$membership, $contributorMembership]), $assignments),
+            $assignments,
+            new InMemoryAssignmentAuditEvents(),
+            new IssueProfessionalNotification($notifications),
+        );
+
+        $service->transition($case, CaseStatus::Active, 'Fictional assessment is continuing.', 'Fictional review record is available.', $lead, new DateTimeImmutable('2026-08-11T12:00:00+00:00'));
+
+        self::assertCount(1, $notifications->saved);
+        self::assertSame($contributor, $notifications->saved[0]->recipient());
+        self::assertSame(ProfessionalNotificationType::CaseLifecycleChanged, $notifications->saved[0]->type());
+    }
+
+    public function testADisabledOptionalPreferenceSuppressesTheLifecycleNotification(): void
+    {
+        [$case, $lead, $membership, $leadAssignment] = $this->scope();
+        $contributor = $this->professional('contributor');
+        $contributorMembership = new OrganisationMembership(Uuid::v7(), $contributor, $case->organisation(), ProfessionalRole::Triage, new DateTimeImmutable());
+        $contributorAssignment = new CaseAssignment(Uuid::v7(), $case, $contributor, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable());
+        $assignments = new InMemoryAssignments([$leadAssignment, $contributorAssignment]);
+        $notifications = new InMemoryProfessionalNotifications();
+        $notifications->changePreference($contributor, ProfessionalNotificationType::CaseLifecycleChanged, false);
+        $service = new TransitionManagedCase(
+            new AuthoriseCaseAccess($this->memberships([$membership, $contributorMembership]), $assignments),
+            $assignments,
+            new InMemoryAssignmentAuditEvents(),
+            new IssueProfessionalNotification($notifications),
+        );
+
+        $service->transition($case, CaseStatus::Active, 'Fictional assessment is continuing.', 'Fictional review record is available.', $lead, new DateTimeImmutable('2026-08-11T12:00:00+00:00'));
+
+        self::assertSame([], $notifications->saved);
+    }
+
+    public function testASafeguardingRequiredNotificationTypeHasNoStoredPreference(): void
+    {
+        $this->expectException(LogicException::class);
+        new ProfessionalNotificationPreference($this->professional('recipient'), ProfessionalNotificationType::CaseAssigned, false);
     }
 
     /** @return array{ManagedCase, Professional, OrganisationMembership, CaseAssignment} */
@@ -134,6 +199,19 @@ final class InMemoryAssignments implements CaseAssignmentRepository
     public function findActiveByCase(ManagedCase $case): array { return array_values(array_filter($this->assignments, static fn (CaseAssignment $assignment): bool => $assignment->managedCase()->id()->equals($case->id()) && $assignment->isActive())); }
     public function save(CaseAssignment $assignment): void { $this->assignments[] = $assignment; }
     public function replaceLead(CaseAssignment $formerLead, CaseAssignment $newLead): void { $this->assignments[] = $newLead; }
+}
+
+final class InMemoryProfessionalNotifications implements ProfessionalNotificationRepository
+{
+    /** @var list<ProfessionalNotification> */ public array $saved = [];
+    /** @var array<string, bool> */ private array $preferences = [];
+
+    public function findFor(Professional $professional, int $limit): array { return array_values(array_filter($this->saved, static fn (ProfessionalNotification $notification): bool => $notification->recipient()->id()->equals($professional->id()))); }
+    public function findForRecipient(Uuid $id, Professional $professional): ?ProfessionalNotification { foreach ($this->saved as $notification) { if ($notification->id()->equals($id) && $notification->recipient()->id()->equals($professional->id())) return $notification; } return null; }
+    public function save(ProfessionalNotification $notification): void { $this->saved[] = $notification; }
+    public function enabled(Professional $professional, ProfessionalNotificationType $type): bool { return $type->isRequired() || ($this->preferences[$this->key($professional, $type)] ?? true); }
+    public function changePreference(Professional $professional, ProfessionalNotificationType $type, bool $enabled): void { $this->preferences[$this->key($professional, $type)] = (new ProfessionalNotificationPreference($professional, $type, $enabled))->enabled(); }
+    private function key(Professional $professional, ProfessionalNotificationType $type): string { return $professional->id()->toRfc4122().'|'.$type->value; }
 }
 
 final class InMemoryAssignmentAuditEvents implements CaseAuditEventRepository

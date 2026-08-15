@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
@@ -15,11 +15,6 @@ export class ProfessionalPortalStore {
   readonly errorMessage = signal<string | null>(null);
   readonly newPage = signal<ProfessionalReportPage | null>(null);
   readonly reviewedPage = signal<ProfessionalReportPage | null>(null);
-  readonly newNotificationCount = computed(() => {
-    const page = this.newPage();
-    if (!page) return null;
-    return `${page.items.length}${page.pagination.nextCursor ? '+' : ''}`;
-  });
 
   load(force = false): void {
     if (this.requested && !force) return;

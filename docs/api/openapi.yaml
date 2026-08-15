@@ -987,6 +987,68 @@ paths:
       security:
         -
           professionalSession: []
+  /api/v1/professional/notifications:
+    get:
+      tags:
+        - 'Professional notifications'
+      summary: 'List permission-safe in-product notifications'
+      operationId: listProfessionalNotifications
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/notifications/{id}/read':
+    post:
+      tags:
+        - 'Professional notifications'
+      summary: 'Mark an accessible notification as read'
+      operationId: markProfessionalNotificationRead
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+  /api/v1/professional/notification-preferences:
+    get:
+      tags:
+        - 'Professional notifications'
+      summary: 'Get professional notification preferences'
+      operationId: getProfessionalNotificationPreferences
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/notification-preferences/{type}':
+    patch:
+      tags:
+        - 'Professional notifications'
+      summary: 'Change an optional professional notification preference'
+      operationId: changeProfessionalNotificationPreference
+      parameters:
+        -
+          name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: ''
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/reports:
     get:
       tags:
@@ -3365,6 +3427,9 @@ tags:
   -
     name: 'Professional access'
     description: 'Professional access'
+  -
+    name: 'Professional notifications'
+    description: 'Professional notifications'
   -
     name: 'Professional reports'
     description: 'Professional reports'

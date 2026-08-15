@@ -1,0 +1,50 @@
+<section class="notifications" aria-labelledby="notifications-title">
+  <p class="eyebrow">Tu espacio</p>
+  <h1 id="notifications-title">Avisos</h1>
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  @if (loading()) {
+    <p role="status">Cargando avisos…</p>
+  } @else if (items().length === 0) {
+    <p class="empty">No tienes avisos disponibles.</p>
+  } @else {
+    <ul aria-label="Avisos disponibles">
+      @for (notification of items(); track notification.id) {
+        <li [class.unread]="notification.readAt === null">
+          <button type="button" (click)="open(notification)">
+            <strong>{{ label(notification.type) }}</strong
+            ><span
+              >{{ notification.readAt === null ? 'Sin leer' : 'Leído' }} ·
+              {{ notification.createdAt | date: 'short' }}</span
+            >
+          </button>
+        </li>
+      }
+    </ul>
+  }
+  <section class="preferences" aria-labelledby="preferences-title">
+    <h2 id="preferences-title">Preferencias</h2>
+    <p>
+      Los avisos de asignación son obligatorios para mantener la visibilidad del trabajo asignado.
+    </p>
+    @for (preference of preferences(); track preference.type) {
+      <label
+        ><input
+          type="checkbox"
+          [checked]="preference.enabled"
+          [disabled]="preference.required"
+          (change)="change(preference, $any($event.target).checked)"
+        />
+        {{
+          preference.type === 'case_assigned'
+            ? 'Asignaciones de caso'
+            : 'Cambios de estado de casos'
+        }}
+        @if (preference.required) {
+          <span>(obligatorio)</span>
+        }
+      </label>
+    }
+  </section>
+</section>

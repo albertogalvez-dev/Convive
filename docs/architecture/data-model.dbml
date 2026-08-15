@@ -320,8 +320,36 @@ Table organisation_memberships {
   }
 }
 
+Table professional_notifications {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  recipient_professional_id uuid [not null, note: 'the only professional who may read the row; delivery is recipient-specific, never broadcast']
+  case_id uuid [not null, note: 'deep-link target only; access is re-authorised on every read, so a revoked recipient stops seeing the row']
+  type varchar(30) [not null, note: 'case_assigned | case_lifecycle_changed (CHECK constraint)']
+  created_at timestamptz [not null, note: 'immutable UTC instant']
+  read_at timestamptz [null, note: 'set once when the recipient acknowledges; never reset']
+
+  indexes {
+    (recipient_professional_id, created_at, id)
+  }
+
+  note: 'Minimised in-product notifications. No report or case content is copied here: the row carries only a type, an instant and a case reference resolved through the normal access check.'
+}
+
+Table professional_notification_preferences {
+  professional_id uuid [not null]
+  notification_type varchar(30) [not null, note: 'case_lifecycle_changed only (CHECK constraint); safeguarding-required types are never persisted and cannot be disabled']
+  enabled boolean [not null]
+
+  indexes {
+    (professional_id, notification_type) [pk, unique]
+  }
+}
+
 Ref: organisation_memberships.professional_id > professionals.id
 Ref: organisation_memberships.organisation_id > organisations.id
+Ref: professional_notifications.recipient_professional_id > professionals.id
+Ref: professional_notifications.case_id > managed_cases.id
+Ref: professional_notification_preferences.professional_id > professionals.id
 Ref: professional_export_events.professional_id > professionals.id
 Ref: professional_credential_invitations.professional_id > professionals.id
 Ref: professional_credential_invitations.issued_by_professional_id > professionals.id

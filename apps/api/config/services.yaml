@@ -57,6 +57,7 @@ services:
     App\Professionals\Domain\OrganisationMembershipRepository: '@App\Professionals\Infrastructure\DoctrineOrganisationMembershipRepository'
     App\Professionals\Domain\ProfessionalCredentialInvitationRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalCredentialInvitationRepository'
     App\Professionals\Domain\ProfessionalAccountAuditEventRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalAccountAuditEventRepository'
+    App\Professionals\Domain\ProfessionalNotificationRepository: '@App\Professionals\Infrastructure\DoctrineProfessionalNotificationRepository'
     App\Cases\Domain\CaseInvolvedPersonRepository: '@App\Cases\Infrastructure\DoctrineCaseInvolvedPersonRepository'
     App\Cases\Domain\CaseAssignmentRepository: '@App\Cases\Infrastructure\DoctrineCaseAssignmentRepository'
     App\Cases\Domain\CaseTaskRepository: '@App\Cases\Infrastructure\DoctrineCaseTaskRepository'
