@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
-import { ProfessionalPortalStore } from './professional-portal.store';
 import { ProfessionalNotificationsService } from './professional-notifications.service';
+import { ProfessionalPortalStore } from './professional-portal.store';
 
 @Component({
   selector: 'app-professional-shell',
