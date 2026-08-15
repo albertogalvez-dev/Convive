@@ -708,6 +708,89 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame(0, $this->responsePayload()['unreadCount']);
     }
 
+    public function testANotificationCannotBeReadByAProfessionalWhoIsNotItsRecipient(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $recipient = $this->createProfessional('notification-owner', $organisation, ProfessionalRole::Triage);
+        $bystander = $this->createProfessional('notification-bystander', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $recipient, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable()));
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $bystander, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable()));
+        $notification = new ProfessionalNotification(Uuid::v7(), $recipient, $managedCase, ProfessionalNotificationType::CaseAssigned, new DateTimeImmutable());
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($bystander);
+        $this->client->request('POST', '/api/v1/professional/notifications/'.$notification->id()->toRfc4122().'/read', server: $this->sameOriginHeaders());
+
+        // The bystander can reach the case, so a leaked notification would only
+        // be prevented by the recipient boundary itself.
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->client->request('GET', '/api/v1/professional/notifications');
+        self::assertSame([], $this->responsePayload()['items']);
+    }
+
+    public function testReadStateSurvivesANewSessionForTheSameRecipient(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $recipient = $this->createProfessional('notification-reader', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $recipient, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable()));
+        $notification = new ProfessionalNotification(Uuid::v7(), $recipient, $managedCase, ProfessionalNotificationType::CaseAssigned, new DateTimeImmutable());
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($recipient);
+        $this->client->request('POST', '/api/v1/professional/notifications/'.$notification->id()->toRfc4122().'/read', server: $this->sameOriginHeaders());
+        self::assertResponseIsSuccessful();
+        $firstReadAt = $this->responsePayload()['readAt'];
+        self::assertNotNull($firstReadAt);
+
+        $this->client->loginUser($recipient);
+        $this->client->request('GET', '/api/v1/professional/notifications');
+
+        self::assertResponseIsSuccessful();
+        self::assertSame(0, $this->responsePayload()['unreadCount']);
+        // Doctrine's datetimetz mapping persists whole seconds, so the reloaded
+        // acknowledgement is compared at the resolution actually stored.
+        self::assertSame(
+            $this->toPersistedSecond($firstReadAt),
+            $this->toPersistedSecond($this->responsePayload()['items'][0]['readAt']),
+        );
+    }
+
+    public function testAnOptionalNotificationPreferenceCanBeDisabledButARequiredOneCannot(): void
+    {
+        [, , $organisation] = $this->createCaseWorkspace();
+        $professional = $this->createProfessional('notification-preferences', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->flush();
+        $this->client->loginUser($professional);
+
+        $this->client->request('GET', '/api/v1/professional/notification-preferences');
+        self::assertResponseIsSuccessful();
+        self::assertSame(
+            [
+                ['type' => 'case_assigned', 'enabled' => true, 'required' => true],
+                ['type' => 'case_lifecycle_changed', 'enabled' => true, 'required' => false],
+            ],
+            $this->responsePayload()['items'],
+        );
+
+        $this->client->jsonRequest('PATCH', '/api/v1/professional/notification-preferences/case_lifecycle_changed', ['enabled' => false], $this->sameOriginHeaders());
+        self::assertResponseIsSuccessful();
+        self::assertFalse($this->responsePayload()['enabled']);
+
+        $this->client->jsonRequest('PATCH', '/api/v1/professional/notification-preferences/case_assigned', ['enabled' => false], $this->sameOriginHeaders());
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $this->client->request('GET', '/api/v1/professional/notification-preferences');
+        self::assertSame(
+            [
+                ['type' => 'case_assigned', 'enabled' => true, 'required' => true],
+                ['type' => 'case_lifecycle_changed', 'enabled' => false, 'required' => false],
+            ],
+            $this->responsePayload()['items'],
+        );
+    }
+
     /** @return array{ManagedCase, Professional, Organisation, ReportAttachment, Report} */
     private function createCaseWorkspace(?DateTimeImmutable $now = null): array
     {
@@ -828,6 +911,11 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $organisation;
+    }
+
+    private function toPersistedSecond(string $timestamp): string
+    {
+        return (new DateTimeImmutable($timestamp))->format('Y-m-d\TH:i:sP');
     }
 
     /** @return array<string, string> */
