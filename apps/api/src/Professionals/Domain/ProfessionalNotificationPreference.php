@@ -6,6 +6,7 @@ namespace App\Professionals\Domain;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'professional_notification_preferences')]
@@ -26,7 +27,10 @@ class ProfessionalNotificationPreference
 
     public function __construct(Professional $professional, ProfessionalNotificationType $type, bool $enabled)
     {
-        if ($type->isRequired()) throw new \LogicException('Required notification preferences cannot be persisted.');
+        if ($type->isRequired()) {
+            throw new LogicException('A safeguarding-required notification type has no stored preference.');
+        }
+
         $this->professional = $professional;
         $this->type = $type;
         $this->enabled = $enabled;

@@ -14,9 +14,21 @@ use Symfony\Component\Uid\Uuid;
 
 final readonly class IssueProfessionalNotification
 {
-    public function __construct(private ProfessionalNotificationRepository $notifications) {}
-    public function issue(Professional $recipient, ManagedCase $case, ProfessionalNotificationType $type, DateTimeImmutable $now): void
+    public function __construct(private ProfessionalNotificationRepository $notifications)
     {
-        if ($this->notifications->enabled($recipient, $type)) $this->notifications->save(new ProfessionalNotification(Uuid::v7(), $recipient, $case, $type, $now));
+    }
+
+    /**
+     * Records a minimised notification for a single recipient. No report or case
+     * content is copied: the row carries a type, an instant and the case whose
+     * access is re-authorised on every read.
+     */
+    public function issue(Professional $recipient, ManagedCase $managedCase, ProfessionalNotificationType $type, DateTimeImmutable $now): void
+    {
+        if (!$this->notifications->enabled($recipient, $type)) {
+            return;
+        }
+
+        $this->notifications->save(new ProfessionalNotification(Uuid::v7(), $recipient, $managedCase, $type, $now));
     }
 }

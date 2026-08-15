@@ -36,8 +36,13 @@ class ProfessionalNotification
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $readAt = null;
 
-    public function __construct(Uuid $id, Professional $recipient, ManagedCase $managedCase, ProfessionalNotificationType $type, DateTimeImmutable $createdAt)
-    {
+    public function __construct(
+        Uuid $id,
+        Professional $recipient,
+        ManagedCase $managedCase,
+        ProfessionalNotificationType $type,
+        DateTimeImmutable $createdAt,
+    ) {
         $this->id = $id;
         $this->recipient = $recipient;
         $this->managedCase = $managedCase;
