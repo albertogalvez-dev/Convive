@@ -13,9 +13,9 @@ use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditTarget;
 use App\Cases\Domain\CasePermission;
 use App\Cases\Domain\ManagedCase;
+use App\Professionals\Application\IssueProfessionalNotification;
 use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
-use App\Professionals\Application\IssueProfessionalNotification;
 use App\Professionals\Domain\ProfessionalNotificationType;
 use DateTimeImmutable;
 use LogicException;
@@ -28,7 +28,7 @@ final readonly class ManageCaseAssignment
         private CaseAssignmentRepository $assignments,
         private OrganisationMembershipRepository $memberships,
         private CaseAuditEventRepository $auditEvents,
-        private ?IssueProfessionalNotification $notifications = null,
+        private IssueProfessionalNotification $notifications,
     ) {
     }
 
@@ -48,7 +48,7 @@ final readonly class ManageCaseAssignment
         $this->assignments->save($assignment);
         $this->auditEvents->append(new CaseAuditEvent(Uuid::v7(), $case, $actor, CaseAuditAction::AssignmentCreated, CaseAuditTarget::Assignment, $assignment->id(), $now));
         $this->auditEvents->flush();
-        $this->notifications?->issue($target, $case, ProfessionalNotificationType::CaseAssigned, $now);
+        $this->notifications->issue($target, $case, ProfessionalNotificationType::CaseAssigned, $now);
 
         return $assignment;
     }
@@ -72,7 +72,7 @@ final readonly class ManageCaseAssignment
         $this->auditEvents->append(new CaseAuditEvent(Uuid::v7(), $case, $actor, CaseAuditAction::AssignmentCreated, CaseAuditTarget::Assignment, $newLead->id(), $now));
         $this->auditEvents->append(new CaseAuditEvent(Uuid::v7(), $case, $actor, CaseAuditAction::AssignmentRevoked, CaseAuditTarget::Assignment, $formerLead->id(), $now));
         $this->auditEvents->flush();
-        $this->notifications?->issue($target, $case, ProfessionalNotificationType::CaseAssigned, $now);
+        $this->notifications->issue($target, $case, ProfessionalNotificationType::CaseAssigned, $now);
 
         return $newLead;
     }
