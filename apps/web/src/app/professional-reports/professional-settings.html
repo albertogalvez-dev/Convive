@@ -93,6 +93,70 @@
   </div>
 
   <div class="settings-card">
+    <h2>Ausencias planificadas</h2>
+    <p class="card-hint">
+      Avisar de una ausencia no traspasa tus casos ni te quita el acceso: solo hace visible que
+      har&aacute; falta decidir qui&eacute;n se ocupa mientras no est&aacute;s.
+    </p>
+
+    @if (absenceError(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+
+    <form (ngSubmit)="recordAbsence()">
+      <label>
+        <span>Desde</span>
+        <input
+          type="date"
+          name="startsOn"
+          required
+          [ngModel]="absenceForm().startsOn"
+          (ngModelChange)="absenceForm.set({ ...absenceForm(), startsOn: $event })"
+        />
+      </label>
+      <label>
+        <span>Hasta</span>
+        <input
+          type="date"
+          name="endsOn"
+          required
+          [ngModel]="absenceForm().endsOn"
+          (ngModelChange)="absenceForm.set({ ...absenceForm(), endsOn: $event })"
+        />
+      </label>
+      <label>
+        <span>Nota (opcional)</span>
+        <input
+          type="text"
+          name="note"
+          maxlength="200"
+          [ngModel]="absenceForm().note"
+          (ngModelChange)="absenceForm.set({ ...absenceForm(), note: $event })"
+          aria-describedby="absence-note-hint"
+        />
+      </label>
+      <p id="absence-note-hint" class="field-hint">
+        Es una nota operativa para tu equipo. No escribas motivos de salud ni datos personales.
+      </p>
+      <button type="submit">Registrar ausencia</button>
+    </form>
+
+    @if (absences().length > 0) {
+      <ul class="absences">
+        @for (absence of absences(); track absence.id) {
+          <li>
+            <strong>{{ absence.startsOn }} &ndash; {{ absence.endsOn }}</strong>
+            @if (absence.note) {
+              <span>{{ absence.note }}</span>
+            }
+            <button type="button" (click)="cancelAbsence(absence)">Anular</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="settings-card">
     <h2>Sesi&oacute;n</h2>
     <div class="session-row">
       <div>

@@ -1,9 +1,11 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, UpperCasePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
   AccountAdministrationOrganisation,
+  CaseContinuityEntry,
+  CaseContinuityReason,
   ProfessionalAccount,
   ProfessionalAccountRole,
   ProfessionalAccountsService,
@@ -13,7 +15,7 @@ import {
 @Component({
   selector: 'app-professional-accounts',
   standalone: true,
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, UpperCasePipe],
   templateUrl: './professional-accounts.html',
   styleUrl: './professional-accounts.scss',
 })
@@ -23,6 +25,7 @@ export class ProfessionalAccounts {
   protected readonly organisations = signal<AccountAdministrationOrganisation[]>([]);
   protected readonly accounts = signal<ProfessionalAccount[]>([]);
   protected readonly memberships = signal<OrganisationMembership[]>([]);
+  protected readonly continuity = signal<CaseContinuityEntry[]>([]);
   protected readonly error = signal<string | null>(null);
   protected readonly message = signal<string | null>(null);
   protected readonly credential = signal<{ secret: string; expiresAt: string } | null>(null);
@@ -100,6 +103,18 @@ export class ProfessionalAccounts {
       });
   }
 
+  /**
+   * Deliberately operational wording. An entry means work needs a decision,
+   * never that the case itself has been judged.
+   */
+  protected continuityReasonLabel(reason: CaseContinuityReason): string {
+    return {
+      responsible_absent: 'La persona responsable está ausente y nadie ha asumido el caso.',
+      overdue_task: 'Hay al menos una tarea fuera de plazo.',
+      absent_with_overdue_task: 'La persona responsable está ausente y hay tareas fuera de plazo.',
+    }[reason];
+  }
+
   protected statusLabel(status: ProfessionalAccount['status']): string {
     return {
       invited: 'Pendiente de activación',
@@ -141,6 +156,15 @@ export class ProfessionalAccounts {
     this.accountsApi.memberships(this.selectedOrganisationId).subscribe({
       next: ({ items }) => this.memberships.set(items),
       error: () => this.error.set('No se pueden cargar las membresías.'),
+    });
+    this.loadContinuity();
+  }
+
+  private loadContinuity(): void {
+    if (!this.selectedOrganisationId) return;
+    this.accountsApi.caseContinuity(this.selectedOrganisationId).subscribe({
+      next: ({ items }) => this.continuity.set(items),
+      error: () => this.error.set('No se puede cargar la continuidad de casos.'),
     });
   }
 }

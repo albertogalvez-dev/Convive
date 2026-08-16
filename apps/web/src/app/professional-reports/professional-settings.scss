@@ -207,3 +207,30 @@ button {
     flex-direction: column;
   }
 }
+
+.absences {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.absences li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  border: 1px solid #e0e7f0;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1rem;
+  background: #f8fafc;
+}
+.absences span {
+  color: #657694;
+  font-size: 0.85rem;
+}
+.absences button {
+  margin-left: auto;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}

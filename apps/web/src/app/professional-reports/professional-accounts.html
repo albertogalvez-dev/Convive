@@ -124,5 +124,30 @@
         }
       </ul>
     </section>
+
+    <section class="continuity" aria-labelledby="continuity-title">
+      <h2 id="continuity-title">Casos que necesitan una decisión de continuidad</h2>
+      <p class="continuity-note">
+        Esto indica que hay trabajo sin nadie al cargo, no una valoraci&oacute;n del caso. Ver esta
+        lista no te da acceso a los casos: para retomar uno hay que reasignarlo
+        expl&iacute;citamente, y esa reasignaci&oacute;n queda registrada.
+      </p>
+      @if (continuity().length === 0) {
+        <p class="empty">No hay casos pendientes de una decisi&oacute;n de continuidad.</p>
+      } @else {
+        <ul class="continuity-list">
+          @for (entry of continuity(); track entry.caseId) {
+            <li>
+              <strong>Caso {{ entry.caseId.slice(0, 8) | uppercase }}</strong>
+              <span class="responsible">Responsable: {{ entry.responsible.name }}</span>
+              <span class="reason">{{ continuityReasonLabel(entry.reason) }}</span>
+              @if (entry.earliestOverdueAt; as overdueAt) {
+                <span class="overdue">Desde {{ overdueAt | date: 'short' }}</span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
   }
 </section>

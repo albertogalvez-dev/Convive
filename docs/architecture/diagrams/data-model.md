@@ -212,6 +212,15 @@ erDiagram
         timestamptz created_at "immutable UTC"
         timestamptz read_at "nullable; set once on acknowledgement"
     }
+    professional_absences {
+        uuid id PK "UUIDv7, application-generated"
+        uuid professional_id FK "recorded by the professional about themselves"
+        date starts_on "inclusive"
+        date ends_on "inclusive; CHECK ends_on >= starts_on"
+        varchar note "optional operational note; never a personal reason"
+        timestamptz recorded_at "immutable UTC"
+        timestamptz cancelled_at "nullable; row persists after cancellation"
+    }
     professional_notification_preferences {
         uuid professional_id PK "composite key with notification_type"
         varchar notification_type PK "case_lifecycle_changed only; required types are never stored"
@@ -249,5 +258,6 @@ erDiagram
     organisations ||--o{ organisation_memberships : "grants"
     professionals ||--o{ professional_notifications : "receives"
     professionals ||--o{ professional_notification_preferences : "sets"
+    professionals ||--o{ professional_absences : "records own planned absence"
     managed_cases ||--o{ professional_notifications : "is the deep-link target of"
 ```

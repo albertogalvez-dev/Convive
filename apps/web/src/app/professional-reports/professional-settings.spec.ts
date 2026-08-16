@@ -45,8 +45,9 @@ describe('ProfessionalSettings', () => {
 
   // ngModel writes to the DOM asynchronously, so the fixture has to settle
   // before an input's value reflects the loaded profile.
-  const flushProfile = async (): Promise<void> => {
+  const flushProfile = async (absences: unknown[] = []): Promise<void> => {
     http.expectOne('/api/v1/professional/profile').flush(profile);
+    http.expectOne('/api/v1/professional/absences').flush({ items: absences });
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -165,6 +166,35 @@ describe('ProfessionalSettings', () => {
     expect(page.querySelector<HTMLInputElement>('input[name=email]')?.value).toBe(
       'ocupado@example.com',
     );
+  });
+
+  it('states that recording an absence transfers nothing, and warns against personal reasons', async () => {
+    await flushProfile();
+
+    const card = [...page.querySelectorAll('.settings-card')].find((section) =>
+      section.textContent?.includes('Ausencias planificadas'),
+    );
+    expect(card?.textContent).toContain('no traspasa tus casos ni te quita el acceso');
+    expect(card?.querySelector('#absence-note-hint')?.textContent).toContain(
+      'No escribas motivos de salud ni datos personales',
+    );
+  });
+
+  it('records an absence and lists it with a way to cancel', async () => {
+    await flushProfile([
+      { id: 'absence-1', startsOn: '2026-09-01', endsOn: '2026-09-05', note: null },
+    ]);
+
+    expect(page.querySelector('.absences li')?.textContent).toContain('2026-09-01');
+
+    page.querySelector<HTMLButtonElement>('.absences button')?.click();
+    const cancelled = http.expectOne('/api/v1/professional/absences/absence-1');
+    expect(cancelled.request.method).toBe('DELETE');
+    cancelled.flush(null);
+    http.expectOne('/api/v1/professional/absences').flush({ items: [] });
+    fixture.detectChanges();
+
+    expect(page.querySelector('.absences')).toBeNull();
   });
 
   it('closes the current session', async () => {

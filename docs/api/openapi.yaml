@@ -56,6 +56,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
       security: []
+  '/api/v1/professional/organisations/{id}/case-continuity':
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'List open cases of an administered organisation that need a continuity decision'
+      description: 'Operational metadata only. An entry means the responsible professional is absent today or the case holds overdue work; it is not a safeguarding judgement, and reading it grants no access to the case.'
+      operationId: listOrganisationCaseContinuity
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Cases needing a continuity decision. Empty when the professional does not administer the organisation.'
+        '404':
+          description: 'The organisation is not available.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/organisations/{id}/memberships':
     get:
       tags:
@@ -134,6 +158,62 @@ paths:
       responses:
         default:
           description: ''
+      security:
+        -
+          professionalSession: []
+  /api/v1/professional/absences:
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'List the current professional own planned absences'
+      operationId: listProfessionalAbsences
+      responses:
+        '200':
+          description: 'The professional own planned absences.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
+    post:
+      tags:
+        - 'Professional access'
+      summary: 'Record a planned absence for the current professional'
+      operationId: recordProfessionalAbsence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordProfessionalAbsenceRequest'
+      responses:
+        '201':
+          description: 'The planned absence was recorded. It moves no case and changes no access.'
+        '400':
+          description: 'The absence period is invalid.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
+  '/api/v1/professional/absences/{id}':
+    delete:
+      tags:
+        - 'Professional access'
+      summary: 'Cancel one of the current professional own planned absences'
+      operationId: cancelProfessionalAbsence
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'The planned absence was cancelled.'
+        '404':
+          description: 'No such absence belongs to this professional.'
       security:
         -
           professionalSession: []
@@ -3152,6 +3232,22 @@ components:
             - suspend
             - resume
             - remove
+      type: object
+    RecordProfessionalAbsenceRequest:
+      required:
+        - startsOn
+        - endsOn
+      properties:
+        startsOn:
+          type: string
+        endsOn:
+          type: string
+        note:
+          type:
+            - string
+            - 'null'
+          default: null
+          maxLength: 200
       type: object
     AcceptProfessionalCredentialRequest:
       required:

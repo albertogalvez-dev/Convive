@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Cases\Infrastructure;
 
 use App\Cases\Domain\CaseAssignment;
+use App\Cases\Domain\CaseAssignmentRole;
 use App\Cases\Domain\CaseCommunication;
+use App\Cases\Domain\CaseStatus;
 use App\Cases\Domain\CaseInvolvedPerson;
 use App\Cases\Domain\CaseTask;
 use App\Cases\Domain\CaseTaskStatus;
@@ -294,6 +296,61 @@ final readonly class DoctrineCaseWorkspaceRepository implements CaseWorkspaceRep
             ->addOrderBy('communication.id', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findOpenCaseResponsibilities(Organisation $organisation, DateTimeImmutable $now): array
+    {
+        // Two fixed queries rather than one mixed hydration: the assignments,
+        // then the earliest overdue task per case. Neither grows with the
+        // number of cases.
+        /** @var list<CaseAssignment> $leadAssignments */
+        $leadAssignments = $this->entityManager->createQueryBuilder()
+            ->select('assignment', 'managedCase', 'lead')
+            ->from(CaseAssignment::class, 'assignment')
+            ->join('assignment.managedCase', 'managedCase')
+            ->join('assignment.professional', 'lead')
+            ->where('managedCase.organisation = :organisation')
+            ->andWhere('managedCase.status != :closed')
+            ->andWhere('assignment.role = :lead')
+            ->andWhere('assignment.revokedAt IS NULL')
+            ->setParameter('organisation', $organisation)
+            ->setParameter('closed', CaseStatus::Closed->value)
+            ->setParameter('lead', CaseAssignmentRole::Lead->value)
+            ->getQuery()
+            ->getResult();
+
+        if ($leadAssignments === []) {
+            return [];
+        }
+
+        /** @var list<array{caseId: string, dueAt: string}> $overdueRows */
+        $overdueRows = $this->entityManager->createQueryBuilder()
+            ->select('IDENTITY(task.managedCase) AS caseId', 'MIN(task.dueAt) AS dueAt')
+            ->from(CaseTask::class, 'task')
+            ->join('task.managedCase', 'taskCase')
+            ->where('taskCase.organisation = :organisation')
+            ->andWhere('task.status = :pending')
+            ->andWhere('task.dueAt < :now')
+            ->setParameter('organisation', $organisation)
+            ->setParameter('pending', CaseTaskStatus::Pending->value)
+            ->setParameter('now', $now)
+            ->groupBy('task.managedCase')
+            ->getQuery()
+            ->getArrayResult();
+
+        $earliestOverdue = [];
+        foreach ($overdueRows as $row) {
+            $earliestOverdue[(string) $row['caseId']] = new DateTimeImmutable((string) $row['dueAt']);
+        }
+
+        return array_map(
+            static fn (CaseAssignment $assignment): array => [
+                'managedCase' => $assignment->managedCase(),
+                'lead' => $assignment->professional(),
+                'earliestOverdueAt' => $earliestOverdue[$assignment->managedCase()->id()->toRfc4122()] ?? null,
+            ],
+            $leadAssignments,
+        );
     }
 
     public function findSourceDecision(ManagedCase $managedCase): ?ReportTriageDecision
