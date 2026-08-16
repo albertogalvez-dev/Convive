@@ -10,22 +10,19 @@ main {
   padding: 2rem clamp(1.25rem, 5vw, 5rem) 3rem;
 }
 header,
-footer,
 .hero div,
 nav {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-header,
-footer {
+header {
   justify-content: space-between;
 }
 header nav {
   margin-left: auto;
 }
-header a,
-footer a {
+header a {
   color: #176f9c;
   font-weight: 700;
   text-decoration: none;
@@ -104,11 +101,6 @@ article p {
   margin-top: 1rem;
   background: #eaf7fc;
 }
-footer {
-  margin-top: 3.5rem;
-  color: #5d6f8e;
-  font-size: 0.85rem;
-}
 a:focus-visible {
   outline: 3px solid #8bd4f2;
   outline-offset: 3px;
@@ -129,9 +121,5 @@ a:focus-visible {
   }
   header nav {
     display: none;
-  }
-  footer {
-    align-items: flex-start;
-    flex-direction: column;
   }
 }

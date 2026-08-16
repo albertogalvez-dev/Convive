@@ -6,11 +6,35 @@
     <a [href]="professionalAccessUrl">Área profesional</a>
   </header>
 
-  <section aria-labelledby="information-title">
-    <p>{{ content.eyebrow }}</p>
+  <article aria-labelledby="information-title">
+    <p class="eyebrow">{{ content.eyebrow }}</p>
     <h1 id="information-title">{{ content.title }}</h1>
-    <p>{{ content.description }}</p>
+    <p class="lead">{{ content.description }}</p>
     <p class="notice">{{ content.notice }}</p>
-    <a routerLink="/">Volver al inicio</a>
-  </section>
+
+    @for (section of content.sections; track section.heading) {
+      <section [attr.aria-labelledby]="'section-' + $index">
+        <h2 [id]="'section-' + $index">{{ section.heading }}</h2>
+        @for (paragraph of section.paragraphs; track paragraph) {
+          <p>{{ paragraph }}</p>
+        }
+        @if (section.items) {
+          <ul>
+            @for (item of section.items; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    <p class="review">
+      Revisado el {{ content.review.reviewedOn }} por {{ content.review.owner }}.
+      {{ content.review.trigger }}
+    </p>
+
+    <a class="back" routerLink="/">Volver al inicio</a>
+  </article>
+
+  <app-public-site-footer />
 </main>

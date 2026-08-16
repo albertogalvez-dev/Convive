@@ -2,13 +2,14 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PublicSeoService } from '../public-seo.service';
+import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
 
 const VIEWS = ['Bandeja', 'Revisión', 'Caso'] as const;
 
 @Component({
   selector: 'app-professional-demo',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, PublicSiteFooter],
   templateUrl: './professional-demo.html',
   styleUrl: './professional-demo.scss',
 })

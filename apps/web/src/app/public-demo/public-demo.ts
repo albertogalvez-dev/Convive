@@ -2,13 +2,14 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PublicSeoService } from '../public-seo.service';
+import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
 
 const STEPS = ['Describe una situación', 'Indica el contexto', 'Revisa el ejemplo'] as const;
 
 @Component({
   selector: 'app-public-demo',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, PublicSiteFooter],
   templateUrl: './public-demo.html',
   styleUrl: './public-demo.scss',
 })

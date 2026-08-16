@@ -3,23 +3,7 @@ import { Routes } from '@angular/router';
 import { applicationHostGuard, publicWebsiteHostGuard } from './host-boundary.guard';
 import { PublicHome } from './public-home/public-home';
 import { professionalAuthGuard } from './professional-access/professional-auth.guard';
-import type { PublicInformationContent } from './public-information/public-information';
-
-const publicInformationRoutes: ReadonlyArray<{
-  readonly path: string;
-  readonly content: PublicInformationContent;
-}> = [
-  {
-    path: 'contacto',
-    content: {
-      eyebrow: 'INFORMACIÓN PARA CENTROS',
-      title: 'El canal de contacto se habilitará próximamente.',
-      description:
-        'La solicitud de información y demostración se incorporará con un tratamiento de datos limitado.',
-      notice: 'No envíes información personal ni comunicaciones de convivencia por esta vía.',
-    },
-  },
-];
+import { PUBLIC_INFORMATION_PAGES } from './public-information/public-information-content';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: PublicHome, canMatch: [publicWebsiteHostGuard] },
@@ -46,8 +30,8 @@ export const routes: Routes = [
     loadComponent: () => import('./blog/blog-article').then((module) => module.BlogArticle),
     canMatch: [publicWebsiteHostGuard],
   },
-  ...publicInformationRoutes.map(({ path, content }) => ({
-    path,
+  ...PUBLIC_INFORMATION_PAGES.map((content) => ({
+    path: content.path.replace(/^\/|\/$/g, ''),
     loadComponent: () =>
       import('./public-information/public-information').then((module) => module.PublicInformation),
     canMatch: [publicWebsiteHostGuard],
