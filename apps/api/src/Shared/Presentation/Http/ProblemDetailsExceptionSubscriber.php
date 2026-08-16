@@ -11,6 +11,7 @@ use App\Professionals\Presentation\Http\InvalidProfessionalReportResponseHttpExc
 use App\Professionals\Presentation\Http\InvalidProfessionalReportTriageHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportAlreadyReviewedHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportNotFoundHttpException;
+use App\Professionals\Presentation\Http\ProfessionalEmailConflictHttpException;
 use App\Professionals\Presentation\Http\ProfessionalReportTriageConflictHttpException;
 use App\Reporting\Application\AddReportFollowUpEntry\ReportFollowUpEntryLimitReached;
 use App\Reporting\Application\AttachmentStorageLimitExceeded;
@@ -325,6 +326,19 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
                     'Invalid report triage',
                     Response::HTTP_UNPROCESSABLE_ENTITY,
                     'The submitted report triage decision is invalid.',
+                ),
+            );
+
+            return;
+        }
+
+        if ($exception instanceof ProfessionalEmailConflictHttpException) {
+            $event->setResponse(
+                $this->createResponse(
+                    'urn:convive:problem:professional-email-conflict',
+                    'Professional email conflict',
+                    Response::HTTP_CONFLICT,
+                    'The professional email address is already in use.',
                 ),
             );
 
