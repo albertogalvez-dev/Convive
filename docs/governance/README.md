@@ -54,3 +54,4 @@ gap for someone to close conveniently.
 | [Retention, deletion, legal hold and rights](retention-deletion-and-rights.md) | How long real data would be kept, how it would be removed, and how a rights request would be answered |
 | [Impact and safeguarding assessment](dpia-and-safeguarding-assessment.md) | What the system does to the people in it when it works exactly as designed |
 | [Processor, vendor and access governance](vendor-and-access-governance.md) | Which providers and administrative access paths would touch real data, and on whose authority |
+| [Real-email delivery and notification operations](email-delivery-operations.md) | Whether a pilot needs email at all, and what would have to be true before a single message left the system |
