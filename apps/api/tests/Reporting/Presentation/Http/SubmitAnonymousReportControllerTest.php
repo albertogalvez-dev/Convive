@@ -138,6 +138,90 @@ final class SubmitAnonymousReportControllerTest extends WebTestCase
         );
     }
 
+    public function testAReportNamingNobodyAndDatingNothingIsStillComplete(): void
+    {
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'Something is happening and I do not want to say more.',
+                'situationContext' => 'unknown',
+            ],
+        );
+
+        // The free-text account alone is a complete report: every disclosure
+        // field is optional and defaults to an explicit unknown rather than to
+        // a missing answer.
+        self::assertResponseStatusCodeSame(201);
+        $stored = $this->entityManager->getConnection()->fetchAssociative(
+            'SELECT reporter_timing, reported_people, reporter_recurrence FROM reports ORDER BY created_at DESC LIMIT 1',
+        );
+        self::assertIsArray($stored);
+        self::assertSame('unknown', $stored['reporter_timing']);
+        self::assertSame('unknown', $stored['reporter_recurrence']);
+        self::assertNull($stored['reported_people']);
+    }
+
+    public function testBlankReportedPeopleIsStoredAsAbsenceRatherThanAnEmptyString(): void
+    {
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'A student is being excluded repeatedly.',
+                'situationContext' => 'in_person',
+                'reportedPeople' => '   ',
+            ],
+        );
+
+        self::assertResponseStatusCodeSame(201);
+        // Nothing downstream should have to tell "left blank" from "absent".
+        self::assertNull($this->entityManager->getConnection()->fetchOne(
+            'SELECT reported_people FROM reports ORDER BY created_at DESC LIMIT 1',
+        ));
+    }
+
+    public function testTheOptionalDisclosureFieldsArePersistedWhenGiven(): void
+    {
+        $this->client->jsonRequest(
+            'POST',
+            $this->endpoint(),
+            [
+                'situationDescription' => 'A student is being excluded repeatedly.',
+                'situationContext' => 'in_person',
+                'reporterTiming' => 'within_days',
+                'reportedPeople' => 'Dos compañeros de mi clase',
+            ],
+        );
+
+        self::assertResponseStatusCodeSame(201);
+        $stored = $this->entityManager->getConnection()->fetchAssociative(
+            'SELECT reporter_timing, reported_people FROM reports ORDER BY created_at DESC LIMIT 1',
+        );
+        self::assertIsArray($stored);
+        self::assertSame('within_days', $stored['reporter_timing']);
+        self::assertSame('Dos compañeros de mi clase', $stored['reported_people']);
+    }
+
+    public function testAnInvalidTimingOrAnOverlongPeopleFieldIsRejected(): void
+    {
+        foreach ([
+            ['reporterTiming' => 'last_tuesday'],
+            ['reportedPeople' => str_repeat('a', 201)],
+        ] as $invalid) {
+            $this->client->jsonRequest(
+                'POST',
+                $this->endpoint(),
+                [
+                    'situationDescription' => 'A student is being excluded repeatedly.',
+                    'situationContext' => 'in_person',
+                ] + $invalid,
+            );
+
+            self::assertResponseStatusCodeSame(422);
+        }
+    }
+
     public function testItRejectsAllReporterMutationsInFictionalDemoModeBeforePersistingContent(): void
     {
         $this->enableFictionalDemoMode();

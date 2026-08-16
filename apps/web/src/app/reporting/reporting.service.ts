@@ -14,9 +14,13 @@ export interface SubmitReportRequest {
   situationContext: SituationContext;
   reporterRecurrence: ReporterRecurrence;
   reporterAttentionCue: ReporterAttentionCue;
+  reporterTiming: ReporterTiming;
+  /** Omitted entirely when the reporter named nobody. */
+  reportedPeople?: string;
 }
 
 export type ReporterRecurrence = 'single' | 'repeated' | 'ongoing' | 'unknown';
+export type ReporterTiming = 'within_days' | 'within_weeks' | 'longer_ago' | 'unknown';
 export type ReporterAttentionCue =
   'needs_prompt_attention' | 'no_prompt_attention_indicated' | 'unknown';
 

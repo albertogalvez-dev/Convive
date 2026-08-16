@@ -3605,6 +3605,20 @@ components:
             - needs_prompt_attention
             - no_prompt_attention_indicated
             - unknown
+        reporterTiming:
+          type: string
+          default: unknown
+          enum:
+            - within_days
+            - within_weeks
+            - longer_ago
+            - unknown
+        reportedPeople:
+          type:
+            - string
+            - 'null'
+          default: null
+          maxLength: 200
       type: object
     VerifyReportAccessRequest:
       required:

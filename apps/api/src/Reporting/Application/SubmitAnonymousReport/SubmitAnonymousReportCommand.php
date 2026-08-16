@@ -8,7 +8,9 @@ use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Domain\ReporterAttentionCue;
+use App\Reporting\Domain\ReportedPeople;
 use App\Reporting\Domain\ReporterRecurrence;
+use App\Reporting\Domain\ReporterTiming;
 
 final readonly class SubmitAnonymousReportCommand
 {
@@ -18,6 +20,8 @@ final readonly class SubmitAnonymousReportCommand
         public SituationContext $situationContext,
         public ReporterRecurrence $reporterRecurrence = ReporterRecurrence::Unknown,
         public ReporterAttentionCue $reporterAttentionCue = ReporterAttentionCue::Unknown,
+        public ReporterTiming $reporterTiming = ReporterTiming::Unknown,
+        public ?ReportedPeople $reportedPeople = null,
     ) {
     }
 }

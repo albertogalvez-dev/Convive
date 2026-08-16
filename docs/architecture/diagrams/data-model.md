@@ -17,6 +17,8 @@ erDiagram
         uuid organisation_id FK
         text situation_description
         varchar situation_context "in_person | digital | mixed | unknown"
+        varchar reporter_timing "within_days | within_weeks | longer_ago | unknown"
+        varchar reported_people "nullable; optional, reporter's own words"
         varchar status "received | reviewed; independent from triage"
         varchar public_reference UK "non-sequential"
         varchar access_secret_hash UK "64-char lowercase hex SHA-256; secret never stored"

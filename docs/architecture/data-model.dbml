@@ -15,6 +15,8 @@ Table reports {
   organisation_id uuid [not null]
   situation_description text [not null]
   situation_context varchar(20) [not null, note: 'in_person | digital | mixed | unknown (CHECK constraint)']
+  reporter_timing varchar(24) [not null, default: 'unknown', note: 'within_days | within_weeks | longer_ago | unknown (CHECK constraint); deliberately coarse, so no exact date is asked for or stored']
+  reported_people varchar(200) [null, note: 'optional, in the reporter own words; null means they named nobody, which is a complete report rather than a missing answer']
   status varchar(20) [not null, note: 'received | reviewed (CHECK constraint); independent from triage outcome']
   public_reference varchar(32) [not null, unique, note: 'non-sequential public tracking reference']
   access_secret_hash varchar(64) [not null, unique, note: 'lowercase hexadecimal SHA-256 lookup hash of the access secret; the secret is never stored']
