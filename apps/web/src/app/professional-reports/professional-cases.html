@@ -52,6 +52,30 @@
         <option value="unknown">Sin concretar</option>
       </select>
     </label>
+    <label>
+      <span>En mis notas</span>
+      <input
+        type="search"
+        name="note"
+        [ngModel]="note()"
+        (ngModelChange)="note.set($event)"
+        minlength="3"
+        maxlength="80"
+        aria-describedby="note-filter-hint"
+      />
+    </label>
+    <p id="note-filter-hint" class="filter-hint">
+      Busca solo en las notas de comunicación que has escrito tú.
+    </p>
+    <label class="checkbox">
+      <input
+        type="checkbox"
+        name="pending"
+        [ngModel]="pending()"
+        (ngModelChange)="pending.set($event)"
+      />
+      <span>Solo con tareas pendientes</span>
+    </label>
     <button type="submit">Aplicar</button>
     @if (hasFilters()) {
       <button type="button" class="clear" (click)="clearFilters()">Limpiar</button>

@@ -49,6 +49,12 @@ export interface ProfessionalCaseFilters {
   status?: CaseStatus | '';
   modality?: CaseModality | '';
   reference?: string;
+  /** Narrows to cases this professional is also assigned to. */
+  responsible?: string;
+  /** Narrows to cases holding at least one pending task. */
+  pending?: 'true' | '';
+  /** Matches the caller's own communication notes only. */
+  note?: string;
   cursor?: string;
   limit?: number;
 }
