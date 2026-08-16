@@ -4,18 +4,72 @@
 
   <div class="settings-card">
     <h2>Cuenta</h2>
-    @if (professional(); as currentProfessional) {
-      <dl>
-        <div>
-          <dt>Nombre</dt>
-          <dd>{{ currentProfessional.name }}</dd>
-        </div>
-        <div>
-          <dt>Correo</dt>
-          <dd>{{ currentProfessional.email }}</dd>
-        </div>
-      </dl>
+    <p class="card-hint">Estos datos son tuyos y puedes corregirlos cuando quieras.</p>
+
+    @if (errorMessage(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
     }
+    @if (savedMessage(); as message) {
+      <p class="saved" role="status">{{ message }}</p>
+    }
+
+    <form (ngSubmit)="save()">
+      <label>
+        <span>Nombre</span>
+        <input
+          type="text"
+          name="name"
+          required
+          maxlength="255"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+        />
+      </label>
+      <label>
+        <span>Correo</span>
+        <input
+          type="email"
+          name="email"
+          required
+          maxlength="255"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          aria-describedby="email-hint"
+        />
+      </label>
+      <p id="email-hint" class="field-hint">
+        El correo es tu identificador de acceso. Si lo cambias, se cerrar&aacute; tu sesi&oacute;n y
+        tendr&aacute;s que volver a entrar con el correo nuevo.
+      </p>
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="settings-card">
+    <h2>Centro y permisos</h2>
+    <p class="card-hint">
+      Tu centro, tu rol y el acceso a cada caso los gestiona la direcci&oacute;n del centro. No
+      puedes cambiarlos desde aqu&iacute;.
+    </p>
+    @if (memberships().length === 0) {
+      <p class="empty">No tienes ning&uacute;n centro asignado.</p>
+    } @else {
+      <ul class="memberships">
+        @for (membership of memberships(); track membership.organisation.id) {
+          <li>
+            <strong>{{ membership.organisation.name }}</strong>
+            <span>{{ roleLabel(membership.role) }}</span>
+            <span class="managed">Gestionado por direcci&oacute;n</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="settings-card">
+    <h2>Sesi&oacute;n</h2>
     <div class="session-row">
       <div>
         <strong>Sesi&oacute;n</strong><span>Cierra el acceso profesional en este dispositivo.</span>

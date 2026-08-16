@@ -7,6 +7,7 @@ namespace App\Professionals\Domain;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,11 +17,13 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Table(name: 'professionals')]
 class Professional implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
+    public const MAX_NAME_LENGTH = 255;
+
     #[ORM\Id]
     #[ORM\Column(type: 'uuid')]
     private Uuid $id;
 
-    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[ORM\Column(type: Types::STRING, length: self::MAX_NAME_LENGTH)]
     private string $name;
 
     /** @var non-empty-string */
@@ -157,6 +160,33 @@ class Professional implements UserInterface, PasswordAuthenticatedUserInterface,
         $this->accountStatus = ProfessionalAccountStatus::Deactivated;
         $this->active = false;
         ++$this->securityRevision;
+    }
+
+    public function rename(string $name): void
+    {
+        $name = trim($name);
+        if ($name === '' || mb_strlen($name) > self::MAX_NAME_LENGTH) {
+            throw new InvalidArgumentException(
+                sprintf('A professional name must contain between 1 and %d characters.', self::MAX_NAME_LENGTH),
+            );
+        }
+
+        $this->name = $name;
+    }
+
+    /**
+     * The email is the login identifier, so replacing it necessarily ends every
+     * existing session: `isEqualTo` compares it, and the security revision is
+     * raised so no serialised session can survive the change.
+     */
+    public function changeEmail(ProfessionalEmail $email): void
+    {
+        if ($this->email === $email->toString()) {
+            return;
+        }
+
+        $this->email = $email->toString();
+        $this->invalidateSessions();
     }
 
     public function securityRevision(): int

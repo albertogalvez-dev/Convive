@@ -1073,6 +1073,43 @@ paths:
       security:
         -
           professionalSession: []
+  /api/v1/professional/profile:
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'Get the current professional self-service profile'
+      operationId: getProfessionalProfile
+      responses:
+        '200':
+          description: 'The editable profile and its administrator-controlled context.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
+    patch:
+      tags:
+        - 'Professional access'
+      summary: 'Update the current professional name and email'
+      operationId: updateProfessionalProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfessionalProfileRequest'
+      responses:
+        '200':
+          description: 'The updated profile. Changing the email ends every existing session.'
+        '400':
+          description: 'The submitted profile is invalid.'
+        '409':
+          description: 'The email address is already in use.'
+        '401':
+          description: 'A professional session is required.'
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/reports:
     get:
       tags:
@@ -3312,6 +3349,19 @@ components:
         evidence:
           type: string
           maxLength: 500
+      type: object
+    UpdateProfessionalProfileRequest:
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+        email:
+          type: string
+          maxLength: 255
       type: object
     ReviewProfessionalReportRequest:
       required:
