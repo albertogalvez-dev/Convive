@@ -34,5 +34,8 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Real-data governance drafts](governance/README.md): unapproved preparatory
   material framing the decisions a competent controller would have to make
   before a real-data pilot could be considered.
+- [Publishing an additional locale](content/i18n-process.md): the completeness
+  gate, the sign-off process and the immediate-withdrawal rule that keeps a
+  published translation honest.
 - [Development log](development-log.md): material delivery decisions and
   evidence, without inventing history.

@@ -27,7 +27,12 @@
               "src/favicon.svg",
               "src/convive-logo.svg",
               "src/robots.txt",
-              "src/sitemap.xml"
+              "src/sitemap.xml",
+              {
+                "glob": "**/*.json",
+                "input": "src/i18n",
+                "output": "i18n"
+              }
             ],
             "styles": ["src/styles.scss"]
           },
