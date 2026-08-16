@@ -50,6 +50,24 @@ Classifying a training gap as a defect wastes engineering time; classifying a
 defect as a training gap ships the defect. When a scenario is ambiguous, record
 it as a policy decision and let the owner reclassify.
 
+### Prioritising a finding
+
+Priority follows from what the deviation exposes, not from how hard it is to
+fix:
+
+- **Blocking** — a boundary failed: data reached someone who should not have it,
+  a denial did not deny, or a safeguarding-relevant action was lost. The release
+  does not proceed until it is resolved or explicitly accepted in writing by the
+  owner.
+- **High** — a journey cannot be completed by a role that needs it, or the
+  interface states something untrue about what the product does.
+- **Normal** — friction, unclear wording or a missing convenience that does not
+  block the journey or misstate behaviour.
+
+A blocking finding is never downgraded because the release date is close. That
+trade is the owner's to make explicitly, in writing, on the issue — not an
+implementer's to make quietly.
+
 ## Reporter journey
 
 ### R1 — Submit a report and return with the access code · automated
@@ -199,10 +217,10 @@ or page reads as an official form or an emergency channel.
 
 Copy this table into the release record (#166) and fill one row per scenario.
 
-| Scenario | Run by | Date | Outcome | Classification | Follow-up |
-| --- | --- | --- | --- | --- | --- |
-| R1 | | | | | |
+| Scenario | Run by | Date | Outcome | Classification | Priority | Owner | Follow-up |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| R1 | | | | | | | |
 
 A run is complete when every scenario has an outcome and every deviation has a
-classification and an owner. An incomplete run is reported as incomplete rather
+classification, a priority, a named owner and a linked follow-up. An incomplete run is reported as incomplete rather
 than summarised as a pass.
