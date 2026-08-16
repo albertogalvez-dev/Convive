@@ -46,4 +46,15 @@ interface CaseWorkspaceRepository
     public function findCommunications(ManagedCase $managedCase): array;
 
     public function findSourceDecision(ManagedCase $managedCase): ?ReportTriageDecision;
+
+    /**
+     * Every open case of the organisation with its active lead and, when it has
+     * one, the due date of its earliest pending overdue task.
+     *
+     * This is organisation-scoped operational metadata: it carries no case
+     * content, and reading it grants no access to the cases it lists.
+     *
+     * @return list<array{managedCase: ManagedCase, lead: Professional, earliestOverdueAt: \DateTimeImmutable|null}>
+     */
+    public function findOpenCaseResponsibilities(Organisation $organisation, \DateTimeImmutable $now): array;
 }
