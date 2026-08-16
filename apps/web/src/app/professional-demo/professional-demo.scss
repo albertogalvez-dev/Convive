@@ -84,9 +84,11 @@ nav button.active {
   color: #173367;
 }
 nav button.active span {
-  background: #1ca2db;
+  // Same correction as the public demonstration: white on #1ca2db is 2.9:1,
+  // while #176f9c reaches 5.54:1 with the same accent family.
+  background: #176f9c;
   color: #fff;
-  border-color: #1ca2db;
+  border-color: #176f9c;
 }
 .controls {
   margin-top: 1.5rem;

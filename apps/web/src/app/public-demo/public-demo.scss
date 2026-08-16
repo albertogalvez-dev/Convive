@@ -99,8 +99,10 @@ li.current button {
 }
 li.current span,
 li.done span {
-  border-color: #1ca2db;
-  background: #1ca2db;
+  // #1ca2db gives white text only 2.9:1, below the 4.5:1 that 12.8px text
+  // needs. #176f9c is the accent already used for links and reaches 5.54:1.
+  border-color: #176f9c;
+  background: #176f9c;
   color: #fff;
 }
 .guide-controls {
