@@ -49,7 +49,13 @@ services:
     App\Reporting\Domain\ReportTriageDecisionRepository: '@App\Reporting\Infrastructure\DoctrineReportTriageDecisionRepository'
     App\Reporting\Application\AttachmentStorage: '@App\Reporting\Infrastructure\LocalPrivateAttachmentStorage'
     App\Reporting\Application\AttachmentDownloadConcurrencyLimiter: '@App\Reporting\Infrastructure\LocalPrivateAttachmentDownloadConcurrencyLimiter'
-    App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\UnavailableAttachmentScanner'
+    # The ClamAV scanner treats an empty CLAMAV_DSN as no daemon at all and
+    # returns Unavailable, so an environment without a provisioned scanner
+    # quarantines attachments rather than releasing them unscanned.
+    App\Reporting\Application\AttachmentScanner: '@App\Reporting\Infrastructure\ClamAvAttachmentScanner'
+    App\Reporting\Infrastructure\ClamAvAttachmentScanner:
+        arguments:
+            $dsn: '%env(string:CLAMAV_DSN)%'
     App\Reporting\Application\PublicReportingModePolicy:
         arguments:
             $configuredMode: '%public_reporting.mode%'
