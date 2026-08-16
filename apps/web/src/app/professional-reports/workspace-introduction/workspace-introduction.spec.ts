@@ -80,6 +80,44 @@ describe('WorkspaceIntroduction', () => {
     expect(localStorage.getItem(storageKey)).toBe('seen');
   });
 
+  it('leaves focus on the workspace rather than on the document body', async () => {
+    // The real journey opens the introduction straight after the login
+    // navigation, when nothing meaningful holds focus. Restoring "the previous
+    // element" is then the body, and the next Tab starts from the top of the
+    // page instead of at the workspace.
+    const main = document.createElement('main');
+    main.textContent = 'Workspace';
+    document.body.append(main);
+
+    try {
+      await render();
+      buttonLabelled('Saltar')?.click();
+      fixture.detectChanges();
+
+      expect(document.activeElement).not.toBe(document.body);
+      expect(document.activeElement?.tagName).toBe('MAIN');
+    } finally {
+      main.remove();
+    }
+  });
+
+  it('still restores a meaningful element that held focus before', async () => {
+    const opener = document.createElement('button');
+    opener.textContent = 'Abrir';
+    document.body.append(opener);
+    opener.focus();
+
+    try {
+      await render();
+      buttonLabelled('Saltar')?.click();
+      fixture.detectChanges();
+
+      expect(document.activeElement).toBe(opener);
+    } finally {
+      opener.remove();
+    }
+  });
+
   it('walks the whole sequence and closes at the end', async () => {
     await render();
 
