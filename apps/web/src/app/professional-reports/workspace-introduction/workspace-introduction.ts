@@ -156,9 +156,32 @@ export class WorkspaceIntroduction implements AfterViewInit, OnDestroy {
     queueMicrotask(() => this.dialog()?.nativeElement.focus());
   }
 
+  /**
+   * Put focus somewhere the workspace is usable from.
+   *
+   * Restoring whatever held focus before is right when something did. In the
+   * real journey nothing does: the introduction opens straight after the login
+   * navigation, so the previous element is the document body, and returning
+   * there makes the next Tab start from the top of the page — past the whole
+   * sidebar the introduction just finished explaining.
+   */
   private restoreFocus(): void {
-    this.previouslyFocused?.focus?.();
+    const previous = this.previouslyFocused;
     this.previouslyFocused = null;
+
+    if (previous !== null && previous !== this.document.body && previous.isConnected) {
+      previous.focus();
+
+      return;
+    }
+
+    const main = this.document.querySelector<HTMLElement>('main');
+    if (main === null) return;
+
+    if (!main.hasAttribute('tabindex')) {
+      main.setAttribute('tabindex', '-1');
+    }
+    main.focus();
   }
 
   /**
