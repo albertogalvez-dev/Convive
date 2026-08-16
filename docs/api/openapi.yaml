@@ -318,6 +318,30 @@ paths:
             type: string
             maxLength: 64
         -
+          name: responsible
+          in: query
+          description: 'Narrow to cases that also have an active assignment for this professional.'
+          schema:
+            type: string
+            format: uuid
+        -
+          name: pending
+          in: query
+          description: 'Narrow to cases holding at least one pending task.'
+          schema:
+            type: string
+            enum:
+              - 'true'
+              - 'false'
+        -
+          name: note
+          in: query
+          description: "Match the requesting professional's own communication notes. Notes written by another professional are never searched."
+          schema:
+            type: string
+            maxLength: 80
+            minLength: 3
+        -
           name: limit
           in: query
           schema:
