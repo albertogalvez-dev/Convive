@@ -499,8 +499,6 @@ and the gates keeping the demonstration restricted to fictional data.
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](LICENSE).
-
-## Acknowledgements
-
-Convive is being developed as part of the Aircury Summer of Code 2026 programme, with mentoring and financial support from Aircury SL.
+This project is released under the MIT License. See [LICENSE](LICENSE). See
+[NOTICE](NOTICE.md) for the scholarship acknowledgement required by the
+Aircury Summer of Code 2026 programme.
