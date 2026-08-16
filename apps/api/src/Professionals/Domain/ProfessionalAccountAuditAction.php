@@ -17,4 +17,6 @@ enum ProfessionalAccountAuditAction: string
     case MembershipSuspended = 'membership_suspended';
     case MembershipResumed = 'membership_resumed';
     case MembershipRemoved = 'membership_removed';
+    case ProfileNameChanged = 'profile_name_changed';
+    case ProfileEmailChanged = 'profile_email_changed';
 }

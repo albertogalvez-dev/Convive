@@ -9,6 +9,7 @@ use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
 use App\Professionals\Domain\ProfessionalEmailAlreadyUsed;
+use DateTimeImmutable;
 use InvalidArgumentException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -62,7 +63,12 @@ final readonly class ProfessionalProfileController
         $emailChanged = $professional->email()->toString() !== mb_strtolower(trim($payload->email));
 
         try {
-            $this->updateProfile->update($professional, $payload->name, ProfessionalEmail::fromString($payload->email));
+            $this->updateProfile->update(
+                $professional,
+                $payload->name,
+                ProfessionalEmail::fromString($payload->email),
+                DateTimeImmutable::createFromTimestamp(microtime(true)),
+            );
         } catch (ProfessionalEmailAlreadyUsed $exception) {
             throw new ProfessionalEmailConflictHttpException(previous: $exception);
         } catch (InvalidArgumentException $exception) {

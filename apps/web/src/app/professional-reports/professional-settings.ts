@@ -26,12 +26,17 @@ export class ProfessionalSettings implements OnInit {
   protected readonly saving = signal(false);
   protected readonly savedMessage = signal<string | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly confirmingEmail = signal(false);
+
+  /** The address the profile was loaded with, used to detect a real change. */
+  private currentEmail = '';
 
   ngOnInit(): void {
     this.profiles.get().subscribe({
       next: (profile) => {
         this.name.set(profile.name);
         this.email.set(profile.email);
+        this.currentEmail = profile.email;
         this.memberships.set(profile.memberships);
       },
       error: () => this.errorMessage.set('No hemos podido cargar tus datos.'),
@@ -43,6 +48,27 @@ export class ProfessionalSettings implements OnInit {
       return;
     }
 
+    // Replacing the login identifier can lock the professional out, so it is
+    // confirmed explicitly rather than saved with the rest of the form.
+    if (this.email().trim().toLowerCase() !== this.currentEmail.toLowerCase()) {
+      this.confirmingEmail.set(true);
+      return;
+    }
+
+    this.persist();
+  }
+
+  protected cancelEmailChange(): void {
+    this.confirmingEmail.set(false);
+    this.email.set(this.currentEmail);
+  }
+
+  protected confirmEmailChange(): void {
+    this.confirmingEmail.set(false);
+    this.persist();
+  }
+
+  private persist(): void {
     this.saving.set(true);
     this.savedMessage.set(null);
     this.errorMessage.set(null);
@@ -58,6 +84,7 @@ export class ProfessionalSettings implements OnInit {
           return;
         }
 
+        this.currentEmail = profile.email;
         this.savedMessage.set('Hemos guardado tus datos.');
       },
       error: (error: unknown) => {
