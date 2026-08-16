@@ -78,11 +78,35 @@
                 </button>
               }
               @if (account.status !== 'deactivated') {
-                <button type="button" class="danger" (click)="changeStatus(account, 'deactivate')">
+                <button type="button" (click)="startEmailCorrection(account)">
+                  Corregir correo</button
+                ><button type="button" class="danger" (click)="changeStatus(account, 'deactivate')">
                   Desactivar
                 </button>
               }
             </div>
+            @if (correctingAccountId() === account.id) {
+              <form class="correction" (ngSubmit)="correctEmail()">
+                <label [attr.for]="'correct-email-' + account.id">
+                  Nueva dirección de {{ account.name }}
+                </label>
+                <p class="hint">
+                  Al corregirla, la persona sale de sus sesiones y entrará con la nueva dirección.
+                </p>
+                <input
+                  [id]="'correct-email-' + account.id"
+                  type="email"
+                  name="email"
+                  required
+                  autocomplete="off"
+                  [(ngModel)]="correctionEmail"
+                />
+                <div class="actions">
+                  <button type="submit">Corregir</button
+                  ><button type="button" (click)="cancelEmailCorrection()">Cancelar</button>
+                </div>
+              </form>
+            }
           </li>
         } @empty {
           <li class="empty">No hay cuentas en este centro.</li>

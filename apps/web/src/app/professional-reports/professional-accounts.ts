@@ -29,6 +29,8 @@ export class ProfessionalAccounts {
   protected readonly error = signal<string | null>(null);
   protected readonly message = signal<string | null>(null);
   protected readonly credential = signal<{ secret: string; expiresAt: string } | null>(null);
+  protected readonly correctingAccountId = signal<string | null>(null);
+  protected correctionEmail = '';
   protected selectedOrganisationId = '';
   protected invitation = { name: '', email: '', role: 'triage' as ProfessionalAccountRole };
 
@@ -68,6 +70,48 @@ export class ProfessionalAccounts {
       },
       error: () => this.error.set('No se puede emitir un código para esta cuenta.'),
     });
+  }
+
+  protected startEmailCorrection(account: ProfessionalAccount): void {
+    this.error.set(null);
+    this.message.set(null);
+    this.correctingAccountId.set(account.id);
+    this.correctionEmail = account.email;
+  }
+
+  protected cancelEmailCorrection(): void {
+    this.correctingAccountId.set(null);
+  }
+
+  /**
+   * The recovery path for an address typed wrong in self-service settings.
+   * Correcting it replaces the login identifier and ends the professional's
+   * sessions, so the confirmation says that plainly rather than reporting a
+   * bare success.
+   */
+  protected correctEmail(): void {
+    const professionalId = this.correctingAccountId();
+    if (!this.selectedOrganisationId || professionalId === null) return;
+    this.error.set(null);
+    this.accountsApi
+      .correctEmail(this.selectedOrganisationId, professionalId, this.correctionEmail)
+      .subscribe({
+        next: (account) => {
+          this.correctingAccountId.set(null);
+          this.message.set(
+            account.sessionEnded
+              ? 'La dirección se ha corregido. La persona ha salido de sus sesiones y entrará con la nueva dirección.'
+              : 'La dirección ya era esa, así que no ha cambiado nada.',
+          );
+          this.loadAccounts();
+        },
+        error: (response: { status?: number }) =>
+          this.error.set(
+            response.status === 409
+              ? 'Esa dirección ya pertenece a otra cuenta.'
+              : 'No se puede corregir la dirección de esta cuenta.',
+          ),
+      });
   }
 
   protected changeStatus(
