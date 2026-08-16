@@ -52,3 +52,4 @@ gap for someone to close conveniently.
 |---|---|
 | [Controller, lawful basis and processing record](controller-and-processing-decisions.md) | Who would be accountable, on what basis, over which processing |
 | [Retention, deletion, legal hold and rights](retention-deletion-and-rights.md) | How long real data would be kept, how it would be removed, and how a rights request would be answered |
+| [Impact and safeguarding assessment](dpia-and-safeguarding-assessment.md) | What the system does to the people in it when it works exactly as designed |
