@@ -23,6 +23,7 @@ use App\Cases\Domain\CaseAuditAction;
 use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditEventRepository;
 use App\Cases\Domain\CaseAuditTarget;
+use App\Cases\Domain\CaseDocumentTemplate;
 use App\Cases\Domain\CaseCommunication;
 use App\Cases\Domain\CaseCommunicationChannel;
 use App\Cases\Domain\CaseCommunicationRecipient;
@@ -802,6 +803,75 @@ final readonly class ProfessionalCaseController
         $this->auditEvents->flush();
 
         return $this->pdfResponse($pdf, 'case-record.pdf');
+    }
+
+    #[Route(
+        '/api/v1/professional/cases/{id}/documents/{template}',
+        name: 'api_v1_professional_generate_case_document',
+        methods: ['GET'],
+    )]
+    #[OA\Get(
+        operationId: 'generateProfessionalCaseDocument',
+        summary: 'Generate an approved controlled case document as PDF',
+        description: 'Renders only data the requesting professional can already see in the workspace. Each document carries its template version, generation instant and a visible fictional-demonstration marker, and is never an official form of any administration.',
+        security: [['professionalSession' => []]],
+        tags: ['Professional cases'],
+        parameters: [
+            new OA\Parameter(
+                name: 'template',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'string', enum: [
+                    'action_record',
+                    'follow_up_plan',
+                    'coordination_note',
+                    'family_communication',
+                    'protocol_review_checklist',
+                    'closure_report',
+                ]),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The controlled document.'),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case or template is unavailable in this scope.'),
+        ],
+    )]
+    public function generateCaseDocument(
+        string $id,
+        string $template,
+        #[CurrentUser] Professional $professional,
+    ): Response {
+        $documentTemplate = CaseDocumentTemplate::tryFrom($template);
+        if ($documentTemplate === null) {
+            throw new ProfessionalCaseNotFoundHttpException();
+        }
+
+        $detail = $this->resolveDetail($id, $professional);
+
+        try {
+            // Generating a document is a management act, not a reading one:
+            // contributors and observers read the workspace but cannot extract
+            // a document from it.
+            $this->authorise->require($detail->managedCase, $professional, CasePermission::Manage);
+        } catch (CaseAccessDenied $exception) {
+            throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
+        }
+
+        $generatedAt = DateTimeImmutable::createFromTimestamp(microtime(true));
+        $pdf = $this->pdfRenderer->caseDocument($detail, $documentTemplate, $generatedAt);
+        $this->auditEvents->append(new CaseAuditEvent(
+            Uuid::v7(),
+            $detail->managedCase,
+            $professional,
+            CaseAuditAction::DocumentGenerated,
+            CaseAuditTarget::Document,
+            $detail->managedCase->id(),
+            $generatedAt,
+        ));
+        $this->auditEvents->flush();
+
+        return $this->pdfResponse($pdf, $documentTemplate->value.'.pdf');
     }
 
     #[Route(
