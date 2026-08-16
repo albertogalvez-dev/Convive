@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace App\Cases\Application;
 
 use App\Cases\Domain\CaseAssignmentRole;
+use App\Cases\Domain\CaseCommunication;
+use App\Cases\Domain\CaseCommunicationChannel;
+use App\Cases\Domain\CaseCommunicationRecipient;
+use App\Cases\Domain\CaseCommunicationStatus;
+use App\Cases\Domain\CaseDocumentTemplate;
 use App\Cases\Domain\CaseAuditAction;
 use App\Cases\Domain\CaseAuditEvent;
 use App\Cases\Domain\CaseAuditTarget;
@@ -83,6 +88,118 @@ final class CasePdfRenderer
                 $counts['overdue'],
                 $counts['upcoming'],
             ),
+        );
+    }
+
+    /**
+     * Renders one approved controlled document. Every template draws only from
+     * the workspace detail the requesting professional already sees, so a
+     * document can never reveal more than the screen it was generated from.
+     */
+    public function caseDocument(
+        CaseWorkspaceDetail $detail,
+        CaseDocumentTemplate $template,
+        \DateTimeImmutable $generatedAt,
+    ): string {
+        $case = $detail->managedCase;
+        $provenance = sprintf(
+            '<section class="summary"><div><span>Caso</span><strong>%s</strong></div>'
+            .'<div><span>Documento</span><strong>%s</strong></div>'
+            .'<div><span>Versión de plantilla</span><strong>%s</strong></div>'
+            .'<div><span>Generado</span><strong>%s</strong></div>'
+            .'<div><span>Estado del caso</span><strong>%s</strong></div>'
+            .'<div><span>Acceso de quien genera</span><strong>%s</strong></div></section>',
+            $this->escape($case->id()->toRfc4122()),
+            $this->escape($template->title()),
+            $this->escape($template->version()),
+            $this->escape($this->formatDate($generatedAt)),
+            $this->escape($this->caseStatusLabel($case->status())),
+            $this->escape($this->assignmentRoleLabel($detail->currentAssignment->role())),
+        );
+
+        return $this->render(
+            $template->title(),
+            $template->title(),
+            $template->purpose().' Documento de demostración ficticia; no es un formulario oficial de ninguna administración.',
+            $provenance.$this->documentBody($detail, $template),
+        );
+    }
+
+    private function documentBody(CaseWorkspaceDetail $detail, CaseDocumentTemplate $template): string
+    {
+        return match ($template) {
+            CaseDocumentTemplate::ActionRecord => '<h2>Actuaciones registradas</h2>'.$this->taskTable($detail->tasks),
+            CaseDocumentTemplate::FollowUpPlan => '<h2>Tareas pendientes</h2>'.$this->taskTable(
+                array_values(array_filter(
+                    $detail->tasks,
+                    static fn ($task): bool => $task->status() === CaseTaskStatus::Pending,
+                )),
+            ),
+            CaseDocumentTemplate::CoordinationNote => '<h2>Comunicaciones registradas</h2>'.$this->communicationTable($detail->communications),
+            CaseDocumentTemplate::FamilyCommunication => '<h2>Comunicaciones dirigidas a la familia</h2>'.$this->communicationTable(
+                array_values(array_filter(
+                    $detail->communications,
+                    static fn ($communication): bool => $communication->recipient() === CaseCommunicationRecipient::Family,
+                )),
+            ),
+            CaseDocumentTemplate::ProtocolReviewChecklist => '<h2>Revisión por etapa del protocolo</h2>'.$this->taskTable($detail->tasks),
+            CaseDocumentTemplate::ClosureReport => '<h2>Cierre registrado</h2>'.$this->closureSection($detail),
+        };
+    }
+
+    /** @param list<\App\Cases\Domain\CaseTask> $tasks */
+    private function taskTable(array $tasks): string
+    {
+        return $this->table(
+            ['Etapa', 'Tipo', 'Estado', 'Fecha objetivo'],
+            array_map(
+                fn ($task): string => sprintf(
+                    '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
+                    $this->escape($this->stageLabel($task->stage())),
+                    $this->escape($this->taskKindLabel($task->kind())),
+                    $this->escape($this->taskStatusLabel($task->status())),
+                    $this->escape($this->formatDate($task->dueAt())),
+                ),
+                $tasks,
+            ),
+            'No hay tareas que mostrar en este documento.',
+        );
+    }
+
+    /** @param list<CaseCommunication> $communications */
+    private function communicationTable(array $communications): string
+    {
+        return $this->table(
+            ['Fecha', 'Destinatario', 'Canal', 'Estado', 'Nota'],
+            array_map(
+                fn (CaseCommunication $communication): string => sprintf(
+                    '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
+                    $this->escape($this->formatDate($communication->occurredAt())),
+                    $this->escape($this->communicationRecipientLabel($communication->recipient())),
+                    $this->escape($this->communicationChannelLabel($communication->channel())),
+                    $this->escape($this->communicationStatusLabel($communication->status())),
+                    $this->escape($communication->note()),
+                ),
+                $communications,
+            ),
+            'No hay comunicaciones registradas para este documento.',
+        );
+    }
+
+    private function closureSection(CaseWorkspaceDetail $detail): string
+    {
+        $case = $detail->managedCase;
+        if ($case->status() !== CaseStatus::Closed) {
+            return '<p class="empty">El caso no está cerrado, por lo que este documento no recoge un cierre.</p>';
+        }
+
+        return sprintf(
+            '<section class="summary"><div><span>Cerrado</span><strong>%s</strong></div>'
+            .'<div><span>Motivo</span><strong>%s</strong></div>'
+            .'<div><span>Evidencia</span><strong>%s</strong></div></section>',
+            $this->escape($case->statusChangedAt() === null ? 'Sin fecha registrada' : $this->formatDate($case->statusChangedAt())),
+            $this->escape($case->statusReason() ?? 'Sin motivo registrado'),
+            $this->escape($case->statusEvidence() ?? 'Sin evidencia registrada'),
         );
     }
 
@@ -173,6 +290,36 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
         };
     }
 
+    private function communicationRecipientLabel(CaseCommunicationRecipient $recipient): string
+    {
+        return match ($recipient) {
+            CaseCommunicationRecipient::Family => 'Familia',
+            CaseCommunicationRecipient::ExternalService => 'Servicio externo',
+            CaseCommunicationRecipient::EducationInspectorate => 'Inspección educativa',
+            CaseCommunicationRecipient::Other => 'Otro',
+        };
+    }
+
+    private function communicationChannelLabel(CaseCommunicationChannel $channel): string
+    {
+        return match ($channel) {
+            CaseCommunicationChannel::InPerson => 'Presencial',
+            CaseCommunicationChannel::Telephone => 'Teléfono',
+            CaseCommunicationChannel::SecurePortal => 'Portal seguro',
+            CaseCommunicationChannel::WrittenRecord => 'Registro escrito',
+            CaseCommunicationChannel::Other => 'Otro',
+        };
+    }
+
+    private function communicationStatusLabel(CaseCommunicationStatus $status): string
+    {
+        return match ($status) {
+            CaseCommunicationStatus::Planned => 'Prevista',
+            CaseCommunicationStatus::Recorded => 'Registrada',
+            CaseCommunicationStatus::NotApplicable => 'No aplicable',
+        };
+    }
+
     private function assignmentRoleLabel(CaseAssignmentRole $role): string
     {
         return match ($role) {
@@ -237,6 +384,7 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditAction::StatusChanged => 'Estado del caso actualizado',
             CaseAuditAction::CommunicationRecorded => 'Comunicación registrada',
             CaseAuditAction::CommunicationCorrected => 'Comunicación corregida',
+            CaseAuditAction::DocumentGenerated => 'Documento generado',
         };
     }
 
@@ -252,6 +400,7 @@ HTML, $this->escape($title), $this->escape($heading), $this->escape($description
             CaseAuditTarget::CaseRecord => 'Expediente',
             CaseAuditTarget::Person => 'Persona vinculada',
             CaseAuditTarget::Communication => 'Comunicación',
+            CaseAuditTarget::Document => 'Documento',
         };
     }
 

@@ -712,6 +712,62 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame(0, $this->responsePayload()['unreadCount']);
     }
 
+    public function testEveryApprovedDocumentTemplateRendersWithItsProvenance(): void
+    {
+        [$managedCase, $lead] = $this->createCaseWorkspace();
+        $this->entityManager->flush();
+        $this->client->loginUser($lead);
+
+        foreach ([
+            'action_record',
+            'follow_up_plan',
+            'coordination_note',
+            'family_communication',
+            'protocol_review_checklist',
+            'closure_report',
+        ] as $template) {
+            $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/documents/'.$template);
+
+            self::assertResponseIsSuccessful($template);
+            self::assertSame('application/pdf', $this->client->getResponse()->headers->get('content-type'), $template);
+            self::assertStringStartsWith('%PDF', (string) $this->client->getInternalResponse()->getContent(), $template);
+        }
+
+        // Each generation is recorded, so a document can be traced to who made it.
+        $generated = $this->entityManager->getConnection()->fetchOne(
+            "SELECT COUNT(*) FROM case_audit_events WHERE case_id = :caseId AND action = 'document_generated' AND target = 'document'",
+            ['caseId' => $managedCase->id()->toRfc4122()],
+        );
+        self::assertSame(6, (int) $generated);
+    }
+
+    public function testAnUnknownDocumentTemplateIsNotFound(): void
+    {
+        [$managedCase, $lead] = $this->createCaseWorkspace();
+        $this->entityManager->flush();
+        $this->client->loginUser($lead);
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/documents/invented_template');
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testAnObserverCannotGenerateADocumentFromACaseTheyCanRead(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $observer = $this->createProfessional('document-observer', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $observer, CaseAssignmentRole::Observer, $lead, new DateTimeImmutable()));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($observer);
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+
+        // Reading the workspace does not carry the right to extract it.
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/documents/action_record');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testTheResponsibleFilterNarrowsToSharedCasesAndNeverRevealsOthers(): void
     {
         [$sharedCase, $lead, $organisation] = $this->createCaseWorkspace();

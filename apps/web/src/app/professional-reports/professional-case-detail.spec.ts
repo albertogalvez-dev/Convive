@@ -114,6 +114,30 @@ describe('ProfessionalCaseDetailPage', () => {
     );
   });
 
+  it('offers every approved document and states what they are', () => {
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    const panel = page.querySelector('.document-panel');
+    expect(panel?.textContent).toContain('solo lo que ya ves en este caso');
+    expect(panel?.textContent).toContain('ninguno es un formulario oficial');
+
+    const links = [...panel!.querySelectorAll<HTMLAnchorElement>('.document-list a')];
+    expect(links).toHaveLength(6);
+    expect(links.map((link) => link.getAttribute('data-template'))).toEqual([
+      'action_record',
+      'follow_up_plan',
+      'coordination_note',
+      'family_communication',
+      'protocol_review_checklist',
+      'closure_report',
+    ]);
+    expect(links[0].getAttribute('href')).toBe(
+      '/api/v1/professional/cases/case-1/documents/action_record',
+    );
+  });
+
   it('records a reasoned contributor or observer access change through the exact-case endpoint', () => {
     http.expectOne(endpoint).flush(detail());
     http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });

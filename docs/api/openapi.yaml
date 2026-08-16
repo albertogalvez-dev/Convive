@@ -986,6 +986,43 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/cases/{id}/documents/{template}':
+    get:
+      tags:
+        - 'Professional cases'
+      summary: 'Generate an approved controlled case document as PDF'
+      description: 'Renders only data the requesting professional can already see in the workspace. Each document carries its template version, generation instant and a visible fictional-demonstration marker, and is never an official form of any administration.'
+      operationId: generateProfessionalCaseDocument
+      parameters:
+        -
+          name: template
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - action_record
+              - follow_up_plan
+              - coordination_note
+              - family_communication
+              - protocol_review_checklist
+              - closure_report
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The controlled document.'
+        '401':
+          description: 'A professional session is required.'
+        '404':
+          description: 'The case or template is unavailable in this scope.'
+      security:
+        -
+          professionalSession: []
   '/api/v1/professional/cases/{id}/people':
     post:
       tags:

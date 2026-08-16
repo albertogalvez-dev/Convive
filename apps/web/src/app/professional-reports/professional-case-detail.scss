@@ -427,3 +427,28 @@ button:focus-visible {
     grid-column: 1;
   }
 }
+
+.document-note {
+  margin: 0 0 0.9rem;
+  color: #4d6287;
+  font-size: 0.85rem;
+}
+.document-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.document-list a {
+  display: inline-block;
+  border: 1px solid #b8c9df;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  color: #19366d;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+}

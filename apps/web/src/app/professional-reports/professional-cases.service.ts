@@ -340,6 +340,10 @@ export class ProfessionalCasesService {
     return `${this.endpoint}/${encodeURIComponent(caseId)}/audit-events/export`;
   }
 
+  caseDocumentUrl(caseId: string, template: string): string {
+    return `${this.endpoint}/${encodeURIComponent(caseId)}/documents/${encodeURIComponent(template)}`;
+  }
+
   caseRecordExportUrl(caseId: string): string {
     return `${this.endpoint}/${encodeURIComponent(caseId)}/export`;
   }

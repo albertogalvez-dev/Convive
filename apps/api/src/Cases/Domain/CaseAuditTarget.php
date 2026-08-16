@@ -15,4 +15,5 @@ enum CaseAuditTarget: string
     case CaseRecord = 'case_record';
     case Person = 'person';
     case Communication = 'communication';
+    case Document = 'document';
 }
