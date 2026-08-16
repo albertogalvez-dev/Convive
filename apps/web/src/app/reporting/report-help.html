@@ -1,4 +1,12 @@
-<div class="backdrop" (click)="closed.emit()">
+<div
+  class="backdrop"
+  role="button"
+  tabindex="0"
+  aria-label="Cerrar"
+  (click)="closed.emit()"
+  (keydown.enter)="closed.emit()"
+  (keydown.space)="onSpace($event)"
+>
   <section
     #dialog
     class="dialog"
