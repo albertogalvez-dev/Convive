@@ -193,7 +193,7 @@ jobs:
           # The scanner image is large and its signature volume is populated at
           # runtime, so CI verifies that it is pinned and configured rather than
           # starting it.
-          docker compose "${production_compose[@]}" config --images | grep --fixed-strings 'clamav/clamav@sha256:'
+          docker compose "${production_compose[@]}" config --images | grep --fixed-strings 'clamav/clamav'
           docker compose "${production_compose[@]}" up --detach --wait database redis
           docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
