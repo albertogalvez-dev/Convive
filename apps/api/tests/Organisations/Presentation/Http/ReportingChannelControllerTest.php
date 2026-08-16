@@ -109,6 +109,43 @@ final class ReportingChannelControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_CREATED, $this->submitStatusFor($replacement));
     }
 
+    public function testAReporterKeepsTheirConversationAfterTheCentreRotatesItsLink(): void
+    {
+        $organisation = $this->createOrganisation();
+        $administrator = $this->createProfessional($organisation);
+        $this->entityManager->flush();
+
+        // A reporter submits through the current link and keeps their code.
+        $this->client->setServerParameter('REMOTE_ADDR', $this->uniqueTestClientIp());
+        $this->client->jsonRequest(
+            'POST',
+            '/api/v1/public/organisations/'.$organisation->publicReportingIdentifier()->toString().'/reports',
+            [
+                'situationDescription' => 'Una situacion ficticia antes de rotar el enlace.',
+                'situationContext' => 'unknown',
+            ],
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $accessSecret = $this->responsePayload()['accessSecret'];
+
+        $this->client->loginUser($administrator);
+        $this->client->jsonRequest('PATCH', $this->channelEndpoint($organisation), ['action' => 'rotate']);
+        self::assertResponseIsSuccessful();
+
+        // The code still opens the same conversation: it authorises the report,
+        // not the link the reporter arrived through. This is why the recorded
+        // 30-day continuity period was unnecessary.
+        $this->client->setServerParameter('REMOTE_ADDR', $this->uniqueTestClientIp());
+        $this->client->jsonRequest('POST', '/api/v1/public/report-access-grants', ['accessSecret' => $accessSecret]);
+        self::assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/api/v1/reporter/report');
+        self::assertResponseIsSuccessful();
+        $content = $this->client->getResponse()->getContent();
+        self::assertIsString($content);
+        self::assertStringContainsString('antes de rotar el enlace', $content);
+    }
+
     public function testARetiredChannelCannotBeReactivated(): void
     {
         $organisation = $this->createOrganisation();
