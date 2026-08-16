@@ -114,6 +114,23 @@ describe('ProfessionalCaseDetailPage', () => {
     );
   });
 
+  it('explains why evidence cannot be downloaded without the export permission', () => {
+    const restricted = detail();
+    restricted.permissions = { ...restricted.permissions, export: false };
+    http.expectOne(endpoint).flush(restricted);
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    // The evidence is still listed: knowing it exists is part of the work.
+    expect(page.querySelector('.evidence-list')?.textContent).toContain(
+      'Fictional available evidence',
+    );
+    expect(page.querySelector('.evidence-list a')).toBeNull();
+    expect(page.querySelector('.evidence-restricted')?.textContent).toContain(
+      'Solo la persona responsable del caso puede descargarla',
+    );
+  });
+
   it('offers every approved document and states what they are', () => {
     http.expectOne(endpoint).flush(detail());
     http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });

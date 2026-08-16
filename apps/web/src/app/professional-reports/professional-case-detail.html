@@ -497,7 +497,14 @@
                       >{{ evidence.mediaType }} &middot;
                       {{ evidence.byteSize / 1024 | number: '1.0-0' }} KB</small
                     ></span
-                  ><a [href]="evidenceUrl(item.id, evidence.id)">Descargar</a>
+                  >
+                  @if (item.permissions.export) {
+                    <a [href]="evidenceUrl(item.id, evidence.id)">Descargar</a>
+                  } @else {
+                    <span class="evidence-restricted"
+                      >Solo la persona responsable del caso puede descargarla</span
+                    >
+                  }
                 </li>
               }
             </ul>
