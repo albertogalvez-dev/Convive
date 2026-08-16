@@ -113,7 +113,28 @@ arrives. There is no professional override and no download-anyway path.
 
 The scanner is an isolated, regularly updated service. It must receive only
 the object needed for a scan and return a small verdict; it must not call a
-public malware-scanning API with safeguarding evidence. The first release does
+public malware-scanning API with safeguarding evidence.
+
+### Provisioned scanner (#180, 16 August 2026)
+
+The approved implementation is a local ClamAV daemon, pinned by digest,
+reachable from the API only over an internal `scan` network that carries no
+other traffic. It joins a second network used solely by `freshclam` to refresh
+signatures against the official ClamAV endpoint once a day; it shares no
+network with the database, Redis or the attachment store, so a compromised
+scanner cannot reach persisted data through it.
+
+The API talks to it with the `INSTREAM` command, which carries file bytes and
+nothing else: no filename, report reference or professional identity reaches
+the daemon. This is asserted directly by a test that compares the exact bytes
+the daemon receives.
+
+Every failure mode returns `Unavailable`, never `Clean`. An unset `CLAMAV_DSN`,
+an unreachable daemon, a timeout, an `ERROR` reply, an empty reply and an
+unrecognised reply all leave the attachment quarantined. Only an explicit `OK`
+from a daemon that actually answered releases a file, so an environment without
+a provisioned scanner — including local development and CI — fails closed by
+construction rather than by configuration discipline. The first release does
 not extract archives, create previews/thumbnails, transcode media, run OCR or
 perform content-disarm/reconstruction. Those operations expand the parser
 attack surface and require their own threat review.

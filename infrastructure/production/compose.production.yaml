@@ -48,6 +48,10 @@ services:
       MAILER_DSN: "null://null"
       REPORTER_EMAIL_ENABLED: "0"
       REPORTER_EMAIL_FROM: no-reply@conviveaula.example
+      # Reaches the isolated scanner over the private scan network only. When
+      # absent the API falls back to the fail-closed scanner, so a missing
+      # daemon quarantines attachments instead of releasing them.
+      CLAMAV_DSN: tcp://clamav:3310
       REPORTER_EMAIL_PUBLIC_URL: https://app.conviveaula.com/verificar-correo
       REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
     env_file:
@@ -70,7 +74,7 @@ services:
       - /app/var:uid=33,gid=33,mode=0770
     volumes: [attachment-data:/var/lib/convive/attachments]
     restart: unless-stopped
-    networks: [application, data, cache]
+    networks: [application, data, cache, scan]
     healthcheck:
       test: ["CMD", "php-fpm", "-t"]
       interval: 30s
@@ -146,10 +150,36 @@ services:
       timeout: 5s
       retries: 5
 
+  # Isolated attachment scanner. It reaches the internet only to refresh
+  # signatures, and the API reaches it only over the private scan network, so
+  # it never shares a network with the database, Redis or the attachment store.
+  # It receives file bytes through INSTREAM and no report metadata whatsoever.
+  clamav:
+    # clamav/clamav:1.4.3
+    image: clamav/clamav:1.4.3@sha256:75fb5fd95fcbe1d7e6d240c369c1572b686ee2c95949d1042b5148de8eddebb4
+    environment:
+      # freshclam refreshes signatures against the official ClamAV endpoint once
+      # a day; operating on stale signatures is not an option, and more frequent
+      # checks would widen egress for no material gain.
+      CLAMAV_NO_FRESHCLAM: "false"
+      FRESHCLAM_CHECKS: "1"
+    volumes: [clamav-signatures:/var/lib/clamav]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [scan, signature-refresh]
+    healthcheck:
+      test: ["CMD-SHELL", "clamdscan --ping 1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
 volumes:
   database-data:
   redis-data:
   attachment-data:
+  clamav-signatures:
 
 networks:
   edge:
@@ -171,6 +201,19 @@ networks:
     internal: true
     ipam:
       config: [{subnet: 172.30.48.0/28}]
+  # Carries only API-to-scanner traffic. Internal, so a compromised scanner
+  # cannot reach the database, Redis or the attachment store through it.
+  scan:
+    name: convive_scan
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.64.0/28}]
+  # The scanner's only route out, used exclusively by freshclam to refresh
+  # signatures. No other service joins it.
+  signature-refresh:
+    name: convive_signature_refresh
+    ipam:
+      config: [{subnet: 172.30.80.0/28}]
 
 secrets:
   cloudflare_tunnel_token:
