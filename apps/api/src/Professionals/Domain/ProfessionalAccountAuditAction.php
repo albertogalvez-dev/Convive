@@ -19,4 +19,5 @@ enum ProfessionalAccountAuditAction: string
     case MembershipRemoved = 'membership_removed';
     case ProfileNameChanged = 'profile_name_changed';
     case ProfileEmailChanged = 'profile_email_changed';
+    case EmailCorrected = 'email_corrected';
 }

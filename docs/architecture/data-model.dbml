@@ -290,7 +290,7 @@ Table professional_account_audit_events {
   id uuid [pk, note: 'application-generated UUIDv7; no credentials or content']
   target_professional_id uuid [not null]
   actor_professional_id uuid [not null]
-  action varchar(32) [not null, note: 'invited | credential_accepted | password_reset_issued | suspended | reactivated | deactivated']
+  action varchar(32) [not null, note: 'invited | credential_accepted | password_reset_issued | suspended | reactivated | deactivated | membership_granted | membership_role_changed | membership_suspended | membership_resumed | membership_removed | profile_name_changed | profile_email_changed | email_corrected; profile_* is self-service, email_corrected is an administrator correcting someone else']
   occurred_at timestamptz [not null]
 
   indexes { (target_professional_id, occurred_at) }

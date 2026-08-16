@@ -40,4 +40,32 @@ class ProfessionalAccountAuditEvent
         $this->action = $action;
         $this->occurredAt = $occurredAt;
     }
+
+    /**
+     * Read access to an append-only record.
+     *
+     * The events carry no report or case content, only who acted on which
+     * account and how, so exposing them is safe. Without accessors the record
+     * cannot be verified at all, and an audit trail nobody can inspect is not
+     * an audit trail.
+     */
+    public function target(): Professional
+    {
+        return $this->target;
+    }
+
+    public function actor(): Professional
+    {
+        return $this->actor;
+    }
+
+    public function action(): ProfessionalAccountAuditAction
+    {
+        return $this->action;
+    }
+
+    public function occurredAt(): DateTimeImmutable
+    {
+        return $this->occurredAt;
+    }
 }
