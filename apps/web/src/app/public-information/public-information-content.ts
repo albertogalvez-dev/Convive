@@ -219,7 +219,7 @@ export const PUBLIC_ACCESSIBILITY_NOTICE: PublicInformationContent = {
       heading: 'Estado de la revisión',
       paragraphs: [
         'Las comprobaciones automáticas de accesibilidad forman parte de la integración continua del proyecto y se ejecutan en cada cambio.',
-        'La revisión manual con productos de apoyo sobre los recorridos críticos está planificada y todavía no ha terminado. Mientras no termine, este sitio no declara conformidad con las WCAG 2.2 AA: afirmarlo sin haberlo comprobado sería faltar a la verdad.',
+        'El 16 de agosto de 2026 se ejecutó una auditoría manual de los recorridos críticos, que encontró y corrigió dos fallos reales: un contraste insuficiente y tres estados de error que no se anunciaban a un lector de pantalla. Falta todavía la comprobación con productos de apoyo reales. Mientras no se complete, este sitio no declara conformidad con las WCAG 2.2 AA: afirmarlo sin haberlo comprobado sería faltar a la verdad.',
       ],
     },
     {

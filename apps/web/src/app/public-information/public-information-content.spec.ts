@@ -84,4 +84,14 @@ describe('public information content', () => {
     expect(text).toContain('no declara conformidad');
     expect(text).not.toContain('cumple el nivel AA');
   });
+
+  it('says the manual audit has run, not that it is still pending', () => {
+    // #167's audit ran on 16 August 2026 and found and fixed real issues. The
+    // notice must say so instead of implying nobody has looked yet, while
+    // still refusing to declare conformance until the screen-reader pass runs.
+    const text = allText(PUBLIC_ACCESSIBILITY_NOTICE);
+
+    expect(text).toContain('se ejecutó una auditoría manual');
+    expect(text).not.toContain('está planificada y todavía no ha terminado');
+  });
 });
