@@ -56,3 +56,4 @@ gap for someone to close conveniently.
 | [Processor, vendor and access governance](vendor-and-access-governance.md) | Which providers and administrative access paths would touch real data, and on whose authority |
 | [Real-email delivery and notification operations](email-delivery-operations.md) | Whether a pilot needs email at all, and what would have to be true before a single message left the system |
 | [Incident response and safeguarding escalation](incident-and-safeguarding-playbooks.md) | What happens when the software is working perfectly and someone is harmed anyway |
+| [Pilot onboarding, training and support](pilot-onboarding-and-support.md) | What a centre would need to know before depending on this, and what it must never be told |
