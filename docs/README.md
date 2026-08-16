@@ -31,5 +31,8 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Public information](content/public-information.md): the approved public
   document set, who publishes it, emergency signposting and what the notices
   must never claim.
+- [Real-data governance drafts](governance/README.md): unapproved preparatory
+  material framing the decisions a competent controller would have to make
+  before a real-data pilot could be considered.
 - [Development log](development-log.md): material delivery decisions and
   evidence, without inventing history.
