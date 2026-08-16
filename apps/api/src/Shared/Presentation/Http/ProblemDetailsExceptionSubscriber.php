@@ -134,21 +134,21 @@ final class ProblemDetailsExceptionSubscriber implements EventSubscriberInterfac
             return;
         }
 
+        if ($exception instanceof AttachmentDownloadConcurrencyLimitReached) {
+            $this->securityEventLogger->attachmentDownloadConcurrencyLimited($event->getRequest());
+            $response = $this->createResponse(
+                'urn:convive:problem:attachment-download-busy',
+                'Attachment download busy',
+                Response::HTTP_TOO_MANY_REQUESTS,
+                'The attachment download capacity is temporarily full. Try again shortly.',
+            );
+            $response->headers->set('Retry-After', '1');
+            $event->setResponse($response);
+
+            return;
+        }
+
         if ($exception instanceof TooManyRequestsHttpException) {
-            if ($exception instanceof AttachmentDownloadConcurrencyLimitReached) {
-                $this->securityEventLogger->attachmentDownloadConcurrencyLimited($event->getRequest());
-                $response = $this->createResponse(
-                    'urn:convive:problem:attachment-download-busy',
-                    'Attachment download busy',
-                    Response::HTTP_TOO_MANY_REQUESTS,
-                    'The attachment download capacity is temporarily full. Try again shortly.',
-                );
-                $response->headers->set('Retry-After', '1');
-                $event->setResponse($response);
-
-                return;
-            }
-
             $response = $this->createResponse(
                 'urn:convive:problem:rate-limited',
                 'Too many requests',

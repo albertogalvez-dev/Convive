@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Reporting\Application;
 
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use RuntimeException;
 
-final class AttachmentDownloadConcurrencyLimitReached extends TooManyRequestsHttpException
+final class AttachmentDownloadConcurrencyLimitReached extends RuntimeException
 {
     public function __construct()
     {
-        parent::__construct(1, 'The private attachment download capacity is temporarily full.');
+        parent::__construct('The private attachment download capacity is temporarily full.');
     }
 }
