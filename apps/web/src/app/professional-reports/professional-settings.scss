@@ -94,6 +94,37 @@ form button {
   color: #fff;
   background: #19366d;
 }
+.confirm {
+  border: 1px solid #f0c98a;
+  border-radius: 0.8rem;
+  padding: 1rem 1.1rem;
+  background: #fffaf0;
+}
+.confirm h3 {
+  margin: 0 0 0.55rem;
+  font-size: 1rem;
+}
+.confirm p {
+  margin: 0 0 0.6rem;
+  color: #4d4230;
+  font-size: 0.85rem;
+}
+.confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+.confirm-actions button {
+  border-color: #19366d;
+  color: #fff;
+  background: #19366d;
+}
+.confirm-actions .confirm-cancel {
+  border-color: #cdd9e9;
+  color: #19366d;
+  background: #fff;
+}
 .error,
 .saved {
   margin: 0 0 1rem;

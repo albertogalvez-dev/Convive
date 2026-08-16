@@ -84,7 +84,14 @@ describe('ProfessionalSettings', () => {
     expect(page.querySelector('[role=status]')?.textContent).toContain('Hemos guardado tus datos');
   });
 
-  it('warns that changing the email ends the session, and signs out when it does', async () => {
+  const typeEmail = (value: string): void => {
+    const email = page.querySelector<HTMLInputElement>('input[name=email]');
+    email!.value = value;
+    email!.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+  };
+
+  it('confirms an email change before saving and warns it can lock the account', async () => {
     await flushProfile();
 
     expect(page.querySelector('#email-hint')?.textContent).toContain('se cerrará tu sesión');
@@ -92,8 +99,43 @@ describe('ProfessionalSettings', () => {
       'email-hint',
     );
 
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    typeEmail('nuevo@example.com');
     page.querySelector<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    // Nothing is saved until the professional confirms.
+    http.expectNone('/api/v1/professional/profile');
+    const dialog = page.querySelector('[role=alertdialog]');
+    expect(dialog?.textContent).toContain('nuevo@example.com');
+    expect(dialog?.textContent).toContain('no podrás volver a entrar por tu cuenta');
+    expect(dialog?.textContent).toContain('dirección de tu centro');
+  });
+
+  it('restores the previous email when the change is cancelled', async () => {
+    await flushProfile();
+
+    typeEmail('equivocado@example.com');
+    page.querySelector<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    page.querySelector<HTMLButtonElement>('.confirm-cancel')?.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(page.querySelector('[role=alertdialog]')).toBeNull();
+    expect(page.querySelector<HTMLInputElement>('input[name=email]')?.value).toBe(
+      'laura@example.com',
+    );
+  });
+
+  it('signs the professional out once the confirmed email change is saved', async () => {
+    await flushProfile();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    typeEmail('nuevo@example.com');
+    page.querySelector<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    page.querySelectorAll<HTMLButtonElement>('.confirm-actions button')[1].click();
     http
       .expectOne('/api/v1/professional/profile')
       .flush({ ...profile, email: 'nuevo@example.com', sessionEnded: true });
@@ -106,17 +148,22 @@ describe('ProfessionalSettings', () => {
   it('explains a duplicate email without losing what was typed', async () => {
     await flushProfile();
 
+    typeEmail('ocupado@example.com');
     page.querySelector<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    page.querySelectorAll<HTMLButtonElement>('.confirm-actions button')[1].click();
     http
       .expectOne('/api/v1/professional/profile')
       .flush(null, { status: 409, statusText: 'Conflict' });
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     expect(page.querySelector('[role=alert]')?.textContent).toContain(
       'Ese correo ya pertenece a otra cuenta',
     );
     expect(page.querySelector<HTMLInputElement>('input[name=email]')?.value).toBe(
-      'laura@example.com',
+      'ocupado@example.com',
     );
   });
 

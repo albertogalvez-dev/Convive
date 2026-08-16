@@ -41,6 +41,30 @@
         El correo es tu identificador de acceso. Si lo cambias, se cerrar&aacute; tu sesi&oacute;n y
         tendr&aacute;s que volver a entrar con el correo nuevo.
       </p>
+
+      @if (confirmingEmail()) {
+        <div class="confirm" role="alertdialog" aria-labelledby="confirm-title">
+          <h3 id="confirm-title">Vas a cambiar tu correo de acceso</h3>
+          <p>
+            A partir de ahora entrar&aacute;s con <strong>{{ email().trim() }}</strong
+            >. Se cerrar&aacute; tu sesi&oacute;n inmediatamente.
+          </p>
+          <p>
+            Si te equivocas al escribirlo, no podr&aacute;s volver a entrar por tu cuenta: el
+            env&iacute;o de correos est&aacute; desactivado, as&iacute; que tendr&aacute;s que
+            pedirle a la direcci&oacute;n de tu centro que te restablezca el acceso.
+          </p>
+          <div class="confirm-actions">
+            <button type="button" class="confirm-cancel" (click)="cancelEmailChange()">
+              Volver y revisarlo
+            </button>
+            <button type="button" [disabled]="saving()" (click)="confirmEmailChange()">
+              {{ saving() ? 'Guardando…' : 'Sí, cambiar mi correo' }}
+            </button>
+          </div>
+        </div>
+      }
+
       <button type="submit" [disabled]="saving()">
         {{ saving() ? 'Guardando…' : 'Guardar cambios' }}
       </button>
