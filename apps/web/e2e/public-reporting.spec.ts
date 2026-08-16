@@ -131,6 +131,7 @@ test('completes the fictional reporter-professional conversation loop', async ({
   try {
     const professionalPage = await professionalContext.newPage();
     await loginAsProfessional(professionalPage, TRIAGE_EMAIL);
+    await skipWorkspaceIntroduction(professionalPage);
     await expectNoAccessibilityViolations(professionalPage);
     await professionalPage.goto(absoluteUrl('/profesionales/comunicaciones'));
     await professionalPage.getByText(situationDescription, { exact: true }).click();
@@ -149,6 +150,7 @@ test('completes the fictional reporter-professional conversation loop', async ({
 
     const administratorPage = await administratorContext.newPage();
     await loginAsProfessional(administratorPage, ADMINISTRATOR_EMAIL);
+    await skipWorkspaceIntroduction(administratorPage);
     await administratorPage.goto(professionalDetailUrl);
     await expect(administratorPage.getByRole('alert')).toContainText('no está disponible');
 
@@ -249,6 +251,7 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
   try {
     const leadPage = await leadContext.newPage();
     await loginAsProfessional(leadPage, TRIAGE_EMAIL);
+    await skipWorkspaceIntroduction(leadPage);
     await leadPage.goto(absoluteUrl('/profesionales/casos'));
     await expect(leadPage.getByRole('heading', { name: 'Casos', exact: true })).toBeVisible();
     await expect(leadPage.getByRole('button', { name: /Asignados/ })).toContainText('1');
@@ -283,6 +286,7 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
 
     const administratorPage = await administratorContext.newPage();
     await loginAsProfessional(administratorPage, ADMINISTRATOR_EMAIL);
+    await skipWorkspaceIntroduction(administratorPage);
     await administratorPage.goto(assignedCaseUrl);
     await expect(
       administratorPage.getByRole('heading', { name: 'Caso no disponible' }),
@@ -459,6 +463,23 @@ async function loginAsProfessional(
   await page.getByLabel('Contraseña').fill(PROFESSIONAL_PASSWORD);
   await page.getByRole('button', { name: 'Acceder' }).click();
   await expect(page.getByRole('heading', { name: /Hola,/ })).toBeVisible();
+}
+
+/**
+ * A professional meeting the workspace for the first time is introduced to it,
+ * and every browser context here is a first visit. Leaving the introduction is
+ * part of arriving at the workspace.
+ *
+ * This is deliberately separate from the login helper rather than folded into
+ * it: the performance test measures that helper, and dismissing a dialog is not
+ * part of how long the dashboard takes to become usable.
+ */
+async function skipWorkspaceIntroduction(page: import('@playwright/test').Page): Promise<void> {
+  const introduction = page.getByRole('dialog');
+  await expect(introduction).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+  await page.getByRole('button', { name: 'Saltar la introducción' }).click();
+  await expect(introduction).toBeHidden();
 }
 
 function absoluteUrl(path: string): string {
