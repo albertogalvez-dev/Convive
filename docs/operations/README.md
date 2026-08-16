@@ -30,6 +30,7 @@ real safeguarding data.
 |---|---|---|
 | [Controlled release workflow](controlled-release-workflow.md) | Maintainer/reviewer | CI gates, manual release inputs and deployment boundary |
 | [Deployment, release and rollback](deployment-release-and-rollback.md) | VPS operator | Preflight, migration classes, smoke tests and rollback |
+| [Release acceptance records](release-records/README.md) | VPS operator | One durable record per release: what ran, what was verified, what failed |
 | [Encrypted backup and recovery](backup-and-recovery.md) | VPS operator | Restic/R2 backup, retention and isolated restoration |
 | [Incident response and observability](incident-response.md) | Maintainer/on-call | Redacted signals, alert publication and triage |
 | [Private attachment lifecycle](attachment-lifecycle.md) | VPS operator | Bounded scan retries and fictional-evidence cleanup |
