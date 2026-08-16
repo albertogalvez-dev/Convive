@@ -20,6 +20,8 @@ runtime evidence and meeting-specific material stay outside Git.
   matrix, responsive reflow and defect priority.
 - [Performance baseline](testing/performance.md): bounded bundle, API and
   critical-route regression budgets for the fictional demo.
+- [Operational acceptance pack](testing/operational-acceptance.md): role-based
+  fictional scenarios, including the paths where the product must say no.
 - [Code-quality baseline](development/code-quality.md): static analysis,
   formatting, exceptions and PhpStorm setup.
 - [Delivery traceability](development/delivery-traceability.md): issue,
