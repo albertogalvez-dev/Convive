@@ -229,6 +229,7 @@ final class InMemoryMemberships implements OrganisationMembershipRepository
     public function hasActiveMembership(Professional $professional, Organisation $organisation): bool { foreach ($this->findActiveByProfessional($professional) as $membership) if ($membership->organisation()->id()->equals($organisation->id())) return true; return false; }
     public function findActiveByOrganisation(Organisation $organisation): array { return array_values(array_filter($this->memberships, static fn (OrganisationMembership $membership): bool => $membership->organisation()->id()->equals($organisation->id()) && $membership->isActive())); }
     public function findByOrganisation(Organisation $organisation): array { return array_values(array_filter($this->memberships, static fn (OrganisationMembership $membership): bool => $membership->organisation()->id()->equals($organisation->id()))); }
+    public function findByIdAndOrganisation(Uuid $id, Organisation $organisation): ?OrganisationMembership { foreach ($this->memberships as $membership) if ($membership->id()->equals($id) && $membership->organisation()->id()->equals($organisation->id())) return $membership; return null; }
     public function findActiveByProfessionalAndOrganisation(Professional $professional, Organisation $organisation, ProfessionalRole $role): ?OrganisationMembership { foreach ($this->findActiveByProfessional($professional) as $membership) if ($membership->organisation()->id()->equals($organisation->id()) && $membership->role() === $role) return $membership; return null; }
 }
 

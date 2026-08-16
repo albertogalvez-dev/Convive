@@ -10,6 +10,7 @@ use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalRole;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Uid\Uuid;
 
 final class DoctrineOrganisationMembershipRepository implements OrganisationMembershipRepository
 {
@@ -58,6 +59,14 @@ final class DoctrineOrganisationMembershipRepository implements OrganisationMemb
         return $this->entityManager->getRepository(OrganisationMembership::class)->findBy([
             'organisation' => $organisation,
         ], ['grantedAt' => 'ASC']);
+    }
+
+    public function findByIdAndOrganisation(Uuid $id, Organisation $organisation): ?OrganisationMembership
+    {
+        return $this->entityManager->getRepository(OrganisationMembership::class)->findOneBy([
+            'id' => $id,
+            'organisation' => $organisation,
+        ]);
     }
 
     public function findActiveByProfessionalAndOrganisation(

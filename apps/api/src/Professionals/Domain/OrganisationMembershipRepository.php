@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Professionals\Domain;
 
 use App\Organisations\Domain\Organisation;
+use Symfony\Component\Uid\Uuid;
 
 interface OrganisationMembershipRepository
 {
@@ -22,6 +23,8 @@ interface OrganisationMembershipRepository
 
     /** @return list<OrganisationMembership> */
     public function findByOrganisation(Organisation $organisation): array;
+
+    public function findByIdAndOrganisation(Uuid $id, Organisation $organisation): ?OrganisationMembership;
 
     public function findActiveByProfessionalAndOrganisation(
         Professional $professional,
