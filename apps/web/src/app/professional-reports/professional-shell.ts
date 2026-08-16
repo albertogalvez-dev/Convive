@@ -4,11 +4,12 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { ProfessionalNotificationsService } from './professional-notifications.service';
 import { ProfessionalPortalStore } from './professional-portal.store';
+import { WorkspaceIntroduction } from './workspace-introduction/workspace-introduction';
 
 @Component({
   selector: 'app-professional-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, WorkspaceIntroduction],
   templateUrl: './professional-shell.html',
   styleUrl: './professional-shell.scss',
 })
