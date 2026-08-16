@@ -1561,6 +1561,56 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/organisations/{id}/reporting-channel':
+    get:
+      tags:
+        - 'Professional access'
+      summary: 'Read the public reporting channel of an administered centre'
+      operationId: getOrganisationReportingChannel
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The current link and its state.'
+        '404':
+          description: 'The organisation is not administered by this professional.'
+      security:
+        -
+          professionalSession: []
+    patch:
+      tags:
+        - 'Professional access'
+      summary: 'Pause, activate, rotate or retire the public reporting channel'
+      description: 'Changes routing for new reports only. A reporter holding an access code reaches their own report through a route that never takes a centre identifier, so none of these actions affects a conversation already under way.'
+      operationId: changeOrganisationReportingChannel
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeReportingChannelRequest'
+      responses:
+        '200':
+          description: 'The updated link and state.'
+        '400':
+          description: 'The action is not possible in the current state.'
+        '404':
+          description: 'The organisation is not administered by this professional.'
+      security:
+        -
+          professionalSession: []
   /api/v1/reporter/report/follow-up-entries:
     post:
       tags:
@@ -3549,6 +3599,18 @@ components:
       properties:
         content:
           type: string
+      type: object
+    ChangeReportingChannelRequest:
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - pause
+            - activate
+            - rotate
+            - retire
       type: object
     AddReportFollowUpEntryRequest:
       required:
