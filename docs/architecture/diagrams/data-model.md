@@ -11,6 +11,7 @@ erDiagram
         uuid id PK
         varchar name
         varchar public_reporting_identifier UK "ORG_ + 16 Crockford Base32 characters"
+        varchar reporting_channel_status "active | paused | retired"
     }
     reports {
         uuid id PK "UUIDv7, application-generated"

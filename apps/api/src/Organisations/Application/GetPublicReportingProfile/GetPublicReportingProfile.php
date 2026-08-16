@@ -20,7 +20,10 @@ final readonly class GetPublicReportingProfile
         $organisation = $this->organisationRepository
             ->findByPublicReportingIdentifier($identifier);
 
-        if ($organisation === null) {
+        // A paused or retired channel is refused exactly like an identifier
+        // that never existed, so the state of a real centre — and whether it
+        // ever had a link — is not observable from outside.
+        if ($organisation === null || !$organisation->acceptsNewReports()) {
             throw PublicReportingOrganisationNotFound::withIdentifier(
                 $identifier,
             );

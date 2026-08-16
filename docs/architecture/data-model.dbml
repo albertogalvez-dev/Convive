@@ -8,6 +8,7 @@ Table organisations {
   id uuid [pk]
   name varchar(255) [not null]
   public_reporting_identifier varchar(20) [not null, unique, note: 'ORG_ prefix plus 16 Crockford Base32 characters; public routing identifier']
+  reporting_channel_status varchar(16) [not null, default: 'active', note: 'active | paused | retired (CHECK constraint); only active accepts a new report, and paused or retired is refused exactly like an identifier that never existed']
 }
 
 Table reports {

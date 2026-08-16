@@ -24,7 +24,10 @@ final readonly class SubmitAnonymousReport
                 $command->organisationIdentifier,
             );
 
-        if ($organisation === null) {
+        // Same refusal for a missing organisation and for one whose channel is
+        // paused or retired: a rotation must never become an oracle that tells
+        // an outsider which centres exist or which links used to be real.
+        if ($organisation === null || !$organisation->acceptsNewReports()) {
             throw ReportingOrganisationNotFound::withIdentifier(
                 $command->organisationIdentifier,
             );
