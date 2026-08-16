@@ -2,12 +2,13 @@ import { Component, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { PublicSeoService } from '../public-seo.service';
+import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
 import { articleForSlug } from './blog-content';
 
 @Component({
   selector: 'app-blog-article',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, PublicSiteFooter],
   templateUrl: './blog-article.html',
   styleUrl: './blog.scss',
 })

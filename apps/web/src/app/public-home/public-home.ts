@@ -1,11 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 
 import { PublicSeoService } from '../public-seo.service';
+import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
 import { professionalAccessUrlFor } from '../site-hosts';
 
 @Component({
   selector: 'app-public-home',
   standalone: true,
+  imports: [PublicSiteFooter],
   templateUrl: './public-home.html',
   styleUrl: './public-home.scss',
 })
