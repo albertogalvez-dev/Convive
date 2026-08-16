@@ -4,7 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
-import { ProfessionalMembership, ProfessionalProfileService } from './professional-profile.service';
+import {
+  ProfessionalAbsence,
+  ProfessionalMembership,
+  ProfessionalProfileService,
+} from './professional-profile.service';
 
 @Component({
   selector: 'app-professional-settings',
@@ -27,6 +31,9 @@ export class ProfessionalSettings implements OnInit {
   protected readonly savedMessage = signal<string | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly confirmingEmail = signal(false);
+  protected readonly absences = signal<ProfessionalAbsence[]>([]);
+  protected readonly absenceForm = signal({ startsOn: '', endsOn: '', note: '' });
+  protected readonly absenceError = signal<string | null>(null);
 
   /** The address the profile was loaded with, used to detect a real change. */
   private currentEmail = '';
@@ -40,6 +47,36 @@ export class ProfessionalSettings implements OnInit {
         this.memberships.set(profile.memberships);
       },
       error: () => this.errorMessage.set('No hemos podido cargar tus datos.'),
+    });
+    this.loadAbsences();
+  }
+
+  protected recordAbsence(): void {
+    const form = this.absenceForm();
+    this.absenceError.set(null);
+    this.profiles
+      .recordAbsence({ startsOn: form.startsOn, endsOn: form.endsOn, note: form.note || undefined })
+      .subscribe({
+        next: () => {
+          this.absenceForm.set({ startsOn: '', endsOn: '', note: '' });
+          this.loadAbsences();
+        },
+        error: () =>
+          this.absenceError.set('Revisa las fechas: la vuelta no puede ser anterior a la salida.'),
+      });
+  }
+
+  protected cancelAbsence(absence: ProfessionalAbsence): void {
+    this.profiles.cancelAbsence(absence.id).subscribe({
+      next: () => this.loadAbsences(),
+      error: () => this.absenceError.set('No hemos podido anular esta ausencia.'),
+    });
+  }
+
+  private loadAbsences(): void {
+    this.profiles.absences().subscribe({
+      next: ({ items }) => this.absences.set(items),
+      error: () => this.absenceError.set('No hemos podido cargar tus ausencias.'),
     });
   }
 

@@ -5,6 +5,17 @@ import { Observable } from 'rxjs';
 export type ProfessionalAccountStatus = 'invited' | 'active' | 'suspended' | 'deactivated';
 export type ProfessionalAccountRole = 'triage' | 'administrator';
 
+export type CaseContinuityReason =
+  'responsible_absent' | 'overdue_task' | 'absent_with_overdue_task';
+
+export interface CaseContinuityEntry {
+  caseId: string;
+  status: 'assessment' | 'active' | 'closed';
+  responsible: { id: string; name: string };
+  reason: CaseContinuityReason;
+  earliestOverdueAt: string | null;
+}
+
 export interface AccountAdministrationOrganisation {
   id: string;
   name: string;
@@ -85,6 +96,16 @@ export class ProfessionalAccountsService {
     return this.http.post<OneTimeCredential>(
       `/api/v1/professional/organisations/${encodeURIComponent(organisationId)}/accounts/${encodeURIComponent(professionalId)}/password-reset`,
       {},
+    );
+  }
+
+  /**
+   * Operational metadata about cases needing a continuity decision. It returns
+   * no case content, and reading it grants no access to the cases it names.
+   */
+  caseContinuity(organisationId: string): Observable<{ items: CaseContinuityEntry[] }> {
+    return this.http.get<{ items: CaseContinuityEntry[] }>(
+      `/api/v1/professional/organisations/${encodeURIComponent(organisationId)}/case-continuity`,
     );
   }
 
