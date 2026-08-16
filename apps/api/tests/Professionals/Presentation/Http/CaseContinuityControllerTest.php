@@ -125,6 +125,30 @@ final class CaseContinuityControllerTest extends WebTestCase
         self::assertSame([], $this->responsePayload()['items']);
     }
 
+    public function testTheContinuityListNamesACaseTheAdministratorStillCannotOpen(): void
+    {
+        $organisation = $this->createOrganisation();
+        $administrator = $this->createProfessional('gate-admin', $organisation, ProfessionalRole::Administrator);
+        $lead = $this->createProfessional('gate-lead', $organisation, ProfessionalRole::Triage);
+        $managedCase = $this->createCase($organisation, $lead, overdue: true);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($administrator);
+        $this->client->request('GET', '/api/v1/professional/organisations/'.$organisation->id()->toRfc4122().'/case-continuity');
+        self::assertResponseIsSuccessful();
+        self::assertSame($managedCase->id()->toRfc4122(), $this->responsePayload()['items'][0]['caseId']);
+
+        // The list tells an administrator which case needs a decision. It is
+        // not a way into the case: reading it grants nothing, and restoring
+        // continuity means an explicit, audited assignment.
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        // Nor is the evidence or the audit trail reachable from that knowledge.
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testANonAdministratorReadsNothingEvenForTheirOwnOrganisation(): void
     {
         $organisation = $this->createOrganisation();
