@@ -345,11 +345,28 @@ Table professional_notification_preferences {
   }
 }
 
+Table professional_absences {
+  id uuid [pk, note: 'application-generated UUIDv7']
+  professional_id uuid [not null, note: 'a professional records planned absence about themselves only']
+  starts_on date [not null]
+  ends_on date [not null, note: 'inclusive; CHECK constraint enforces ends_on >= starts_on']
+  note varchar(200) [null, note: 'optional operational note; never a health, diagnosis or personal reason']
+  recorded_at timestamptz [not null]
+  cancelled_at timestamptz [null, note: 'cancelling preserves the row rather than deleting it']
+
+  indexes {
+    (professional_id, starts_on, ends_on)
+  }
+
+  note: 'Planned absence is an operational signal only. It never transfers a case, never widens access and never removes the recorder own access: continuity is restored by an explicit reassignment.'
+}
+
 Ref: organisation_memberships.professional_id > professionals.id
 Ref: organisation_memberships.organisation_id > organisations.id
 Ref: professional_notifications.recipient_professional_id > professionals.id
 Ref: professional_notifications.case_id > managed_cases.id
 Ref: professional_notification_preferences.professional_id > professionals.id
+Ref: professional_absences.professional_id > professionals.id
 Ref: professional_export_events.professional_id > professionals.id
 Ref: professional_credential_invitations.professional_id > professionals.id
 Ref: professional_credential_invitations.issued_by_professional_id > professionals.id
