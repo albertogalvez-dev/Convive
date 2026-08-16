@@ -109,6 +109,23 @@ export class ProfessionalAccountsService {
     );
   }
 
+  /**
+   * Correct a mistyped login address on behalf of a professional who can no
+   * longer reach their own account. The response reports whether the change
+   * ended their sessions, so the interface can say what actually happened
+   * instead of guessing.
+   */
+  correctEmail(
+    organisationId: string,
+    professionalId: string,
+    email: string,
+  ): Observable<ProfessionalAccount & { sessionEnded: boolean }> {
+    return this.http.patch<ProfessionalAccount & { sessionEnded: boolean }>(
+      `/api/v1/professional/organisations/${encodeURIComponent(organisationId)}/accounts/${encodeURIComponent(professionalId)}/email`,
+      { email },
+    );
+  }
+
   changeStatus(
     organisationId: string,
     professionalId: string,

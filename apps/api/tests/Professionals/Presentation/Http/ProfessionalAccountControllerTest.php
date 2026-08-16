@@ -126,6 +126,118 @@ final class ProfessionalAccountControllerTest extends WebTestCase
         self::assertSame(ProfessionalAccountStatus::Active, $persisted->accountStatus());
     }
 
+    public function testAdministratorCorrectsAMistypedEmailAndTheProfessionalIsSignedOut(): void
+    {
+        [$organisation, $administrator] = $this->administratorScope();
+        $target = $this->professional('mistyped-target');
+        $this->entityManager->persist($target);
+        $this->entityManager->persist(new OrganisationMembership(Uuid::v7(), $target, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        $this->entityManager->flush();
+        $revisionBefore = $target->securityRevision();
+        $this->client->loginUser($administrator);
+        $corrected = 'corrected-'.Uuid::v7()->toRfc4122().'@example.invalid';
+
+        $this->client->jsonRequest(
+            'PATCH',
+            $this->emailRoute($organisation, $target),
+            ['email' => $corrected],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame($corrected, $payload['email']);
+        self::assertTrue($payload['sessionEnded']);
+
+        $this->entityManager->clear();
+        $persisted = $this->entityManager->find(Professional::class, $target->id());
+        self::assertInstanceOf(Professional::class, $persisted);
+        self::assertSame($corrected, $persisted->email()->toString());
+        self::assertSame($revisionBefore + 1, $persisted->securityRevision());
+    }
+
+    public function testCorrectionIsRefusedWhenTheAddressBelongsToAnotherAccount(): void
+    {
+        [$organisation, $administrator] = $this->administratorScope();
+        $target = $this->professional('conflict-target');
+        $occupant = $this->professional('conflict-occupant');
+        $this->entityManager->persist($target);
+        $this->entityManager->persist($occupant);
+        foreach ([$target, $occupant] as $professional) {
+            $this->entityManager->persist(new OrganisationMembership(Uuid::v7(), $professional, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        }
+        $this->entityManager->flush();
+        $original = $target->email()->toString();
+        $this->client->loginUser($administrator);
+
+        $this->client->jsonRequest(
+            'PATCH',
+            $this->emailRoute($organisation, $target),
+            ['email' => $occupant->email()->toString()],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
+        $this->entityManager->clear();
+        $persisted = $this->entityManager->find(Professional::class, $target->id());
+        self::assertInstanceOf(Professional::class, $persisted);
+        self::assertSame($original, $persisted->email()->toString());
+    }
+
+    public function testNonAdministratorCannotCorrectAnEmailAndCannotLearnTheAccountExists(): void
+    {
+        [$organisation] = $this->administratorScope();
+        $triage = $this->professional('correction-triage');
+        $target = $this->professional('correction-target');
+        $this->entityManager->persist($triage);
+        $this->entityManager->persist($target);
+        foreach ([$triage, $target] as $professional) {
+            $this->entityManager->persist(new OrganisationMembership(Uuid::v7(), $professional, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        }
+        $this->entityManager->flush();
+        $original = $target->email()->toString();
+        $this->client->loginUser($triage);
+
+        $this->client->jsonRequest(
+            'PATCH',
+            $this->emailRoute($organisation, $target),
+            ['email' => 'taken-over-'.Uuid::v7()->toRfc4122().'@example.invalid'],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->entityManager->clear();
+        $persisted = $this->entityManager->find(Professional::class, $target->id());
+        self::assertInstanceOf(Professional::class, $persisted);
+        self::assertSame($original, $persisted->email()->toString());
+    }
+
+    public function testAdministratorCannotCorrectAnEmailOutsideTheirOwnOrganisation(): void
+    {
+        [, $administrator] = $this->administratorScope();
+        $otherOrganisation = new Organisation(Uuid::v7(), 'Other Fictional School', PublicReportingIdentifier::generate());
+        $outsider = $this->professional('outsider-target');
+        $this->entityManager->persist($otherOrganisation);
+        $this->entityManager->persist($outsider);
+        $this->entityManager->persist(new OrganisationMembership(Uuid::v7(), $outsider, $otherOrganisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        $this->entityManager->flush();
+        $original = $outsider->email()->toString();
+        $this->client->loginUser($administrator);
+
+        $this->client->jsonRequest(
+            'PATCH',
+            $this->emailRoute($otherOrganisation, $outsider),
+            ['email' => 'reached-'.Uuid::v7()->toRfc4122().'@example.invalid'],
+            $this->sameOriginHeaders(),
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->entityManager->clear();
+        $persisted = $this->entityManager->find(Professional::class, $outsider->id());
+        self::assertInstanceOf(Professional::class, $persisted);
+        self::assertSame($original, $persisted->email()->toString());
+    }
+
     public function testCredentialAcceptanceIsRateLimitedWithoutAnEmailLookup(): void
     {
         for ($attempt = 0; $attempt < 5; ++$attempt) {
@@ -145,6 +257,11 @@ final class ProfessionalAccountControllerTest extends WebTestCase
             $this->sameOriginHeaders(),
         );
         self::assertResponseStatusCodeSame(Response::HTTP_TOO_MANY_REQUESTS);
+    }
+
+    private function emailRoute(Organisation $organisation, Professional $target): string
+    {
+        return '/api/v1/professional/organisations/'.$organisation->id()->toRfc4122().'/accounts/'.$target->id()->toRfc4122().'/email';
     }
 
     /** @return array{Organisation, Professional} */

@@ -11,6 +11,7 @@ use App\Professionals\Application\ProfessionalCredentialResult;
 use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
+use App\Professionals\Domain\ProfessionalEmailAlreadyUsed;
 use App\Professionals\Domain\ProfessionalRepository;
 use App\Professionals\Domain\ProfessionalRole;
 use App\Shared\Presentation\Http\RateLimitEnforcer;
@@ -22,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -213,6 +215,44 @@ final readonly class ProfessionalAccountController
         }
 
         return $this->noStore($this->serializeProfessional($target));
+    }
+
+    #[Route('/api/v1/professional/organisations/{id}/accounts/{professionalId}/email', name: 'api_v1_professional_correct_account_email', methods: ['PATCH'])]
+    #[OA\Patch(
+        operationId: 'correctProfessionalAccountEmail',
+        summary: "Correct a professional's login email address",
+        security: [['professionalSession' => []]],
+        tags: ['Professional access'],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/CorrectProfessionalEmailRequest')),
+        responses: [
+            new OA\Response(response: Response::HTTP_OK, description: 'The corrected account. Changing the email ends every session the professional held.'),
+            new OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'The submitted address is invalid.'),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The organisation or professional is unavailable in this scope.'),
+            new OA\Response(response: Response::HTTP_CONFLICT, description: 'The email address is already in use.'),
+        ],
+    )]
+    public function correctEmail(
+        string $id,
+        string $professionalId,
+        #[CurrentUser] Professional $actor,
+        #[MapRequestPayload(acceptFormat: 'json')] CorrectProfessionalEmailRequest $payload,
+    ): JsonResponse {
+        $organisation = $this->organisation($id);
+        $target = $this->professional($professionalId);
+
+        try {
+            $email = ProfessionalEmail::fromString($payload->email);
+            $sessionEnded = !$target->email()->equals($email);
+            $this->accounts->correctEmail($organisation, $target, $email, $actor, new DateTimeImmutable());
+        } catch (ProfessionalEmailAlreadyUsed $exception) {
+            throw new ProfessionalEmailConflictHttpException(previous: $exception);
+        } catch (InvalidArgumentException $exception) {
+            throw new BadRequestHttpException('The submitted address is invalid.', $exception);
+        } catch (LogicException $exception) {
+            throw new ProfessionalAccountUnavailableHttpException(previous: $exception);
+        }
+
+        return $this->noStore($this->serializeProfessional($target) + ['sessionEnded' => $sessionEnded]);
     }
 
     private function organisation(string $id): Organisation
