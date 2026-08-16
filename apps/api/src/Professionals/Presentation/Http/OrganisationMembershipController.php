@@ -93,8 +93,10 @@ final readonly class OrganisationMembershipController
 
     private function membership(Organisation $organisation, string $id): OrganisationMembership
     {
-        foreach ($this->memberships->findByOrganisation($organisation) as $membership) if (Uuid::isValid($id) && $membership->id()->equals(Uuid::fromString($id))) return $membership;
-        throw new ProfessionalAccountUnavailableHttpException();
+        $membership = Uuid::isValid($id) ? $this->memberships->findByIdAndOrganisation(Uuid::fromString($id), $organisation) : null;
+        if (!$membership instanceof OrganisationMembership) throw new ProfessionalAccountUnavailableHttpException();
+
+        return $membership;
     }
 
     private function requireAdministrator(Organisation $organisation, Professional $actor): void
