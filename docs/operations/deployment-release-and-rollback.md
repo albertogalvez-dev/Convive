@@ -25,6 +25,12 @@ Record these values before changing the VPS:
 
 Do not record secret values.
 
+Use the fillable template in
+[`release-records/TEMPLATE.md`](release-records/TEMPLATE.md), copied to a dated
+file in that directory and filled **during** the release. The list above is what
+to capture; the template is where it goes, and it also carries the failure,
+rollback and acceptance sections a completed release needs.
+
 ## Preflight
 
 Stop the release if any check fails:
