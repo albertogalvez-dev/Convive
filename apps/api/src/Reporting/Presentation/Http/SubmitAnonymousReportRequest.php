@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Reporting\Presentation\Http;
 
 use App\Reporting\Domain\SituationDescription;
+use App\Reporting\Domain\ReportedPeople;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class SubmitAnonymousReportRequest
@@ -46,6 +47,20 @@ final readonly class SubmitAnonymousReportRequest
             message: 'Reporter attention cue is not valid.',
         )]
         public string $reporterAttentionCue = 'unknown',
+
+        #[Assert\Choice(
+            choices: ['within_days', 'within_weeks', 'longer_ago', 'unknown'],
+            message: 'Reporter timing is not valid.',
+        )]
+        public string $reporterTiming = 'unknown',
+
+        // Optional in the strongest sense: absent and blank are the same
+        // answer, and a report naming nobody is a complete report.
+        #[Assert\Length(
+            max: ReportedPeople::MAX_LENGTH,
+            maxMessage: 'Reported people must not exceed {{ limit }} characters.',
+        )]
+        public ?string $reportedPeople = null,
     ) {
     }
 }
