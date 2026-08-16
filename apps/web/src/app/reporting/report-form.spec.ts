@@ -198,7 +198,9 @@ describe('ReportForm', () => {
     const purposes = [...page.querySelectorAll('.field-purpose')].map(
       (element) => element.textContent ?? '',
     );
-    expect(purposes.length).toBeGreaterThanOrEqual(4);
+    // Every collected field on this step, including the required one.
+    expect(purposes.length).toBeGreaterThanOrEqual(5);
+    expect(purposes.join(' ')).toContain('el protocolo es distinto');
     expect(purposes.join(' ')).toContain('Puedes no contestarlo');
     expect(purposes.join(' ')).toContain('No hace falta una fecha exacta');
     expect(purposes.join(' ')).toContain('Puedes dejarlo en blanco y el aviso llega igual');
