@@ -74,6 +74,13 @@ final readonly class ProfessionalCaseController
 {
     private const DEFAULT_PAGE_LIMIT = 20;
     private const MAXIMUM_PAGE_LIMIT = 50;
+
+    /**
+     * A note term shorter than this matches too much of the caller's own case
+     * set to be a search rather than a listing, so it is rejected outright.
+     */
+    private const MINIMUM_NOTE_TERM_LENGTH = 3;
+    private const MAXIMUM_NOTE_TERM_LENGTH = 80;
     private const FICTIONAL_ANDALUSIAN_TERRITORIES = ['ES-AN', 'ES-AN-GR'];
 
     public function __construct(
@@ -115,6 +122,24 @@ final readonly class ProfessionalCaseController
             new OA\Parameter(name: 'status', in: 'query', schema: new OA\Schema(type: 'string', enum: ['assessment', 'active', 'closed'])),
             new OA\Parameter(name: 'modality', in: 'query', schema: new OA\Schema(type: 'string', enum: ['in_person', 'digital', 'mixed', 'unknown'])),
             new OA\Parameter(name: 'reference', in: 'query', schema: new OA\Schema(type: 'string', maxLength: 64)),
+            new OA\Parameter(
+                name: 'responsible',
+                description: 'Narrow to cases that also have an active assignment for this professional.',
+                in: 'query',
+                schema: new OA\Schema(type: 'string', format: 'uuid'),
+            ),
+            new OA\Parameter(
+                name: 'pending',
+                description: 'Narrow to cases holding at least one pending task.',
+                in: 'query',
+                schema: new OA\Schema(type: 'string', enum: ['true', 'false']),
+            ),
+            new OA\Parameter(
+                name: 'note',
+                description: 'Match the requesting professional\'s own communication notes. Notes written by another professional are never searched.',
+                in: 'query',
+                schema: new OA\Schema(type: 'string', maxLength: self::MAXIMUM_NOTE_TERM_LENGTH, minLength: self::MINIMUM_NOTE_TERM_LENGTH),
+            ),
             new OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer', minimum: 1, maximum: self::MAXIMUM_PAGE_LIMIT)),
             new OA\Parameter(name: 'cursor', in: 'query', schema: new OA\Schema(type: 'string', maxLength: 512)),
         ],
@@ -842,6 +867,27 @@ final readonly class ProfessionalCaseController
         }
         $reference = $reference === '' ? null : strtoupper($reference);
 
+        $responsibleValue = trim($request->query->getString('responsible'));
+        if ($responsibleValue !== '' && !Uuid::isValid($responsibleValue)) {
+            throw new BadRequestHttpException('The case responsible filter is invalid.');
+        }
+        $responsible = $responsibleValue === '' ? null : Uuid::fromString($responsibleValue);
+
+        $pendingValue = $request->query->getString('pending');
+        if ($pendingValue !== '' && !in_array($pendingValue, ['true', 'false'], true)) {
+            throw new BadRequestHttpException('The pending-task filter is invalid.');
+        }
+        $onlyWithPendingTasks = $pendingValue === 'true';
+
+        $note = trim($request->query->getString('note'));
+        if (mb_strlen($note) > self::MAXIMUM_NOTE_TERM_LENGTH) {
+            throw new BadRequestHttpException('The case note search term is invalid.');
+        }
+        if ($note !== '' && mb_strlen($note) < self::MINIMUM_NOTE_TERM_LENGTH) {
+            throw new BadRequestHttpException('The case note search term is too short.');
+        }
+        $note = $note === '' ? null : $note;
+
         $limitValue = $request->query->get('limit');
         if ($limitValue === null || $limitValue === '') {
             $limit = self::DEFAULT_PAGE_LIMIT;
@@ -860,7 +906,18 @@ final readonly class ProfessionalCaseController
             throw new BadRequestHttpException('The case cursor is invalid.');
         }
 
-        return new CaseWorkspaceQuery($view, $status, $modality, $reference, $cursor, $limit, $now);
+        return new CaseWorkspaceQuery(
+            $view,
+            $status,
+            $modality,
+            $reference,
+            $responsible,
+            $onlyWithPendingTasks,
+            $note,
+            $cursor,
+            $limit,
+            $now,
+        );
     }
 
     #[Route('/api/v1/professional/cases/{id}/people', name: 'api_v1_professional_add_case_person', methods: ['POST'])]

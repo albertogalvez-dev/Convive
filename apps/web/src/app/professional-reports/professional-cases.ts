@@ -36,9 +36,16 @@ export class ProfessionalCases implements OnInit {
   protected readonly status = signal<CaseStatus | ''>('');
   protected readonly modality = signal<CaseModality | ''>('');
   protected readonly reference = signal('');
+  protected readonly note = signal('');
+  protected readonly pending = signal(false);
   protected readonly summary = signal({ assigned: 0, overdue: 0, upcoming: 0 });
   protected readonly hasFilters = computed(
-    () => this.status() !== '' || this.modality() !== '' || this.reference().trim() !== '',
+    () =>
+      this.status() !== '' ||
+      this.modality() !== '' ||
+      this.reference().trim() !== '' ||
+      this.note().trim() !== '' ||
+      this.pending(),
   );
   protected readonly caseStatusLabel = caseStatusLabel;
   protected readonly caseModalityLabel = caseModalityLabel;
@@ -75,6 +82,8 @@ export class ProfessionalCases implements OnInit {
     this.status.set('');
     this.modality.set('');
     this.reference.set('');
+    this.note.set('');
+    this.pending.set(false);
     this.load();
   }
 
@@ -98,6 +107,8 @@ export class ProfessionalCases implements OnInit {
         status: this.status(),
         modality: this.modality(),
         reference: this.reference().trim(),
+        note: this.note().trim(),
+        pending: this.pending() ? 'true' : '',
         cursor: reset ? undefined : (this.nextCursor() ?? undefined),
       })
       .subscribe({

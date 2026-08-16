@@ -101,6 +101,39 @@ describe('ProfessionalCases', () => {
     expect(page.textContent).toContain('Caso SECOND01');
   });
 
+  it("sends the note and pending filters and explains that notes are the professional's own", () => {
+    flushInitial([summary()]);
+    fixture.detectChanges();
+
+    const note = page.querySelector<HTMLInputElement>('input[name=note]');
+    expect(note).not.toBeNull();
+    expect(page.querySelector('#note-filter-hint')?.textContent).toContain(
+      'notas de comunicación que has escrito tú',
+    );
+    expect(note?.getAttribute('aria-describedby')).toBe('note-filter-hint');
+
+    note!.value = 'pasillo';
+    note!.dispatchEvent(new Event('input'));
+    const pending = page.querySelector<HTMLInputElement>('input[name=pending]');
+    pending!.checked = true;
+    pending!.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    page.querySelector<HTMLFormElement>('.case-filters')?.dispatchEvent(new Event('submit'));
+
+    const request = http.expectOne(
+      (candidate) =>
+        candidate.url === '/api/v1/professional/cases' &&
+        candidate.params.get('note') === 'pasillo',
+    );
+    expect(request.request.params.get('pending')).toBe('true');
+    request.flush({ items: [], pagination: { limit: 20, nextCursor: null } });
+    fixture.detectChanges();
+
+    // An empty result must read as "nothing matched", never as a hint that
+    // matching cases exist somewhere the professional cannot see.
+    expect(page.textContent).toContain('No hay casos que coincidan');
+  });
+
   function flushInitial(
     items: CaseSummaryFixture[],
     pagination: { nextCursor: string | null } = { nextCursor: null },

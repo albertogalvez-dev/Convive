@@ -6,6 +6,10 @@ namespace App\Tests\Professionals\Presentation\Http;
 
 use App\Cases\Domain\CaseAssignment;
 use App\Cases\Domain\CaseAssignmentRole;
+use App\Cases\Domain\CaseCommunication;
+use App\Cases\Domain\CaseCommunicationChannel;
+use App\Cases\Domain\CaseCommunicationRecipient;
+use App\Cases\Domain\CaseCommunicationStatus;
 use App\Cases\Domain\CaseInvolvedPerson;
 use App\Cases\Domain\CaseInvolvedPersonName;
 use App\Cases\Domain\CaseInvolvedPersonRole;
@@ -706,6 +710,113 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSame([], $this->responsePayload()['items']);
         self::assertSame(0, $this->responsePayload()['unreadCount']);
+    }
+
+    public function testTheResponsibleFilterNarrowsToSharedCasesAndNeverRevealsOthers(): void
+    {
+        [$sharedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $colleague = $this->createProfessional('search-colleague', $organisation, ProfessionalRole::Triage);
+        $stranger = $this->createProfessional('search-stranger', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $sharedCase, $colleague, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable()));
+
+        // A case the lead cannot reach, held only by the stranger.
+        $inaccessibleCase = new ManagedCase(Uuid::v7(), $organisation, $stranger, new DateTimeImmutable(), CaseModality::Mixed);
+        $this->entityManager->persist($inaccessibleCase);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $inaccessibleCase, $stranger, CaseAssignmentRole::Lead, $stranger, new DateTimeImmutable()));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($lead);
+        $this->client->request('GET', '/api/v1/professional/cases?responsible='.$colleague->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        self::assertSame(
+            [$sharedCase->id()->toRfc4122()],
+            array_column($this->responsePayload()['items'], 'id'),
+        );
+
+        // Filtering by a professional whose cases the caller cannot reach must
+        // return nothing rather than confirm those cases exist.
+        $this->client->request('GET', '/api/v1/professional/cases?responsible='.$stranger->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+    }
+
+    public function testTheNoteSearchNeverMatchesAnotherProfessionalsNote(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $colleague = $this->createProfessional('note-colleague', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $colleague, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable()));
+        $this->entityManager->persist(new CaseCommunication(
+            Uuid::v7(), $managedCase, $lead, CaseCommunicationRecipient::Family, CaseCommunicationChannel::InPerson,
+            CaseCommunicationStatus::Recorded, new DateTimeImmutable(), 'Fictional meeting about the corridor incident.', $lead, new DateTimeImmutable(),
+        ));
+        $this->entityManager->persist(new CaseCommunication(
+            Uuid::v7(), $managedCase, $colleague, CaseCommunicationRecipient::Family, CaseCommunicationChannel::InPerson,
+            CaseCommunicationStatus::Recorded, new DateTimeImmutable(), 'Fictional note mentioning the playground only.', $colleague, new DateTimeImmutable(),
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($lead);
+        $this->client->request('GET', '/api/v1/professional/cases?note=corridor');
+        self::assertResponseIsSuccessful();
+        self::assertSame([$managedCase->id()->toRfc4122()], array_column($this->responsePayload()['items'], 'id'));
+
+        // The colleague's note lives on a case the lead can read, but it is not
+        // the lead's own note, so the term must not match through it.
+        $this->client->request('GET', '/api/v1/professional/cases?note=playground');
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+    }
+
+    public function testANoteSearchTermCannotUseWildcardsToWidenItsOwnMatch(): void
+    {
+        [$managedCase, $lead] = $this->createCaseWorkspace();
+        $this->entityManager->persist(new CaseCommunication(
+            Uuid::v7(), $managedCase, $lead, CaseCommunicationRecipient::Family, CaseCommunicationChannel::InPerson,
+            CaseCommunicationStatus::Recorded, new DateTimeImmutable(), 'Fictional meeting about the corridor incident.', $lead, new DateTimeImmutable(),
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($lead);
+
+        // Were `%` treated as a wildcard, "cor%dor" would match "corridor".
+        $this->client->request('GET', '/api/v1/professional/cases?note='.urlencode('cor%dor'));
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+
+        // The same term without the wildcard character does match, proving the
+        // empty result above comes from escaping rather than a broken query.
+        $this->client->request('GET', '/api/v1/professional/cases?note=corridor');
+        self::assertResponseIsSuccessful();
+        self::assertSame([$managedCase->id()->toRfc4122()], array_column($this->responsePayload()['items'], 'id'));
+    }
+
+    public function testThePendingTaskFilterNarrowsToCasesHoldingPendingWork(): void
+    {
+        [$managedCase, $lead, $organisation] = $this->createCaseWorkspace();
+        $withoutTasks = new ManagedCase(Uuid::v7(), $organisation, $lead, new DateTimeImmutable(), CaseModality::Mixed);
+        $this->entityManager->persist($withoutTasks);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $withoutTasks, $lead, CaseAssignmentRole::Lead, $lead, new DateTimeImmutable()));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($lead);
+        $this->client->request('GET', '/api/v1/professional/cases?pending=true');
+
+        self::assertResponseIsSuccessful();
+        $ids = array_column($this->responsePayload()['items'], 'id');
+        self::assertContains($managedCase->id()->toRfc4122(), $ids);
+        self::assertNotContains($withoutTasks->id()->toRfc4122(), $ids);
+    }
+
+    public function testInvalidSearchFiltersAreRejected(): void
+    {
+        [, $lead] = $this->createCaseWorkspace();
+        $this->entityManager->flush();
+        $this->client->loginUser($lead);
+
+        foreach (['responsible=not-a-uuid', 'note=ab', 'pending=maybe'] as $filter) {
+            $this->client->request('GET', '/api/v1/professional/cases?'.$filter);
+            self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $filter);
+        }
     }
 
     public function testANotificationCannotBeReadByAProfessionalWhoIsNotItsRecipient(): void

@@ -68,6 +68,44 @@ final readonly class DoctrineCaseWorkspaceRepository implements CaseWorkspaceRep
             }
         }
 
+        // Each of these narrows the caller's own assigned set with an EXISTS
+        // subquery, so a match can only ever be a case they already reach.
+        if ($query->responsibleProfessionalId !== null) {
+            $builder
+                ->andWhere($this->existsSubquery(
+                    CaseAssignment::class,
+                    'responsibleAssignment',
+                    'responsibleAssignment.managedCase = managedCase'
+                    .' AND responsibleAssignment.professional = :responsibleProfessional'
+                    .' AND responsibleAssignment.revokedAt IS NULL',
+                ))
+                ->setParameter('responsibleProfessional', $query->responsibleProfessionalId);
+        }
+
+        if ($query->onlyWithPendingTasks) {
+            $builder
+                ->andWhere($this->existsSubquery(
+                    CaseTask::class,
+                    'pendingTask',
+                    'pendingTask.managedCase = managedCase AND pendingTask.status = :pendingTaskStatus',
+                ))
+                ->setParameter('pendingTaskStatus', CaseTaskStatus::Pending->value);
+        }
+
+        if ($query->ownNoteText !== null) {
+            // Only the caller's own communication notes are searchable. Notes
+            // written by another professional stay out of the term match.
+            $builder
+                ->andWhere($this->existsSubquery(
+                    CaseCommunication::class,
+                    'ownNote',
+                    'ownNote.managedCase = managedCase'
+                    .' AND ownNote.createdBy = :professional'
+                    .' AND LOWER(ownNote.note) LIKE :ownNoteText',
+                ))
+                ->setParameter('ownNoteText', '%'.$this->escapeLikeTerm(mb_strtolower($query->ownNoteText)).'%');
+        }
+
         if ($query->view === CaseOperationalView::Overdue || $query->view === CaseOperationalView::Upcoming) {
             $this->applyTaskView($builder, $query);
         } else {
@@ -123,6 +161,28 @@ final readonly class DoctrineCaseWorkspaceRepository implements CaseWorkspaceRep
             ->getScalarResult();
 
         return ['assigned' => (int) $assigned, 'overdue' => count($overdue), 'upcoming' => count($upcoming)];
+    }
+
+    /**
+     * @param class-string $entity
+     */
+    private function existsSubquery(string $entity, string $alias, string $conditions): string
+    {
+        return sprintf(
+            'EXISTS (SELECT 1 FROM %s %s WHERE %s)',
+            $entity,
+            $alias,
+            $conditions,
+        );
+    }
+
+    /**
+     * A search term is matched literally: `%`, `_` and the escape character
+     * itself carry no wildcard meaning, so a term cannot widen its own match.
+     */
+    private function escapeLikeTerm(string $term): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $term);
     }
 
     private function applyCaseView(\Doctrine\ORM\QueryBuilder $builder, CaseWorkspaceQuery $query): void
