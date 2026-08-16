@@ -60,6 +60,21 @@ class Report
 
     #[ORM\Column(
         type: Types::STRING,
+        length: 24,
+        enumType: ReporterTiming::class,
+        options: ['default' => 'unknown'],
+    )]
+    private ReporterTiming $reporterTiming;
+
+    /**
+     * Whoever the reporter chose to name, in their own words. Optional, short
+     * and never required: a report naming nobody is a complete report.
+     */
+    #[ORM\Column(type: Types::STRING, length: ReportedPeople::MAX_LENGTH, nullable: true)]
+    private ?string $reportedPeople = null;
+
+    #[ORM\Column(
+        type: Types::STRING,
         length: 32,
         options: ['default' => TriageTaxonomy::VERSION],
     )]
@@ -120,6 +135,8 @@ class Report
         SituationContext $situationContext,
         ReporterRecurrence $reporterRecurrence,
         ReporterAttentionCue $reporterAttentionCue,
+        ReporterTiming $reporterTiming,
+        ?ReportedPeople $reportedPeople,
         string $publicReference,
         string $accessSecretHash,
         DateTimeImmutable $createdAt,
@@ -130,6 +147,8 @@ class Report
         $this->situationContext = $situationContext;
         $this->reporterRecurrence = $reporterRecurrence;
         $this->reporterAttentionCue = $reporterAttentionCue;
+        $this->reporterTiming = $reporterTiming;
+        $this->reportedPeople = $reportedPeople?->toString();
         $this->status = ReportStatus::Received;
         $this->publicReference = $publicReference;
         $this->accessSecretHash = $accessSecretHash;
@@ -142,6 +161,8 @@ class Report
         SituationContext $situationContext,
         ReporterRecurrence $reporterRecurrence = ReporterRecurrence::Unknown,
         ReporterAttentionCue $reporterAttentionCue = ReporterAttentionCue::Unknown,
+        ReporterTiming $reporterTiming = ReporterTiming::Unknown,
+        ?ReportedPeople $reportedPeople = null,
     ): ReportCreationResult {
         try {
             $publicReferenceBytes = random_bytes(10);
@@ -163,6 +184,8 @@ class Report
             $situationContext,
             $reporterRecurrence,
             $reporterAttentionCue,
+            $reporterTiming,
+            $reportedPeople,
             $publicReference,
             $accessSecret->lookupHash(),
             DateTimeImmutable::createFromTimestamp(microtime(true)),
@@ -172,6 +195,16 @@ class Report
             $report,
             $accessSecret->reveal(),
         );
+    }
+
+    public function reporterTiming(): ReporterTiming
+    {
+        return $this->reporterTiming;
+    }
+
+    public function reportedPeople(): ?string
+    {
+        return $this->reportedPeople;
     }
 
     public function verifyAccessSecret(string $plainAccessSecret): bool
