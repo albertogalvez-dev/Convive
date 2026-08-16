@@ -32,6 +32,17 @@ export class ReportHelp implements AfterViewInit, OnDestroy {
     this.previouslyFocusedElement?.focus();
   }
 
+  /**
+   * The backdrop is a div with role="button" rather than a real button,
+   * because a button cannot legally contain the dialog's own interactive
+   * content (its close button, in particular). Space would otherwise scroll
+   * the page instead of activating it, the way it does for a native button.
+   */
+  protected onSpace(event: Event): void {
+    event.preventDefault();
+    this.closed.emit();
+  }
+
   @HostListener('document:keydown', ['$event'])
   protected handleKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
