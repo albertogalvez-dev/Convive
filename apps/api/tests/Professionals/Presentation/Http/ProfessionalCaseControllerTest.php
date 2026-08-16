@@ -712,6 +712,44 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertSame(0, $this->responsePayload()['unreadCount']);
     }
 
+    public function testEvidenceMetadataIsVisibleToAContributorWhoCannotDownloadIt(): void
+    {
+        [$managedCase, $lead, $organisation, $attachment] = $this->createCaseWorkspace();
+        $contributor = $this->createProfessional('evidence-contributor', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $contributor, CaseAssignmentRole::Contributor, $lead, new DateTimeImmutable()));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($contributor);
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        self::assertResponseIsSuccessful();
+        // Knowing evidence exists is part of working the case.
+        self::assertSame($attachment->id()->toRfc4122(), $this->responsePayload()['evidence'][0]['id']);
+        self::assertFalse($this->responsePayload()['permissions']['export']);
+
+        // Retrieving the file is not: that is an export, reserved to the lead.
+        $this->client->request(
+            'GET',
+            '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/evidence/'.$attachment->id()->toRfc4122().'/download',
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testAnObserverCannotDownloadEvidenceEither(): void
+    {
+        [$managedCase, $lead, $organisation, $attachment] = $this->createCaseWorkspace();
+        $observer = $this->createProfessional('evidence-observer', $organisation, ProfessionalRole::Triage);
+        $this->entityManager->persist(new CaseAssignment(Uuid::v7(), $managedCase, $observer, CaseAssignmentRole::Observer, $lead, new DateTimeImmutable()));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($observer);
+        $this->client->request(
+            'GET',
+            '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/evidence/'.$attachment->id()->toRfc4122().'/download',
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testEveryApprovedDocumentTemplateRendersWithItsProvenance(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();

@@ -638,7 +638,12 @@ final readonly class ProfessionalCaseController
             'professional_case_evidence_download_ip',
             $request,
         );
-        $detail = $this->resolveDetail($id, $professional);
+        // Taking evidence out of the system is an export, not a read. The
+        // Export permission is held by the case lead alone, so contributors and
+        // observers keep seeing that evidence exists without being able to
+        // retrieve it. Direction that needs a file assigns itself the case,
+        // which is an explicit and audited act.
+        $detail = $this->resolveExportDetail($id, $professional);
 
         if (!Uuid::isValid($attachmentId)) {
             $this->securityEventLogger->professionalAttachmentDownloadDenied($request);
