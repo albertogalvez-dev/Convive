@@ -230,6 +230,10 @@
 
                   <fieldset class="context-options optional-taxonomy">
                     <legend>¿Ha ocurrido más de una vez?</legend>
+                    <p class="field-purpose">
+                      Ayuda a orientaci&oacute;n a saber si es algo puntual o algo que se repite.
+                      Puedes no contestarlo.
+                    </p>
                     <label>
                       <input type="radio" formControlName="reporterRecurrence" value="single" />
                       <span>Una vez</span>
@@ -249,7 +253,51 @@
                   </fieldset>
 
                   <fieldset class="context-options optional-taxonomy">
+                    <legend>¿Cuándo pasó o empezó?</legend>
+                    <p class="field-purpose">
+                      Sirve para saber si sigue pasando ahora. No hace falta una fecha exacta.
+                    </p>
+                    <label>
+                      <input type="radio" formControlName="reporterTiming" value="within_days" />
+                      <span>Estos d&iacute;as</span>
+                    </label>
+                    <label>
+                      <input type="radio" formControlName="reporterTiming" value="within_weeks" />
+                      <span>Estas semanas</span>
+                    </label>
+                    <label>
+                      <input type="radio" formControlName="reporterTiming" value="longer_ago" />
+                      <span>Hace m&aacute;s tiempo</span>
+                    </label>
+                    <label class="unknown-option">
+                      <input type="radio" formControlName="reporterTiming" value="unknown" />
+                      <span>No lo s&eacute; / prefiero no indicarlo</span>
+                    </label>
+                  </fieldset>
+
+                  <div class="context-options optional-taxonomy">
+                    <label class="people-label" for="reportedPeople"
+                      >&iquest;Qui&eacute;n est&aacute; implicado?</label
+                    >
+                    <p class="field-purpose" id="people-purpose">
+                      Solo si t&uacute; quieres. Ay&uacute;danos a saber a qui&eacute;n afecta, con
+                      las palabras que prefieras. Puedes dejarlo en blanco y el aviso llega igual.
+                    </p>
+                    <input
+                      id="reportedPeople"
+                      type="text"
+                      formControlName="reportedPeople"
+                      maxlength="200"
+                      autocomplete="off"
+                      aria-describedby="people-purpose"
+                    />
+                  </div>
+
+                  <fieldset class="context-options optional-taxonomy">
                     <legend>¿Crees que necesita atención pronta?</legend>
+                    <p class="field-purpose">
+                      Ayuda a ordenar la revisi&oacute;n. No decide nada por s&iacute; solo.
+                    </p>
                     <label>
                       <input
                         type="radio"

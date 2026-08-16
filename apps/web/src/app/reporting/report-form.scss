@@ -460,3 +460,25 @@ button {
     display: none;
   }
 }
+
+.field-purpose {
+  margin: -0.35rem 0 0.7rem;
+  color: #4d6287;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.people-label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 750;
+}
+.optional-taxonomy input[type='text'] {
+  width: 100%;
+  min-height: 2.7rem;
+  border: 1px solid #b8c9df;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  color: #102b60;
+  background: #fff;
+  font: inherit;
+}

@@ -10,6 +10,7 @@ import { ReportSending } from './report-sending';
 import {
   PublicReportingProfile,
   ReporterAttentionCue,
+  ReporterTiming,
   ReporterRecurrence,
   ReportingService,
   ReportSubmissionResponse,
@@ -49,6 +50,8 @@ export class ReportForm {
     situationContext: ['', [Validators.required]],
     reporterRecurrence: ['unknown' as ReporterRecurrence],
     reporterAttentionCue: ['unknown' as ReporterAttentionCue],
+    reporterTiming: ['unknown' as ReporterTiming],
+    reportedPeople: ['', [Validators.maxLength(200)]],
   });
 
   protected readonly submitting = signal(false);
@@ -165,6 +168,10 @@ export class ReportForm {
         situationContext: value.situationContext as SituationContext,
         reporterRecurrence: value.reporterRecurrence,
         reporterAttentionCue: value.reporterAttentionCue,
+        reporterTiming: value.reporterTiming,
+        // Blank means the reporter named nobody, so the field is left out of
+        // the request rather than sent as an empty string.
+        ...(value.reportedPeople?.trim() ? { reportedPeople: value.reportedPeople.trim() } : {}),
       })
       .subscribe({
         next: (response) => {

@@ -187,6 +187,32 @@ describe('ReportForm', () => {
     );
   });
 
+  it('states why each optional field is asked and lets the reporter skip all of them', () => {
+    startValidForm();
+
+    writeDescription('Una situación ocurrió durante el recreo.');
+    continueToNextStep();
+    selectContext('En persona');
+
+    // Every optional field explains what it is for before it is answered.
+    const purposes = [...page.querySelectorAll('.field-purpose')].map(
+      (element) => element.textContent ?? '',
+    );
+    expect(purposes.length).toBeGreaterThanOrEqual(4);
+    expect(purposes.join(' ')).toContain('Puedes no contestarlo');
+    expect(purposes.join(' ')).toContain('No hace falta una fecha exacta');
+    expect(purposes.join(' ')).toContain('Puedes dejarlo en blanco y el aviso llega igual');
+
+    // Naming people is a plain optional text field, never a required step.
+    const people = page.querySelector<HTMLInputElement>('#reportedPeople');
+    expect(people).not.toBeNull();
+    expect(people?.required).toBe(false);
+
+    // Nothing added here blocks moving on: the account alone is enough.
+    continueToNextStep();
+    expect(page.querySelector('#step-title')?.textContent).toContain('Revisa antes de enviar');
+  });
+
   it('should submit the report and display the access credentials', async () => {
     startValidForm();
 
@@ -208,7 +234,10 @@ describe('ReportForm', () => {
       situationContext: 'in_person',
       reporterRecurrence: 'unknown',
       reporterAttentionCue: 'unknown',
+      reporterTiming: 'unknown',
     });
+    // reportedPeople is absent, not empty: naming nobody is a complete report.
+    expect(request.request.body).not.toHaveProperty('reportedPeople');
     expect(page.querySelector('#step-title')?.textContent).toContain(
       'Estamos enviando tu comunicación',
     );
@@ -458,6 +487,7 @@ describe('ReportForm', () => {
       situationDescription: 'Una situación ocurrió en el centro y continuó en internet.',
       situationContext: 'mixed',
       reporterRecurrence: 'unknown',
+      reporterTiming: 'unknown',
       reporterAttentionCue: 'unknown',
     });
 
