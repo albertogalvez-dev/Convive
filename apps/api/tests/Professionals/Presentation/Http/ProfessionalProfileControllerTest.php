@@ -98,6 +98,51 @@ final class ProfessionalProfileControllerTest extends WebTestCase
         self::assertGreaterThan($revisionBefore, $professional->securityRevision());
     }
 
+    public function testProfileChangesAreAuditedAgainstTheProfessionalsOwnAccount(): void
+    {
+        [$professional] = $this->createProfessional('profile-audit');
+        $this->client->loginUser($professional);
+
+        $this->client->jsonRequest('PATCH', '/api/v1/professional/profile', [
+            'name' => 'Fictional Audited Name',
+            'email' => 'profile-audited-'.Uuid::v7()->toRfc4122().'@profile-test.example',
+        ]);
+        self::assertResponseIsSuccessful();
+
+        $actions = $this->entityManager->getConnection()->fetchFirstColumn(
+            'SELECT action FROM professional_account_audit_events'
+            .' WHERE target_professional_id = :id ORDER BY action',
+            ['id' => $professional->id()->toRfc4122()],
+        );
+
+        self::assertSame(['profile_email_changed', 'profile_name_changed'], $actions);
+        $actors = $this->entityManager->getConnection()->fetchFirstColumn(
+            'SELECT DISTINCT actor_professional_id FROM professional_account_audit_events'
+            .' WHERE target_professional_id = :id',
+            ['id' => $professional->id()->toRfc4122()],
+        );
+        // A self-service change records the professional as its own actor,
+        // which is what distinguishes it from an administrator action.
+        self::assertSame([$professional->id()->toRfc4122()], $actors);
+    }
+
+    public function testAnUnchangedProfileRecordsNoAuditEvent(): void
+    {
+        [$professional] = $this->createProfessional('profile-unchanged');
+        $this->client->loginUser($professional);
+
+        $this->client->jsonRequest('PATCH', '/api/v1/professional/profile', [
+            'name' => $professional->name(),
+            'email' => $professional->email()->toString(),
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertSame(0, (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT COUNT(*) FROM professional_account_audit_events WHERE target_professional_id = :id',
+            ['id' => $professional->id()->toRfc4122()],
+        ));
+    }
+
     public function testAnEmailAlreadyUsedByAnotherProfessionalIsRejected(): void
     {
         [$professional, $organisation] = $this->createProfessional('profile-first');
