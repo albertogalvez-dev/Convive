@@ -16,6 +16,7 @@ use App\Professionals\Domain\ProfessionalCredentialInvitation;
 use App\Professionals\Domain\ProfessionalCredentialInvitationPurpose;
 use App\Professionals\Domain\ProfessionalCredentialInvitationRepository;
 use App\Professionals\Domain\ProfessionalEmail;
+use App\Professionals\Domain\ProfessionalEmailAlreadyUsed;
 use App\Professionals\Domain\ProfessionalRepository;
 use App\Professionals\Domain\ProfessionalRole;
 use DateInterval;
@@ -76,6 +77,47 @@ final readonly class ManageProfessionalAccount
         $this->audit($target, $actor, ProfessionalAccountAuditAction::PasswordResetIssued, $now);
 
         return $result;
+    }
+
+    /**
+     * Correct another professional's login identifier.
+     *
+     * A mistyped self-service email change signs a professional out of an
+     * account whose new address they cannot read, and real delivery stays
+     * disabled until #190, so no self-service recovery exists. This is that
+     * recovery path, and it stays narrow: an administrator of the professional's
+     * own organisation, an address nobody else holds, and an audit entry naming
+     * the administrator as actor so the account history never presents an
+     * administrator correction as a self-service change.
+     *
+     * Ending the affected sessions is not repeated here. Replacing the address
+     * is what ends them, so the domain does it on every path that changes an
+     * email rather than leaving each caller to remember.
+     *
+     * @throws ProfessionalEmailAlreadyUsed when the address belongs to another account
+     */
+    public function correctEmail(
+        Organisation $organisation,
+        Professional $target,
+        ProfessionalEmail $email,
+        Professional $actor,
+        DateTimeImmutable $now,
+    ): void {
+        $this->requireAdministrator($organisation, $actor);
+        $this->requireManagedProfessional($organisation, $target, $actor);
+
+        $existing = $this->professionals->findByEmail($email);
+        if ($existing !== null && !$existing->id()->equals($target->id())) {
+            throw new ProfessionalEmailAlreadyUsed();
+        }
+
+        if ($target->email()->equals($email)) {
+            return;
+        }
+
+        $target->changeEmail($email);
+        $this->professionals->save($target);
+        $this->audit($target, $actor, ProfessionalAccountAuditAction::EmailCorrected, $now);
     }
 
     public function suspend(Organisation $organisation, Professional $target, Professional $actor): void

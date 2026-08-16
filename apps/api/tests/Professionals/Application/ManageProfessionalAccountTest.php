@@ -11,12 +11,14 @@ use App\Professionals\Application\ManageOrganisationMembership;
 use App\Professionals\Domain\OrganisationMembership;
 use App\Professionals\Domain\OrganisationMembershipRepository;
 use App\Professionals\Domain\Professional;
+use App\Professionals\Domain\ProfessionalAccountAuditAction;
 use App\Professionals\Domain\ProfessionalAccountAuditEvent;
 use App\Professionals\Domain\ProfessionalAccountAuditEventRepository;
 use App\Professionals\Domain\ProfessionalAccountStatus;
 use App\Professionals\Domain\ProfessionalCredentialInvitation;
 use App\Professionals\Domain\ProfessionalCredentialInvitationRepository;
 use App\Professionals\Domain\ProfessionalEmail;
+use App\Professionals\Domain\ProfessionalEmailAlreadyUsed;
 use App\Professionals\Domain\ProfessionalRepository;
 use App\Professionals\Domain\ProfessionalRole;
 use DateTimeImmutable;
@@ -110,6 +112,80 @@ final class ManageProfessionalAccountTest extends TestCase
         self::assertTrue($membership->isActive());
     }
 
+    public function testAdministratorCorrectsAMistypedEmailAndEndsTheAffectedSessions(): void
+    {
+        [$organisation, $administrator, $memberships] = $this->administratorScope();
+        $target = $this->professional('mistyped');
+        $memberships->save(new OrganisationMembership(Uuid::v7(), $target, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        $auditEvents = new InMemoryProfessionalAccountAuditEvents();
+        $accounts = $this->accounts(new InMemoryProfessionals([$administrator, $target]), $memberships, new InMemoryCredentialInvitations(), $auditEvents);
+        $before = $target->securityRevision();
+
+        $accounts->correctEmail($organisation, $target, ProfessionalEmail::fromString('corrected@example.invalid'), $administrator, new DateTimeImmutable());
+
+        self::assertSame('corrected@example.invalid', $target->email()->toString());
+        self::assertSame($before + 1, $target->securityRevision());
+        self::assertCount(1, $auditEvents->events);
+        self::assertSame(ProfessionalAccountAuditAction::EmailCorrected, $auditEvents->events[0]->action());
+        self::assertTrue($auditEvents->events[0]->actor()->id()->equals($administrator->id()));
+        self::assertTrue($auditEvents->events[0]->target()->id()->equals($target->id()));
+    }
+
+    public function testCorrectionCannotTakeOverAnAddressThatBelongsToAnotherAccount(): void
+    {
+        [$organisation, $administrator, $memberships] = $this->administratorScope();
+        $target = $this->professional('target');
+        $occupant = $this->professional('occupant');
+        foreach ([$target, $occupant] as $professional) {
+            $memberships->save(new OrganisationMembership(Uuid::v7(), $professional, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        }
+        $accounts = $this->accounts(new InMemoryProfessionals([$administrator, $target, $occupant]), $memberships, new InMemoryCredentialInvitations());
+
+        $this->expectException(ProfessionalEmailAlreadyUsed::class);
+        $accounts->correctEmail($organisation, $target, $occupant->email(), $administrator, new DateTimeImmutable());
+    }
+
+    public function testNonAdministratorCannotCorrectAnotherProfessionalsEmail(): void
+    {
+        [$organisation, $administrator, $memberships] = $this->administratorScope();
+        $triage = $this->professional('triage');
+        $target = $this->professional('target');
+        foreach ([$triage, $target] as $professional) {
+            $memberships->save(new OrganisationMembership(Uuid::v7(), $professional, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        }
+        $accounts = $this->accounts(new InMemoryProfessionals([$administrator, $triage, $target]), $memberships, new InMemoryCredentialInvitations());
+
+        $this->expectException(LogicException::class);
+        $accounts->correctEmail($organisation, $target, ProfessionalEmail::fromString('elsewhere@example.invalid'), $triage, new DateTimeImmutable());
+    }
+
+    public function testAdministratorCannotReachAProfessionalOfAnotherOrganisation(): void
+    {
+        [$organisation, $administrator, $memberships] = $this->administratorScope();
+        $outsider = $this->professional('outsider');
+        $otherOrganisation = new Organisation(Uuid::v7(), 'Another Fictional School', PublicReportingIdentifier::generate());
+        $memberships->save(new OrganisationMembership(Uuid::v7(), $outsider, $otherOrganisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        $accounts = $this->accounts(new InMemoryProfessionals([$administrator, $outsider]), $memberships, new InMemoryCredentialInvitations());
+
+        $this->expectException(LogicException::class);
+        $accounts->correctEmail($organisation, $outsider, ProfessionalEmail::fromString('outsider-corrected@example.invalid'), $administrator, new DateTimeImmutable());
+    }
+
+    public function testResubmittingTheSameAddressDoesNotEndSessionsOrRecordACorrection(): void
+    {
+        [$organisation, $administrator, $memberships] = $this->administratorScope();
+        $target = $this->professional('unchanged');
+        $memberships->save(new OrganisationMembership(Uuid::v7(), $target, $organisation, ProfessionalRole::Triage, new DateTimeImmutable()));
+        $auditEvents = new InMemoryProfessionalAccountAuditEvents();
+        $accounts = $this->accounts(new InMemoryProfessionals([$administrator, $target]), $memberships, new InMemoryCredentialInvitations(), $auditEvents);
+        $before = $target->securityRevision();
+
+        $accounts->correctEmail($organisation, $target, $target->email(), $administrator, new DateTimeImmutable());
+
+        self::assertSame($before, $target->securityRevision());
+        self::assertSame([], $auditEvents->events);
+    }
+
     /** @return array{Organisation, Professional, InMemoryMemberships} */
     private function administratorScope(): array
     {
@@ -121,9 +197,13 @@ final class ManageProfessionalAccountTest extends TestCase
         return [$organisation, $administrator, $memberships];
     }
 
-    private function accounts(InMemoryProfessionals $professionals, InMemoryMemberships $memberships, InMemoryCredentialInvitations $invitations): ManageProfessionalAccount
-    {
-        return new ManageProfessionalAccount($professionals, $memberships, $invitations, new InMemoryProfessionalAccountAuditEvents(), new InMemoryUserPasswordHasher());
+    private function accounts(
+        InMemoryProfessionals $professionals,
+        InMemoryMemberships $memberships,
+        InMemoryCredentialInvitations $invitations,
+        ?InMemoryProfessionalAccountAuditEvents $auditEvents = null,
+    ): ManageProfessionalAccount {
+        return new ManageProfessionalAccount($professionals, $memberships, $invitations, $auditEvents ?? new InMemoryProfessionalAccountAuditEvents(), new InMemoryUserPasswordHasher());
     }
 
     private function professional(string $name): Professional
@@ -168,5 +248,6 @@ final class InMemoryUserPasswordHasher implements UserPasswordHasherInterface
 
 final class InMemoryProfessionalAccountAuditEvents implements ProfessionalAccountAuditEventRepository
 {
-    public function append(ProfessionalAccountAuditEvent $event): void {}
+    /** @var list<ProfessionalAccountAuditEvent> */ public array $events = [];
+    public function append(ProfessionalAccountAuditEvent $event): void { $this->events[] = $event; }
 }

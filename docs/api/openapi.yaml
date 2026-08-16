@@ -355,6 +355,43 @@ paths:
       security:
         -
           professionalSession: []
+  '/api/v1/professional/organisations/{id}/accounts/{professionalId}/email':
+    patch:
+      tags:
+        - 'Professional access'
+      summary: "Correct a professional's login email address"
+      operationId: correctProfessionalAccountEmail
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: professionalId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorrectProfessionalEmailRequest'
+      responses:
+        '200':
+          description: 'The corrected account. Changing the email ends every session the professional held.'
+        '400':
+          description: 'The submitted address is invalid.'
+        '404':
+          description: 'The organisation or professional is unavailable in this scope.'
+        '409':
+          description: 'The email address is already in use.'
+      security:
+        -
+          professionalSession: []
   /api/v1/professional/cases:
     get:
       tags:
@@ -3376,6 +3413,14 @@ components:
             - suspend
             - reactivate
             - deactivate
+      type: object
+    CorrectProfessionalEmailRequest:
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          maxLength: 255
       type: object
     ManageProfessionalCaseAssignmentRequest:
       required:
