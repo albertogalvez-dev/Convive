@@ -714,6 +714,34 @@
           </section>
         }
 
+        @if (item.permissions.manage) {
+          <section class="panel document-panel" aria-labelledby="documents-title">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Documentos controlados</p>
+                <h2 id="documents-title">Generar documento</h2>
+              </div>
+            </div>
+            <p class="document-note">
+              Cada documento recoge solo lo que ya ves en este caso, indica su versi&oacute;n y su
+              fecha, y deja constancia en la auditor&iacute;a. Son documentos de demostraci&oacute;n
+              ficticia: ninguno es un formulario oficial.
+            </p>
+            <ul class="document-list">
+              @for (template of documentTemplates; track template.id) {
+                <li>
+                  <a
+                    [href]="caseDocumentUrl(item.id, template.id)"
+                    [attr.data-template]="template.id"
+                  >
+                    {{ template.title }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
         @if (item.permissions.viewAudit) {
           <section class="panel audit-panel" aria-labelledby="audit-title">
             <div class="panel-heading">

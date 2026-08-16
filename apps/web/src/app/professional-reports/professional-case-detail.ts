@@ -155,6 +155,20 @@ export class ProfessionalCaseDetailPage implements OnInit {
     return this.cases.auditExportUrl(caseId);
   }
 
+  /** The approved closed set, mirroring the API enum. */
+  protected readonly documentTemplates = [
+    { id: 'action_record', title: 'Registro de actuación' },
+    { id: 'follow_up_plan', title: 'Plan de seguimiento' },
+    { id: 'coordination_note', title: 'Nota de coordinación' },
+    { id: 'family_communication', title: 'Comunicación a familia' },
+    { id: 'protocol_review_checklist', title: 'Checklist de revisión de protocolo' },
+    { id: 'closure_report', title: 'Informe de cierre ficticio' },
+  ] as const;
+
+  protected caseDocumentUrl(caseId: string, template: string): string {
+    return this.cases.caseDocumentUrl(caseId, template);
+  }
+
   protected caseRecordExportUrl(caseId: string): string {
     return this.cases.caseRecordExportUrl(caseId);
   }
