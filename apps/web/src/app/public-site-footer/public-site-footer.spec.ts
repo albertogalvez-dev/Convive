@@ -1,11 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { PUBLIC_EMERGENCY_RESOURCES } from '../public-emergency-resources';
 import { PublicSiteFooter } from './public-site-footer';
 
 describe('PublicSiteFooter', () => {
   async function render(): Promise<HTMLElement> {
-    await TestBed.configureTestingModule({ imports: [PublicSiteFooter] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [PublicSiteFooter, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
+    }).compileComponents();
 
     const fixture = TestBed.createComponent(PublicSiteFooter);
     fixture.detectChanges();

@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { professionalAccessUrlFor } from '../site-hosts';
 
 import { PublicHome } from './public-home';
@@ -14,7 +16,7 @@ describe('PublicHome', () => {
 
   it('offers clear public and professional destinations without a reporting-route detour', async () => {
     await TestBed.configureTestingModule({
-      imports: [PublicHome],
+      imports: [PublicHome, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(PublicHome);

@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { PublicInformation, PublicInformationContent } from './public-information';
 
 const content: PublicInformationContent = {
@@ -26,7 +28,7 @@ const content: PublicInformationContent = {
 
 async function renderWith(pageContent: PublicInformationContent): Promise<HTMLElement> {
   await TestBed.configureTestingModule({
-    imports: [PublicInformation],
+    imports: [PublicInformation, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
     providers: [
       { provide: ActivatedRoute, useValue: { snapshot: { data: { content: pageContent } } } },
     ],

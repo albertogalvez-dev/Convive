@@ -1,12 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ProfessionalDemo } from './professional-demo';
 
 describe('ProfessionalDemo', () => {
   it('renders only fixed fictional professional capabilities', async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfessionalDemo],
+      imports: [ProfessionalDemo, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
       providers: [provideRouter([])],
     }).compileComponents();
 

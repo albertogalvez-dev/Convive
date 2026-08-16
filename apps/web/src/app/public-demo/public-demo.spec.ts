@@ -1,12 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { PublicDemo } from './public-demo';
 
 describe('PublicDemo', () => {
   it('keeps the fictional journey local and controllable', async () => {
     await TestBed.configureTestingModule({
-      imports: [PublicDemo],
+      imports: [PublicDemo, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
       providers: [provideRouter([])],
     }).compileComponents();
 
