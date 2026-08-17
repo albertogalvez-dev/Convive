@@ -1,40 +1,49 @@
 <main>
   <header>
-    <a class="wordmark" routerLink="/" aria-label="Convive, inicio">
+    <a
+      class="wordmark"
+      routerLink="/"
+      [attr.aria-label]="'public-information.homeLinkLabel' | transloco"
+    >
       <img src="/convive-logo.svg" alt="" width="158" height="52" />
     </a>
-    <a [href]="professionalAccessUrl">Área profesional</a>
+    <a [href]="professionalAccessUrl">{{ 'public-information.professionalAccess' | transloco }}</a>
   </header>
 
-  <article aria-labelledby="information-title">
-    <p class="eyebrow">{{ content.eyebrow }}</p>
-    <h1 id="information-title">{{ content.title }}</h1>
-    <p class="lead">{{ content.description }}</p>
-    <p class="notice">{{ content.notice }}</p>
+  @if (content().title) {
+    <article aria-labelledby="information-title">
+      <p class="eyebrow">{{ content().eyebrow }}</p>
+      <h1 id="information-title">{{ content().title }}</h1>
+      <p class="lead">{{ content().description }}</p>
+      <p class="notice">{{ content().notice }}</p>
 
-    @for (section of content.sections; track section.heading) {
-      <section [attr.aria-labelledby]="'section-' + $index">
-        <h2 [id]="'section-' + $index">{{ section.heading }}</h2>
-        @for (paragraph of section.paragraphs; track paragraph) {
-          <p>{{ paragraph }}</p>
-        }
-        @if (section.items) {
-          <ul>
-            @for (item of section.items; track item) {
-              <li>{{ item }}</li>
-            }
-          </ul>
-        }
-      </section>
-    }
+      @for (section of content().sections; track section.heading) {
+        <section [attr.aria-labelledby]="'section-' + $index">
+          <h2 [id]="'section-' + $index">{{ section.heading }}</h2>
+          @for (paragraph of section.paragraphs; track paragraph) {
+            <p>{{ paragraph }}</p>
+          }
+          @if (section.items) {
+            <ul>
+              @for (item of section.items; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          }
+        </section>
+      }
 
-    <p class="review">
-      Revisado el {{ content.review.reviewedOn }} por {{ content.review.owner }}.
-      {{ content.review.trigger }}
-    </p>
+      <p class="review">
+        {{
+          'public-information.reviewLine'
+            | transloco: { reviewedOn: meta.reviewedOn, owner: meta.owner }
+        }}
+        {{ content().reviewTrigger }}
+      </p>
 
-    <a class="back" routerLink="/">Volver al inicio</a>
-  </article>
+      <a class="back" routerLink="/">{{ 'public-information.backLink' | transloco }}</a>
+    </article>
+  }
 
   <app-public-site-footer />
 </main>

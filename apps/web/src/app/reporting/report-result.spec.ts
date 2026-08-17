@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
+import reportResultEs from '../../i18n/report-result/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ReportResult } from './report-result';
 import { ReportSubmissionResponse } from './reporting.service';
 
@@ -30,7 +32,9 @@ describe('ReportResult', () => {
   };
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [ReportResult] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [ReportResult, i18nTestingModule({ 'report-result': reportResultEs })],
+    }).compileComponents();
   });
 
   describe('copyAccessSecret', () => {

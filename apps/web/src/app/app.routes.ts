@@ -30,12 +30,12 @@ export const routes: Routes = [
     loadComponent: () => import('./blog/blog-article').then((module) => module.BlogArticle),
     canMatch: [publicWebsiteHostGuard],
   },
-  ...PUBLIC_INFORMATION_PAGES.map((content) => ({
-    path: content.path.replace(/^\/|\/$/g, ''),
+  ...PUBLIC_INFORMATION_PAGES.map((meta) => ({
+    path: meta.path.replace(/^\/|\/$/g, ''),
     loadComponent: () =>
       import('./public-information/public-information').then((module) => module.PublicInformation),
     canMatch: [publicWebsiteHostGuard],
-    data: { content },
+    data: { meta },
   })),
   {
     path: '',

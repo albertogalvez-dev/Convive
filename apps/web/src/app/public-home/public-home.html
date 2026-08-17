@@ -1,46 +1,43 @@
 <main>
   <header>
-    <a class="wordmark" href="/" aria-label="Convive, inicio">
+    <a class="wordmark" href="/" [attr.aria-label]="'public-home.homeLinkLabel' | transloco">
       <img src="/convive-logo.svg" alt="" width="158" height="52" />
     </a>
-    <nav aria-label="Navegación principal">
-      <a href="/blog/">Blog</a>
-      <a href="/demostracion/">Demostración</a>
-      <a href="/contacto/">Contacto</a>
+    <nav [attr.aria-label]="'public-home.nav.label' | transloco">
+      <a href="/blog/">{{ 'public-home.nav.blog' | transloco }}</a>
+      <a href="/demostracion/">{{ 'public-home.nav.demo' | transloco }}</a>
+      <a href="/contacto/">{{ 'public-home.nav.contact' | transloco }}</a>
     </nav>
-    <a [href]="professionalAccessUrl">Área profesional</a>
+    <a [href]="professionalAccessUrl">{{ 'public-home.professionalAccess' | transloco }}</a>
   </header>
   <section class="hero" aria-labelledby="home-title">
-    <p>CONVIVENCIA ESCOLAR</p>
-    <h1 id="home-title">Un canal seguro para escuchar antes.</h1>
-    <p>Convive ayuda a los centros a recibir, ordenar y responder comunicaciones con cuidado.</p>
+    <p>{{ 'public-home.hero.eyebrow' | transloco }}</p>
+    <h1 id="home-title">{{ 'public-home.hero.title' | transloco }}</h1>
+    <p>{{ 'public-home.hero.description' | transloco }}</p>
     <div>
-      <a href="/demostracion/">Solicitar demostración</a
-      ><a [href]="professionalAccessUrl">Acceder al centro</a>
+      <a href="/demostracion/">{{ 'public-home.hero.requestDemo' | transloco }}</a
+      ><a [href]="professionalAccessUrl">{{ 'public-home.hero.accessCentre' | transloco }}</a>
     </div>
   </section>
-  <section class="cards" aria-label="Cómo ayuda Convive">
+  <section class="cards" [attr.aria-label]="'public-home.cards.label' | transloco">
     <article>
-      <h2>Comunicación clara</h2>
-      <p>Un espacio para que el centro reciba información sin pedir una cuenta.</p>
+      <h2>{{ 'public-home.cards.communication.title' | transloco }}</h2>
+      <p>{{ 'public-home.cards.communication.body' | transloco }}</p>
     </article>
     <article>
-      <h2>Privacidad con límites claros</h2>
-      <p>No se solicita una cuenta, pero ninguna comunicación promete anonimato absoluto.</p>
+      <h2>{{ 'public-home.cards.privacy.title' | transloco }}</h2>
+      <p>{{ 'public-home.cards.privacy.body' | transloco }}</p>
     </article>
     <article>
-      <h2>Trabajo del centro</h2>
-      <p>Los equipos autorizados responden desde un entorno protegido.</p>
+      <h2>{{ 'public-home.cards.work.title' | transloco }}</h2>
+      <p>{{ 'public-home.cards.work.body' | transloco }}</p>
     </article>
   </section>
   <section class="demo" aria-labelledby="demo-title">
-    <p>DEMOSTRACIÓN FICTICIA</p>
-    <h2 id="demo-title">Conoce el flujo completo.</h2>
-    <p>
-      La demostración usa únicamente información ficticia. No sustituye la atención ante una
-      emergencia.
-    </p>
-    <a href="/demostracion/">Ver la demostración</a>
+    <p>{{ 'public-home.demo.eyebrow' | transloco }}</p>
+    <h2 id="demo-title">{{ 'public-home.demo.title' | transloco }}</h2>
+    <p>{{ 'public-home.demo.description' | transloco }}</p>
+    <a href="/demostracion/">{{ 'public-home.demo.cta' | transloco }}</a>
   </section>
   <app-public-site-footer />
 </main>

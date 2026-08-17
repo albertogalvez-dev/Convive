@@ -1,4 +1,5 @@
-import { Component, HostListener, input, signal } from '@angular/core';
+import { Component, HostListener, inject, input, signal } from '@angular/core';
+import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ReportEvidence } from '../report-attachments/report-evidence';
 import { ReportSubmissionResponse } from './reporting.service';
@@ -27,11 +28,14 @@ function passwordCredentialConstructor(): PasswordCredentialConstructor | null {
 @Component({
   selector: 'app-report-result',
   standalone: true,
-  imports: [ReportEvidence],
+  imports: [ReportEvidence, TranslocoPipe],
+  providers: [provideTranslocoScope('report-result')],
   templateUrl: './report-result.html',
   styleUrl: './report-result.scss',
 })
 export class ReportResult {
+  private readonly transloco = inject(TranslocoService);
+
   readonly submitted = input.required<ReportSubmissionResponse>();
   protected readonly statusMessage = signal<string | null>(null);
   protected readonly canSaveInBrowser = signal(passwordCredentialConstructor() !== null);
@@ -50,7 +54,9 @@ export class ReportResult {
     const credentialConstructor = passwordCredentialConstructor();
 
     if (credentialConstructor === null) {
-      this.statusMessage.set('Este navegador no puede guardarlo. Copia el secreto y guárdalo tú.');
+      this.statusMessage.set(
+        this.transloco.translate('report-result.status.credentialUnsupported'),
+      );
       return;
     }
 
@@ -59,15 +65,13 @@ export class ReportResult {
         new credentialConstructor({
           id: this.submitted().publicReference,
           password: this.submitted().accessSecret,
-          name: 'Convive · seguimiento',
+          name: this.transloco.translate('report-result.credentialName'),
         }),
       );
       this.accessSecretKept.set(true);
-      this.statusMessage.set('Se lo hemos pedido a tu navegador. Acepta para no perder el acceso.');
+      this.statusMessage.set(this.transloco.translate('report-result.status.credentialRequested'));
     } catch {
-      this.statusMessage.set(
-        'No se ha podido guardar en el navegador. Copia el secreto y guárdalo tú.',
-      );
+      this.statusMessage.set(this.transloco.translate('report-result.status.credentialFailed'));
     }
   }
 
@@ -75,9 +79,9 @@ export class ReportResult {
     try {
       await navigator.clipboard.writeText(this.submitted().accessSecret);
       this.accessSecretKept.set(true);
-      this.statusMessage.set('Secreto copiado. Ya puedes cerrar esta página.');
+      this.statusMessage.set(this.transloco.translate('report-result.status.copySuccess'));
     } catch {
-      this.statusMessage.set('No se ha podido copiar. Selecciona y copia el secreto manualmente.');
+      this.statusMessage.set(this.transloco.translate('report-result.status.copyFailed'));
     }
   }
 

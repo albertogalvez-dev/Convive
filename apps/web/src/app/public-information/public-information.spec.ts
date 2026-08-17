@@ -1,37 +1,27 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 
+import publicInformationEs from '../../i18n/public-information/es.json';
 import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
 import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
-import { PublicInformation, PublicInformationContent } from './public-information';
+import {
+  PUBLIC_CONTACT_NOTICE,
+  PUBLIC_DEMONSTRATION_NOTICE,
+  PUBLIC_PRIVACY_NOTICE,
+  PublicInformationPageMeta,
+} from './public-information-content';
+import { PublicInformation } from './public-information';
 
-const content: PublicInformationContent = {
-  path: '/aviso-demostracion/',
-  eyebrow: 'AVISO DE DEMOSTRACIÓN',
-  title: 'Convive es una demostración con información ficticia.',
-  seoDescription: 'Convive es una demostración con información ficticia.',
-  description: 'Nada de lo que escribas aquí llega a un centro educativo.',
-  notice: 'Si alguien está en peligro, este sitio no es la vía.',
-  sections: [
-    {
-      heading: 'Qué no es Convive',
-      paragraphs: ['Conviene decirlo sin rodeos.'],
-      items: ['No es un canal de emergencia ni de atención urgente.'],
-    },
-  ],
-  review: {
-    owner: 'Alberto Gálvez — Proyecto Convive',
-    reviewedOn: '16 de agosto de 2026',
-    trigger: 'Se revisa cada seis meses.',
-  },
-};
-
-async function renderWith(pageContent: PublicInformationContent): Promise<HTMLElement> {
+async function renderWith(meta: PublicInformationPageMeta): Promise<HTMLElement> {
   await TestBed.configureTestingModule({
-    imports: [PublicInformation, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
-    providers: [
-      { provide: ActivatedRoute, useValue: { snapshot: { data: { content: pageContent } } } },
+    imports: [
+      PublicInformation,
+      i18nTestingModule({
+        'public-information': publicInformationEs,
+        'public-site-footer': publicSiteFooterEs,
+      }),
     ],
+    providers: [{ provide: ActivatedRoute, useValue: { snapshot: { data: { meta } } } }],
   }).compileComponents();
 
   const fixture = TestBed.createComponent(PublicInformation);
@@ -42,7 +32,7 @@ async function renderWith(pageContent: PublicInformationContent): Promise<HTMLEl
 
 describe('PublicInformation', () => {
   it('publishes the document body without exposing an operational journey', async () => {
-    const page = await renderWith(content);
+    const page = await renderWith(PUBLIC_DEMONSTRATION_NOTICE);
 
     expect(page.querySelector('h1')?.textContent).toContain(
       'demostración con información ficticia',
@@ -58,16 +48,23 @@ describe('PublicInformation', () => {
   });
 
   it('states who reviewed the page and what makes it due again', async () => {
-    const page = await renderWith(content);
+    const page = await renderWith(PUBLIC_DEMONSTRATION_NOTICE);
 
     const review = page.querySelector('.review')?.textContent ?? '';
-    expect(review).toContain('16 de agosto de 2026');
-    expect(review).toContain('Alberto Gálvez — Proyecto Convive');
-    expect(review).toContain('Se revisa cada seis meses.');
+    expect(review).toContain(PUBLIC_DEMONSTRATION_NOTICE.reviewedOn);
+    expect(review).toContain(PUBLIC_DEMONSTRATION_NOTICE.owner);
+    expect(review).toContain('Se revisa cada seis meses');
+  });
+
+  it('interpolates the contact email into the translated prose rather than leaving a placeholder', async () => {
+    const page = await renderWith(PUBLIC_PRIVACY_NOTICE);
+
+    expect(page.textContent).toContain('privacy@conviveaula.com');
+    expect(page.textContent).not.toContain('{{privacyEmail}}');
   });
 
   it('carries the safety footer on every document, not only the demonstration notice', async () => {
-    const page = await renderWith({ ...content, sections: undefined });
+    const page = await renderWith(PUBLIC_CONTACT_NOTICE);
 
     const footer = page.querySelector('footer')?.textContent ?? '';
     expect(footer).toContain('datos ficticios');

@@ -9,10 +9,13 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-report-help',
   standalone: true,
+  imports: [TranslocoPipe],
+  providers: [provideTranslocoScope('report-help')],
   templateUrl: './report-help.html',
   styleUrl: './report-help.scss',
 })

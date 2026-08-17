@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
+import reportHelpEs from '../../i18n/report-help/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ReportHelp } from './report-help';
 
 describe('ReportHelp', () => {
@@ -9,7 +11,9 @@ describe('ReportHelp', () => {
   let closed: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [ReportHelp] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [ReportHelp, i18nTestingModule({ 'report-help': reportHelpEs })],
+    }).compileComponents();
     fixture = TestBed.createComponent(ReportHelp);
     page = fixture.nativeElement as HTMLElement;
     closed = vi.spyOn(fixture.componentInstance.closed, 'emit');
