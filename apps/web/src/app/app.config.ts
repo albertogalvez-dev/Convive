@@ -30,6 +30,11 @@ export const appConfig: ApplicationConfig = {
         fallbackLang: SOURCE_LOCALE,
         reRenderOnLangChange: true,
         prodMode: true,
+        // Without this, Transloco camelCases scope names internally
+        // ('public-site-footer' -> 'publicSiteFooter') while templates and
+        // file paths keep the hyphenated form, so every lookup silently
+        // misses. Keep the scope name identical everywhere.
+        scopes: { keepCasing: true },
       },
       loader: HttpTranslocoLoader,
     }),
@@ -43,7 +48,7 @@ export const appConfig: ApplicationConfig = {
       return forkJoin(
         EAGER_TRANSLOCO_SCOPES.length === 0
           ? [of(null)]
-          : EAGER_TRANSLOCO_SCOPES.map((scope) => transloco.load(`${SOURCE_LOCALE}/${scope}`)),
+          : EAGER_TRANSLOCO_SCOPES.map((scope) => transloco.load(`${scope}/${SOURCE_LOCALE}`)),
       );
     }),
   ],

@@ -18,7 +18,13 @@ export class HttpTranslocoLoader implements TranslocoLoader {
   private readonly http = inject(HttpClient);
 
   getTranslation(langPath: string): Observable<Translation> {
-    const [locale, scope] = langPath.split('/');
+    // Transloco passes a bare locale ('es') for the root translation, and
+    // `${scope}/${locale}` (e.g. 'public-site-footer/es') for a scoped one —
+    // confirmed against the actual requests a running app makes, not against
+    // an assumed convention.
+    const segments = langPath.split('/');
+    const locale = segments[segments.length - 1];
+    const scope = segments.length > 1 ? segments[0] : undefined;
 
     if (!isLocaleReady(locale)) {
       return throwError(

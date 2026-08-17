@@ -13,7 +13,7 @@ describe('HttpTranslocoLoader', () => {
     });
 
     const loader = TestBed.inject(HttpTranslocoLoader);
-    const translation = await firstValueFrom(loader.getTranslation('es/public-site-footer'));
+    const translation = await firstValueFrom(loader.getTranslation('public-site-footer/es'));
 
     expect(get).toHaveBeenCalledWith('/i18n/public-site-footer/es.json');
     expect(translation).toEqual({ hello: 'hola' });
@@ -39,7 +39,7 @@ describe('HttpTranslocoLoader', () => {
 
     const loader = TestBed.inject(HttpTranslocoLoader);
 
-    await expect(firstValueFrom(loader.getTranslation('ca/public-site-footer'))).rejects.toThrow(
+    await expect(firstValueFrom(loader.getTranslation('public-site-footer/ca'))).rejects.toThrow(
       /not signed off/,
     );
     expect(get).not.toHaveBeenCalled();
