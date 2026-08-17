@@ -69,7 +69,7 @@ app-report-result,
 .form-loading-status {
   position: absolute;
   top: 50%;
-  left: 50%;
+  inset-inline-start: 50%;
   display: flex;
   width: fit-content;
   height: fit-content;
@@ -253,7 +253,7 @@ textarea:focus {
 }
 
 #description-counter {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .context-options {
@@ -353,6 +353,18 @@ button {
   color: #172b57;
   background: transparent;
   border: 1px solid transparent;
+}
+
+// The "continue" arrow is decorative (aria-hidden) but still implies a
+// reading direction — it needs to point towards the end of the flow, which
+// is visually left once the document is right-to-left. `:host-context` is
+// required rather than a plain `[dir='rtl']` selector because Angular's
+// emulated view encapsulation stamps its content attribute onto every simple
+// selector in a rule; `<html dir="rtl">` never carries this component's
+// attribute, so only `:host-context` can reach up to it.
+:host-context([dir='rtl']) .continue-arrow {
+  display: inline-block;
+  transform: scaleX(-1);
 }
 
 .review-details {

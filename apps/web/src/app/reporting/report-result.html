@@ -19,12 +19,12 @@
 
     <span class="credential-label">{{ 'report-result.referenceLabel' | transloco }}</span>
     <p class="credential-value reference">
-      <code>{{ submitted().publicReference }}</code>
+      <code dir="ltr">{{ submitted().publicReference }}</code>
     </p>
 
     <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
     <p class="credential-value secret">
-      <code>{{ submitted().accessSecret }}</code>
+      <code dir="ltr">{{ submitted().accessSecret }}</code>
     </p>
 
     <div class="actions">
@@ -67,11 +67,11 @@
   <h2 id="print-receipt-title">{{ 'report-result.printReceiptTitle' | transloco }}</h2>
   <p>
     {{ 'report-result.printAccessPrefix' | transloco }}
-    <strong>app.conviveaula.com/seguimiento</strong>
+    <strong dir="ltr">app.conviveaula.com/seguimiento</strong>
   </p>
   <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
   <p class="print-secret">
-    <code>{{ submitted().accessSecret }}</code>
+    <code dir="ltr">{{ submitted().accessSecret }}</code>
   </p>
   <p class="print-warning">
     {{ 'report-result.printWarning' | transloco }}

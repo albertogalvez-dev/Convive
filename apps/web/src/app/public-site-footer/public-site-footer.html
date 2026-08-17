@@ -9,7 +9,7 @@
     <ul>
       @for (resource of emergencyResources; track resource.dial) {
         <li>
-          <a [href]="'tel:' + resource.dial">{{ resource.number }}</a>
+          <a dir="ltr" [href]="'tel:' + resource.dial">{{ resource.number }}</a>
           <span>{{ resource.name }}</span>
         </li>
       }
