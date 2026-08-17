@@ -12,5 +12,8 @@
     "blog": "Blog",
     "demo": "Demostración",
     "contact": "Contacto"
+  },
+  "languageSwitcher": {
+    "label": "Idioma"
   }
 }

@@ -1,0 +1,73 @@
+{
+  "organisationLabel": "Centre",
+  "askedQuestion": "Què ha passat?",
+  "descriptionPlaceholder": "Escriu ací…",
+  "preparingForm": "Preparant el formulari",
+  "descriptionCounter": "{{count}} / {{max}}",
+  "continue": "Continuar",
+  "back": "Arrere",
+  "submit": "Enviar",
+  "invalid": {
+    "label": "Enllaç no vàlid",
+    "title": "No podem obrir este formulari",
+    "message": "Torna a escanejar el codi QR del centre i comprova que l'enllaç estiga complet.",
+    "help": "Si torna a passar, avisa el centre perquè revise el codi."
+  },
+  "unavailable": {
+    "label": "Problema de connexió",
+    "retry": "Reintentar",
+    "title": "No podem carregar el formulari",
+    "message": "Comprova la teua connexió o torna-ho a provar d'ací a uns segons."
+  },
+  "fictionalDemo": {
+    "label": "Demostració fictícia",
+    "title": "Ací no es guarden comunicacions",
+    "message": "Convive està mostrant una demostració segura. No escrigues informació personal, situacions reals ni dades d'altres persones.",
+    "help": "Este entorn serveix únicament per a conèixer com funcionaria el procés."
+  },
+  "disabled": {
+    "label": "Canal no disponible",
+    "title": "Este formulari no està habilitat",
+    "message": "No envies informació personal ni comunicacions de convivència per esta via."
+  },
+  "step1": {
+    "descriptionError": "Escriu què ha passat per a continuar."
+  },
+  "step2": {
+    "title": "On va passar?",
+    "contextPurpose": "Orientació necessita saber si passa en el centre, per internet o en els dos llocs, perquè el protocol és diferent. Si no ho tens clar, tria l'última opció.",
+    "inPerson": "En persona",
+    "online": "En línia",
+    "preferNotToSay": "Preferisc no dir-ho",
+    "contextError": "Selecciona una opció per a continuar.",
+    "recurrenceTitle": "Ha passat més d'una vegada?",
+    "recurrencePurpose": "Ajuda orientació a saber si és una cosa puntual o que es repetix. Pots no contestar-ho.",
+    "recurrenceSingle": "Una vegada",
+    "recurrenceRepeated": "Diverses vegades",
+    "recurrenceOngoing": "Continua passant",
+    "unknownOption": "No ho sé / preferisc no indicar-ho",
+    "timingTitle": "Quan va passar o va començar?",
+    "timingPurpose": "Servix per a saber si encara està passant. No cal una data exacta.",
+    "timingWithinDays": "Estos dies",
+    "timingWithinWeeks": "Estes setmanes",
+    "timingLongerAgo": "Fa més temps",
+    "peopleLabel": "Qui hi està implicat?",
+    "peoplePurpose": "Només si tu vols. Ajuda'ns a saber a qui afecta, amb les paraules que preferisques. Ho pots deixar en blanc i l'avís arriba igualment.",
+    "attentionTitle": "Creus que necessita atenció ràpida?",
+    "attentionPurpose": "Ajuda a ordenar la revisió. No decidix res per si sola.",
+    "attentionYes": "Sí, agrairia una revisió ràpida",
+    "attentionNo": "No s'indica atenció ràpida",
+    "attentionUnknown": "Preferisc no indicar-ho"
+  },
+  "step3": {
+    "title": "Revisa abans d'enviar",
+    "descriptionLabel": "Què ha passat",
+    "contextLabel": "On va passar"
+  },
+  "submissionError": {
+    "invalidLink": "Este enllaç de comunicació no és vàlid. Comprova'l i torna-ho a provar.",
+    "invalidData": "Alguna informació no és vàlida. Revisa-la i torna-ho a provar.",
+    "processingFailed": "No hem pogut processar la comunicació. Torna-ho a provar.",
+    "generic": "Ara mateix no hem pogut enviar la comunicació. Torna-ho a provar més tard."
+  }
+}

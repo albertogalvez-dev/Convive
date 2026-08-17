@@ -1,0 +1,25 @@
+{
+  "title": "Comunicació enviada",
+  "accessTitle": "Dades d'accés",
+  "warningStrong": "Qualsevol persona que tingui aquest secret hi pot entrar.",
+  "warningBody": "No es pot recuperar: guarda'l abans de tancar i no el comparteixis.",
+  "referenceLabel": "Referència",
+  "secretLabel": "Secret",
+  "saveInBrowser": "Guardar al navegador",
+  "copySecret": "Copiar secret",
+  "print": "Imprimir o guardar en PDF",
+  "browserSaveHelp": "Es guarda juntament amb les teves contrasenyes. Evita-ho en un dispositiu compartit.",
+  "followUpHintPrefix": "Quan vulguis veure com va o afegir informació, entra a",
+  "followUpLinkText": "Seguiment",
+  "printReceiptTitle": "Accés a la teva comunicació",
+  "printAccessPrefix": "Entra a",
+  "printWarning": "Qualsevol persona que tingui aquest secret pot entrar a la teva comunicació. Guarda'l en un lloc privat i no el comparteixis.",
+  "status": {
+    "credentialUnsupported": "Aquest navegador no ho pot guardar. Copia el secret i guarda'l tu.",
+    "credentialRequested": "Li ho hem demanat al teu navegador. Accepta-ho per no perdre l'accés.",
+    "credentialFailed": "No s'ha pogut guardar al navegador. Copia el secret i guarda'l tu.",
+    "copySuccess": "Secret copiat. Ja pots tancar aquesta pàgina.",
+    "copyFailed": "No s'ha pogut copiar. Selecciona i copia el secret manualment."
+  },
+  "credentialName": "Convive · seguiment"
+}
