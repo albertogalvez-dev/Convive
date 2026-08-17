@@ -1,8 +1,11 @@
 import { Component, computed, input, output } from '@angular/core';
+import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-report-header',
   standalone: true,
+  imports: [TranslocoPipe],
+  providers: [provideTranslocoScope('report-header')],
   templateUrl: './report-header.html',
   styleUrl: './report-header.scss',
 })

@@ -13,30 +13,36 @@
         @case ('loading') {
           @if (showProfileLoading()) {
             <div class="organisation-context" aria-busy="true">
-              <span class="organisation-label">Centro</span>
+              <span class="organisation-label">{{
+                'report-form.organisationLabel' | transloco
+              }}</span>
               <span class="organisation-name-placeholder" aria-hidden="true"></span>
             </div>
 
             <form class="form-loading" aria-busy="true">
               <div class="step">
-                <h1>¿Qué ha ocurrido?</h1>
+                <h1>{{ 'report-form.askedQuestion' | transloco }}</h1>
                 <div class="form-loading-field">
                   <textarea
                     rows="10"
-                    placeholder="Escribe aquí…"
+                    [placeholder]="'report-form.descriptionPlaceholder' | transloco"
                     disabled
                     aria-hidden="true"
                   ></textarea>
                   <p class="form-loading-status" role="status">
                     <span aria-hidden="true"></span>
-                    Preparando el formulario
+                    {{ 'report-form.preparingForm' | transloco }}
                   </p>
                 </div>
                 <div class="form-loading-controls" aria-hidden="true">
-                  <div class="field-meta"><span>0 / 5000</span></div>
+                  <div class="field-meta">
+                    <span>{{
+                      'report-form.descriptionCounter' | transloco: { count: 0, max: 5000 }
+                    }}</span>
+                  </div>
                   <div class="actions actions-end">
                     <button type="button" class="primary" disabled>
-                      Continuar <span aria-hidden="true">→</span>
+                      {{ 'report-form.continue' | transloco }} <span aria-hidden="true">→</span>
                     </button>
                   </div>
                 </div>
@@ -56,14 +62,14 @@
                 <path d="m7.5 16.5-1 1a3.54 3.54 0 0 1-5-5l3-3a3.54 3.54 0 0 1 5 0" />
                 <path d="m16.5 7.5 1-1a3.54 3.54 0 0 1 5 5l-3 3a3.54 3.54 0 0 1-5 0" />
               </svg>
-              Enlace no válido
+              {{ 'report-form.invalid.label' | transloco }}
             </p>
-            <h1 id="profile-error-title">No podemos abrir este formulario</h1>
+            <h1 id="profile-error-title">{{ 'report-form.invalid.title' | transloco }}</h1>
             <p class="profile-status-message">
-              Vuelve a escanear el código QR del centro y comprueba que el enlace esté completo.
+              {{ 'report-form.invalid.message' | transloco }}
             </p>
             <p class="profile-status-help">
-              Si vuelve a ocurrir, avisa al centro para que revise el código.
+              {{ 'report-form.invalid.help' | transloco }}
             </p>
           </div>
         }
@@ -81,19 +87,19 @@
                   <path d="M12 17h.01" />
                   <path d="m3 3 18 18" />
                 </svg>
-                Problema de conexión
+                {{ 'report-form.unavailable.label' | transloco }}
               </p>
               <button type="button" class="retry-action" (click)="retryProfileResolution()">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M20 11a8.1 8.1 0 1 0 .2 3" />
                   <path d="M20 5v6h-6" />
                 </svg>
-                Reintentar
+                {{ 'report-form.unavailable.retry' | transloco }}
               </button>
             </div>
-            <h1 id="profile-error-title">No podemos cargar el formulario</h1>
+            <h1 id="profile-error-title">{{ 'report-form.unavailable.title' | transloco }}</h1>
             <p class="profile-status-message">
-              Comprueba tu conexión o inténtalo de nuevo en unos segundos.
+              {{ 'report-form.unavailable.message' | transloco }}
             </p>
           </div>
         }
@@ -103,14 +109,13 @@
             role="status"
             aria-labelledby="fictional-demo-title"
           >
-            <p class="profile-status-label">Demostración ficticia</p>
-            <h1 id="fictional-demo-title">Aquí no se guardan comunicaciones</h1>
+            <p class="profile-status-label">{{ 'report-form.fictionalDemo.label' | transloco }}</p>
+            <h1 id="fictional-demo-title">{{ 'report-form.fictionalDemo.title' | transloco }}</h1>
             <p class="profile-status-message">
-              Convive está mostrando una demostración segura. No escribas información personal,
-              situaciones reales ni datos de otras personas.
+              {{ 'report-form.fictionalDemo.message' | transloco }}
             </p>
             <p class="profile-status-help">
-              Este entorno sirve únicamente para conocer cómo funcionaría el proceso.
+              {{ 'report-form.fictionalDemo.help' | transloco }}
             </p>
           </div>
         }
@@ -120,17 +125,19 @@
             role="alert"
             aria-labelledby="reporting-disabled-title"
           >
-            <p class="profile-status-label">Canal no disponible</p>
-            <h1 id="reporting-disabled-title">Este formulario no está habilitado</h1>
+            <p class="profile-status-label">{{ 'report-form.disabled.label' | transloco }}</p>
+            <h1 id="reporting-disabled-title">{{ 'report-form.disabled.title' | transloco }}</h1>
             <p class="profile-status-message">
-              No envíes información personal ni comunicaciones de convivencia por esta vía.
+              {{ 'report-form.disabled.message' | transloco }}
             </p>
           </div>
         }
         @case ('ready') {
           @if (!result()) {
             <div class="organisation-context">
-              <span class="organisation-label">Centro</span>
+              <span class="organisation-label">{{
+                'report-form.organisationLabel' | transloco
+              }}</span>
               <p class="organisation-name">{{ state.profile.name }}</p>
             </div>
           }
@@ -145,17 +152,17 @@
             <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
               @if (currentStep() === 1) {
                 <div class="step">
-                  <h1 id="step-title">¿Qué ha ocurrido?</h1>
+                  <h1 id="step-title">{{ 'report-form.askedQuestion' | transloco }}</h1>
 
-                  <label class="visually-hidden" for="situationDescription"
-                    >¿Qué ha ocurrido?</label
-                  >
+                  <label class="visually-hidden" for="situationDescription">{{
+                    'report-form.askedQuestion' | transloco
+                  }}</label>
                   <textarea
                     id="situationDescription"
                     formControlName="situationDescription"
                     rows="10"
                     maxlength="5000"
-                    placeholder="Escribe aquí…"
+                    [placeholder]="'report-form.descriptionPlaceholder' | transloco"
                     [attr.aria-describedby]="
                       form.controls.situationDescription.touched &&
                       form.controls.situationDescription.invalid
@@ -170,23 +177,27 @@
                       form.controls.situationDescription.invalid
                     ) {
                       <p id="description-error" class="error" role="alert">
-                        Escribe qué ha ocurrido para continuar.
+                        {{ 'report-form.step1.descriptionError' | transloco }}
                       </p>
                     }
                     <span id="description-counter">
-                      {{ form.controls.situationDescription.value.length }} / 5000
+                      {{
+                        'report-form.descriptionCounter'
+                          | transloco
+                            : { count: form.controls.situationDescription.value.length, max: 5000 }
+                      }}
                     </span>
                   </div>
 
                   <div class="actions actions-end">
                     <button type="button" class="primary" (click)="continue()">
-                      Continuar <span aria-hidden="true">→</span>
+                      {{ 'report-form.continue' | transloco }} <span aria-hidden="true">→</span>
                     </button>
                   </div>
                 </div>
               } @else if (currentStep() === 2) {
                 <div class="step">
-                  <h1 id="step-title">¿Dónde ocurrió?</h1>
+                  <h1 id="step-title">{{ 'report-form.step2.title' | transloco }}</h1>
 
                   <fieldset
                     class="context-options"
@@ -197,11 +208,11 @@
                         : null
                     "
                   >
-                    <legend class="visually-hidden">¿Dónde ocurrió?</legend>
+                    <legend class="visually-hidden">
+                      {{ 'report-form.step2.title' | transloco }}
+                    </legend>
                     <p class="field-purpose">
-                      Orientaci&oacute;n necesita saber si ocurre en el centro, por internet o en
-                      los dos sitios, porque el protocolo es distinto. Si no lo tienes claro, elige
-                      la &uacute;ltima opci&oacute;n.
+                      {{ 'report-form.step2.contextPurpose' | transloco }}
                     </p>
                     <label>
                       <input
@@ -209,7 +220,7 @@
                         [checked]="isContextSelected('in_person')"
                         (change)="toggleContext('in_person')"
                       />
-                      <span>En persona</span>
+                      <span>{{ 'report-form.step2.inPerson' | transloco }}</span>
                     </label>
                     <label>
                       <input
@@ -217,7 +228,7 @@
                         [checked]="isContextSelected('digital')"
                         (change)="toggleContext('digital')"
                       />
-                      <span>Online</span>
+                      <span>{{ 'report-form.step2.online' | transloco }}</span>
                     </label>
                     <label class="unknown-option">
                       <input
@@ -225,7 +236,7 @@
                         [checked]="isContextSelected('unknown')"
                         (change)="toggleContext('unknown')"
                       />
-                      <span>Prefiero no decirlo</span>
+                      <span>{{ 'report-form.step2.preferNotToSay' | transloco }}</span>
                     </label>
                   </fieldset>
 
@@ -233,64 +244,62 @@
                     form.controls.situationContext.touched && form.controls.situationContext.invalid
                   ) {
                     <p id="context-error" class="error" role="alert">
-                      Selecciona una opción para continuar.
+                      {{ 'report-form.step2.contextError' | transloco }}
                     </p>
                   }
 
                   <fieldset class="context-options optional-taxonomy">
-                    <legend>¿Ha ocurrido más de una vez?</legend>
+                    <legend>{{ 'report-form.step2.recurrenceTitle' | transloco }}</legend>
                     <p class="field-purpose">
-                      Ayuda a orientaci&oacute;n a saber si es algo puntual o algo que se repite.
-                      Puedes no contestarlo.
+                      {{ 'report-form.step2.recurrencePurpose' | transloco }}
                     </p>
                     <label>
                       <input type="radio" formControlName="reporterRecurrence" value="single" />
-                      <span>Una vez</span>
+                      <span>{{ 'report-form.step2.recurrenceSingle' | transloco }}</span>
                     </label>
                     <label>
                       <input type="radio" formControlName="reporterRecurrence" value="repeated" />
-                      <span>Varias veces</span>
+                      <span>{{ 'report-form.step2.recurrenceRepeated' | transloco }}</span>
                     </label>
                     <label>
                       <input type="radio" formControlName="reporterRecurrence" value="ongoing" />
-                      <span>Sigue ocurriendo</span>
+                      <span>{{ 'report-form.step2.recurrenceOngoing' | transloco }}</span>
                     </label>
                     <label class="unknown-option">
                       <input type="radio" formControlName="reporterRecurrence" value="unknown" />
-                      <span>No lo sé / prefiero no indicarlo</span>
+                      <span>{{ 'report-form.step2.unknownOption' | transloco }}</span>
                     </label>
                   </fieldset>
 
                   <fieldset class="context-options optional-taxonomy">
-                    <legend>¿Cuándo pasó o empezó?</legend>
+                    <legend>{{ 'report-form.step2.timingTitle' | transloco }}</legend>
                     <p class="field-purpose">
-                      Sirve para saber si sigue pasando ahora. No hace falta una fecha exacta.
+                      {{ 'report-form.step2.timingPurpose' | transloco }}
                     </p>
                     <label>
                       <input type="radio" formControlName="reporterTiming" value="within_days" />
-                      <span>Estos d&iacute;as</span>
+                      <span>{{ 'report-form.step2.timingWithinDays' | transloco }}</span>
                     </label>
                     <label>
                       <input type="radio" formControlName="reporterTiming" value="within_weeks" />
-                      <span>Estas semanas</span>
+                      <span>{{ 'report-form.step2.timingWithinWeeks' | transloco }}</span>
                     </label>
                     <label>
                       <input type="radio" formControlName="reporterTiming" value="longer_ago" />
-                      <span>Hace m&aacute;s tiempo</span>
+                      <span>{{ 'report-form.step2.timingLongerAgo' | transloco }}</span>
                     </label>
                     <label class="unknown-option">
                       <input type="radio" formControlName="reporterTiming" value="unknown" />
-                      <span>No lo s&eacute; / prefiero no indicarlo</span>
+                      <span>{{ 'report-form.step2.unknownOption' | transloco }}</span>
                     </label>
                   </fieldset>
 
                   <div class="context-options optional-taxonomy">
-                    <label class="people-label" for="reportedPeople"
-                      >&iquest;Qui&eacute;n est&aacute; implicado?</label
-                    >
+                    <label class="people-label" for="reportedPeople">{{
+                      'report-form.step2.peopleLabel' | transloco
+                    }}</label>
                     <p class="field-purpose" id="people-purpose">
-                      Solo si t&uacute; quieres. Ay&uacute;danos a saber a qui&eacute;n afecta, con
-                      las palabras que prefieras. Puedes dejarlo en blanco y el aviso llega igual.
+                      {{ 'report-form.step2.peoplePurpose' | transloco }}
                     </p>
                     <input
                       id="reportedPeople"
@@ -303,9 +312,9 @@
                   </div>
 
                   <fieldset class="context-options optional-taxonomy">
-                    <legend>¿Crees que necesita atención pronta?</legend>
+                    <legend>{{ 'report-form.step2.attentionTitle' | transloco }}</legend>
                     <p class="field-purpose">
-                      Ayuda a ordenar la revisi&oacute;n. No decide nada por s&iacute; solo.
+                      {{ 'report-form.step2.attentionPurpose' | transloco }}
                     </p>
                     <label>
                       <input
@@ -313,7 +322,7 @@
                         formControlName="reporterAttentionCue"
                         value="needs_prompt_attention"
                       />
-                      <span>Sí, agradecería una revisión pronta</span>
+                      <span>{{ 'report-form.step2.attentionYes' | transloco }}</span>
                     </label>
                     <label>
                       <input
@@ -321,18 +330,20 @@
                         formControlName="reporterAttentionCue"
                         value="no_prompt_attention_indicated"
                       />
-                      <span>No se indica atención pronta</span>
+                      <span>{{ 'report-form.step2.attentionNo' | transloco }}</span>
                     </label>
                     <label class="unknown-option">
                       <input type="radio" formControlName="reporterAttentionCue" value="unknown" />
-                      <span>Prefiero no indicarlo</span>
+                      <span>{{ 'report-form.step2.attentionUnknown' | transloco }}</span>
                     </label>
                   </fieldset>
 
                   <div class="actions">
-                    <button type="button" class="secondary" (click)="goBack()">Atrás</button>
+                    <button type="button" class="secondary" (click)="goBack()">
+                      {{ 'report-form.back' | transloco }}
+                    </button>
                     <button type="button" class="primary" (click)="continueFromContext()">
-                      Continuar <span aria-hidden="true">→</span>
+                      {{ 'report-form.continue' | transloco }} <span aria-hidden="true">→</span>
                     </button>
                   </div>
                 </div>
@@ -341,15 +352,15 @@
                   @if (submitting()) {
                     <app-report-sending />
                   } @else {
-                    <h1 id="step-title">Revisa antes de enviar</h1>
+                    <h1 id="step-title">{{ 'report-form.step3.title' | transloco }}</h1>
 
                     <dl class="review-details">
                       <div>
-                        <dt>Qué ha ocurrido</dt>
+                        <dt>{{ 'report-form.step3.descriptionLabel' | transloco }}</dt>
                         <dd>{{ form.controls.situationDescription.value }}</dd>
                       </div>
                       <div>
-                        <dt>Dónde ocurrió</dt>
+                        <dt>{{ 'report-form.step3.contextLabel' | transloco }}</dt>
                         <dd>{{ contextSummary() }}</dd>
                       </div>
                     </dl>
@@ -359,8 +370,12 @@
                     }
 
                     <div class="actions">
-                      <button type="button" class="secondary" (click)="goBack()">Atrás</button>
-                      <button type="submit" class="primary">Enviar</button>
+                      <button type="button" class="secondary" (click)="goBack()">
+                        {{ 'report-form.back' | transloco }}
+                      </button>
+                      <button type="submit" class="primary">
+                        {{ 'report-form.submit' | transloco }}
+                      </button>
                     </div>
                   }
                 </div>

@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ReportHeader } from './report-header';
 import { ReportHelp } from './report-help';
@@ -28,7 +29,15 @@ type ReportingProfileState =
 @Component({
   selector: 'app-report-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ReportHeader, ReportHelp, ReportResult, ReportSending],
+  imports: [
+    ReactiveFormsModule,
+    ReportHeader,
+    ReportHelp,
+    ReportResult,
+    ReportSending,
+    TranslocoPipe,
+  ],
+  providers: [provideTranslocoScope('report-form')],
   templateUrl: './report-form.html',
   styleUrl: './report-form.scss',
 })
@@ -37,6 +46,7 @@ export class ReportForm {
   private readonly destroyRef = inject(DestroyRef);
   private readonly reporting = inject(ReportingService);
   private readonly route = inject(ActivatedRoute);
+  private readonly transloco = inject(TranslocoService);
   private profileLoadingTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly publicReportingIdentifier =
@@ -235,15 +245,15 @@ export class ReportForm {
     if (error instanceof HttpErrorResponse) {
       switch (error.status) {
         case 404:
-          return 'Este enlace de comunicación no es válido. Compruébalo e inténtalo de nuevo.';
+          return this.transloco.translate('report-form.submissionError.invalidLink');
         case 422:
-          return 'Alguna información no es válida. Revísala e inténtalo de nuevo.';
+          return this.transloco.translate('report-form.submissionError.invalidData');
         case 400:
         case 415:
-          return 'No hemos podido procesar la comunicación. Inténtalo de nuevo.';
+          return this.transloco.translate('report-form.submissionError.processingFailed');
       }
     }
 
-    return 'No hemos podido enviar la comunicación ahora. Inténtalo de nuevo más tarde.';
+    return this.transloco.translate('report-form.submissionError.generic');
   }
 }

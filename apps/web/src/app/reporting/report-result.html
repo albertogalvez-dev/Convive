@@ -1,28 +1,28 @@
 <div class="result">
   <div class="heading">
     <span aria-hidden="true">✓</span>
-    <h1 id="step-title">Comunicación enviada</h1>
+    <h1 id="step-title">{{ 'report-result.title' | transloco }}</h1>
   </div>
 
   <div class="perforation" aria-hidden="true"></div>
 
   <section class="access" aria-labelledby="access-title">
-    <h2 id="access-title">Datos de acceso</h2>
+    <h2 id="access-title">{{ 'report-result.accessTitle' | transloco }}</h2>
 
     <div class="warning" role="note">
       <span aria-hidden="true">!</span>
       <p>
-        <strong>Cualquiera que tenga este secreto puede entrar.</strong>
-        No puede recuperarse: guárdalo antes de cerrar y no lo compartas.
+        <strong>{{ 'report-result.warningStrong' | transloco }}</strong>
+        {{ 'report-result.warningBody' | transloco }}
       </p>
     </div>
 
-    <span class="credential-label">Referencia</span>
+    <span class="credential-label">{{ 'report-result.referenceLabel' | transloco }}</span>
     <p class="credential-value reference">
       <code>{{ submitted().publicReference }}</code>
     </p>
 
-    <span class="credential-label">Secreto</span>
+    <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
     <p class="credential-value secret">
       <code>{{ submitted().accessSecret }}</code>
     </p>
@@ -30,18 +30,18 @@
     <div class="actions">
       @if (canSaveInBrowser()) {
         <button type="button" class="save-button primary" (click)="saveInBrowser()">
-          Guardar en el navegador
+          {{ 'report-result.saveInBrowser' | transloco }}
         </button>
         <button type="button" class="copy-button secondary" (click)="copyAccessSecret()">
-          Copiar secreto
+          {{ 'report-result.copySecret' | transloco }}
         </button>
       } @else {
         <button type="button" class="copy-button primary" (click)="copyAccessSecret()">
-          Copiar secreto
+          {{ 'report-result.copySecret' | transloco }}
         </button>
       }
       <button type="button" class="print-button secondary" (click)="printAccessReceipt()">
-        Imprimir o guardar en PDF
+        {{ 'report-result.print' | transloco }}
       </button>
     </div>
 
@@ -49,27 +49,32 @@
 
     @if (canSaveInBrowser()) {
       <p class="actions-help">
-        Se guarda junto a tus contraseñas. Evítalo en un dispositivo compartido.
+        {{ 'report-result.browserSaveHelp' | transloco }}
       </p>
     }
 
     <p class="follow-up-hint">
-      Cuando quieras ver cómo va o añadir información, entra en
-      <a href="/seguimiento" target="_blank" rel="noopener">Seguimiento</a>.
+      {{ 'report-result.followUpHintPrefix' | transloco }}
+      <a href="/seguimiento" target="_blank" rel="noopener">{{
+        'report-result.followUpLinkText' | transloco
+      }}</a
+      >.
     </p>
   </section>
 </div>
 
 <section class="print-receipt" aria-labelledby="print-receipt-title">
-  <h2 id="print-receipt-title">Acceso a tu comunicación</h2>
-  <p>Entra en <strong>app.conviveaula.com/seguimiento</strong></p>
-  <span class="credential-label">Secreto</span>
+  <h2 id="print-receipt-title">{{ 'report-result.printReceiptTitle' | transloco }}</h2>
+  <p>
+    {{ 'report-result.printAccessPrefix' | transloco }}
+    <strong>app.conviveaula.com/seguimiento</strong>
+  </p>
+  <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
   <p class="print-secret">
     <code>{{ submitted().accessSecret }}</code>
   </p>
   <p class="print-warning">
-    Cualquiera que tenga este secreto puede entrar en tu comunicación. Guárdalo en un lugar privado
-    y no lo compartas.
+    {{ 'report-result.printWarning' | transloco }}
   </p>
 </section>
 

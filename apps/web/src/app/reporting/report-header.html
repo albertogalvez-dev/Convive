@@ -2,9 +2,13 @@
   <img src="/convive-logo.svg" alt="Convive" width="180" height="59" />
   @if (showProgress()) {
     <div class="header-actions">
-      <button class="help" type="button" (click)="helpRequested.emit()">Cómo funciona</button>
+      <button class="help" type="button" (click)="helpRequested.emit()">
+        {{ 'report-header.helpButton' | transloco }}
+      </button>
       <span class="desktop-label" aria-live="polite">
-        Paso {{ currentStep() }} de {{ totalSteps() }}
+        {{
+          'report-header.stepIndicator' | transloco: { current: currentStep(), total: totalSteps() }
+        }}
       </span>
     </div>
   } @else if (showCloseAccess()) {
@@ -15,9 +19,9 @@
       (click)="closeRequested.emit()"
     >
       @if (closing()) {
-        Cerrando…
+        {{ 'report-header.closing' | transloco }}
       } @else {
-        Cerrar acceso
+        {{ 'report-header.closeAccess' | transloco }}
       }
     </button>
   }
@@ -26,9 +30,11 @@
 @if (showProgress()) {
   <div class="progress">
     <span class="progress-label mobile-label" aria-live="polite">
-      Paso {{ currentStep() }} de {{ totalSteps() }}
+      {{
+        'report-header.stepIndicator' | transloco: { current: currentStep(), total: totalSteps() }
+      }}
     </span>
-    <ol aria-label="Progreso de la comunicación">
+    <ol [attr.aria-label]="'report-header.progressLabel' | transloco">
       @for (step of steps(); track step) {
         <li>
           <button
@@ -36,7 +42,7 @@
             [class.reached]="step <= currentStep()"
             [disabled]="step >= currentStep()"
             [attr.aria-current]="step === currentStep() ? 'step' : null"
-            [attr.aria-label]="'Ir al paso ' + step"
+            [attr.aria-label]="'report-header.goToStep' | transloco: { step }"
             (click)="stepRequested.emit(step)"
           ></button>
         </li>

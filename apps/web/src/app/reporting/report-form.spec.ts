@@ -4,6 +4,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { vi } from 'vitest';
 
+import reportFormEs from '../../i18n/report-form/es.json';
+import reportHeaderEs from '../../i18n/report-header/es.json';
+import reportHelpEs from '../../i18n/report-help/es.json';
+import reportResultEs from '../../i18n/report-result/es.json';
+import reportSendingEs from '../../i18n/report-sending/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ReportForm } from './report-form';
 
 describe('ReportForm', () => {
@@ -26,7 +32,16 @@ describe('ReportForm', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [ReportForm],
+      imports: [
+        ReportForm,
+        i18nTestingModule({
+          'report-form': reportFormEs,
+          'report-header': reportHeaderEs,
+          'report-help': reportHelpEs,
+          'report-result': reportResultEs,
+          'report-sending': reportSendingEs,
+        }),
+      ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
