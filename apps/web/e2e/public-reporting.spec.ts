@@ -341,6 +341,65 @@ test('keeps the public product homepage accessible and separate from reporting e
   ).toHaveCount(0);
 });
 
+test('lets a visitor switch to Catalan or Valencian by keyboard, with the choice remembered', async ({
+  page,
+  context,
+}) => {
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
+  ).toBeVisible();
+
+  const languageSwitcher = page.getByLabel('Idioma');
+
+  await expect(languageSwitcher).toHaveValue('es');
+
+  // Keyboard-only: focus the control the same way a screen-reader or
+  // keyboard-only visitor would, without ever clicking it.
+  await languageSwitcher.focus();
+  await expect(languageSwitcher).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+  await expect(
+    page.getByRole('heading', { name: 'Un canal segur per escoltar abans.' }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('ca');
+  await expectNoAccessibilityViolations(page);
+
+  // No IP geolocation or other inference decides Catalan vs Valencian --
+  // only an explicit choice, persisted for next time. The switcher's own
+  // visible label now reads "Llengua" (Catalan for "Language"), not
+  // "Idioma": re-locate it rather than reuse the stale Spanish-label
+  // locator, the same way a real screen-reader user would rediscover it.
+  await expect(page.getByLabel('Llengua')).toHaveValue('ca');
+  await page.reload();
+  await expect(
+    page.getByRole('heading', { name: 'Un canal segur per escoltar abans.' }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Llengua')).toHaveValue('ca');
+
+  await page.getByLabel('Llengua').selectOption('ca-valencia');
+  await expect(
+    page.getByRole('heading', { name: 'Un canal segur per a escoltar abans.' }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('ca-valencia');
+  await expectNoAccessibilityViolations(page);
+
+  // A fresh, unrelated browser context never inherits another visitor's
+  // stored choice -- the persistence is per-visitor, not server-side or
+  // inferred from anything about this request.
+  const freshContext = await context.browser()?.newContext();
+  try {
+    const freshPage = await freshContext?.newPage();
+    await freshPage?.goto(absoluteUrl('/'));
+    await expect(freshPage?.getByLabel('Idioma')).toHaveValue('es');
+  } finally {
+    await freshContext?.close();
+  }
+});
+
 test('keeps reviewed blog content accessible, responsive and attributable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/blog/');

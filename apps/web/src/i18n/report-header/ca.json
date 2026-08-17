@@ -1,0 +1,8 @@
+{
+  "helpButton": "Com funciona",
+  "stepIndicator": "Pas {{current}} de {{total}}",
+  "closing": "Tancant…",
+  "closeAccess": "Tancar accés",
+  "progressLabel": "Progrés de la comunicació",
+  "goToStep": "Anar al pas {{step}}"
+}

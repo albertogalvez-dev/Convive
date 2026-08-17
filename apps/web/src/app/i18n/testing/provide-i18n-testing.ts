@@ -16,7 +16,17 @@ export function i18nTestingModule(
 ): ReturnType<typeof TranslocoTestingModule.forRoot> {
   return TranslocoTestingModule.forRoot({
     langs: { es: scopes },
-    translocoConfig: { availableLangs: ['es'], defaultLang: 'es' },
+    translocoConfig: {
+      availableLangs: ['es'],
+      defaultLang: 'es',
+      // Must match app.config.ts's production setting: without it, a call
+      // that resolves a scope by name (TranslocoService.selectTranslation(),
+      // in particular, rather than a pre-flattened `'scope.key' | transloco`
+      // template lookup) camelCases the scope internally while the loaded
+      // content keeps its hyphenated form, so the lookup misses in tests
+      // without ever failing in a way that shows up outside them.
+      scopes: { keepCasing: true },
+    },
     preloadLangs: true,
   });
 }

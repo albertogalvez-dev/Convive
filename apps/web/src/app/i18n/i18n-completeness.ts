@@ -16,7 +16,7 @@
  *    listing it here, after it has passed sign-off, does.
  */
 
-type TranslationTree = { [key: string]: string | TranslationTree };
+export type TranslationTree = { [key: string]: string | TranslationTree };
 
 /** @returns every dotted key path a translation tree contains, sorted. */
 function keyPaths(tree: TranslationTree, prefix = ''): string[] {
@@ -62,7 +62,7 @@ export function checkLocaleCompleteness(
  * only once {@link checkLocaleCompleteness} passes for that locale's every
  * translation file and a reviewer has recorded sign-off, per #256's process.
  */
-export const READY_LOCALES: readonly string[] = ['es'];
+export const READY_LOCALES: readonly string[] = ['es', 'ca', 'ca-valencia'];
 
 export function isLocaleReady(code: string): boolean {
   return READY_LOCALES.includes(code);

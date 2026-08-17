@@ -39,7 +39,7 @@ describe('HttpTranslocoLoader', () => {
 
     const loader = TestBed.inject(HttpTranslocoLoader);
 
-    await expect(firstValueFrom(loader.getTranslation('public-site-footer/ca'))).rejects.toThrow(
+    await expect(firstValueFrom(loader.getTranslation('public-site-footer/eu'))).rejects.toThrow(
       /not signed off/,
     );
     expect(get).not.toHaveBeenCalled();

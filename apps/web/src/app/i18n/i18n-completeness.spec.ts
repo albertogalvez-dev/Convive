@@ -54,7 +54,8 @@ describe('isLocaleReady', () => {
   it('refuses a locale that has translation files but has not been added to READY_LOCALES', () => {
     // Publishing a locale is adding its code here after sign-off, not
     // creating the JSON file — a file existing on disk must not be enough.
-    expect(isLocaleReady('ca')).toBe(false);
+    // `ca`/`ca-valencia` are signed off as of #256; `eu` and `ar` are not.
+    expect(isLocaleReady('eu')).toBe(false);
     expect(isLocaleReady('ar')).toBe(false);
   });
 
