@@ -509,6 +509,56 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-CB', $andalusianTerritories);
     }
 
+    public function testCastillaYLeonScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $castillaYLeon = $this->createOrganisation('47A', 'Castilla y León Workspace School');
+        $castillaYLeon->assignTerritorialScope('ES-CL');
+        $this->entityManager->persist($castillaYLeon);
+        $this->entityManager->flush();
+        $castillaYLeonLead = $this->createProfessional('castilla-y-leon-lead', $castillaYLeon, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $castillaYLeonCase = new ManagedCase(Uuid::v7(), $castillaYLeon, $castillaYLeonLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($castillaYLeonCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $castillaYLeonCase,
+            $castillaYLeonLead,
+            CaseAssignmentRole::Lead,
+            $castillaYLeonLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($castillaYLeonLead);
+        $castillaYLeonUrl = '/api/v1/professional/cases/'.$castillaYLeonCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $castillaYLeonUrl);
+        self::assertResponseIsSuccessful();
+        $castillaYLeonTemplates = $this->responsePayload()['items'];
+
+        // Every template a Castilla y León-scoped organisation sees carries
+        // its own source and territory -- never Andalucía's, Aragón's,
+        // Valencia's, Castilla-La Mancha's or Cantabria's, even though all
+        // exist in the same database.
+        self::assertNotEmpty($castillaYLeonTemplates);
+        self::assertSame(
+            array_fill(0, count($castillaYLeonTemplates), 'ES-CL'),
+            array_column(array_column($castillaYLeonTemplates, 'source'), 'territory'),
+        );
+
+        // The reverse: the existing Andalucía-scoped workspace never sees
+        // Castilla y León's templates.
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-CL', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
