@@ -1,14 +1,11 @@
 <footer>
   <section class="boundary" aria-labelledby="footer-boundary-title">
-    <h2 id="footer-boundary-title">Esta es una demostración con datos ficticios</h2>
-    <p>
-      Convive no es un canal de emergencia y no es un servicio oficial de la Junta de Andalucía.
-      Nada de lo que ocurre en la demostración llega a un centro educativo.
-    </p>
+    <h2 id="footer-boundary-title">{{ 'public-site-footer.boundaryTitle' | transloco }}</h2>
+    <p>{{ 'public-site-footer.boundaryBody' | transloco }}</p>
   </section>
 
   <section class="emergency" aria-labelledby="footer-emergency-title">
-    <h2 id="footer-emergency-title">Recursos públicos de ayuda</h2>
+    <h2 id="footer-emergency-title">{{ 'public-site-footer.emergencyTitle' | transloco }}</h2>
     <ul>
       @for (resource of emergencyResources; track resource.dial) {
         <li>
@@ -19,15 +16,15 @@
     </ul>
   </section>
 
-  <nav class="links" aria-label="Información pública">
-    <a href="/aviso-demostracion/">Aviso de demostración</a>
-    <a href="/privacidad/">Privacidad</a>
-    <a href="/cookies/">Cookies</a>
-    <a href="/terminos/">Términos</a>
-    <a href="/accesibilidad/">Accesibilidad</a>
-    <a href="/blog/">Blog</a>
-    <a href="/demostracion/">Demostración</a>
-    <a href="/contacto/">Contacto</a>
+  <nav class="links" [attr.aria-label]="'public-site-footer.linksLabel' | transloco">
+    <a href="/aviso-demostracion/">{{ 'public-site-footer.links.notice' | transloco }}</a>
+    <a href="/privacidad/">{{ 'public-site-footer.links.privacy' | transloco }}</a>
+    <a href="/cookies/">{{ 'public-site-footer.links.cookies' | transloco }}</a>
+    <a href="/terminos/">{{ 'public-site-footer.links.terms' | transloco }}</a>
+    <a href="/accesibilidad/">{{ 'public-site-footer.links.accessibility' | transloco }}</a>
+    <a href="/blog/">{{ 'public-site-footer.links.blog' | transloco }}</a>
+    <a href="/demostracion/">{{ 'public-site-footer.links.demo' | transloco }}</a>
+    <a href="/contacto/">{{ 'public-site-footer.links.contact' | transloco }}</a>
   </nav>
 
   <p class="operator">

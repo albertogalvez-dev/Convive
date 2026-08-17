@@ -1,12 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { BlogArticle } from './blog-article';
 
 describe('BlogArticle', () => {
   it('renders attributed content and article metadata for a published slug', async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogArticle],
+      imports: [BlogArticle, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
       providers: [
         provideRouter([]),
         {
@@ -36,7 +38,7 @@ describe('BlogArticle', () => {
 
   it('does not index an unknown article slug', async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogArticle],
+      imports: [BlogArticle, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
       providers: [
         provideRouter([]),
         {

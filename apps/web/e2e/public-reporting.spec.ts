@@ -525,6 +525,17 @@ async function expectCredentialAbsentFromBrowserState(
 async function expectNoAccessibilityViolations(
   page: import('@playwright/test').Page,
 ): Promise<void> {
+  // Scoped translations (the shared footer's, in particular) resolve over a
+  // follow-up HTTP request after the initial page load, so scanning right on
+  // 'load' can catch a focusable link before its accessible name has arrived.
+  // Not every page includes the footer (the reporting form deliberately
+  // doesn't), so only wait for it when it's actually present on this page.
+  const footerTitle = page.locator('#footer-boundary-title');
+
+  if ((await footerTitle.count()) > 0) {
+    await footerTitle.filter({ hasText: /\S/ }).waitFor();
+  }
+
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

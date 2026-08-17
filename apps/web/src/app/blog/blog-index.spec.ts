@@ -1,12 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { BlogIndex } from './blog-index';
 
 describe('BlogIndex', () => {
   it('publishes reviewed content with a canonical index page', async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogIndex],
+      imports: [BlogIndex, i18nTestingModule({ 'public-site-footer': publicSiteFooterEs })],
       providers: [provideRouter([])],
     }).compileComponents();
 
