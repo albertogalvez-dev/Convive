@@ -287,6 +287,80 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
     }
 
+    public function testATerritorialScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $aragon = $this->createOrganisation('46B', 'Aragón Workspace School');
+        $aragon->assignTerritorialScope('ES-AR');
+        $this->entityManager->persist($aragon);
+        $this->entityManager->flush();
+        $aragonLead = $this->createProfessional('aragon-lead', $aragon, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $aragonCase = new ManagedCase(Uuid::v7(), $aragon, $aragonLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($aragonCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $aragonCase,
+            $aragonLead,
+            CaseAssignmentRole::Lead,
+            $aragonLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($aragonLead);
+        $aragonUrl = '/api/v1/professional/cases/'.$aragonCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $aragonUrl);
+        self::assertResponseIsSuccessful();
+        $aragonTemplates = $this->responsePayload()['items'];
+
+        // Every template an Aragón-scoped organisation sees carries Aragón's
+        // own source and territory -- never Andalucía's, even though both
+        // exist in the same database.
+        self::assertNotEmpty($aragonTemplates);
+        self::assertSame(
+            array_fill(0, count($aragonTemplates), 'ES-AR'),
+            array_column(array_column($aragonTemplates, 'source'), 'territory'),
+        );
+
+        // The reverse: the existing Andalucía-scoped workspace never sees
+        // Aragón's templates, even though this test just created them.
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-AR', $andalusianTerritories);
+
+        // An organisation with no territorial scope assigned at all sees no
+        // territorial templates -- not a default region's, since a default
+        // would be exactly the silent re-scoping the standing rule forbids.
+        $unscoped = $this->createOrganisationWithoutTerritorialScope('46C', 'Unscoped Workspace School');
+        $unscopedLead = $this->createProfessional('unscoped-lead', $unscoped, ProfessionalRole::Triage);
+        $unscopedCase = new ManagedCase(Uuid::v7(), $unscoped, $unscopedLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($unscopedCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $unscopedCase,
+            $unscopedLead,
+            CaseAssignmentRole::Lead,
+            $unscopedLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($unscopedLead);
+        $this->client->request(
+            'GET',
+            '/api/v1/professional/cases/'.$unscopedCase->id()->toRfc4122().'/task-planning-catalogue',
+        );
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
@@ -1106,6 +1180,23 @@ final class ProfessionalCaseControllerTest extends WebTestCase
     }
 
     private function createOrganisation(string $suffix, string $name): Organisation
+    {
+        $organisation = new Organisation(
+            Uuid::v7(),
+            $name,
+            PublicReportingIdentifier::fromString('ORG_1NB46'.str_pad($suffix, 11, '0')),
+        );
+        // Explicit, matching how every organisation in this test suite has
+        // always only ever seen Andalucía content -- now a real, visible
+        // assignment (#254) rather than an implicit global default.
+        $organisation->assignTerritorialScope('ES-AN');
+        $this->entityManager->persist($organisation);
+        $this->entityManager->flush();
+
+        return $organisation;
+    }
+
+    private function createOrganisationWithoutTerritorialScope(string $suffix, string $name): Organisation
     {
         $organisation = new Organisation(
             Uuid::v7(),

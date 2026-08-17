@@ -72,8 +72,8 @@ content.
 
 ## What the notices must never claim
 
-- That the demonstration is an emergency channel, or an official Junta de
-  Andalucía service, or associated with any administration.
+- That the demonstration is an emergency channel, or an official service of
+  any education authority, or associated with any administration.
 - That a communication is absolutely anonymous. The privacy notice states the
   real limits instead: no account is required, but free text can identify a
   person by what it describes, and ordinary technical records exist.

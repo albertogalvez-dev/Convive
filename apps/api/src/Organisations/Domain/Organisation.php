@@ -36,6 +36,18 @@ class Organisation
     )]
     private ReportingChannelStatus $reportingChannelStatus = ReportingChannelStatus::Active;
 
+    /**
+     * Which territorial protocol profile (#253) this organisation's
+     * professionals see in their task-planning catalogue -- null until an
+     * administrator explicitly assigns one. Never inferred from the
+     * organisation's name, address or anything else: an unscoped
+     * organisation sees no territorial templates at all, not a default
+     * region's, per the standing rule that no organisation is silently
+     * re-scoped.
+     */
+    #[ORM\Column(name: 'territorial_scope', type: Types::STRING, length: 20, nullable: true)]
+    private ?string $territorialScope = null;
+
     public function __construct(
         Uuid $id,
         string $name,
@@ -88,6 +100,27 @@ class Organisation
     public function retireReportingChannel(): void
     {
         $this->reportingChannelStatus = ReportingChannelStatus::Retired;
+    }
+
+    public function territorialScope(): ?string
+    {
+        return $this->territorialScope;
+    }
+
+    /**
+     * The explicit administrative action that assigns (or reassigns) an
+     * organisation's territorial protocol profile. There is no automatic or
+     * inferred assignment anywhere else in this class.
+     */
+    public function assignTerritorialScope(string $territorialScope): void
+    {
+        $territorialScope = trim($territorialScope);
+
+        if ($territorialScope === '' || mb_strlen($territorialScope) > 20) {
+            throw new LogicException('A territorial scope must contain between 1 and 20 characters.');
+        }
+
+        $this->territorialScope = $territorialScope;
     }
 
     /**

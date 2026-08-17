@@ -23,7 +23,7 @@ describe('PublicSiteFooter', () => {
     const text = footer.textContent ?? '';
     expect(text).toContain('datos ficticios');
     expect(text).toContain('no es un canal de emergencia');
-    expect(text).toContain('Junta de Andalucía');
+    expect(text).toContain('ninguna administración educativa');
   });
 
   it('signposts every official public resource as a dialable number', async () => {

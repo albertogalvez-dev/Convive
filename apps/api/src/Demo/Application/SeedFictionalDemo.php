@@ -216,15 +216,21 @@ final readonly class SeedFictionalDemo
     private function upsertOrganisation(): void
     {
         $this->connection->executeStatement(
-            'INSERT INTO organisations (id, name, public_reporting_identifier)
-             VALUES (:id, :name, :identifier)
+            'INSERT INTO organisations (id, name, public_reporting_identifier, territorial_scope)
+             VALUES (:id, :name, :identifier, :territorialScope)
              ON CONFLICT (id) DO UPDATE SET
                 name = EXCLUDED.name,
-                public_reporting_identifier = EXCLUDED.public_reporting_identifier',
+                public_reporting_identifier = EXCLUDED.public_reporting_identifier,
+                territorial_scope = EXCLUDED.territorial_scope',
             [
                 'id' => FictionalDemoDataset::ORGANISATION_ID,
                 'name' => FictionalDemoDataset::ORGANISATION_NAME,
                 'identifier' => FictionalDemoDataset::PUBLIC_REPORTING_IDENTIFIER,
+                // Explicit, not inferred: this fictional organisation has
+                // always only ever seen the Andalucía profile (#249); this
+                // just makes that assignment a real, visible fact instead of
+                // an implicit global default.
+                'territorialScope' => FictionalDemoDataset::TERRITORIAL_SCOPE,
             ],
         );
     }
