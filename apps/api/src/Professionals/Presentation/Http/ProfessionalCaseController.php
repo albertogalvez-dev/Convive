@@ -44,6 +44,7 @@ use App\Cases\Domain\WorkflowTaskTemplateRepository;
 use App\Cases\Domain\ProfessionalExportEvent;
 use App\Cases\Domain\ProfessionalExportEventRepository;
 use App\Cases\Domain\ProfessionalExportKind;
+use App\Organisations\Domain\Organisation;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalRepository;
 use App\Professionals\Domain\OrganisationMembershipRepository;
@@ -82,7 +83,18 @@ final readonly class ProfessionalCaseController
      */
     private const MINIMUM_NOTE_TERM_LENGTH = 3;
     private const MAXIMUM_NOTE_TERM_LENGTH = 80;
-    private const FICTIONAL_ANDALUSIAN_TERRITORIES = ['ES-AN', 'ES-AN-GR'];
+
+    /**
+     * Andalucía's own fictional demonstration content (#249) is scoped one
+     * level narrower than the region itself ('ES-AN-GR'), so an organisation
+     * assigned 'ES-AN' must see both. This is the one such relationship that
+     * exists today; a future territory with its own narrower internal source
+     * would be added here explicitly, the same way -- never inferred from
+     * the scope string itself.
+     */
+    private const array TERRITORIAL_SCOPE_ALIASES = [
+        'ES-AN' => ['ES-AN', 'ES-AN-GR'],
+    ];
 
     public function __construct(
         private ProfessionalCaseWorkspace $workspace,
@@ -220,16 +232,17 @@ final readonly class ProfessionalCaseController
         security: [['professionalSession' => []]],
         tags: ['Professional cases'],
         responses: [
-            new OA\Response(response: Response::HTTP_OK, description: 'The approved fictional Andalusian planning catalogue.', content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseTaskPlanningCatalogue')),
+            new OA\Response(response: Response::HTTP_OK, description: "The approved planning catalogue for the case's assigned territorial scope.", content: new OA\JsonContent(ref: '#/components/schemas/ProfessionalCaseTaskPlanningCatalogue')),
             new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
             new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
         ],
     )]
     public function taskPlanningCatalogue(string $id, #[CurrentUser] Professional $professional): JsonResponse
     {
-        $this->resolveDetail($id, $professional);
+        $detail = $this->resolveDetail($id, $professional);
+        $territories = $this->resolveTerritories($detail->managedCase->organisation());
 
-        return $this->json(['items' => array_map(
+        return $this->json(['items' => $territories === [] ? [] : array_map(
             fn (WorkflowTaskTemplate $template): array => [
                 'id' => $template->id()->toRfc4122(),
                 'title' => $template->title(),
@@ -243,7 +256,7 @@ final readonly class ProfessionalCaseController
                     'uri' => $template->source()->uri(),
                 ],
             ],
-            $this->workflowTemplates->findApprovedForTerritoriesCatalogue(self::FICTIONAL_ANDALUSIAN_TERRITORIES),
+            $this->workflowTemplates->findApprovedForTerritoriesCatalogue($territories),
         )]);
     }
 
@@ -432,8 +445,9 @@ final readonly class ProfessionalCaseController
     ): JsonResponse {
         $detail = $this->resolveDetail($id, $professional);
         $owner = $this->assignedProfessional($detail, $payload->ownerId);
-        $template = Uuid::isValid($payload->templateId)
-            ? $this->workflowTemplates->findApprovedForTerritories(Uuid::fromString($payload->templateId), self::FICTIONAL_ANDALUSIAN_TERRITORIES)
+        $territories = $this->resolveTerritories($detail->managedCase->organisation());
+        $template = Uuid::isValid($payload->templateId) && $territories !== []
+            ? $this->workflowTemplates->findApprovedForTerritories(Uuid::fromString($payload->templateId), $territories)
             : null;
         if ($owner === null || $template === null) {
             throw new ProfessionalCaseNotFoundHttpException();
@@ -1058,6 +1072,25 @@ final readonly class ProfessionalCaseController
 
         return $this->workspace->detail(Uuid::fromString($id), $professional)
             ?? throw new ProfessionalCaseNotFoundHttpException();
+    }
+
+    /**
+     * The territorial protocol templates a case's organisation may see.
+     * An organisation with no territorial scope assigned (#254) sees no
+     * territorial templates -- not a default region's -- since a default
+     * would be exactly the silent re-scoping the standing rule forbids.
+     *
+     * @return list<string>
+     */
+    private function resolveTerritories(Organisation $organisation): array
+    {
+        $scope = $organisation->territorialScope();
+
+        if ($scope === null) {
+            return [];
+        }
+
+        return self::TERRITORIAL_SCOPE_ALIASES[$scope] ?? [$scope];
     }
 
     private function requireMinimisedPersonPayload(Request $request): void
