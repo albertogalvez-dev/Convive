@@ -531,7 +531,22 @@ async function expectNoAccessibilityViolations(
   // `networkidle` is unreliable here (some pages keep a connection open and
   // it never fires, timing the whole test out), so wait for a concrete
   // signal instead: the footer's eagerly-loaded heading getting its text.
-  await page.locator('#footer-boundary-title').filter({ hasText: /\S/ }).waitFor();
+  try {
+    await page.locator('#footer-boundary-title').filter({ hasText: /\S/ }).waitFor();
+  } catch (error) {
+    const diagnostics = await page
+      .evaluate(async () => {
+        const response = await fetch('/i18n/public-site-footer/es.json');
+        return {
+          footerTitleHtml: document.querySelector('#footer-boundary-title')?.outerHTML ?? null,
+          jsonStatus: response.status,
+          jsonBody: await response.text(),
+        };
+      })
+      .catch((evalError) => ({ evalError: String(evalError) }));
+    console.log('FOOTER DIAGNOSTICS', page.url(), JSON.stringify(diagnostics));
+    throw error;
+  }
 
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
