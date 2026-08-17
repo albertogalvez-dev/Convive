@@ -13,7 +13,15 @@ import { routes } from './app.routes';
 import { EAGER_TRANSLOCO_SCOPES } from './i18n/i18n-eager-scopes';
 import { HttpTranslocoLoader } from './i18n/i18n-loader';
 import { READY_LOCALES } from './i18n/i18n-completeness';
+import { readStoredLocale } from './i18n/i18n-locale-preference';
 import { SOURCE_LOCALE } from './i18n/i18n-locales';
+
+// The visitor's or organisation's explicitly stored choice, read once at
+// bootstrap -- never inferred from geolocation or any other automatic
+// signal (#256). Falls back to the source locale when nothing was ever
+// chosen, storage is unavailable, or the stored value is no longer a
+// signed-off locale.
+const initialLocale = readStoredLocale() ?? SOURCE_LOCALE;
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,7 +34,7 @@ export const appConfig: ApplicationConfig = {
         // reReRenderOnLangChange keeps every translated view in sync when a
         // visitor switches without a page reload.
         availableLangs: [...READY_LOCALES],
-        defaultLang: SOURCE_LOCALE,
+        defaultLang: initialLocale,
         fallbackLang: SOURCE_LOCALE,
         reRenderOnLangChange: true,
         prodMode: true,
@@ -38,17 +46,20 @@ export const appConfig: ApplicationConfig = {
       },
       loader: HttpTranslocoLoader,
     }),
-    // Blocks first render until every eager scope's default-locale JSON has
-    // resolved, so a focusable control backed by translated text (the shared
-    // footer's navigation, in particular) never has an empty accessible name
-    // during the fetch. See i18n-eager-scopes.ts for why this list is short.
+    // Blocks first render until every eager scope's JSON for the initial
+    // locale has resolved, so a focusable control backed by translated text
+    // (the shared footer's navigation, in particular) never has an empty
+    // accessible name during the fetch. See i18n-eager-scopes.ts for why
+    // this list is short. Loads `initialLocale`, not always the source
+    // locale, so a returning visitor who chose Catalan does not see a flash
+    // of Spanish before the switch takes effect.
     provideAppInitializer(() => {
       const transloco = inject(TranslocoService);
 
       return forkJoin(
         EAGER_TRANSLOCO_SCOPES.length === 0
           ? [of(null)]
-          : EAGER_TRANSLOCO_SCOPES.map((scope) => transloco.load(`${scope}/${SOURCE_LOCALE}`)),
+          : EAGER_TRANSLOCO_SCOPES.map((scope) => transloco.load(`${scope}/${initialLocale}`)),
       );
     }),
   ],

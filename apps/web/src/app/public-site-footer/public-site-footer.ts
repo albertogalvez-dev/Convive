@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { PUBLIC_EMERGENCY_RESOURCES } from '../public-emergency-resources';
 import {
   PUBLIC_GENERAL_EMAIL,
@@ -22,7 +23,7 @@ import {
 @Component({
   selector: 'app-public-site-footer',
   standalone: true,
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, LanguageSwitcher],
   providers: [provideTranslocoScope('public-site-footer')],
   templateUrl: './public-site-footer.html',
   styleUrl: './public-site-footer.scss',

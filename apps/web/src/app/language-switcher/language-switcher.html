@@ -1,0 +1,12 @@
+<div class="language-switcher">
+  <label for="language-switcher-select">{{
+    'public-site-footer.languageSwitcher.label' | transloco
+  }}</label>
+  <select id="language-switcher-select" (change)="onChange($event)">
+    @for (locale of availableLocales; track locale.code) {
+      <option [value]="locale.code" [selected]="locale.code === activeLang()">
+        {{ locale.label }}
+      </option>
+    }
+  </select>
+</div>

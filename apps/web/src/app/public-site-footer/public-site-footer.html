@@ -27,6 +27,8 @@
     <a href="/contacto/">{{ 'public-site-footer.links.contact' | transloco }}</a>
   </nav>
 
+  <app-language-switcher />
+
   <p class="operator">
     {{ operatorName }} · <a [href]="'mailto:' + generalEmail">{{ generalEmail }}</a>
   </p>

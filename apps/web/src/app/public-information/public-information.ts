@@ -2,6 +2,7 @@ import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { map } from 'rxjs';
 
 import { PUBLIC_GENERAL_EMAIL, PUBLIC_PRIVACY_EMAIL } from '../public-identity';
 import { PublicSeoService } from '../public-seo.service';
@@ -76,15 +77,33 @@ export class PublicInformation {
   readonly meta = this.route.snapshot.data['meta'] as PublicInformationPageMeta;
   readonly professionalAccessUrl = professionalAccessUrlFor(globalThis.location.hostname);
 
-  // The key already carries the `public-information.` scope prefix, the same
-  // way every other call in this codebase addresses a scoped key (see
-  // ReportForm.describeError), so no separate scope argument is passed here
-  // -- doing so would have Transloco prefix the scope a second time and the
-  // lookup would miss.
+  // Two separate steps, deliberately not combined into one
+  // selectTranslateObject(key, params, scope) call:
+  //
+  // 1. selectTranslation('public-information') re-subscribes through
+  //    Transloco's own scope-loading path (the same one TranslocoPipe uses)
+  //    on every locale change, which is what actually fetches that locale's
+  //    public-information/*.json. A key with no scope argument at all only
+  //    reloads the (empty, unused) root translation file when the locale
+  //    changes, so the content would silently keep showing the previous
+  //    locale after a switch -- confirmed by hand against a running app.
+  // 2. Once that resolves, translateObject() reads the now-loaded tree with
+  //    the scope prefix already folded into the key string, the same
+  //    pattern every synchronous lookup elsewhere in this codebase uses
+  //    (e.g. ReportForm.describeError). Passing the scope as a separate
+  //    argument to *this* call, instead, hits Transloco's scope-casing
+  //    normalisation (`scopes.keepCasing`) a second time and the two
+  //    normalisations disagree -- also confirmed by hand.
   private readonly rawContent = toSignal(
-    this.transloco.selectTranslateObject<PublicInformationTranslation>(
-      `public-information.${this.meta.id}`,
-    ),
+    this.transloco
+      .selectTranslation('public-information')
+      .pipe(
+        map(() =>
+          this.transloco.translateObject<PublicInformationTranslation>(
+            `public-information.${this.meta.id}`,
+          ),
+        ),
+      ),
     { initialValue: {} as PublicInformationTranslation },
   );
 

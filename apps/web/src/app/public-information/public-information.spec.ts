@@ -26,6 +26,8 @@ async function renderWith(meta: PublicInformationPageMeta): Promise<HTMLElement>
 
   const fixture = TestBed.createComponent(PublicInformation);
   fixture.detectChanges();
+  await fixture.whenStable();
+  fixture.detectChanges();
 
   return fixture.nativeElement as HTMLElement;
 }
