@@ -28,7 +28,9 @@ describe('i18n locale preference', () => {
   });
 
   it('refuses a stored value for a locale that exists but is not ready', () => {
-    localStorage.setItem('convive-locale', 'ar');
+    // `eu` (Basque) is a real entry in `LOCALES` but has not been signed off
+    // under #256's process yet, unlike `ar` (#257).
+    localStorage.setItem('convive-locale', 'eu');
 
     expect(readStoredLocale()).toBeNull();
   });
