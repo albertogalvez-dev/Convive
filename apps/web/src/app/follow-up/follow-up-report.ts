@@ -1,11 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
 import { describeSituationContext } from '../reporting/situation-context';
-import {
-  FollowUpEntry,
-  ReporterProgressStage,
-  ReportFollowUpState,
-} from './follow-up.service';
+import { FollowUpEntry, ReporterProgressStage, ReportFollowUpState } from './follow-up.service';
 
 interface ProgressCopy {
   readonly label: string;
@@ -60,9 +56,7 @@ export class FollowUpReport {
   protected readonly progress = computed<ProgressCopy | null>(() => {
     const stage = this.report().progressStage;
 
-    return stage !== undefined && stage in PROGRESS_COPY
-      ? PROGRESS_COPY[stage]
-      : null;
+    return stage !== undefined && stage in PROGRESS_COPY ? PROGRESS_COPY[stage] : null;
   });
 
   protected authorLabel(entry: FollowUpEntry): string {

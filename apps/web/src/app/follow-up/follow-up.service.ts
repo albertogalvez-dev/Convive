@@ -18,11 +18,7 @@ export interface FollowUpEntry {
  * professional identity, no triage reason, and no indication of which
  * internal outcome was chosen. It promises no timeline.
  */
-export type ReporterProgressStage =
-  | 'received'
-  | 'under_review'
-  | 'action_taken'
-  | 'closed';
+export type ReporterProgressStage = 'received' | 'under_review' | 'action_taken' | 'closed';
 
 export interface ReportFollowUpState {
   publicReference: string;

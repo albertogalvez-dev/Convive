@@ -61,12 +61,7 @@ describe('FollowUpReport', () => {
       'te contestaremos',
     ];
 
-    const stages: ReporterProgressStage[] = [
-      'received',
-      'under_review',
-      'action_taken',
-      'closed',
-    ];
+    const stages: ReporterProgressStage[] = ['received', 'under_review', 'action_taken', 'closed'];
 
     for (const stage of stages) {
       render(reportState(stage));
@@ -87,9 +82,7 @@ describe('FollowUpReport', () => {
     expect(section()).toBeNull();
     // The parts of the page the reporter actually depends on are still there.
     expect(fixture.nativeElement.textContent).toContain('CNV-2026-0001');
-    expect(fixture.nativeElement.textContent).toContain(
-      'Una situación ocurrió durante el recreo.',
-    );
+    expect(fixture.nativeElement.textContent).toContain('Una situación ocurrió durante el recreo.');
   });
 
   it('keeps the conversation usable when the API sends a stage it does not know', () => {
