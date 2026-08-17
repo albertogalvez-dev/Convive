@@ -11,6 +11,11 @@ jobs:
     name: PR traceability
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Dependabot PRs bump a dependency version, not a product change tied to
+    # an issue -- they are reviewed and merged on their own real merits
+    # (build, tests, CodeQL, dependency review) rather than against a
+    # fabricated "Closes #N".
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     env:
       PR_BODY: ${{ github.event.pull_request.body }}
 
