@@ -525,6 +525,12 @@ async function expectCredentialAbsentFromBrowserState(
 async function expectNoAccessibilityViolations(
   page: import('@playwright/test').Page,
 ): Promise<void> {
+  // Scoped translations (the shared footer's, in particular) resolve over a
+  // follow-up HTTP request after the initial page load, so scanning right on
+  // 'load' can catch a focusable link before its accessible name has arrived.
+  // Waiting for the network to settle avoids racing that fetch.
+  await page.waitForLoadState('networkidle');
+
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
