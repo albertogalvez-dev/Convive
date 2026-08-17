@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { of, switchMap } from 'rxjs';
 
 import {
@@ -40,6 +41,8 @@ interface EvidenceDraft {
 @Component({
   selector: 'app-report-evidence',
   standalone: true,
+  imports: [TranslocoPipe],
+  providers: [provideTranslocoScope('report-evidence')],
   templateUrl: './report-evidence.html',
   styleUrl: './report-evidence.scss',
 })
@@ -50,6 +53,7 @@ export class ReportEvidence implements OnInit {
 
   private readonly attachments = inject(ReportAttachmentService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
   private nextDraftKey = 1;
 
   protected readonly maximumDescriptionLength = MAXIMUM_DESCRIPTION_LENGTH;
@@ -127,7 +131,9 @@ export class ReportEvidence implements OnInit {
     }
 
     if (files.some((file) => !this.isAcceptedSelection(file))) {
-      this.selectionError.set('Selecciona únicamente PDF, JPG o PNG de hasta 5 MB.');
+      this.selectionError.set(
+        this.transloco.translate('report-evidence.errors.unsupportedSelection'),
+      );
       return;
     }
 
@@ -196,12 +202,16 @@ export class ReportEvidence implements OnInit {
         next: ({ items }) => {
           this.remoteAttachments.set(items);
           this.refreshing.set(false);
-          this.statusMessage.set('Estados actualizados.');
+          this.statusMessage.set(
+            this.transloco.translate('report-evidence.errors.statusesUpdated'),
+          );
         },
         error: (error: unknown) => {
           this.refreshing.set(false);
           if (!this.handleAccessRejected(error)) {
-            this.statusMessage.set('No hemos podido actualizar los estados. Inténtalo de nuevo.');
+            this.statusMessage.set(
+              this.transloco.translate('report-evidence.errors.refreshFailed'),
+            );
           }
         },
       });
@@ -217,24 +227,24 @@ export class ReportEvidence implements OnInit {
 
   protected fileTypeLabel(file: File): string {
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-      return 'PDF';
+      return this.transloco.translate('report-evidence.fileType.pdf');
     }
 
     if (file.type === 'image/png' || file.name.toLowerCase().endsWith('.png')) {
-      return 'Imagen PNG';
+      return this.transloco.translate('report-evidence.fileType.imagePng');
     }
 
-    return 'Imagen JPG';
+    return this.transloco.translate('report-evidence.fileType.imageJpg');
   }
 
   protected remoteTypeLabel(attachment: ReporterAttachment): string {
     return attachment.mediaType === 'application/pdf'
-      ? 'PDF'
+      ? this.transloco.translate('report-evidence.fileType.pdf')
       : attachment.mediaType === 'image/png'
-        ? 'Imagen PNG'
+        ? this.transloco.translate('report-evidence.fileType.imagePng')
         : attachment.mediaType === 'image/jpeg'
-          ? 'Imagen JPG'
-          : 'Prueba';
+          ? this.transloco.translate('report-evidence.fileType.imageJpg')
+          : this.transloco.translate('report-evidence.fileType.generic');
   }
 
   protected formatBytes(bytes: number): string {
@@ -248,11 +258,11 @@ export class ReportEvidence implements OnInit {
   protected remoteStatusLabel(attachment: ReporterAttachment): string {
     switch (attachment.status) {
       case 'processing':
-        return 'En comprobación';
+        return this.transloco.translate('report-evidence.status.processing');
       case 'available':
-        return 'Disponible';
+        return this.transloco.translate('report-evidence.status.available');
       case 'unavailable':
-        return 'No disponible';
+        return this.transloco.translate('report-evidence.status.unavailable');
     }
   }
 
@@ -265,9 +275,11 @@ export class ReportEvidence implements OnInit {
 
     if (next === undefined) {
       this.statusMessage.set(
-        this.drafts().some((draft) => draft.status === 'failed')
-          ? 'Revisa las pruebas que no se han podido enviar.'
-          : 'Las pruebas seleccionadas se han enviado.',
+        this.transloco.translate(
+          this.drafts().some((draft) => draft.status === 'failed')
+            ? 'report-evidence.errors.reviewFailed'
+            : 'report-evidence.errors.allSent',
+        ),
       );
       return;
     }
@@ -302,7 +314,7 @@ export class ReportEvidence implements OnInit {
           this.updateDraft(next.key, (draft) => ({
             ...draft,
             status: 'failed',
-            errorMessage: describeUploadError(error),
+            errorMessage: this.describeUploadError(error),
           }));
           this.handleAccessRejected(error);
 
@@ -320,7 +332,7 @@ export class ReportEvidence implements OnInit {
       this.updateDraft(key, (draft) => ({
         ...draft,
         status: 'failed',
-        errorMessage: 'No hemos podido confirmar la subida. Puedes reintentarlo.',
+        errorMessage: this.transloco.translate('report-evidence.errors.confirmFailed'),
       }));
       this.uploadNext();
       return;
@@ -351,16 +363,16 @@ export class ReportEvidence implements OnInit {
     const remaining = this.selectionLimit();
 
     if (remaining === 0) {
-      return 'Esta comunicación ha alcanzado el límite de 10 pruebas.';
+      return this.transloco.translate('report-evidence.capacityMessage');
     }
 
-    return `Puedes seleccionar hasta ${remaining} pruebas ahora.`;
+    return this.transloco.translate('report-evidence.errors.selectionLimit', { remaining });
   }
 
   private failAccess(error: unknown): void {
     this.accessState.set('failed');
     if (!this.handleAccessRejected(error)) {
-      this.statusMessage.set('No hemos podido preparar las pruebas. Inténtalo de nuevo.');
+      this.statusMessage.set(this.transloco.translate('report-evidence.errors.prepareFailed'));
     }
   }
 
@@ -373,32 +385,32 @@ export class ReportEvidence implements OnInit {
       this.accessRejected.emit();
     } else {
       this.accessState.set('failed');
-      this.statusMessage.set('El acceso ha caducado. Prepáralo de nuevo para continuar.');
+      this.statusMessage.set(this.transloco.translate('report-evidence.errors.accessExpired'));
     }
 
     return true;
   }
-}
 
-function describeUploadError(error: unknown): string {
-  if (error instanceof HttpErrorResponse) {
-    switch (error.status) {
-      case 401:
-        return 'El acceso ha caducado. Vuelve a abrir la comunicación.';
-      case 409:
-        return 'Esta comunicación ha alcanzado el límite de pruebas.';
-      case 413:
-        return 'El archivo supera el límite de 5 MB.';
-      case 415:
-        return 'El formato del archivo no está permitido.';
-      case 422:
-        return 'No hemos podido validar este archivo.';
-      case 429:
-        return 'Has hecho demasiados intentos seguidos. Espera un momento.';
+  private describeUploadError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      switch (error.status) {
+        case 401:
+          return this.transloco.translate('report-evidence.errors.uploadAccessExpired');
+        case 409:
+          return this.transloco.translate('report-evidence.errors.uploadLimitReached');
+        case 413:
+          return this.transloco.translate('report-evidence.errors.fileTooLarge');
+        case 415:
+          return this.transloco.translate('report-evidence.errors.unsupportedFormat');
+        case 422:
+          return this.transloco.translate('report-evidence.errors.validationFailed');
+        case 429:
+          return this.transloco.translate('report-evidence.errors.tooManyAttempts');
+      }
     }
-  }
 
-  return 'No hemos podido subir este archivo. Puedes reintentarlo.';
+    return this.transloco.translate('report-evidence.errors.uploadFailedGeneric');
+  }
 }
 
 function shouldStopQueue(error: unknown): boolean {

@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { vi } from 'vitest';
 
+import reportEvidenceEs from '../../i18n/report-evidence/es.json';
 import reportFormEs from '../../i18n/report-form/es.json';
 import reportHeaderEs from '../../i18n/report-header/es.json';
 import reportHelpEs from '../../i18n/report-help/es.json';
@@ -35,6 +36,7 @@ describe('ReportForm', () => {
       imports: [
         ReportForm,
         i18nTestingModule({
+          'report-evidence': reportEvidenceEs,
           'report-form': reportFormEs,
           'report-header': reportHeaderEs,
           'report-help': reportHelpEs,
