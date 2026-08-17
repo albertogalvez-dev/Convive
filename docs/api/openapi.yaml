@@ -2208,6 +2208,7 @@ components:
         - situationDescription
         - situationContext
         - status
+        - progressStage
         - createdAt
         - followUpEntries
       properties:
@@ -2233,6 +2234,15 @@ components:
           enum:
             - received
             - reviewed
+        progressStage:
+          description: "A minimal progress stage that confirms the report is moving and never exposes case content, a professional's identity, a triage reason, or which internal outcome was chosen. Redirected and dismissed reports both read as closed. It promises no timeline."
+          type: string
+          example: received
+          enum:
+            - received
+            - under_review
+            - action_taken
+            - closed
         createdAt:
           type: string
           format: date-time

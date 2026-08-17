@@ -12,6 +12,8 @@ use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportFollowUpEntry;
 use App\Reporting\Domain\ReportFollowUpEntryRepository;
 use App\Reporting\Domain\ReportStatus;
+use App\Reporting\Domain\ReportTriageDecisionRepository;
+use App\Reporting\Domain\ReporterProgressStage;
 use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use DateTimeImmutable;
@@ -56,8 +58,18 @@ final class GetReportFollowUpStateTest extends TestCase
             ->with($report)
             ->willReturn($entries);
 
+        $triageDecisionRepository = $this->createMock(
+            ReportTriageDecisionRepository::class,
+        );
+        $triageDecisionRepository
+            ->expects(self::once())
+            ->method('findByReport')
+            ->with($report)
+            ->willReturn([]);
+
         $getReportFollowUpState = new GetReportFollowUpState(
             $followUpEntryRepository,
+            $triageDecisionRepository,
         );
 
         $state = $getReportFollowUpState($report);
@@ -70,6 +82,10 @@ final class GetReportFollowUpStateTest extends TestCase
         self::assertSame(SituationContext::InPerson, $state->situationContext);
         self::assertSame('andalucia-v1', $state->taxonomyVersion);
         self::assertSame(ReportStatus::Received, $state->status);
+        self::assertSame(
+            ReporterProgressStage::Received,
+            $state->progressStage,
+        );
         self::assertSame($report->createdAt(), $state->createdAt);
         self::assertSame($entries, $state->followUpEntries);
     }
