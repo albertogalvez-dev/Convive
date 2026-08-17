@@ -6,7 +6,7 @@
   "demonstrationNotice": {
     "eyebrow": "AVISO DE DEMOSTRACIÓN",
     "title": "Convive es una demostración con información ficticia.",
-    "seoDescription": "Convive es una demostración con información ficticia. No es un canal de emergencia ni un servicio oficial de la Junta de Andalucía.",
+    "seoDescription": "Convive es una demostración con información ficticia. No es un canal de emergencia ni un servicio oficial de ninguna administración educativa.",
     "description": "Todo lo que ves funciona sobre un centro educativo inventado. Nada de lo que escribas aquí llega a un colegio, a un instituto ni a ninguna administración.",
     "notice": "Si alguien está en peligro, este sitio no es la vía. Abajo tienes los teléfonos públicos de ayuda.",
     "sections": [
@@ -17,7 +17,7 @@
         ],
         "items": [
           "No es un canal de emergencia ni de atención urgente.",
-          "No es un servicio oficial de la Junta de Andalucía ni de ninguna otra administración, y no está asociado a ninguna.",
+          "No es un servicio oficial de ninguna administración educativa, y no está asociado a ninguna.",
           "No sustituye al protocolo de convivencia de ningún centro educativo.",
           "No ofrece asesoramiento jurídico, clínico ni psicológico."
         ]

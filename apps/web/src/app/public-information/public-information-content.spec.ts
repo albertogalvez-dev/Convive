@@ -51,7 +51,7 @@ describe('public information content', () => {
     const text = allText(pages['demonstrationNotice']);
 
     expect(text).toContain('No es un canal de emergencia');
-    expect(text).toContain('No es un servicio oficial de la Junta de Andalucía');
+    expect(text).toContain('No es un servicio oficial de ninguna administración educativa');
     expect(text).toContain('112');
   });
 
