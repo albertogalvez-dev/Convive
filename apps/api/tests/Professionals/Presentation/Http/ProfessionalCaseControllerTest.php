@@ -657,6 +657,55 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-IB', $andalusianTerritories);
     }
 
+    public function testAsturiasScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $asturias = $this->createOrganisation('33A', 'Asturias Workspace School');
+        $asturias->assignTerritorialScope('ES-AS');
+        $this->entityManager->persist($asturias);
+        $this->entityManager->flush();
+        $asturiasLead = $this->createProfessional('asturias-lead', $asturias, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $asturiasCase = new ManagedCase(Uuid::v7(), $asturias, $asturiasLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($asturiasCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $asturiasCase,
+            $asturiasLead,
+            CaseAssignmentRole::Lead,
+            $asturiasLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($asturiasLead);
+        $asturiasUrl = '/api/v1/professional/cases/'.$asturiasCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $asturiasUrl);
+        self::assertResponseIsSuccessful();
+        $asturiasTemplates = $this->responsePayload()['items'];
+
+        // Every template an Asturias-scoped organisation sees carries its
+        // own source and territory -- never any of the other territories
+        // that now exist in the same database.
+        self::assertNotEmpty($asturiasTemplates);
+        self::assertSame(
+            array_fill(0, count($asturiasTemplates), 'ES-AS'),
+            array_column(array_column($asturiasTemplates, 'source'), 'territory'),
+        );
+
+        // The reverse: the existing Andalucía-scoped workspace never sees
+        // Asturias's templates.
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-AS', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
