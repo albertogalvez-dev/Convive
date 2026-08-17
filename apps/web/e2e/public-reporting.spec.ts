@@ -528,8 +528,10 @@ async function expectNoAccessibilityViolations(
   // Scoped translations (the shared footer's, in particular) resolve over a
   // follow-up HTTP request after the initial page load, so scanning right on
   // 'load' can catch a focusable link before its accessible name has arrived.
-  // Waiting for the network to settle avoids racing that fetch.
-  await page.waitForLoadState('networkidle');
+  // `networkidle` is unreliable here (some pages keep a connection open and
+  // it never fires, timing the whole test out), so wait for a concrete
+  // signal instead: the footer's eagerly-loaded heading getting its text.
+  await page.locator('#footer-boundary-title').filter({ hasText: /\S/ }).waitFor();
 
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
