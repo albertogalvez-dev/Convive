@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import reportEvidenceEs from '../../i18n/report-evidence/es.json';
 import reportHeaderEs from '../../i18n/report-header/es.json';
 import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { FollowUp } from './follow-up';
@@ -22,7 +23,10 @@ describe('FollowUp', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FollowUp, i18nTestingModule({ 'report-header': reportHeaderEs })],
+      imports: [
+        FollowUp,
+        i18nTestingModule({ 'report-evidence': reportEvidenceEs, 'report-header': reportHeaderEs }),
+      ],
       providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 

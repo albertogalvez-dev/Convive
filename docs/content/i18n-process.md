@@ -32,10 +32,30 @@ disk does not publish anything by itself — that list is the actual gate.
    child-facing copy — documented the same way code-review iteration is
    documented elsewhere in this project. Each pass records what it actually
    changed. A pass that changes nothing ends the process; a pass that finds
-   something real means at least one more pass follows it.
+   something real means at least one more pass follows it. For a
+   safety-relevant scope (`public-site-footer`'s emergency resources,
+   `public-information`'s privacy and safety-boundary notices in particular),
+   a dedicated final pass confirms the translation carries the identical
+   meaning as the Spanish source — not just fluent, but not stronger and not
+   weaker a claim than the original.
+   - **For a right-to-left locale specifically** (Arabic, per
+     [#257](https://github.com/albertogalvez-dev/Convive/issues/257)), the
+     review additionally includes a real visual check in a running browser:
+     switch to the locale through the language switcher and look at the
+     reporting form, the shared footer, `public-information`, and the
+     switcher itself. A form whose submit button ends up on the wrong side,
+     or a footer whose emergency phone numbers read out of order, is a
+     layout defect the completeness gate cannot catch, because it checks
+     translation keys, not rendered direction. This check is recorded the
+     same way a translation pass is: what was actually looked at, and what
+     was fixed as a result.
 4. **Sign off.** Record, next to the ADR or in the pull request that adds the
-   locale: who reviewed it (per step 3), the date, and confirmation that step
-   2's completeness check passed for every scoped file the locale covers.
+   locale: who reviewed it (per step 3), the date, confirmation that step 2's
+   completeness check passed for every scoped file the locale covers, and —
+   for Arabic specifically, given this project has meaningfully less
+   structural certainty in it than in Catalan — that the review was the same
+   author's self-review, not an independent native speaker's. Update this
+   note if that ever changes.
 5. **Publish.** Add the locale's code to `READY_LOCALES`. This is the only
    step that makes the locale reachable through the UI.
 

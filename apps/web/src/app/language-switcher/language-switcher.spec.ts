@@ -34,11 +34,12 @@ describe('LanguageSwitcher', () => {
 
     const options = Array.from(page.querySelectorAll<HTMLOptionElement>('option'));
 
-    expect(options.map((option) => option.value)).toEqual(['es', 'ca', 'ca-valencia']);
+    expect(options.map((option) => option.value)).toEqual(['es', 'ca', 'ca-valencia', 'ar']);
     expect(options.map((option) => option.textContent?.trim())).toEqual([
       'Español',
       'Català',
       'Valencià',
+      'العربية',
     ]);
   });
 

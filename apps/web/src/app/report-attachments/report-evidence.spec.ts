@@ -2,6 +2,8 @@ import { HttpEventType, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import reportEvidenceEs from '../../i18n/report-evidence/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ReportEvidence } from './report-evidence';
 
 describe('ReportEvidence', () => {
@@ -14,7 +16,7 @@ describe('ReportEvidence', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReportEvidence],
+      imports: [ReportEvidence, i18nTestingModule({ 'report-evidence': reportEvidenceEs })],
       providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 

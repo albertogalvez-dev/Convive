@@ -62,7 +62,7 @@ export function checkLocaleCompleteness(
  * only once {@link checkLocaleCompleteness} passes for that locale's every
  * translation file and a reviewer has recorded sign-off, per #256's process.
  */
-export const READY_LOCALES: readonly string[] = ['es', 'ca', 'ca-valencia'];
+export const READY_LOCALES: readonly string[] = ['es', 'ca', 'ca-valencia', 'ar'];
 
 export function isLocaleReady(code: string): boolean {
   return READY_LOCALES.includes(code);

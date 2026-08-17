@@ -114,12 +114,26 @@ rather than requiring bespoke tooling built and maintained by hand on top of
   #256, the reviewer role is satisfied by the same author performing multiple
   documented self-review passes, not a separate independent reviewer; this
   does not change the completeness gate itself, only who operates it.
-- Adding Arabic under #257 requires an RTL capability the foundation does not
-  currently have: `dir` attribute switching on the document root tied to the
-  active locale, and a layout audit for every RTL-sensitive surface (icon
-  direction, text alignment, form-field order). This is scoped as part of
-  #257's own work, using the machinery this ADR establishes, not as a change
-  to this decision.
+- Arabic (#257) delivered the RTL capability this ADR anticipated: `dir`
+  switches on the document root in step with the active locale
+  (`I18nDocumentSync`, covered by its own spec including a runtime-switch
+  case), and every in-scope surface (the reporting form, the shared footer,
+  `public-information`, the language switcher itself) was converted to CSS
+  logical properties — `padding-inline-start`, `text-align: end`,
+  `inset-inline-end` and so on — so direction follows `dir` automatically,
+  with a small number of `:host-context([dir='rtl'])` overrides only where a
+  logical property could not express the need (a decorative directional
+  arrow icon). This was verified both in a real running browser and by an
+  end-to-end test that switches to Arabic and asserts a genuine layout
+  reflow, not only that translated text renders. It used the machinery this
+  ADR establishes, not a change to this decision.
+- Arabic's translation content was drafted and self-reviewed by the same
+  author under the process #256 defines, the same as the co-official
+  languages — but this project has meaningfully less structural certainty in
+  Modern Standard Arabic than in Catalan, Valencian, Basque, Galician or
+  Aranese, and no independent native-speaker review has happened. This is
+  recorded next to `LOCALES` in `i18n-locales.ts` and in
+  `docs/content/i18n-process.md` rather than left implicit.
 - `lang` is set correctly on the document root per the active locale (WCAG
   3.1.1), and any content that mixes languages within a single page (for
   example a Basque school name inside Spanish body text) is marked with its

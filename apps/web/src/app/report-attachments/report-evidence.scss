@@ -37,7 +37,7 @@ h2 {
   font-size: 0.82rem;
   line-height: 1.5;
   background: #fff9e8;
-  border-left: 3px solid #d9a51a;
+  border-inline-start: 3px solid #d9a51a;
   border-radius: 0.45rem;
 }
 
@@ -135,15 +135,15 @@ button:disabled,
 }
 
 .remote-list li.remote-available {
-  border-left: 3px solid #3f9f7d;
+  border-inline-start: 3px solid #3f9f7d;
 }
 
 .remote-list li.remote-processing {
-  border-left: 3px solid #239dd1;
+  border-inline-start: 3px solid #239dd1;
 }
 
 .remote-list li.remote-unavailable {
-  border-left: 3px solid #a6b1bf;
+  border-inline-start: 3px solid #a6b1bf;
 }
 
 .item-main {
@@ -193,7 +193,7 @@ button:disabled,
 }
 
 .file-size {
-  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
   color: #63738d;
   font-size: 0.74rem;
 }
@@ -244,7 +244,7 @@ textarea:focus {
   margin-top: 0.3rem;
   color: #63738d;
   font-size: 0.7rem;
-  text-align: right;
+  text-align: end;
 }
 
 .draft-state,
@@ -310,7 +310,7 @@ progress {
 .status-message {
   min-height: 1.1rem;
   color: #28714d;
-  text-align: right;
+  text-align: end;
 }
 
 .visually-hidden {
@@ -356,6 +356,6 @@ progress {
   }
 
   .status-message {
-    text-align: left;
+    text-align: start;
   }
 }

@@ -400,6 +400,58 @@ test('lets a visitor switch to Catalan or Valencian by keyboard, with the choice
   }
 });
 
+test('switches to Arabic, flips the document to right-to-left and reflows the layout', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.dir)).toBe('ltr');
+
+  const wordmarkBeforeSwitch = await page.locator('header .wordmark').boundingBox();
+  const navBeforeSwitch = await page.locator('header nav').boundingBox();
+
+  if (wordmarkBeforeSwitch === null || navBeforeSwitch === null) {
+    throw new Error('The header wordmark or nav could not be measured before switching locale.');
+  }
+
+  // In the default left-to-right layout the wordmark sits at the header's
+  // start (left) and the nav cluster is pushed to its end (right).
+  expect(wordmarkBeforeSwitch.x).toBeLessThan(navBeforeSwitch.x);
+
+  await page.getByLabel('Idioma').selectOption('ar');
+
+  await expect(page.getByRole('heading', { name: 'قناة آمنة للاستماع أولًا.' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('ar');
+  expect(await page.evaluate(() => document.documentElement.dir)).toBe('rtl');
+
+  // The same `header nav { margin-inline-start: auto }` rule that pushes the
+  // nav cluster to the header's end in Spanish pushes it to the *opposite*
+  // physical side once the document is right-to-left: this is a real layout
+  // reflow driven by the `dir` attribute, not just translated text on an
+  // unchanged page.
+  const wordmarkAfterSwitch = await page.locator('header .wordmark').boundingBox();
+  const navAfterSwitch = await page.locator('header nav').boundingBox();
+
+  if (wordmarkAfterSwitch === null || navAfterSwitch === null) {
+    throw new Error('The header wordmark or nav could not be measured after switching locale.');
+  }
+
+  expect(wordmarkAfterSwitch.x).toBeGreaterThan(navAfterSwitch.x);
+
+  // The switcher's own visible label is now translated too: re-locate it by
+  // its Arabic label rather than reusing the stale "Idioma" locator, the
+  // same way the Catalan/Valencian test re-locates by "Llengua".
+  await expect(page.getByLabel('اللغة')).toHaveValue('ar');
+  await expectNoAccessibilityViolations(page);
+
+  await page.reload();
+  expect(await page.evaluate(() => document.documentElement.dir)).toBe('rtl');
+  await expect(page.getByLabel('اللغة')).toHaveValue('ar');
+});
+
 test('keeps reviewed blog content accessible, responsive and attributable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/blog/');
