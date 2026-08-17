@@ -89,11 +89,15 @@ final class GetReportFollowUpStateControllerTest extends WebTestCase
                 'situationContext',
                 'reporterTaxonomy',
                 'status',
+                'progressStage',
                 'createdAt',
                 'followUpEntries',
             ],
             array_keys($payload),
         );
+        // A freshly submitted report has had nothing happen to it yet, and
+        // the honest stage is the one that says exactly that.
+        self::assertSame('received', $payload['progressStage']);
         self::assertSame(
             $creationResult->report->publicReference(),
             $payload['publicReference'],

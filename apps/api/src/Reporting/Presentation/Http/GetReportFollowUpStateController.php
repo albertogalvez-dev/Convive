@@ -100,6 +100,7 @@ final readonly class GetReportFollowUpStateController
                     'attentionCue' => $state->reporterAttentionCue->value,
                 ],
                 'status' => $state->status->value,
+                'progressStage' => $state->progressStage->value,
                 'createdAt' => $state->createdAt->format(
                     DATE_RFC3339_EXTENDED,
                 ),
