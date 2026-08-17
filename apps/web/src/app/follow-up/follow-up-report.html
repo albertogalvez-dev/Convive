@@ -22,6 +22,14 @@
     </dl>
   </header>
 
+  @if (progress(); as stage) {
+    <section class="report-progress" aria-labelledby="progress-title">
+      <h2 id="progress-title">En qué punto está</h2>
+      <p class="progress-label">{{ stage.label }}</p>
+      <p class="progress-explanation">{{ stage.explanation }}</p>
+    </section>
+  }
+
   <section class="report-description" aria-labelledby="description-title">
     <h2 id="description-title">Qué contaste</h2>
     <p class="description-text">{{ report().situationDescription }}</p>

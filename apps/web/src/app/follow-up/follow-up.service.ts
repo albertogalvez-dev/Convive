@@ -12,11 +12,28 @@ export interface FollowUpEntry {
   createdAt: string;
 }
 
+/**
+ * The fixed vocabulary a reporter is shown for their own report. It confirms
+ * the report is moving and discloses nothing: no case content, no
+ * professional identity, no triage reason, and no indication of which
+ * internal outcome was chosen. It promises no timeline.
+ */
+export type ReporterProgressStage =
+  | 'received'
+  | 'under_review'
+  | 'action_taken'
+  | 'closed';
+
 export interface ReportFollowUpState {
   publicReference: string;
   situationDescription: string;
   situationContext: SituationContext;
   status: string;
+  /**
+   * Optional on the wire on purpose: an older API, or a response this client
+   * cannot fully parse, must still leave the follow-up conversation usable.
+   */
+  progressStage?: ReporterProgressStage;
   createdAt: string;
   followUpEntries: FollowUpEntry[];
 }
