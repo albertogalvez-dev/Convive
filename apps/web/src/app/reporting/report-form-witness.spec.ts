@@ -104,6 +104,25 @@ describe('ReportForm witness entry', () => {
     }
   });
 
+  /**
+   * The cross-entry link must not sit between the description and the primary
+   * action. It did at first, and the public-reporting E2E test caught it:
+   * tabbing out of the description landed on the link instead of "Continuar".
+   * That is a keyboard-navigation regression, not just a failing assertion.
+   */
+  it('keeps the primary action ahead of the cross-entry link in DOM order', async () => {
+    await createEntry('witnessed');
+    resolveOrganisation();
+
+    const page: HTMLElement = fixture.nativeElement;
+    const focusable = Array.from(
+      page.querySelectorAll<HTMLElement>('#situationDescription, button.primary, a.other-entry'),
+    );
+    const order = focusable.map((element) => element.tagName);
+
+    expect(order).toEqual(['TEXTAREA', 'BUTTON', 'A']);
+  });
+
   it('offers a route to the other entry for the same organisation', async () => {
     await createEntry('witnessed');
     resolveOrganisation();

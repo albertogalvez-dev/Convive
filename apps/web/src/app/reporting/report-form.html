@@ -194,16 +194,24 @@
                     </span>
                   </div>
 
-                  <a class="other-entry" [routerLink]="otherEntryLink">{{
-                    otherEntryLabelKey | transloco
-                  }}</a>
-
                   <div class="actions actions-end">
                     <button type="button" class="primary" (click)="continue()">
                       {{ 'report-form.continue' | transloco }}
                       <span class="continue-arrow" aria-hidden="true">→</span>
                     </button>
                   </div>
+
+                  <!--
+                    After the primary action on purpose. Placing this link
+                    between the description and "Continuar" put a secondary
+                    escape hatch in the middle of the main path and moved the
+                    keyboard focus order, which the public-reporting E2E test
+                    caught: tabbing out of the description must still reach
+                    "Continuar".
+                  -->
+                  <a class="other-entry" [routerLink]="otherEntryLink">{{
+                    otherEntryLabelKey | transloco
+                  }}</a>
                 </div>
               } @else if (currentStep() === 2) {
                 <div class="step">
