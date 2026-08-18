@@ -6,55 +6,52 @@ import {
   WorkflowSourceAuthority,
 } from './professional-cases.service';
 
-export const caseStatusLabel = (status: CaseStatus): string =>
-  ({ assessment: 'En valoración', active: 'Activo', closed: 'Cerrado' })[status];
+/**
+ * These return translation keys, not text. The page pipes them through
+ * Transloco, so the professional reads them in the locale they chose rather
+ * than in whatever language the code was written in.
+ *
+ * Unknown values fall through to the raw code on purpose. Transloco returns
+ * the key itself when no translation exists, so an unrecognised stage still
+ * renders its identifier instead of an empty label — the same behaviour these
+ * functions had before, when they ended in `?? stage`.
+ */
+const SCOPE = 'professional-case';
+
+export const caseStatusLabel = (status: CaseStatus): string => `${SCOPE}.caseStatus.${status}`;
 
 export const caseModalityLabel = (modality: CaseModality): string =>
-  ({
-    in_person: 'Presencial',
-    digital: 'Digital',
-    mixed: 'Mixto',
-    unknown: 'Sin concretar',
-  })[modality];
+  `${SCOPE}.modality.${modality}`;
 
 export const assignmentRoleLabel = (role: CaseAssignmentRole): string =>
-  ({ lead: 'Responsable', contributor: 'Colabora', observer: 'Consulta' })[role];
+  `${SCOPE}.assignmentRole.${role}`;
 
-export const taskStatusLabel = (status: CaseTaskStatus): string =>
-  ({ pending: 'Pendiente', completed: 'Completada', not_applicable: 'No aplica' })[status];
+export const taskStatusLabel = (status: CaseTaskStatus): string => `${SCOPE}.taskStatus.${status}`;
 
 export const sourceAuthorityLabel = (authority: WorkflowSourceAuthority): string =>
-  ({ binding: 'Normativa aplicable', recommended: 'Recomendación', internal: 'Objetivo interno' })[
-    authority
-  ];
+  `${SCOPE}.sourceAuthority.${authority}`;
+
+const PERSON_ROLES = ['affected', 'alleged_actor', 'witness', 'guardian', 'other'];
 
 export function personRoleLabel(role: string): string {
-  return (
-    {
-      affected: 'Persona afectada',
-      alleged_actor: 'Persona presuntamente implicada',
-      witness: 'Testigo',
-      guardian: 'Responsable legal',
-      other: 'Otra vinculación',
-    }[role] ?? role
-  );
+  return PERSON_ROLES.includes(role) ? `${SCOPE}.personRole.${role}` : role;
 }
 
+const STAGES = [
+  'identification',
+  'immediate_actions',
+  'urgent_protection',
+  'family_communication',
+  'professional_coordination',
+  'information_collection',
+  'educational_measures',
+  'inspection_communication',
+  'assessment',
+  'action_plan',
+  'family_measures',
+  'inspection_follow_up',
+];
+
 export function stageLabel(stage: string): string {
-  return (
-    {
-      identification: 'Identificación',
-      immediate_actions: 'Actuaciones inmediatas',
-      urgent_protection: 'Protección urgente',
-      family_communication: 'Comunicación con familias',
-      professional_coordination: 'Coordinación profesional',
-      information_collection: 'Recogida de información',
-      educational_measures: 'Medidas educativas',
-      inspection_communication: 'Comunicación con Inspección',
-      assessment: 'Valoración',
-      action_plan: 'Plan de actuación',
-      family_measures: 'Medidas con las familias',
-      inspection_follow_up: 'Seguimiento de Inspección',
-    }[stage] ?? stage
-  );
+  return STAGES.includes(stage) ? `${SCOPE}.stage.${stage}` : stage;
 }
