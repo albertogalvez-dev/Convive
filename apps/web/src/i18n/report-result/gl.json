@@ -1,0 +1,25 @@
+{
+  "title": "Comunicación enviada",
+  "accessTitle": "Datos de acceso",
+  "warningStrong": "Calquera que teña este segredo pode entrar.",
+  "warningBody": "Non se pode recuperar: gárdao antes de pechar e non o compartas.",
+  "referenceLabel": "Referencia",
+  "secretLabel": "Segredo",
+  "saveInBrowser": "Gardar no navegador",
+  "copySecret": "Copiar o segredo",
+  "print": "Imprimir ou gardar en PDF",
+  "browserSaveHelp": "Gárdase xunto aos teus contrasinais. Evítao nun dispositivo compartido.",
+  "followUpHintPrefix": "Cando queiras ver como vai ou engadir información, entra en",
+  "followUpLinkText": "Seguimento",
+  "printReceiptTitle": "Acceso á túa comunicación",
+  "printAccessPrefix": "Entra en",
+  "printWarning": "Calquera que teña este segredo pode entrar na túa comunicación. Gárdao nun lugar privado e non o compartas.",
+  "status": {
+    "credentialUnsupported": "Este navegador non o pode gardar. Copia o segredo e gárdao ti.",
+    "credentialRequested": "Pedímosllo ao teu navegador. Acepta para non perder o acceso.",
+    "credentialFailed": "Non se puido gardar no navegador. Copia o segredo e gárdao ti.",
+    "copySuccess": "Segredo copiado. Xa podes pechar esta páxina.",
+    "copyFailed": "Non se puido copiar. Selecciona e copia o segredo manualmente."
+  },
+  "credentialName": "Convive · seguimento"
+}

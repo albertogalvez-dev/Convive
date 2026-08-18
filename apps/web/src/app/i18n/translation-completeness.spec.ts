@@ -4,40 +4,50 @@ import footerEs from '../../i18n/public-site-footer/es.json';
 import footerCa from '../../i18n/public-site-footer/ca.json';
 import footerCaValencia from '../../i18n/public-site-footer/ca-valencia.json';
 import footerAr from '../../i18n/public-site-footer/ar.json';
+import footerGl from '../../i18n/public-site-footer/gl.json';
 import publicHomeEs from '../../i18n/public-home/es.json';
 import publicHomeCa from '../../i18n/public-home/ca.json';
 import publicHomeCaValencia from '../../i18n/public-home/ca-valencia.json';
 import publicHomeAr from '../../i18n/public-home/ar.json';
+import publicHomeGl from '../../i18n/public-home/gl.json';
 import publicInformationEs from '../../i18n/public-information/es.json';
 import publicInformationCa from '../../i18n/public-information/ca.json';
 import publicInformationCaValencia from '../../i18n/public-information/ca-valencia.json';
 import publicInformationAr from '../../i18n/public-information/ar.json';
+import publicInformationGl from '../../i18n/public-information/gl.json';
 import reportEvidenceEs from '../../i18n/report-evidence/es.json';
 import reportEvidenceCa from '../../i18n/report-evidence/ca.json';
 import reportEvidenceCaValencia from '../../i18n/report-evidence/ca-valencia.json';
 import reportEvidenceAr from '../../i18n/report-evidence/ar.json';
+import reportEvidenceGl from '../../i18n/report-evidence/gl.json';
 import reportFormEs from '../../i18n/report-form/es.json';
 import reportFormCa from '../../i18n/report-form/ca.json';
 import reportFormCaValencia from '../../i18n/report-form/ca-valencia.json';
 import reportFormAr from '../../i18n/report-form/ar.json';
+import reportFormGl from '../../i18n/report-form/gl.json';
 import reportHeaderEs from '../../i18n/report-header/es.json';
 import reportHeaderCa from '../../i18n/report-header/ca.json';
 import reportHeaderCaValencia from '../../i18n/report-header/ca-valencia.json';
 import reportHeaderAr from '../../i18n/report-header/ar.json';
+import reportHeaderGl from '../../i18n/report-header/gl.json';
 import reportHelpEs from '../../i18n/report-help/es.json';
 import reportHelpCa from '../../i18n/report-help/ca.json';
 import reportHelpCaValencia from '../../i18n/report-help/ca-valencia.json';
 import reportHelpAr from '../../i18n/report-help/ar.json';
+import reportHelpGl from '../../i18n/report-help/gl.json';
 import reportResultEs from '../../i18n/report-result/es.json';
 import reportResultCa from '../../i18n/report-result/ca.json';
 import reportResultCaValencia from '../../i18n/report-result/ca-valencia.json';
 import reportResultAr from '../../i18n/report-result/ar.json';
+import reportResultGl from '../../i18n/report-result/gl.json';
 import reportSendingEs from '../../i18n/report-sending/es.json';
 import reportSendingCa from '../../i18n/report-sending/ca.json';
 import reportSendingCaValencia from '../../i18n/report-sending/ca-valencia.json';
 import reportSendingAr from '../../i18n/report-sending/ar.json';
+import reportSendingGl from '../../i18n/report-sending/gl.json';
 import professionalCaseEs from '../../i18n/professional-case/es.json';
 import professionalCaseCa from '../../i18n/professional-case/ca.json';
+import professionalCaseGl from '../../i18n/professional-case/gl.json';
 
 /**
  * The completeness gate #255 built (`checkLocaleCompleteness`), run for real
@@ -62,6 +72,7 @@ const scopes: ReadonlyArray<{
   readonly ca: TranslationTree;
   readonly caValencia: TranslationTree;
   readonly ar: TranslationTree;
+  readonly gl: TranslationTree;
 }> = [
   {
     name: 'public-site-footer',
@@ -69,6 +80,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(footerCa),
     caValencia: asTranslationTree(footerCaValencia),
     ar: asTranslationTree(footerAr),
+    gl: asTranslationTree(footerGl),
   },
   {
     name: 'public-home',
@@ -76,6 +88,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(publicHomeCa),
     caValencia: asTranslationTree(publicHomeCaValencia),
     ar: asTranslationTree(publicHomeAr),
+    gl: asTranslationTree(publicHomeGl),
   },
   {
     name: 'public-information',
@@ -83,6 +96,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(publicInformationCa),
     caValencia: asTranslationTree(publicInformationCaValencia),
     ar: asTranslationTree(publicInformationAr),
+    gl: asTranslationTree(publicInformationGl),
   },
   {
     name: 'report-evidence',
@@ -90,6 +104,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(reportEvidenceCa),
     caValencia: asTranslationTree(reportEvidenceCaValencia),
     ar: asTranslationTree(reportEvidenceAr),
+    gl: asTranslationTree(reportEvidenceGl),
   },
   {
     name: 'report-form',
@@ -97,6 +112,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(reportFormCa),
     caValencia: asTranslationTree(reportFormCaValencia),
     ar: asTranslationTree(reportFormAr),
+    gl: asTranslationTree(reportFormGl),
   },
   {
     name: 'report-header',
@@ -104,6 +120,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(reportHeaderCa),
     caValencia: asTranslationTree(reportHeaderCaValencia),
     ar: asTranslationTree(reportHeaderAr),
+    gl: asTranslationTree(reportHeaderGl),
   },
   {
     name: 'report-help',
@@ -111,6 +128,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(reportHelpCa),
     caValencia: asTranslationTree(reportHelpCaValencia),
     ar: asTranslationTree(reportHelpAr),
+    gl: asTranslationTree(reportHelpGl),
   },
   {
     name: 'report-result',
@@ -118,6 +136,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(reportResultCa),
     caValencia: asTranslationTree(reportResultCaValencia),
     ar: asTranslationTree(reportResultAr),
+    gl: asTranslationTree(reportResultGl),
   },
   {
     name: 'report-sending',
@@ -125,6 +144,7 @@ const scopes: ReadonlyArray<{
     ca: asTranslationTree(reportSendingCa),
     caValencia: asTranslationTree(reportSendingCaValencia),
     ar: asTranslationTree(reportSendingAr),
+    gl: asTranslationTree(reportSendingGl),
   },
 ];
 
@@ -202,5 +222,43 @@ describe('professional-case: ca matches es key-for-key (#320)', () => {
       [...JSON.stringify(tree).matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((match) => match[1]).sort();
 
     expect(params(professionalCaseCa)).toEqual(params(professionalCaseEs));
+  });
+});
+
+describe('gl passes the completeness gate on every scope (#322)', () => {
+  // Galician is the first locale published after the professional-case scope
+  // existed, so it is the first that has to be complete for a professional as
+  // well as for a child. Drafted and self-reviewed by the same author under
+  // the authorisation recorded on #256 -- see "Translation review passes" in
+  // the pull request description for what that review did and did not cover
+  // (no independent native-speaker review).
+  for (const scope of scopes) {
+    it(`${scope.name}: gl matches es key-for-key`, () => {
+      const result = checkLocaleCompleteness(scope.es, scope.gl);
+
+      expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+    });
+  }
+
+  it('professional-case: gl matches es key-for-key', () => {
+    const result = checkLocaleCompleteness(
+      asTranslationTree(professionalCaseEs),
+      asTranslationTree(professionalCaseGl),
+    );
+
+    expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+  });
+
+  it('keeps every interpolation parameter the source declares', () => {
+    // A public notice that loses {{privacyEmail}} still reads as a complete
+    // sentence and leaves a reader with no way to exercise a right.
+    const params = (tree: unknown): string[] =>
+      [...JSON.stringify(tree).matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((match) => match[1]).sort();
+
+    for (const scope of scopes) {
+      expect(params(scope.gl), scope.name).toEqual(params(scope.es));
+    }
+
+    expect(params(professionalCaseGl)).toEqual(params(professionalCaseEs));
   });
 });

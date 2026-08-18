@@ -1,0 +1,234 @@
+{
+  "nav": {
+    "backToCases": "← Volver aos casos"
+  },
+  "state": {
+    "loading": "Estase a cargar o caso…",
+    "unavailableTitle": "Caso non dispoñible",
+    "unavailableBody": "Non existe ou non está asignado ao teu perfil.",
+    "myCases": "Ver os meus casos",
+    "retry": "Tentalo de novo"
+  },
+  "tracking": {
+    "title": "Seguimento do caso",
+    "operationalState": "Estado operativo"
+  },
+  "transition": {
+    "title": "Transición do caso",
+    "newState": "Novo estado",
+    "reason": "Motivo",
+    "record": "Constancia operativa",
+    "submit": "Rexistrar a transición"
+  },
+  "summary": {
+    "pendingTasks": "Tarefas pendentes",
+    "overdue": "Fóra de prazo",
+    "linkedPeople": "Persoas vinculadas",
+    "availableEvidence": "Evidencias dispoñibles"
+  },
+  "tasks": {
+    "section": "Próximas accións",
+    "heading": "Tarefas",
+    "new": "Nova tarefa",
+    "create": "Crear a tarefa",
+    "empty": "Non hai tarefas rexistradas.",
+    "owner": "Responsable:",
+    "overdue": "Fóra do obxectivo temporal",
+    "action": "Acción",
+    "complete": "Completar",
+    "notApplicable": "Non se aplica",
+    "confirmReason": "Confirmar o motivo",
+    "sourceGuidance": "{{authority}}: {{title}} ({{version}}). Esta guía non decide ningunha obriga nin calcula ningún prazo: revisa e adapta a acción, a persoa responsable e o obxectivo temporal antes de gardala.",
+    "reviewedTemplate": "Modelo revisado",
+    "dueLabel": "Obxectivo temporal",
+    "dueValue": "Obxectivo: {{value}}"
+  },
+  "comms": {
+    "section": "Rexistro operativo",
+    "heading": "Comunicacións",
+    "recipient": "Destinatario",
+    "channel": "Canle",
+    "owner": "Responsable",
+    "datetime": "Data e hora",
+    "note": "Nota operativa breve",
+    "record": "Rexistrar a comunicación",
+    "disclaimer": "Este rexistro non envía nada nin acredita a entrega, a recepción ou unha notificación legal. As correccións quedarán como un rexistro posterior.",
+    "empty": "Non hai comunicacións rexistradas.",
+    "correct": "Corrixir",
+    "correction": "Corrección rastrexable dun rexistro anterior",
+    "recipientOption": {
+      "family": "Familia",
+      "external_service": "Servizo externo",
+      "inspection": "Inspección educativa",
+      "other": "Outro"
+    },
+    "channelOption": {
+      "in_person": "Presencial",
+      "phone": "Teléfono",
+      "secure_channel": "Canle segura",
+      "written_record": "Rexistro escrito",
+      "other": "Outro"
+    },
+    "statusLabel": "Estado explícito",
+    "statusOption": {
+      "planned": "Prevista",
+      "recorded": "Acción rexistrada",
+      "not_applicable": "Non procede"
+    }
+  },
+  "people": {
+    "section": "Alcance do caso",
+    "heading": "Persoas vinculadas",
+    "minimalData": "Datos mínimos",
+    "disclaimer": "Só o nome e a vinculación funcional. Estas etiquetas non determinan feitos.",
+    "name": "Nome",
+    "relation": "Vinculación",
+    "add": "Engadir unha persoa",
+    "empty": "Non hai persoas vinculadas.",
+    "correct": "Corrixir",
+    "saveCorrection": "Gardar a corrección"
+  },
+  "evidence": {
+    "section": "Documentación privada",
+    "heading": "Evidencias",
+    "viewCommunication": "Ver a comunicación",
+    "empty": "Non hai evidencias dispoñibles.",
+    "download": "Descargar",
+    "leadOnly": "Só a persoa responsable do caso a pode descargar",
+    "sizeKb": "{{size}} KB"
+  },
+  "origin": {
+    "section": "Orixe do caso",
+    "heading": "Decisión rexistrada",
+    "openedAsCase": "Aberto como caso"
+  },
+  "access": {
+    "section": "Acceso ao caso",
+    "heading": "Equipo",
+    "confirmAssignment": "Confirmar a asignación",
+    "withdraw": "Retirar",
+    "handover": "Traspasar",
+    "change": "Cambiar o acceso",
+    "handoverOrWithdrawReason": "Motivo do traspaso ou da retirada",
+    "changeReason": "Motivo do cambio",
+    "confirmChange": "Confirmar o cambio",
+    "transferReason": "Motivo do traspaso",
+    "confirmWithdraw": "Confirmar a retirada",
+    "confirmHandover": "Confirmar o traspaso",
+    "professional": "Profesional",
+    "newLevel": "Novo acceso",
+    "newLead": "Nova persoa responsable"
+  },
+  "activity": {
+    "section": "Actividade do caso",
+    "heading": "Actividade"
+  },
+  "documents": {
+    "exportSection": "Rexistro controlado",
+    "exportHeading": "Exportar o expediente",
+    "downloadPdf": "Descargar o PDF",
+    "section": "Documentos controlados",
+    "generate": "Xerar o documento",
+    "disclaimer": "Cada documento recolle só o que xa ves neste caso, indica a súa versión e a súa data, e deixa constancia na auditoría. Son documentos de demostración ficticios: ningún é un formulario oficial."
+  },
+  "audit": {
+    "section": "Rexistro protexido",
+    "heading": "Auditoría",
+    "exportCsv": "Exportar o CSV",
+    "loading": "Estase a cargar o rexistro…",
+    "unavailable": "O rexistro non está dispoñible neste momento.",
+    "empty": "Aínda non hai accións auditables."
+  },
+  "caseRef": "Caso {{ref}}",
+  "caseStatus": {
+    "assessment": "En valoración",
+    "active": "Activo",
+    "closed": "Pechado"
+  },
+  "modality": {
+    "in_person": "Presencial",
+    "digital": "Dixital",
+    "mixed": "Mixto",
+    "unknown": "Sen concretar"
+  },
+  "assignmentRole": {
+    "lead": "Responsable",
+    "contributor": "Colabora",
+    "observer": "Consulta"
+  },
+  "taskStatus": {
+    "pending": "Pendente",
+    "completed": "Completada",
+    "not_applicable": "Non se aplica"
+  },
+  "sourceAuthority": {
+    "binding": "Normativa aplicable",
+    "recommended": "Recomendación",
+    "internal": "Obxectivo interno"
+  },
+  "personRole": {
+    "affected": "Persoa afectada",
+    "alleged_actor": "Persoa presuntamente implicada",
+    "witness": "Testemuña",
+    "guardian": "Responsable legal",
+    "other": "Outra vinculación"
+  },
+  "stage": {
+    "identification": "Identificación",
+    "immediate_actions": "Actuacións inmediatas",
+    "urgent_protection": "Protección urxente",
+    "family_communication": "Comunicación coas familias",
+    "professional_coordination": "Coordinación profesional",
+    "information_collection": "Recollida de información",
+    "educational_measures": "Medidas educativas",
+    "inspection_communication": "Comunicación coa Inspección",
+    "assessment": "Valoración",
+    "action_plan": "Plan de actuación",
+    "family_measures": "Medidas coas familias",
+    "inspection_follow_up": "Seguimento da Inspección"
+  },
+  "auditAction": {
+    "case_created": "Caso creado",
+    "report_linked": "Comunicación vinculada",
+    "assignment_created": "Acceso asignado",
+    "assignment_changed": "Acceso modificado",
+    "assignment_revoked": "Acceso retirado",
+    "task_created": "Tarefa creada",
+    "task_completed": "Tarefa completada",
+    "task_marked_not_applicable": "Tarefa marcada como non aplicable",
+    "evidence_download_authorised": "Descarga de evidencia autorizada",
+    "audit_exported": "Rexistro exportado",
+    "person_added": "Persoa vinculada",
+    "person_corrected": "Vinculación corrixida",
+    "person_removed": "Vinculación retirada",
+    "status_changed": "Estado do caso actualizado",
+    "communication_recorded": "Comunicación rexistrada",
+    "communication_corrected": "Comunicación corrixida",
+    "fallback": "Acción rexistrada"
+  },
+  "timeline": {
+    "case_created": "Caso creado",
+    "assignment_added": "Profesional asignado",
+    "task_created": "Tarefa creada",
+    "task_resolved": "Tarefa resolta",
+    "fallback": "Actividade rexistrada"
+  },
+  "notice": {
+    "caseLoadFailed": "Non puidemos cargar o caso.",
+    "taskCatalogueFailed": "Non se pode cargar o catálogo de tarefas revisadas.",
+    "taskCreated": "A tarefa creouse. Non confirma ningunha comunicación externa.",
+    "taskCompleted": "A tarefa marcouse como completada.",
+    "taskNotApplicable": "A tarefa marcouse como non aplicable co seu motivo.",
+    "taskNotUpdatable": "A tarefa xa non se pode actualizar ou non tes permiso.",
+    "invalidReason": "Indica un motivo válido ou téntao de novo.",
+    "assignmentRecorded": "A asignación rexistrouse de forma explícita.",
+    "assignmentLevelFailed": "Non se pode actualizar este nivel de acceso.",
+    "accessWithdrawn": "O acceso retirouse cun motivo rexistrado.",
+    "handoverRecorded": "O traspaso de responsabilidade rexistrouse.",
+    "personAdded": "A persoa vinculada rexistrouse con datos mínimos.",
+    "personCorrected": "A vinculación corrixiuse e queda rexistrada.",
+    "personCorrectionFailed": "Non se pode corrixir esta vinculación.",
+    "personRemoved": "A retirada rexistrouse; non se borrou o historial.",
+    "personRemovalFailed": "Non se pode retirar esta vinculación."
+  }
+}
