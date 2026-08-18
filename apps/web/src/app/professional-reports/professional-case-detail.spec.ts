@@ -8,6 +8,7 @@ import { vi } from 'vitest';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
+import professionalCaseEs from '../../i18n/professional-case/es.json';
 import { ProfessionalCaseDetailPage } from './professional-case-detail';
 
 /**
@@ -33,7 +34,13 @@ describe('ProfessionalCaseDetailPage', () => {
   beforeEach(async () => {
     navigate = vi.fn().mockResolvedValue(true);
     await TestBed.configureTestingModule({
-      imports: [ProfessionalCaseDetailPage, i18nTestingModule({}, { ca: catalanTemplateTitles })],
+      imports: [
+        ProfessionalCaseDetailPage,
+        i18nTestingModule(
+          { 'professional-case': professionalCaseEs },
+          { ca: catalanTemplateTitles },
+        ),
+      ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -323,6 +330,29 @@ describe('ProfessionalCaseDetailPage', () => {
 
     return (option?.textContent ?? '').trim();
   }
+
+  it('resolves the source guidance through Transloco rather than rendering it literally', () => {
+    // The paragraph that tells a professional this guide decides no
+    // obligation and calculates no deadline is the single most important
+    // sentence on the page: it is what keeps a cited protocol from reading
+    // like an instruction. If it ever stops resolving, it must fail here
+    // rather than reach a reader as a raw key.
+    openTaskPlanningCatalogue();
+
+    const guidance = page.textContent ?? '';
+
+    expect(guidance).toContain('no decide una obligación ni calcula un plazo');
+    expect(guidance).not.toContain('professional-case.tasks.sourceGuidance');
+    // The interpolated source metadata has to survive translation too,
+    // otherwise the sentence cites nothing.
+    expect(guidance).toContain('Andalusian fictional protocol');
+  });
+
+  it('renders no raw translation key anywhere on the page', () => {
+    openTaskPlanningCatalogue();
+
+    expect(page.textContent ?? '').not.toContain('professional-case.');
+  });
 
   async function switchToCatalan(): Promise<void> {
     const transloco = TestBed.inject(TranslocoService);

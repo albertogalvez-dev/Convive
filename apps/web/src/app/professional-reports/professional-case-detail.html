@@ -1,34 +1,42 @@
 <section class="case-detail" aria-labelledby="case-title">
-  <a class="back-link" routerLink="/profesionales/casos">&larr; Volver a casos</a>
+  <a class="back-link" routerLink="/profesionales/casos">{{
+    'professional-case.nav.backToCases' | transloco
+  }}</a>
 
   @if (loading()) {
     <div class="page-state" aria-live="polite">
       <span class="spinner" aria-hidden="true"></span>
-      <p>Cargando caso&hellip;</p>
+      <p>{{ 'professional-case.state.loading' | transloco }}</p>
     </div>
   } @else if (unavailable()) {
     <div class="page-state">
-      <h1 id="case-title">Caso no disponible</h1>
-      <p>No existe o no est&aacute; asignado a tu perfil.</p>
-      <a routerLink="/profesionales/casos">Ver mis casos</a>
+      <h1 id="case-title">{{ 'professional-case.state.unavailableTitle' | transloco }}</h1>
+      <p>{{ 'professional-case.state.unavailableBody' | transloco }}</p>
+      <a routerLink="/profesionales/casos">{{ 'professional-case.state.myCases' | transloco }}</a>
     </div>
   } @else if (errorMessage(); as message) {
     <div class="page-state">
       <p role="alert">{{ message }}</p>
-      <button type="button" (click)="retry()">Volver a intentar</button>
+      <button type="button" (click)="retry()">
+        {{ 'professional-case.state.retry' | transloco }}
+      </button>
     </div>
   } @else if (detail(); as item) {
     <header class="case-heading">
       <div>
-        <p class="eyebrow">Caso {{ item.id.slice(-8).toUpperCase() }}</p>
-        <h1 id="case-title">Seguimiento del caso</h1>
+        <p class="eyebrow">
+          {{ 'professional-case.caseRef' | transloco: { ref: item.id.slice(-8).toUpperCase() } }}
+        </p>
+        <h1 id="case-title">{{ 'professional-case.tracking.title' | transloco }}</h1>
         <p class="case-meta">
-          {{ item.organisationName }} &middot; {{ caseModalityLabel(item.modality) }}
+          {{ item.organisationName }} &middot; {{ caseModalityLabel(item.modality) | transloco }}
         </p>
       </div>
       <div class="heading-badges">
-        <span class="role">{{ assignmentRoleLabel(item.assignmentRole) }}</span>
-        <span [class]="'status ' + item.status">{{ caseStatusLabel(item.status) }}</span>
+        <span class="role">{{ assignmentRoleLabel(item.assignmentRole) | transloco }}</span>
+        <span [class]="'status ' + item.status">{{
+          caseStatusLabel(item.status) | transloco
+        }}</span>
       </div>
     </header>
 
@@ -36,8 +44,10 @@
       <section class="panel" aria-labelledby="lifecycle-title">
         <div class="panel-heading">
           <div>
-            <p class="section-label">Estado operativo</p>
-            <h2 id="lifecycle-title">Transición del caso</h2>
+            <p class="section-label">
+              {{ 'professional-case.tracking.operationalState' | transloco }}
+            </p>
+            <h2 id="lifecycle-title">{{ 'professional-case.transition.title' | transloco }}</h2>
           </div>
         </div>
         @if (lifecycleError(); as message) {
@@ -47,13 +57,19 @@
         }
         <form class="resolution-form" (ngSubmit)="transitionLifecycle(item)">
           <label
-            >Nuevo estado<select name="lifecycleStatus" [(ngModel)]="lifecycleStatus">
-              <option value="active">Activo</option>
-              <option value="closed">Cerrado</option>
+            >{{ 'professional-case.transition.newState' | transloco
+            }}<select name="lifecycleStatus" [(ngModel)]="lifecycleStatus">
+              <option value="active">
+                {{ 'professional-case.caseStatus.active' | transloco }}
+              </option>
+              <option value="closed">
+                {{ 'professional-case.caseStatus.closed' | transloco }}
+              </option>
             </select></label
           >
           <label
-            >Motivo<textarea
+            >{{ 'professional-case.transition.reason' | transloco
+            }}<textarea
               name="lifecycleReason"
               [(ngModel)]="lifecycleReason"
               maxlength="500"
@@ -61,30 +77,37 @@
             ></textarea>
           </label>
           <label
-            >Constancia operativa<textarea
+            >{{ 'professional-case.transition.record' | transloco
+            }}<textarea
               name="lifecycleEvidence"
               [(ngModel)]="lifecycleEvidence"
               maxlength="500"
               required
             ></textarea>
           </label>
-          <button type="submit" [disabled]="lifecycleSaving()">Registrar transición</button>
+          <button type="submit" [disabled]="lifecycleSaving()">
+            {{ 'professional-case.transition.submit' | transloco }}
+          </button>
         </form>
       </section>
     }
 
     <div class="summary-grid">
       <article>
-        <span>Tareas pendientes</span><strong>{{ item.pendingTasks }}</strong>
+        <span>{{ 'professional-case.summary.pendingTasks' | transloco }}</span
+        ><strong>{{ item.pendingTasks }}</strong>
       </article>
       <article [class.alert]="item.overdueTasks > 0">
-        <span>Fuera de plazo</span><strong>{{ item.overdueTasks }}</strong>
+        <span>{{ 'professional-case.summary.overdue' | transloco }}</span
+        ><strong>{{ item.overdueTasks }}</strong>
       </article>
       <article>
-        <span>Personas vinculadas</span><strong>{{ item.people.length }}</strong>
+        <span>{{ 'professional-case.summary.linkedPeople' | transloco }}</span
+        ><strong>{{ item.people.length }}</strong>
       </article>
       <article>
-        <span>Evidencias disponibles</span><strong>{{ item.evidence.length }}</strong>
+        <span>{{ 'professional-case.summary.availableEvidence' | transloco }}</span
+        ><strong>{{ item.evidence.length }}</strong>
       </article>
     </div>
 
@@ -93,12 +116,12 @@
         <section class="panel tasks-panel" aria-labelledby="tasks-title">
           <div class="panel-heading">
             <div>
-              <p class="section-label">Pr&oacute;ximas acciones</p>
-              <h2 id="tasks-title">Tareas</h2>
+              <p class="section-label">{{ 'professional-case.tasks.section' | transloco }}</p>
+              <h2 id="tasks-title">{{ 'professional-case.tasks.heading' | transloco }}</h2>
             </div>
             @if (item.permissions.manage) {
               <button type="button" class="quiet-action" (click)="startTask(item)">
-                Nueva tarea
+                {{ 'professional-case.tasks.new' | transloco }}
               </button>
             }
           </div>
@@ -110,7 +133,7 @@
           @if (item.permissions.manage && taskTemplates().length > 0) {
             <form class="task-form" (ngSubmit)="createTask(item)">
               <label
-                >Plantilla revisada
+                >{{ 'professional-case.tasks.reviewedTemplate' | transloco }}
                 <select
                   name="templateId"
                   [value]="newTask().templateId"
@@ -120,22 +143,28 @@
                   @for (template of taskTemplates(); track template.id) {
                     <option [value]="template.id">
                       {{ resolveTemplateTitle(template) }} ·
-                      {{ sourceAuthorityLabel(template.source.authority) }}
+                      {{ sourceAuthorityLabel(template.source.authority) | transloco }}
                     </option>
                   }
                 </select>
               </label>
               @if (selectedTaskTemplate(); as template) {
                 <p class="empty">
-                  {{ sourceAuthorityLabel(template.source.authority) }}:
-                  {{ template.source.title }} ({{ template.source.version }}). Esta gu&iacute;a no
-                  decide una obligaci&oacute;n ni calcula un plazo: revisa y adapta la
-                  acci&oacute;n, responsable y objetivo temporal antes de guardarla.
+                  {{
+                    'professional-case.tasks.sourceGuidance'
+                      | transloco
+                        : {
+                            authority:
+                              (sourceAuthorityLabel(template.source.authority) | transloco),
+                            title: template.source.title,
+                            version: template.source.version,
+                          }
+                  }}
                 </p>
               }
               <label
-                >Acci&oacute;n
-                <input
+                >{{ 'professional-case.tasks.action' | transloco
+                }}<input
                   name="title"
                   [value]="newTask().title"
                   (input)="updateTaskTitle($any($event.target).value)"
@@ -144,8 +173,8 @@
                 />
               </label>
               <label
-                >Responsable
-                <select
+                >{{ 'professional-case.comms.owner' | transloco
+                }}<select
                   name="ownerId"
                   [value]="newTask().ownerId"
                   (change)="updateTaskOwner($any($event.target).value)"
@@ -159,7 +188,7 @@
                 </select>
               </label>
               <label
-                >Objetivo temporal
+                >{{ 'professional-case.tasks.dueLabel' | transloco }}
                 <input
                   type="datetime-local"
                   name="dueAt"
@@ -168,36 +197,43 @@
                   required
                 />
               </label>
-              <button type="submit" [disabled]="taskSaving()">Crear tarea</button>
+              <button type="submit" [disabled]="taskSaving()">
+                {{ 'professional-case.tasks.create' | transloco }}
+              </button>
             </form>
           }
           @if (item.tasks.length === 0) {
-            <p class="empty">No hay tareas registradas.</p>
+            <p class="empty">{{ 'professional-case.tasks.empty' | transloco }}</p>
           } @else {
             <ul class="task-list">
               @for (task of item.tasks; track task.id) {
                 <li [class.overdue]="task.overdue">
                   <div class="task-topline">
-                    <span class="stage">{{ stageLabel(task.stage) }}</span>
+                    <span class="stage">{{ stageLabel(task.stage) | transloco }}</span>
                     <span [class]="'task-status ' + task.status">{{
-                      taskStatusLabel(task.status)
+                      taskStatusLabel(task.status) | transloco
                     }}</span>
                   </div>
                   <h3>{{ task.title }}</h3>
                   <div class="task-details">
                     <span
-                      >Responsable: <strong>{{ task.owner.name }}</strong></span
+                      >{{ 'professional-case.tasks.owner' | transloco
+                      }}<strong>{{ task.owner.name }}</strong></span
                     >
-                    <time [attr.datetime]="task.dueAt"
-                      >Objetivo: {{ task.dueAt | date: 'd MMM y, HH:mm' : undefined : 'es' }}</time
-                    >
+                    <time [attr.datetime]="task.dueAt">{{
+                      'professional-case.tasks.dueValue'
+                        | transloco
+                          : { value: (task.dueAt | date: 'd MMM y, HH:mm' : undefined : 'es') }
+                    }}</time>
                   </div>
                   @if (task.overdue) {
-                    <p class="deadline-alert">Fuera del objetivo temporal</p>
+                    <p class="deadline-alert">
+                      {{ 'professional-case.tasks.overdue' | transloco }}
+                    </p>
                   }
                   <div class="source">
                     <span [class]="'authority ' + task.source.authority">{{
-                      sourceAuthorityLabel(task.source.authority)
+                      sourceAuthorityLabel(task.source.authority) | transloco
                     }}</span>
                     @if (task.source.uri) {
                       <a [href]="task.source.uri" target="_blank" rel="noopener noreferrer">{{
@@ -218,7 +254,7 @@
                         (click)="completeTask(item, task.id)"
                         [disabled]="taskSaving()"
                       >
-                        Completar
+                        {{ 'professional-case.tasks.complete' | transloco }}
                       </button>
                       <button
                         type="button"
@@ -226,21 +262,23 @@
                         (click)="openNotApplicable(task.id)"
                         [disabled]="taskSaving()"
                       >
-                        No aplica
+                        {{ 'professional-case.tasks.notApplicable' | transloco }}
                       </button>
                     </div>
                     @if (notApplicableTaskId === task.id) {
                       <form class="resolution-form" (ngSubmit)="markNotApplicable(item)">
                         <label
-                          >Motivo
-                          <textarea
+                          >{{ 'professional-case.transition.reason' | transloco
+                          }}<textarea
                             name="notApplicableReason"
                             [(ngModel)]="notApplicableReason"
                             maxlength="500"
                             required
                           ></textarea>
                         </label>
-                        <button type="submit" [disabled]="taskSaving()">Confirmar motivo</button>
+                        <button type="submit" [disabled]="taskSaving()">
+                          {{ 'professional-case.tasks.confirmReason' | transloco }}
+                        </button>
                       </form>
                     }
                   }
@@ -252,12 +290,12 @@
         <section class="panel tasks-panel" aria-labelledby="communications-title">
           <div class="panel-heading">
             <div>
-              <p class="section-label">Registro operativo</p>
-              <h2 id="communications-title">Comunicaciones</h2>
+              <p class="section-label">{{ 'professional-case.comms.section' | transloco }}</p>
+              <h2 id="communications-title">{{ 'professional-case.comms.heading' | transloco }}</h2>
             </div>
             @if (item.permissions.manage) {
               <button type="button" class="quiet-action" (click)="startCommunication(item)">
-                Registrar comunicación
+                {{ 'professional-case.comms.record' | transloco }}
               </button>
             }
           </div>
@@ -270,43 +308,71 @@
           @if (item.permissions.manage && newCommunication().occurredAt) {
             <form class="task-form" (ngSubmit)="recordCommunication(item)">
               <label
-                >Destinatario<select
+                >{{ 'professional-case.comms.recipient' | transloco
+                }}<select
                   name="communicationRecipient"
                   [value]="newCommunication().recipient"
                   (change)="updateCommunication('recipient', $any($event.target).value)"
                 >
-                  <option value="family">Familia</option>
-                  <option value="external_service">Servicio externo</option>
-                  <option value="education_inspectorate">Inspección educativa</option>
-                  <option value="other">Otro</option>
+                  <option value="family">
+                    {{ 'professional-case.comms.recipientOption.family' | transloco }}
+                  </option>
+                  <option value="external_service">
+                    {{ 'professional-case.comms.recipientOption.external_service' | transloco }}
+                  </option>
+                  <option value="education_inspectorate">
+                    {{ 'professional-case.comms.recipientOption.inspection' | transloco }}
+                  </option>
+                  <option value="other">
+                    {{ 'professional-case.comms.recipientOption.other' | transloco }}
+                  </option>
                 </select></label
               >
               <label
-                >Canal<select
+                >{{ 'professional-case.comms.channel' | transloco
+                }}<select
                   name="communicationChannel"
                   [value]="newCommunication().channel"
                   (change)="updateCommunication('channel', $any($event.target).value)"
                 >
-                  <option value="in_person">Presencial</option>
-                  <option value="telephone">Teléfono</option>
-                  <option value="secure_portal">Canal seguro</option>
-                  <option value="written_record">Registro escrito</option>
-                  <option value="other">Otro</option>
+                  <option value="in_person">
+                    {{ 'professional-case.comms.channelOption.in_person' | transloco }}
+                  </option>
+                  <option value="telephone">
+                    {{ 'professional-case.comms.channelOption.phone' | transloco }}
+                  </option>
+                  <option value="secure_portal">
+                    {{ 'professional-case.comms.channelOption.secure_channel' | transloco }}
+                  </option>
+                  <option value="written_record">
+                    {{ 'professional-case.comms.channelOption.written_record' | transloco }}
+                  </option>
+                  <option value="other">
+                    {{ 'professional-case.comms.recipientOption.other' | transloco }}
+                  </option>
                 </select></label
               >
               <label
-                >Estado explícito<select
+                >{{ 'professional-case.comms.statusLabel' | transloco
+                }}<select
                   name="communicationStatus"
                   [value]="newCommunication().status"
                   (change)="updateCommunication('status', $any($event.target).value)"
                 >
-                  <option value="planned">Prevista</option>
-                  <option value="recorded">Acción registrada</option>
-                  <option value="not_applicable">No procede</option>
+                  <option value="planned">
+                    {{ 'professional-case.comms.statusOption.planned' | transloco }}
+                  </option>
+                  <option value="recorded">
+                    {{ 'professional-case.comms.statusOption.recorded' | transloco }}
+                  </option>
+                  <option value="not_applicable">
+                    {{ 'professional-case.comms.statusOption.not_applicable' | transloco }}
+                  </option>
                 </select></label
               >
               <label
-                >Responsable<select
+                >{{ 'professional-case.comms.owner' | transloco
+                }}<select
                   name="communicationResponsible"
                   [value]="newCommunication().responsibleId"
                   (change)="updateCommunication('responsibleId', $any($event.target).value)"
@@ -319,7 +385,8 @@
                 </select></label
               >
               <label
-                >Fecha y hora<input
+                >{{ 'professional-case.comms.datetime' | transloco
+                }}<input
                   type="datetime-local"
                   name="communicationOccurredAt"
                   [value]="newCommunication().occurredAt"
@@ -327,7 +394,8 @@
                   required
               /></label>
               <label
-                >Nota operativa breve<input
+                >{{ 'professional-case.comms.note' | transloco
+                }}<input
                   name="communicationNote"
                   [value]="newCommunication().note"
                   (input)="updateCommunication('note', $any($event.target).value)"
@@ -335,8 +403,7 @@
                   required
               /></label>
               <p class="empty">
-                Este registro no envía nada ni acredita entrega, recepción o una notificación legal.
-                Las correcciones quedarán como un registro posterior.
+                {{ 'professional-case.comms.disclaimer' | transloco }}
               </p>
               <button type="submit" [disabled]="communicationSaving()">
                 {{ correctingCommunicationId === null ? 'Añadir registro' : 'Añadir corrección' }}
@@ -344,7 +411,7 @@
             </form>
           }
           @if (item.communications.length === 0) {
-            <p class="empty">No hay comunicaciones registradas.</p>
+            <p class="empty">{{ 'professional-case.comms.empty' | transloco }}</p>
           } @else {
             <ol class="team-list">
               @for (communication of item.communications; track communication.id) {
@@ -353,7 +420,7 @@
                     ><strong>{{ communication.recipient }} · {{ communication.channel }}</strong
                     ><small>{{ communication.note }}</small>
                     @if (communication.supersedesId !== null) {
-                      <small>Corrección trazable de un registro anterior</small>
+                      <small>{{ 'professional-case.comms.correction' | transloco }}</small>
                     }
                     @if (item.permissions.manage) {
                       <button
@@ -361,7 +428,7 @@
                         class="quiet-action"
                         (click)="startCommunicationCorrection(communication)"
                       >
-                        Corregir
+                        {{ 'professional-case.people.correct' | transloco }}
                       </button>
                     }</span
                   ><time [attr.datetime]="communication.occurredAt">{{
@@ -376,11 +443,13 @@
         <section class="panel" aria-labelledby="people-title">
           <div class="panel-heading">
             <div>
-              <p class="section-label">Alcance del caso</p>
-              <h2 id="people-title">Personas vinculadas</h2>
+              <p class="section-label">{{ 'professional-case.people.section' | transloco }}</p>
+              <h2 id="people-title">{{ 'professional-case.summary.linkedPeople' | transloco }}</h2>
             </div>
             @if (item.permissions.manage) {
-              <span class="section-label">Datos mínimos</span>
+              <span class="section-label">{{
+                'professional-case.people.minimalData' | transloco
+              }}</span>
             }
           </div>
           @if (peopleError(); as message) {
@@ -391,29 +460,39 @@
           @if (item.permissions.manage) {
             <form class="resolution-form" (ngSubmit)="addPerson(item)">
               <p class="empty">
-                Solo nombre y vinculación funcional. Estas etiquetas no determinan hechos.
+                {{ 'professional-case.people.disclaimer' | transloco }}
               </p>
               <label
-                >Nombre<input
-                  name="newPersonName"
-                  [(ngModel)]="newPerson.name"
-                  maxlength="120"
-                  required
+                >{{ 'professional-case.people.name' | transloco
+                }}<input name="newPersonName" [(ngModel)]="newPerson.name" maxlength="120" required
               /></label>
               <label
-                >Vinculación<select name="newPersonRole" [(ngModel)]="newPerson.role">
-                  <option value="affected">Persona afectada</option>
-                  <option value="alleged_actor">Persona presuntamente implicada</option>
-                  <option value="witness">Testigo</option>
-                  <option value="guardian">Responsable legal</option>
-                  <option value="other">Otra vinculación</option>
+                >{{ 'professional-case.people.relation' | transloco
+                }}<select name="newPersonRole" [(ngModel)]="newPerson.role">
+                  <option value="affected">
+                    {{ 'professional-case.personRole.affected' | transloco }}
+                  </option>
+                  <option value="alleged_actor">
+                    {{ 'professional-case.personRole.alleged_actor' | transloco }}
+                  </option>
+                  <option value="witness">
+                    {{ 'professional-case.personRole.witness' | transloco }}
+                  </option>
+                  <option value="guardian">
+                    {{ 'professional-case.personRole.guardian' | transloco }}
+                  </option>
+                  <option value="other">
+                    {{ 'professional-case.personRole.other' | transloco }}
+                  </option>
                 </select></label
               >
-              <button type="submit" [disabled]="peopleSaving()">Añadir persona</button>
+              <button type="submit" [disabled]="peopleSaving()">
+                {{ 'professional-case.people.add' | transloco }}
+              </button>
             </form>
           }
           @if (item.people.length === 0) {
-            <p class="empty">No hay personas vinculadas.</p>
+            <p class="empty">{{ 'professional-case.people.empty' | transloco }}</p>
           } @else {
             <ul class="people-list">
               @for (person of item.people; track person.id) {
@@ -422,7 +501,7 @@
                   ><span
                     ><strong>{{ person.name }}</strong
                     ><small
-                      >{{ personRoleLabel(person.role)
+                      >{{ personRoleLabel(person.role) | transloco
                       }}{{ person.state === 'removed' ? ' · Retirada' : '' }}</small
                     ></span
                   >
@@ -433,39 +512,50 @@
                         class="secondary"
                         (click)="openPersonCorrection(person)"
                       >
-                        Corregir</button
+                        {{ 'professional-case.people.correct' | transloco }}</button
                       ><button
                         type="button"
                         class="secondary"
                         (click)="removePerson(item, person.id)"
                         [disabled]="peopleSaving()"
                       >
-                        Retirar
+                        {{ 'professional-case.access.withdraw' | transloco }}
                       </button></span
                     >
                   }
                   @if (correctingPersonId === person.id) {
                     <form class="resolution-form" (ngSubmit)="correctPerson(item)">
                       <label
-                        >Nombre<input
+                        >{{ 'professional-case.people.name' | transloco
+                        }}<input
                           name="correctingPersonName"
                           [(ngModel)]="correctingPerson.name"
                           maxlength="120"
                           required
                       /></label>
                       <label
-                        >Vinculación<select
-                          name="correctingPersonRole"
-                          [(ngModel)]="correctingPerson.role"
-                        >
-                          <option value="affected">Persona afectada</option>
-                          <option value="alleged_actor">Persona presuntamente implicada</option>
-                          <option value="witness">Testigo</option>
-                          <option value="guardian">Responsable legal</option>
-                          <option value="other">Otra vinculación</option>
+                        >{{ 'professional-case.people.relation' | transloco
+                        }}<select name="correctingPersonRole" [(ngModel)]="correctingPerson.role">
+                          <option value="affected">
+                            {{ 'professional-case.personRole.affected' | transloco }}
+                          </option>
+                          <option value="alleged_actor">
+                            {{ 'professional-case.personRole.alleged_actor' | transloco }}
+                          </option>
+                          <option value="witness">
+                            {{ 'professional-case.personRole.witness' | transloco }}
+                          </option>
+                          <option value="guardian">
+                            {{ 'professional-case.personRole.guardian' | transloco }}
+                          </option>
+                          <option value="other">
+                            {{ 'professional-case.personRole.other' | transloco }}
+                          </option>
                         </select></label
                       >
-                      <button type="submit" [disabled]="peopleSaving()">Guardar corrección</button>
+                      <button type="submit" [disabled]="peopleSaving()">
+                        {{ 'professional-case.people.saveCorrection' | transloco }}
+                      </button>
                     </form>
                   }
                 </li>
@@ -477,17 +567,17 @@
         <section class="panel" aria-labelledby="evidence-title">
           <div class="panel-heading">
             <div>
-              <p class="section-label">Documentaci&oacute;n privada</p>
-              <h2 id="evidence-title">Evidencias</h2>
+              <p class="section-label">{{ 'professional-case.evidence.section' | transloco }}</p>
+              <h2 id="evidence-title">{{ 'professional-case.evidence.heading' | transloco }}</h2>
             </div>
             @if (item.sourceReport) {
-              <a [routerLink]="['/profesionales/comunicaciones', item.sourceReport.id]"
-                >Ver comunicaci&oacute;n</a
-              >
+              <a [routerLink]="['/profesionales/comunicaciones', item.sourceReport.id]">{{
+                'professional-case.evidence.viewCommunication' | transloco
+              }}</a>
             }
           </div>
           @if (item.evidence.length === 0) {
-            <p class="empty">No hay evidencias disponibles.</p>
+            <p class="empty">{{ 'professional-case.evidence.empty' | transloco }}</p>
           } @else {
             <ul class="evidence-list">
               @for (evidence of item.evidence; track evidence.id) {
@@ -496,15 +586,20 @@
                     ><strong>{{ evidence.description || 'Evidencia adjunta' }}</strong
                     ><small
                       >{{ evidence.mediaType }} &middot;
-                      {{ evidence.byteSize / 1024 | number: '1.0-0' }} KB</small
+                      {{
+                        'professional-case.evidence.sizeKb'
+                          | transloco: { size: (evidence.byteSize / 1024 | number: '1.0-0') }
+                      }}</small
                     ></span
                   >
                   @if (item.permissions.export) {
-                    <a [href]="evidenceUrl(item.id, evidence.id)">Descargar</a>
+                    <a [href]="evidenceUrl(item.id, evidence.id)">{{
+                      'professional-case.evidence.download' | transloco
+                    }}</a>
                   } @else {
-                    <span class="evidence-restricted"
-                      >Solo la persona responsable del caso puede descargarla</span
-                    >
+                    <span class="evidence-restricted">{{
+                      'professional-case.evidence.leadOnly' | transloco
+                    }}</span>
                   }
                 </li>
               }
@@ -516,10 +611,12 @@
           <section class="panel origin-panel" aria-labelledby="origin-title">
             <div class="panel-heading">
               <div>
-                <p class="section-label">Origen del caso</p>
-                <h2 id="origin-title">Decisi&oacute;n registrada</h2>
+                <p class="section-label">{{ 'professional-case.origin.section' | transloco }}</p>
+                <h2 id="origin-title">{{ 'professional-case.origin.heading' | transloco }}</h2>
               </div>
-              <span class="task-status completed">Abierto como caso</span>
+              <span class="task-status completed">{{
+                'professional-case.origin.openedAsCase' | transloco
+              }}</span>
             </div>
             <p>{{ decision.reason }}</p>
             <time [attr.datetime]="decision.decidedAt">{{
@@ -533,8 +630,8 @@
         <section class="panel" aria-labelledby="team-title">
           <div class="panel-heading">
             <div>
-              <p class="section-label">Acceso al caso</p>
-              <h2 id="team-title">Equipo</h2>
+              <p class="section-label">{{ 'professional-case.access.section' | transloco }}</p>
+              <h2 id="team-title">{{ 'professional-case.access.heading' | transloco }}</h2>
             </div>
           </div>
           @if (assignmentError(); as message) {
@@ -545,7 +642,7 @@
           @if (item.permissions.manageAssignments && assignmentProfessionalId) {
             <form class="resolution-form" (ngSubmit)="assignProfessional(item)">
               <label
-                >Profesional
+                >{{ 'professional-case.access.professional' | transloco }}
                 <select name="assignmentProfessionalId" [(ngModel)]="assignmentProfessionalId">
                   @for (candidate of item.assignableProfessionals; track candidate.id) {
                     @if (
@@ -561,20 +658,26 @@
               <label
                 >Acceso
                 <select name="assignmentRole" [(ngModel)]="assignmentRole">
-                  <option value="contributor">Colabora</option>
-                  <option value="observer">Consulta</option>
+                  <option value="contributor">
+                    {{ 'professional-case.assignmentRole.contributor' | transloco }}
+                  </option>
+                  <option value="observer">
+                    {{ 'professional-case.assignmentRole.observer' | transloco }}
+                  </option>
                 </select>
               </label>
               <label
-                >Motivo
-                <textarea
+                >{{ 'professional-case.transition.reason' | transloco
+                }}<textarea
                   name="assignmentReason"
                   [(ngModel)]="assignmentReason"
                   maxlength="500"
                   required
                 ></textarea>
               </label>
-              <button type="submit" [disabled]="assignmentSaving()">Confirmar asignación</button>
+              <button type="submit" [disabled]="assignmentSaving()">
+                {{ 'professional-case.access.confirmAssignment' | transloco }}
+              </button>
             </form>
           }
           <ul class="team-list">
@@ -582,7 +685,7 @@
               <li>
                 <span
                   ><strong>{{ assignment.professional.name }}</strong
-                  ><small>{{ assignmentRoleLabel(assignment.role) }}</small></span
+                  ><small>{{ assignmentRoleLabel(assignment.role) | transloco }}</small></span
                 >
                 @if (item.permissions.manageAssignments) {
                   @if (assignment.role === 'lead') {
@@ -591,7 +694,7 @@
                       class="quiet-action"
                       (click)="openHandover(item, assignment.id)"
                     >
-                      Traspasar
+                      {{ 'professional-case.access.handover' | transloco }}
                     </button>
                   } @else {
                     <button
@@ -599,14 +702,14 @@
                       class="quiet-action"
                       (click)="openChangeAssignmentRole(assignment.id, assignment.role)"
                     >
-                      Cambiar acceso
+                      {{ 'professional-case.access.change' | transloco }}
                     </button>
                     <button
                       type="button"
                       class="quiet-action"
                       (click)="openRevokeAssignment(assignment.id)"
                     >
-                      Retirar
+                      {{ 'professional-case.access.withdraw' | transloco }}
                     </button>
                   }
                 }
@@ -618,7 +721,8 @@
                 <li>
                   <form class="resolution-form" (ngSubmit)="revokeAssignment(item)">
                     <label
-                      >Motivo del traspaso o retirada<textarea
+                      >{{ 'professional-case.access.handoverOrWithdrawReason' | transloco
+                      }}<textarea
                         name="revokeReason"
                         [(ngModel)]="revokeReason"
                         maxlength="500"
@@ -626,7 +730,7 @@
                       ></textarea>
                     </label>
                     <button type="submit" [disabled]="assignmentSaving()">
-                      Confirmar retirada
+                      {{ 'professional-case.access.confirmWithdraw' | transloco }}
                     </button>
                   </form>
                 </li>
@@ -635,21 +739,28 @@
                 <li>
                   <form class="resolution-form" (ngSubmit)="updateAssignmentRole(item)">
                     <label
-                      >Nuevo acceso
+                      >{{ 'professional-case.access.newLevel' | transloco }}
                       <select name="changeAssignmentRole" [(ngModel)]="changeAssignmentRole">
-                        <option value="contributor">Colabora</option>
-                        <option value="observer">Consulta</option>
+                        <option value="contributor">
+                          {{ 'professional-case.assignmentRole.contributor' | transloco }}
+                        </option>
+                        <option value="observer">
+                          {{ 'professional-case.assignmentRole.observer' | transloco }}
+                        </option>
                       </select>
                     </label>
                     <label
-                      >Motivo del cambio<textarea
+                      >{{ 'professional-case.access.changeReason' | transloco
+                      }}<textarea
                         name="changeAssignmentReason"
                         [(ngModel)]="changeAssignmentReason"
                         maxlength="500"
                         required
                       ></textarea>
                     </label>
-                    <button type="submit" [disabled]="assignmentSaving()">Confirmar cambio</button>
+                    <button type="submit" [disabled]="assignmentSaving()">
+                      {{ 'professional-case.access.confirmChange' | transloco }}
+                    </button>
                   </form>
                 </li>
               }
@@ -657,7 +768,7 @@
                 <li>
                   <form class="resolution-form" (ngSubmit)="handoverAssignment(item)">
                     <label
-                      >Nuevo responsable
+                      >{{ 'professional-case.access.newLead' | transloco }}
                       <select name="handoverProfessionalId" [(ngModel)]="handoverProfessionalId">
                         @for (candidate of item.assignableProfessionals; track candidate.id) {
                           @if (
@@ -671,7 +782,8 @@
                       </select>
                     </label>
                     <label
-                      >Motivo del traspaso<textarea
+                      >{{ 'professional-case.access.transferReason' | transloco
+                      }}<textarea
                         name="handoverReason"
                         [(ngModel)]="handoverReason"
                         maxlength="500"
@@ -679,7 +791,7 @@
                       ></textarea>
                     </label>
                     <button type="submit" [disabled]="assignmentSaving()">
-                      Confirmar traspaso
+                      {{ 'professional-case.access.confirmHandover' | transloco }}
                     </button>
                   </form>
                 </li>
@@ -691,8 +803,8 @@
         <section class="panel" aria-labelledby="timeline-title">
           <div class="panel-heading">
             <div>
-              <p class="section-label">Actividad del caso</p>
-              <h2 id="timeline-title">Actividad</h2>
+              <p class="section-label">{{ 'professional-case.activity.section' | transloco }}</p>
+              <h2 id="timeline-title">{{ 'professional-case.activity.heading' | transloco }}</h2>
             </div>
           </div>
           <ol class="timeline">
@@ -700,7 +812,7 @@
               <li>
                 <span aria-hidden="true"></span>
                 <div>
-                  <strong>{{ timelineLabel(event.type) }}</strong
+                  <strong>{{ timelineLabel(event.type) | transloco }}</strong
                   ><time [attr.datetime]="event.occurredAt">{{
                     event.occurredAt | date: 'd MMM y, HH:mm' : undefined : 'es'
                   }}</time>
@@ -714,10 +826,16 @@
           <section class="panel export-panel" aria-labelledby="export-title">
             <div class="panel-heading">
               <div>
-                <p class="section-label">Registro controlado</p>
-                <h2 id="export-title">Exportar expediente</h2>
+                <p class="section-label">
+                  {{ 'professional-case.documents.exportSection' | transloco }}
+                </p>
+                <h2 id="export-title">
+                  {{ 'professional-case.documents.exportHeading' | transloco }}
+                </h2>
               </div>
-              <a [href]="caseRecordExportUrl(item.id)">Descargar PDF</a>
+              <a [href]="caseRecordExportUrl(item.id)">{{
+                'professional-case.documents.downloadPdf' | transloco
+              }}</a>
             </div>
           </section>
         }
@@ -726,14 +844,14 @@
           <section class="panel document-panel" aria-labelledby="documents-title">
             <div class="panel-heading">
               <div>
-                <p class="section-label">Documentos controlados</p>
-                <h2 id="documents-title">Generar documento</h2>
+                <p class="section-label">{{ 'professional-case.documents.section' | transloco }}</p>
+                <h2 id="documents-title">
+                  {{ 'professional-case.documents.generate' | transloco }}
+                </h2>
               </div>
             </div>
             <p class="document-note">
-              Cada documento recoge solo lo que ya ves en este caso, indica su versi&oacute;n y su
-              fecha, y deja constancia en la auditor&iacute;a. Son documentos de demostraci&oacute;n
-              ficticia: ninguno es un formulario oficial.
+              {{ 'professional-case.documents.disclaimer' | transloco }}
             </p>
             <ul class="document-list">
               @for (template of documentTemplates; track template.id) {
@@ -754,23 +872,29 @@
           <section class="panel audit-panel" aria-labelledby="audit-title">
             <div class="panel-heading">
               <div>
-                <p class="section-label">Registro protegido</p>
-                <h2 id="audit-title">Auditoría</h2>
+                <p class="section-label">{{ 'professional-case.audit.section' | transloco }}</p>
+                <h2 id="audit-title">{{ 'professional-case.audit.heading' | transloco }}</h2>
               </div>
-              <a [href]="auditExportUrl(item.id)">Exportar CSV</a>
+              <a [href]="auditExportUrl(item.id)">{{
+                'professional-case.audit.exportCsv' | transloco
+              }}</a>
             </div>
             @if (auditLoading()) {
-              <p class="empty" aria-live="polite">Cargando registro&hellip;</p>
+              <p class="empty" aria-live="polite">
+                {{ 'professional-case.audit.loading' | transloco }}
+              </p>
             } @else if (auditUnavailable()) {
-              <p class="empty" role="status">El registro no está disponible en este momento.</p>
+              <p class="empty" role="status">
+                {{ 'professional-case.audit.unavailable' | transloco }}
+              </p>
             } @else if (auditEvents().length === 0) {
-              <p class="empty">Todavía no hay acciones auditables.</p>
+              <p class="empty">{{ 'professional-case.audit.empty' | transloco }}</p>
             } @else {
               <ol class="team-list audit-list">
                 @for (event of auditEvents(); track event.id) {
                   <li>
                     <span
-                      ><strong>{{ auditActionLabel(event.action) }}</strong
+                      ><strong>{{ auditActionLabel(event.action) | transloco }}</strong
                       ><small>{{ event.actorName }}</small></span
                     >
                     <time [attr.datetime]="event.occurredAt">{{
