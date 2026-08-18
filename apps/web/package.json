@@ -11,7 +11,8 @@
     "e2e:install": "playwright install chromium",
     "typecheck": "tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.spec.json",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"e2e/**/*.ts\" \"*.{ts,json,md}\"",
-    "i18n:confirm": "node scripts/confirm-translations.mjs"
+    "i18n:confirm": "node scripts/confirm-translations.mjs",
+    "poster": "node scripts/generate-reporting-poster.mjs"
   },
   "private": true,
   "engines": {
@@ -36,7 +37,9 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.62.1",
     "jsdom": "^28.0.0",
+    "jsqr": "^1.4.0",
     "prettier": "^3.8.1",
+    "qrcode-generator": "^2.0.4",
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"
   }
