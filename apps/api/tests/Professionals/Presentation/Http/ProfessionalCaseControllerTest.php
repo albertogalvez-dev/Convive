@@ -1137,6 +1137,63 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-GA', $andalusianTerritories);
     }
 
+    public function testNavarraScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $navarra = $this->createOrganisation('31A', 'Navarra Workspace School');
+        $navarra->assignTerritorialScope('ES-NC');
+        $this->entityManager->persist($navarra);
+        $this->entityManager->flush();
+        $navarraLead = $this->createProfessional('navarra-lead', $navarra, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $navarraCase = new ManagedCase(Uuid::v7(), $navarra, $navarraLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($navarraCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $navarraCase,
+            $navarraLead,
+            CaseAssignmentRole::Lead,
+            $navarraLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($navarraLead);
+        $url = '/api/v1/professional/cases/'.$navarraCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+        $templates = $this->responsePayload()['items'];
+
+        self::assertNotEmpty($templates);
+        self::assertSame(
+            array_fill(0, count($templates), 'ES-NC'),
+            array_column(array_column($templates, 'source'), 'territory'),
+        );
+
+        // Navarra's article 15 sets no deadline for responding to acoso. Its
+        // only number caps how long a formal mediation may take to still
+        // count as a mitigating circumstance. Rendering that as a response
+        // deadline would invent an obligation and imply the response itself
+        // may wait, so no Navarrese template may state a day or hour count.
+        foreach (array_column($templates, 'title') as $title) {
+            self::assertDoesNotMatchRegularExpression(
+                '/\d+\s*(d[ií]as?|horas?)/iu',
+                $title,
+                'Navarra sets no response deadline; a template must not imply one.',
+            );
+        }
+
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-NC', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
