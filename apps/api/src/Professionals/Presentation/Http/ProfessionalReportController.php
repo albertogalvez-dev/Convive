@@ -541,6 +541,11 @@ final readonly class ProfessionalReportController
                 $report->situationDescription()->toString(),
             ),
             'situationContext' => $report->situationContext()->value,
+            // Deliberately a sibling of the taxonomy rather than a member of
+            // it: this says who is writing, not how severe the situation is,
+            // and folding it into the neutral taxonomy would change what
+            // every existing taxonomy value means.
+            'reporterPerspective' => $report->reporterPerspective()->value,
             'reporterTaxonomy' => [
                 'version' => $report->taxonomyVersion(),
                 'recurrence' => $report->reporterRecurrence()->value,

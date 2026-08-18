@@ -73,6 +73,20 @@ class Report
     #[ORM\Column(type: Types::STRING, length: ReportedPeople::MAX_LENGTH, nullable: true)]
     private ?string $reportedPeople = null;
 
+    /**
+     * Set by the entry point the reporter used, never asked as a question.
+     * Defaults to first-person so that reports predating the witness channel
+     * are described accurately rather than assumed: every one of them was
+     * submitted through an entry framed as "what happened to you".
+     */
+    #[ORM\Column(
+        type: Types::STRING,
+        length: 16,
+        enumType: ReporterPerspective::class,
+        options: ['default' => 'experienced'],
+    )]
+    private ReporterPerspective $reporterPerspective = ReporterPerspective::Experienced;
+
     #[ORM\Column(
         type: Types::STRING,
         length: 32,
@@ -137,6 +151,7 @@ class Report
         ReporterAttentionCue $reporterAttentionCue,
         ReporterTiming $reporterTiming,
         ?ReportedPeople $reportedPeople,
+        ReporterPerspective $reporterPerspective,
         string $publicReference,
         string $accessSecretHash,
         DateTimeImmutable $createdAt,
@@ -149,6 +164,7 @@ class Report
         $this->reporterAttentionCue = $reporterAttentionCue;
         $this->reporterTiming = $reporterTiming;
         $this->reportedPeople = $reportedPeople?->toString();
+        $this->reporterPerspective = $reporterPerspective;
         $this->status = ReportStatus::Received;
         $this->publicReference = $publicReference;
         $this->accessSecretHash = $accessSecretHash;
@@ -163,6 +179,7 @@ class Report
         ReporterAttentionCue $reporterAttentionCue = ReporterAttentionCue::Unknown,
         ReporterTiming $reporterTiming = ReporterTiming::Unknown,
         ?ReportedPeople $reportedPeople = null,
+        ReporterPerspective $reporterPerspective = ReporterPerspective::Experienced,
     ): ReportCreationResult {
         try {
             $publicReferenceBytes = random_bytes(10);
@@ -186,6 +203,7 @@ class Report
             $reporterAttentionCue,
             $reporterTiming,
             $reportedPeople,
+            $reporterPerspective,
             $publicReference,
             $accessSecret->lookupHash(),
             DateTimeImmutable::createFromTimestamp(microtime(true)),
@@ -195,6 +213,11 @@ class Report
             $report,
             $accessSecret->reveal(),
         );
+    }
+
+    public function reporterPerspective(): ReporterPerspective
+    {
+        return $this->reporterPerspective;
     }
 
     public function reporterTiming(): ReporterTiming

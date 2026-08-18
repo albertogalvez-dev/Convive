@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ReportHeader } from './report-header';
@@ -35,6 +35,7 @@ type ReportingProfileState =
     ReportHelp,
     ReportResult,
     ReportSending,
+    RouterLink,
     TranslocoPipe,
   ],
   providers: [provideTranslocoScope('report-form')],
@@ -51,6 +52,33 @@ export class ReportForm {
 
   private readonly publicReportingIdentifier =
     this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '';
+
+  /**
+   * Decided by which route was matched, never by anything the reporter fills
+   * in. Anything other than the witness route is the first-person journey,
+   * unchanged.
+   */
+  protected readonly isWitness = this.route.snapshot.data?.['reporterPerspective'] === 'witnessed';
+
+  /** Link back and forth between the two entries for the same organisation. */
+  protected readonly otherEntryLink = this.isWitness
+    ? ['/r', this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '']
+    : ['/r', this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '', 'testigo'];
+
+  protected readonly otherEntryLabelKey = this.isWitness
+    ? 'report-form.witness.toFirstPerson'
+    : 'report-form.witness.toWitness';
+
+  // Only the framing changes between the two entries. Every other question --
+  // where it happened, how often, when -- reads identically for a witness, so
+  // it is deliberately not duplicated.
+  protected readonly questionKey = this.isWitness
+    ? 'report-form.witness.askedQuestion'
+    : 'report-form.askedQuestion';
+
+  protected readonly descriptionErrorKey = this.isWitness
+    ? 'report-form.witness.descriptionError'
+    : 'report-form.step1.descriptionError';
 
   protected readonly form = this.formBuilder.nonNullable.group({
     situationDescription: [
@@ -182,6 +210,9 @@ export class ReportForm {
         // Blank means the reporter named nobody, so the field is left out of
         // the request rather than sent as an empty string.
         ...(value.reportedPeople?.trim() ? { reportedPeople: value.reportedPeople.trim() } : {}),
+        // Only sent by the witness entry, so the first-person request body
+        // stays byte-for-byte what it is today.
+        ...(this.isWitness ? { reporterPerspective: 'witnessed' as const } : {}),
       })
       .subscribe({
         next: (response) => {

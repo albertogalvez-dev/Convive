@@ -69,5 +69,12 @@
     "invalidData": "Alguna información no es válida. Revísala e inténtalo de nuevo.",
     "processingFailed": "No hemos podido procesar la comunicación. Inténtalo de nuevo.",
     "generic": "No hemos podido enviar la comunicación ahora. Inténtalo de nuevo más tarde."
+  },
+  "witness": {
+    "askedQuestion": "¿Qué has visto?",
+    "descriptionError": "Escribe qué has visto para continuar.",
+    "notice": "Cuentas algo que le ocurre a otra persona.",
+    "toWitness": "Le ocurre a otra persona",
+    "toFirstPerson": "Me ocurre a mí"
   }
 }

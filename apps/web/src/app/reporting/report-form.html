@@ -21,7 +21,7 @@
 
             <form class="form-loading" aria-busy="true">
               <div class="step">
-                <h1>{{ 'report-form.askedQuestion' | transloco }}</h1>
+                <h1>{{ questionKey | transloco }}</h1>
                 <div class="form-loading-field">
                   <textarea
                     rows="10"
@@ -153,10 +153,14 @@
             <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
               @if (currentStep() === 1) {
                 <div class="step">
-                  <h1 id="step-title">{{ 'report-form.askedQuestion' | transloco }}</h1>
+                  <h1 id="step-title">{{ questionKey | transloco }}</h1>
+
+                  @if (isWitness) {
+                    <p class="witness-notice">{{ 'report-form.witness.notice' | transloco }}</p>
+                  }
 
                   <label class="visually-hidden" for="situationDescription">{{
-                    'report-form.askedQuestion' | transloco
+                    questionKey | transloco
                   }}</label>
                   <textarea
                     id="situationDescription"
@@ -178,7 +182,7 @@
                       form.controls.situationDescription.invalid
                     ) {
                       <p id="description-error" class="error" role="alert">
-                        {{ 'report-form.step1.descriptionError' | transloco }}
+                        {{ descriptionErrorKey | transloco }}
                       </p>
                     }
                     <span id="description-counter">
@@ -196,6 +200,18 @@
                       <span class="continue-arrow" aria-hidden="true">→</span>
                     </button>
                   </div>
+
+                  <!--
+                    After the primary action on purpose. Placing this link
+                    between the description and "Continuar" put a secondary
+                    escape hatch in the middle of the main path and moved the
+                    keyboard focus order, which the public-reporting E2E test
+                    caught: tabbing out of the description must still reach
+                    "Continuar".
+                  -->
+                  <a class="other-entry" [routerLink]="otherEntryLink">{{
+                    otherEntryLabelKey | transloco
+                  }}</a>
                 </div>
               } @else if (currentStep() === 2) {
                 <div class="step">

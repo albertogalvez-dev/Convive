@@ -9,6 +9,7 @@ use App\Reporting\Domain\SituationContext;
 use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Domain\ReporterAttentionCue;
 use App\Reporting\Domain\ReportedPeople;
+use App\Reporting\Domain\ReporterPerspective;
 use App\Reporting\Domain\ReporterRecurrence;
 use App\Reporting\Domain\ReporterTiming;
 
@@ -22,6 +23,7 @@ final readonly class SubmitAnonymousReportCommand
         public ReporterAttentionCue $reporterAttentionCue = ReporterAttentionCue::Unknown,
         public ReporterTiming $reporterTiming = ReporterTiming::Unknown,
         public ?ReportedPeople $reportedPeople = null,
+        public ReporterPerspective $reporterPerspective = ReporterPerspective::Experienced,
     ) {
     }
 }
