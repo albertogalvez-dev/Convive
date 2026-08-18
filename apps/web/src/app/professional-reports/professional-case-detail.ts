@@ -4,6 +4,7 @@ import localeEs from '@angular/common/locales/es';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
 
 import {
   assignmentRoleLabel,
@@ -38,6 +39,23 @@ export class ProfessionalCaseDetailPage implements OnInit {
   private readonly cases = inject(ProfessionalCasesService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
+
+  /**
+   * Shows a protocol step in the reader's own language where a translation
+   * exists, and in the Spanish source where it does not.
+   *
+   * The fallback is deliberate rather than incidental. Transloco returns the
+   * key itself when a translation is missing, and a professional reading
+   * `caseWorkflow.template.es_md.assessment` in the middle of a bullying case
+   * learns nothing. Falling back to the source wording means a half-finished
+   * locale degrades to correct Spanish instead of to noise.
+   */
+  protected resolveTemplateTitle(template: ProfessionalCaseTaskPlanningTemplate): string {
+    const translated = this.transloco.translate(template.titleKey);
+
+    return translated === template.titleKey ? template.title : translated;
+  }
 
   protected readonly detail = signal<ProfessionalCaseDetail | null>(null);
   protected readonly loading = signal(true);

@@ -2909,6 +2909,7 @@ components:
             required:
               - id
               - title
+              - titleKey
               - stage
               - kind
               - source
@@ -2917,6 +2918,9 @@ components:
                 type: string
                 format: uuid
               title:
+                type: string
+                maxLength: 160
+              titleKey:
                 type: string
                 maxLength: 160
               stage:

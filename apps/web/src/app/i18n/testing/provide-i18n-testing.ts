@@ -10,14 +10,20 @@ import { Translation, TranslocoTestingModule } from '@jsverse/transloco';
  * on rendered text exercises the same source file production serves. Leave
  * `scopes` empty for a spec that renders nothing translated itself but needs
  * a child component's Transloco dependency satisfied.
+ *
+ * `otherLangs` exists for the one thing a single-language setup cannot show:
+ * that switching locale actually changes what a reader sees. A spec that
+ * only ever loads Spanish can prove a string renders, but not that it
+ * responds to the reader's choice.
  */
 export function i18nTestingModule(
   scopes: Record<string, Translation> = {},
+  otherLangs: Record<string, Record<string, Translation>> = {},
 ): ReturnType<typeof TranslocoTestingModule.forRoot> {
   return TranslocoTestingModule.forRoot({
-    langs: { es: scopes },
+    langs: { es: scopes, ...otherLangs },
     translocoConfig: {
-      availableLangs: ['es'],
+      availableLangs: ['es', ...Object.keys(otherLangs)],
       defaultLang: 'es',
       // Must match app.config.ts's production setting: without it, a call
       // that resolves a scope by name (TranslocoService.selectTranslation(),

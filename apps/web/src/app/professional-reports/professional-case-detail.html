@@ -119,7 +119,8 @@
                 >
                   @for (template of taskTemplates(); track template.id) {
                     <option [value]="template.id">
-                      {{ template.title }} · {{ sourceAuthorityLabel(template.source.authority) }}
+                      {{ resolveTemplateTitle(template) }} ·
+                      {{ sourceAuthorityLabel(template.source.authority) }}
                     </option>
                   }
                 </select>

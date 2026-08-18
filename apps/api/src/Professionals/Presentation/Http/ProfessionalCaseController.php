@@ -246,6 +246,7 @@ final readonly class ProfessionalCaseController
             fn (WorkflowTaskTemplate $template): array => [
                 'id' => $template->id()->toRfc4122(),
                 'title' => $template->title(),
+                'titleKey' => $template->titleKey(),
                 'stage' => $template->stage()->value,
                 'kind' => $template->kind()->value,
                 'source' => [
