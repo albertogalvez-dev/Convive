@@ -2397,6 +2397,7 @@ components:
         - publicReference
         - situationPreview
         - situationContext
+        - reporterPerspective
         - reporterTaxonomy
         - status
         - createdAt
@@ -2417,6 +2418,12 @@ components:
             - digital
             - mixed
             - unknown
+        reporterPerspective:
+          description: 'Whether the writer lived the situation or saw it happen to someone else, set by the entry point they used rather than asked as a question. A sibling of the taxonomy, never a member of it: it says who is writing, not how severe the situation is, and carries no credibility or urgency weight of its own.'
+          type: string
+          enum:
+            - experienced
+            - witnessed
         reporterTaxonomy:
           $ref: '#/components/schemas/ReporterTriageTaxonomy'
         status:
@@ -2452,6 +2459,7 @@ components:
         - publicReference
         - situationPreview
         - situationContext
+        - reporterPerspective
         - reporterTaxonomy
         - status
         - createdAt
@@ -2476,6 +2484,12 @@ components:
             - digital
             - mixed
             - unknown
+        reporterPerspective:
+          description: 'Whether the writer lived the situation or saw it happen to someone else, set by the entry point they used rather than asked as a question. A sibling of the taxonomy, never a member of it: it says who is writing, not how severe the situation is, and carries no credibility or urgency weight of its own.'
+          type: string
+          enum:
+            - experienced
+            - witnessed
         reporterTaxonomy:
           $ref: '#/components/schemas/ReporterTriageTaxonomy'
         status:
@@ -3736,6 +3750,12 @@ components:
             - 'null'
           default: null
           maxLength: 200
+        reporterPerspective:
+          type: string
+          default: experienced
+          enum:
+            - experienced
+            - witnessed
       type: object
     VerifyReportAccessRequest:
       required:

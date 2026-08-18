@@ -69,5 +69,12 @@
     "invalidData": "Alguna informació no és vàlida. Revisa-la i torna-ho a provar.",
     "processingFailed": "No hem pogut processar la comunicació. Torna-ho a provar.",
     "generic": "Ara mateix no hem pogut enviar la comunicació. Torna-ho a provar més tard."
+  },
+  "witness": {
+    "askedQuestion": "Què has vist?",
+    "descriptionError": "Escriu què has vist per continuar.",
+    "notice": "Expliques una cosa que li passa a una altra persona.",
+    "toWitness": "Li passa a una altra persona",
+    "toFirstPerson": "Em passa a mi"
   }
 }

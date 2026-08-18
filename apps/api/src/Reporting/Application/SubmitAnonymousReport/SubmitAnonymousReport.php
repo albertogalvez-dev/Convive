@@ -41,6 +41,7 @@ final readonly class SubmitAnonymousReport
             $command->reporterAttentionCue,
             $command->reporterTiming,
             $command->reportedPeople,
+            $command->reporterPerspective,
         );
 
         $report = $creationResult->report;
