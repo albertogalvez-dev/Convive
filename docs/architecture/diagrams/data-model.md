@@ -4,14 +4,24 @@ Entity–relationship view of Convive's domain schema. GitHub renders this
 diagram from its Mermaid source. It is kept in sync with the Doctrine
 mappings, the committed migrations and [`data-model.dbml`](../data-model.dbml).
 
-Verified against `information_schema` on 18 August 2026: this diagram covers
-all 24 domain tables.
+Verified on 18 August 2026. This is the **Doctrine ORM-mapped domain schema**,
+and `infrastructure/maintenance/check-architecture-documents.sh` enforces that
+this file, `data-model.dbml` and the Doctrine mappings declare exactly the same
+tables. That check is why this diagram cannot silently drift.
 
-`professional_sessions` is deliberately absent. It is Symfony's PDO session
-storage — infrastructure, not domain — and drawing it here would invite a
-reader to treat a session row as a modelled concept. It is noted so the next
-person comparing this diagram against the database finds an answer rather than
-what looks like an omission.
+Three tables exist in PostgreSQL and are deliberately absent here, because none
+is an ORM-mapped domain entity:
+
+- `professional_sessions` — Symfony's PDO session storage. Infrastructure, not
+  domain; drawing it would invite a reader to treat a session row as a modelled
+  concept.
+- `reporter_email_contacts` and `reporter_notification_outbox` — reached through
+  DBAL with explicit SQL rather than the ORM, including `FOR UPDATE` locking and
+  an outbox with a deduplication key. They are consistently absent from
+  `data-model.dbml` too.
+
+Recorded because comparing this diagram against `information_schema` makes all
+three look like omissions. They are not.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E2E8F0', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#64748B', 'lineColor': '#64748B'}}}%%
@@ -238,39 +248,12 @@ erDiagram
         varchar notification_type PK "case_lifecycle_changed only; required types are never stored"
         boolean enabled "opt-out for optional types only"
     }
-    reporter_email_contacts {
-        uuid id PK
-        uuid report_id FK
-        string email "optional, reporter-supplied"
-        string status "pending, verified, revoked"
-        string consent_notice_version "which notice the reporter agreed to"
-        timestamptz consented_at
-        string verification_token_hash "nullable, hashed never stored raw"
-        timestamptz verification_expires_at "nullable"
-        timestamptz verified_at "nullable"
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    reporter_notification_outbox {
-        uuid id PK
-        uuid contact_id FK
-        string kind
-        string deduplication_key "one delivery per event, not one per retry"
-        string status
-        smallint attempts
-        timestamptz available_at "when a retry may be attempted"
-        timestamptz processing_at "nullable, claimed by a worker"
-        timestamptz completed_at "nullable"
-        timestamptz created_at
-    }
     organisations ||--o{ reports : "receives"
     professionals o|--o{ reports : "reviews"
     reports ||--o{ report_access_grants : "grants access to"
     reports ||--o{ report_attachments : "has private attachments"
     reports ||--o{ report_follow_up_entries : "accumulates"
     reports ||--o{ report_triage_decisions : "receives decisions"
-    reports o|--o| reporter_email_contacts : "may have one verified contact"
-    reporter_email_contacts ||--o{ reporter_notification_outbox : "queues generic notices for"
     reports o|--o| report_triage_decisions : "has terminal decision"
     organisations ||--o{ managed_cases : "owns"
     organisations ||--o{ case_audit_events : "scopes audit"
