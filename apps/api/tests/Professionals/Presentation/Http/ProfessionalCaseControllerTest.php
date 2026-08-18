@@ -902,6 +902,75 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-CN', $andalusianTerritories);
     }
 
+    public function testCeutaAndMelillaShareASourceButNeverShareTemplates(): void
+    {
+        // Ceuta and Melilla are governed by a single ministerial resolution.
+        // That makes them the one case in this sequence where two territories
+        // cite the same document, so the isolation that matters most is
+        // between the two cities themselves, not just against Andalucia.
+        $ceuta = $this->createOrganisation('51A', 'Ceuta Workspace School');
+        $ceuta->assignTerritorialScope('ES-CE');
+        $melilla = $this->createOrganisation('52A', 'Melilla Workspace School');
+        $melilla->assignTerritorialScope('ES-ML');
+        $this->entityManager->persist($ceuta);
+        $this->entityManager->persist($melilla);
+        $this->entityManager->flush();
+
+        /**
+         * @return list<string>
+         */
+        $territoriesFor = function (Organisation $organisation, string $slug): array {
+            $lead = $this->createProfessional($slug.'-lead', $organisation, ProfessionalRole::Triage);
+            $now = new DateTimeImmutable('now');
+            $case = new ManagedCase(Uuid::v7(), $organisation, $lead, $now, CaseModality::Mixed);
+            $this->entityManager->persist($case);
+            $this->entityManager->persist(new CaseAssignment(
+                Uuid::v7(),
+                $case,
+                $lead,
+                CaseAssignmentRole::Lead,
+                $lead,
+                $now,
+            ));
+            $this->entityManager->flush();
+
+            $this->client->loginUser($lead);
+            $url = '/api/v1/professional/cases/'.$case->id()->toRfc4122().'/task-planning-catalogue';
+            $this->client->request('GET', $url);
+            self::assertResponseIsSuccessful();
+            $items = $this->responsePayload()['items'];
+            self::assertNotEmpty($items);
+
+            return array_column(array_column($items, 'source'), 'territory');
+        };
+
+        $ceutaTerritories = $territoriesFor($ceuta, 'ceuta');
+        $melillaTerritories = $territoriesFor($melilla, 'melilla');
+
+        // Each city sees only its own territory, and never the other's.
+        self::assertSame(
+            array_fill(0, count($ceutaTerritories), 'ES-CE'),
+            $ceutaTerritories,
+        );
+        self::assertSame(
+            array_fill(0, count($melillaTerritories), 'ES-ML'),
+            $melillaTerritories,
+        );
+
+        // The existing Andalucia-scoped workspace sees neither.
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-CE', $andalusianTerritories);
+        self::assertNotContains('ES-ML', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
