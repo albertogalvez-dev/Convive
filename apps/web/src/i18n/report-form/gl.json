@@ -1,0 +1,80 @@
+{
+  "organisationLabel": "Centro",
+  "askedQuestion": "Que ocorreu?",
+  "descriptionPlaceholder": "Escribe aquí…",
+  "preparingForm": "Preparando o formulario",
+  "descriptionCounter": "{{count}} / {{max}}",
+  "continue": "Continuar",
+  "back": "Atrás",
+  "submit": "Enviar",
+  "invalid": {
+    "label": "Ligazón non válida",
+    "title": "Non podemos abrir este formulario",
+    "message": "Volve escanear o código QR do centro e comproba que a ligazón estea completa.",
+    "help": "Se volve ocorrer, avisa o centro para que revise o código."
+  },
+  "unavailable": {
+    "label": "Problema de conexión",
+    "retry": "Reintentar",
+    "title": "Non podemos cargar o formulario",
+    "message": "Comproba a túa conexión ou téntao de novo nuns segundos."
+  },
+  "fictionalDemo": {
+    "label": "Demostración ficticia",
+    "title": "Aquí non se gardan comunicacións",
+    "message": "Convive está a amosar unha demostración segura. Non escribas información persoal, situacións reais nin datos doutras persoas.",
+    "help": "Esta contorna serve unicamente para coñecer como funcionaría o proceso."
+  },
+  "disabled": {
+    "label": "Canle non dispoñible",
+    "title": "Este formulario non está habilitado",
+    "message": "Non envíes información persoal nin comunicacións de convivencia por esta vía."
+  },
+  "step1": {
+    "descriptionError": "Escribe que ocorreu para continuar."
+  },
+  "step2": {
+    "title": "Onde ocorreu?",
+    "contextPurpose": "Orientación precisa saber se ocorre no centro, por internet ou nos dous sitios, porque o protocolo é distinto. Se non o tes claro, escolle a última opción.",
+    "inPerson": "En persoa",
+    "online": "En liña",
+    "preferNotToSay": "Prefiro non dicilo",
+    "contextError": "Selecciona unha opción para continuar.",
+    "recurrenceTitle": "Ocorreu máis dunha vez?",
+    "recurrencePurpose": "Axuda a orientación a saber se é algo puntual ou algo que se repite. Podes non contestalo.",
+    "recurrenceSingle": "Unha vez",
+    "recurrenceRepeated": "Varias veces",
+    "recurrenceOngoing": "Segue ocorrendo",
+    "unknownOption": "Non o sei / prefiro non indicalo",
+    "timingTitle": "Cando pasou ou comezou?",
+    "timingPurpose": "Serve para saber se segue pasando agora. Non fai falta unha data exacta.",
+    "timingWithinDays": "Estes días",
+    "timingWithinWeeks": "Estas semanas",
+    "timingLongerAgo": "Hai máis tempo",
+    "peopleLabel": "Quen está implicado?",
+    "peoplePurpose": "Só se ti queres. Axúdanos a saber a quen afecta, coas palabras que prefiras. Podes deixalo en branco e o aviso chega igual.",
+    "attentionTitle": "Cres que precisa atención pronta?",
+    "attentionPurpose": "Axuda a ordenar a revisión. Non decide nada por si só.",
+    "attentionYes": "Si, agradecería unha revisión pronta",
+    "attentionNo": "Non se indica atención pronta",
+    "attentionUnknown": "Prefiro non indicalo"
+  },
+  "step3": {
+    "title": "Revisa antes de enviar",
+    "descriptionLabel": "Que ocorreu",
+    "contextLabel": "Onde ocorreu"
+  },
+  "submissionError": {
+    "invalidLink": "Esta ligazón de comunicación non é válida. Compróbaa e téntao de novo.",
+    "invalidData": "Algunha información non é válida. Revísaa e téntao de novo.",
+    "processingFailed": "Non puidemos procesar a comunicación. Téntao de novo.",
+    "generic": "Non puidemos enviar a comunicación agora. Téntao de novo máis tarde."
+  },
+  "witness": {
+    "askedQuestion": "Que viches?",
+    "descriptionError": "Escribe que viches para continuar.",
+    "notice": "Contas algo que lle ocorre a outra persoa.",
+    "toWitness": "Ocórrelle a outra persoa",
+    "toFirstPerson": "Ocórreme a min"
+  }
+}
