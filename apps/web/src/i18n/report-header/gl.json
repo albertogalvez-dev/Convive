@@ -1,0 +1,8 @@
+{
+  "helpButton": "Como funciona",
+  "stepIndicator": "Paso {{current}} de {{total}}",
+  "closing": "Pechando…",
+  "closeAccess": "Pechar o acceso",
+  "progressLabel": "Progreso da comunicación",
+  "goToStep": "Ir ao paso {{step}}"
+}

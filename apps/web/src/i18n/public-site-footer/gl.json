@@ -1,0 +1,19 @@
+{
+  "boundaryTitle": "Esta é unha demostración con datos ficticios",
+  "boundaryBody": "Convive non é unha canle de emerxencia e non é un servizo oficial de ningunha administración educativa. Nada do que ocorre na demostración chega a un centro educativo.",
+  "emergencyTitle": "Recursos públicos de axuda",
+  "linksLabel": "Información pública",
+  "links": {
+    "notice": "Aviso de demostración",
+    "privacy": "Privacidade",
+    "cookies": "Cookies",
+    "terms": "Termos",
+    "accessibility": "Accesibilidade",
+    "blog": "Blog",
+    "demo": "Demostración",
+    "contact": "Contacto"
+  },
+  "languageSwitcher": {
+    "label": "Idioma"
+  }
+}
