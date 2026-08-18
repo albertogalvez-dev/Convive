@@ -36,6 +36,8 @@ import reportSendingEs from '../../i18n/report-sending/es.json';
 import reportSendingCa from '../../i18n/report-sending/ca.json';
 import reportSendingCaValencia from '../../i18n/report-sending/ca-valencia.json';
 import reportSendingAr from '../../i18n/report-sending/ar.json';
+import professionalCaseEs from '../../i18n/professional-case/es.json';
+import professionalCaseCa from '../../i18n/professional-case/ca.json';
 
 /**
  * The completeness gate #255 built (`checkLocaleCompleteness`), run for real
@@ -174,4 +176,31 @@ describe('ar passes the completeness gate on every scope (#257)', () => {
       expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
     });
   }
+});
+
+describe('professional-case: ca matches es key-for-key (#320)', () => {
+  // This scope sits outside the public `scopes` list above on purpose. It is
+  // professional-facing, so it degrades to Spanish per ADR-0027 rather than
+  // being gated all-or-nothing like the public reporting path a child reads.
+  // Degrading gracefully is not licence to drift, though: a key added to `es`
+  // and forgotten in `ca` would silently leave a Catalan professional reading
+  // Spanish, and nothing would fail. This is what makes that fail.
+  it('ca matches es key-for-key', () => {
+    const result = checkLocaleCompleteness(
+      asTranslationTree(professionalCaseEs),
+      asTranslationTree(professionalCaseCa),
+    );
+
+    expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+  });
+
+  it('keeps every interpolation parameter the source declares', () => {
+    // A translated sentence that drops `{{version}}` still reads fluently and
+    // still cites nothing. Fluency is exactly why this needs a test rather
+    // than a reading.
+    const params = (tree: unknown): string[] =>
+      [...JSON.stringify(tree).matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((match) => match[1]).sort();
+
+    expect(params(professionalCaseCa)).toEqual(params(professionalCaseEs));
+  });
 });
