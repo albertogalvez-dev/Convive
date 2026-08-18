@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /r/
+Disallow: /seguimiento
+Disallow: /verificar-correo
+Disallow: /profesionales/
+
+Sitemap: https://conviveaula.com/sitemap.xml

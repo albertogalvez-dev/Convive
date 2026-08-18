@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Convive observability checks every minute
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=1min
+Unit=convive-observability.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

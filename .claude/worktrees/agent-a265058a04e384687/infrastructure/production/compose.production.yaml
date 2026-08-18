@@ -1,0 +1,226 @@
+name: convive
+
+services:
+  cloudflared:
+    # cloudflare/cloudflared:2025.7.0
+    image: cloudflare/cloudflared:2025.7.0@sha256:803b17adb5326a38ce397b9c9f374289ad290ee5526d204b5879a1423b6f5c3e
+    command: ["tunnel", "--no-autoupdate", "run", "--token-file", "/run/secrets/cloudflare_tunnel_token"]
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    secrets: [cloudflare_tunnel_token]
+    networks: [edge]
+
+  gateway:
+    image: ${CONVIVE_GATEWAY_IMAGE:?CONVIVE_GATEWAY_IMAGE is required}
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/data", "/config"]
+    restart: unless-stopped
+    networks: [edge, application]
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  api:
+    image: ${CONVIVE_API_IMAGE:?CONVIVE_API_IMAGE is required}
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      TRUSTED_PROXIES: 172.30.16.0/28
+      # The only approved public production mode while Convive is a
+      # fictional-data demonstration. The API rejects all reporter mutations
+      # before controller payload handling; a real-data mode needs a separate
+      # controller, privacy and pilot approval.
+      PUBLIC_REPORTING_MODE: fictional_demo
+      # Private named volume; never mounted by the gateway or exposed as a
+      # static path. Production evidence remains fictional-only.
+      ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments
+      # Email delivery is an explicit post-demonstration provider gate. Keep
+      # the feature absent even if a populated secret file is reused.
+      MAILER_DSN: "null://null"
+      REPORTER_EMAIL_ENABLED: "0"
+      REPORTER_EMAIL_FROM: no-reply@conviveaula.example
+      # Reaches the isolated scanner over the private scan network only. When
+      # absent the API falls back to the fail-closed scanner, so a missing
+      # daemon quarantines attachments instead of releasing them.
+      CLAMAV_DSN: tcp://clamav:3310
+      REPORTER_EMAIL_PUBLIC_URL: https://app.conviveaula.com/verificar-correo
+      REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
+    env_file:
+      - ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
+    secrets: [api_env]
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      attachment-store-init:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    # Symfony cache and logs are runtime-only. Keep them writable without
+    # weakening the read-only application filesystem or persisting data.
+    tmpfs:
+      - /tmp
+      - /app/var:uid=33,gid=33,mode=0770
+    volumes: [attachment-data:/var/lib/convive/attachments]
+    restart: unless-stopped
+    networks: [application, data, cache, scan]
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # A short-lived privileged setup step gives the unprivileged PHP process
+  # exclusive ownership of the private attachment volume. It has no network
+  # and no access to application, database, cache or gateway volumes.
+  attachment-store-init:
+    image: busybox:1.37.0@sha256:9db7b59979c38555a39def84a31fb98b5296952f9e3afd4f6f11f05b07adfab0
+    user: "0:0"
+    read_only: true
+    cap_drop: ["ALL"]
+    cap_add: ["CHOWN", "FOWNER"]
+    security_opt: ["no-new-privileges:true"]
+    network_mode: none
+    restart: "no"
+    volumes: [attachment-data:/attachments]
+    entrypoint: ["/bin/sh", "-ec"]
+    command: |
+      mkdir -p /attachments
+      chown 33:33 /attachments
+      chmod 0700 /attachments
+
+  database:
+    # postgres:18.4-bookworm
+    image: postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382
+    environment:
+      POSTGRES_DB: convive
+      POSTGRES_USER: convive
+      POSTGRES_PASSWORD_FILE: /run/secrets/database_password
+    secrets: [database_password]
+    volumes: [database-data:/var/lib/postgresql]
+    read_only: true
+    tmpfs: ["/tmp", "/run/postgresql"]
+    cap_drop: ["ALL"]
+    # The upstream entrypoint must initialize the newly mounted, private data
+    # directory before it drops to the postgres user.
+    cap_add: ["CHOWN", "SETGID", "SETUID"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=convive --dbname=convive"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    # redis:8.2.1-alpine
+    image: redis:8.2.1-alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
+    command: ["redis-server", "/run/secrets/redis_conf", "--appendonly", "yes"]
+    secrets: [redis_conf]
+    volumes: [redis-data:/data]
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
+    # The upstream entrypoint assigns the fresh private volume before it drops
+    # to the redis user.
+    cap_add: ["CHOWN", "SETGID", "SETUID"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [cache]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli --no-auth-warning -a \"$$(sed -n 's/^requirepass //p' /run/secrets/redis_conf)\" ping | grep -F PONG",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Isolated attachment scanner. It reaches the internet only to refresh
+  # signatures, and the API reaches it only over the private scan network, so
+  # it never shares a network with the database, Redis or the attachment store.
+  # It receives file bytes through INSTREAM and no report metadata whatsoever.
+  clamav:
+    # clamav/clamav:1.4.3
+    image: clamav/clamav:1.4.3@sha256:75fb5fd95fcbe1d7e6d240c369c1572b686ee2c95949d1042b5148de8eddebb4
+    environment:
+      # freshclam refreshes signatures against the official ClamAV endpoint once
+      # a day; operating on stale signatures is not an option, and more frequent
+      # checks would widen egress for no material gain.
+      CLAMAV_NO_FRESHCLAM: "false"
+      FRESHCLAM_CHECKS: "1"
+    volumes: [clamav-signatures:/var/lib/clamav]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [scan, signature-refresh]
+    healthcheck:
+      test: ["CMD-SHELL", "clamdscan --ping 1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+volumes:
+  database-data:
+  redis-data:
+  attachment-data:
+  clamav-signatures:
+
+networks:
+  edge:
+    name: convive_edge
+    ipam:
+      config: [{subnet: 172.30.0.0/28}]
+  application:
+    name: convive_application
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.16.0/28}]
+  data:
+    name: convive_data
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.32.0/28}]
+  cache:
+    name: convive_cache
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.48.0/28}]
+  # Carries only API-to-scanner traffic. Internal, so a compromised scanner
+  # cannot reach the database, Redis or the attachment store through it.
+  scan:
+    name: convive_scan
+    internal: true
+    ipam:
+      config: [{subnet: 172.30.64.0/28}]
+  # The scanner's only route out, used exclusively by freshclam to refresh
+  # signatures. No other service joins it.
+  signature-refresh:
+    name: convive_signature_refresh
+    ipam:
+      config: [{subnet: 172.30.80.0/28}]
+
+secrets:
+  cloudflare_tunnel_token:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/cloudflare_tunnel_token
+  api_env:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
+  database_password:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/database_password
+  redis_conf:
+    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/redis.conf

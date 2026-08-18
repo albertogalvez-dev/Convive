@@ -1,0 +1,110 @@
+.introduction-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(15, 32, 63, 0.55);
+}
+
+.introduction-dialog {
+  width: min(100%, 34rem);
+  border-radius: 1rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  background: #fff;
+  color: #172b57;
+  box-shadow: 0 1.5rem 3rem rgba(15, 32, 63, 0.25);
+  animation: introduction-enter 160ms ease-out;
+}
+
+.introduction-dialog:focus-visible {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 4px;
+}
+
+.position {
+  margin: 0 0 0.5rem;
+  color: #176f9c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  letter-spacing: -0.015em;
+}
+
+#introduction-body p {
+  margin: 0 0 0.85rem;
+  color: #3c4f70;
+  line-height: 1.7;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.advance {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  border: 1px solid #cddaeb;
+  border-radius: 0.55rem;
+  padding: 0.55rem 1.1rem;
+  background: #fff;
+  color: #176f9c;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.primary {
+  border-color: #176f9c;
+  background: #176f9c;
+  color: #fff;
+}
+
+button.skip {
+  border-color: transparent;
+  color: #526987;
+  padding-left: 0;
+}
+
+button:focus-visible {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 3px;
+}
+
+.escape-hint {
+  margin: 1rem 0 0;
+  color: #60718d;
+  font-size: 0.82rem;
+}
+
+@keyframes introduction-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+/*
+ * Reduced motion removes the movement rather than shortening it: a shorter
+ * animation is still an animation, and the setting asks for none.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .introduction-dialog {
+    animation: none;
+  }
+}
