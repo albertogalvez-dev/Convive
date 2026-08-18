@@ -229,6 +229,7 @@ nelmio_api_doc:
                         - publicReference
                         - situationPreview
                         - situationContext
+                        - reporterPerspective
                         - reporterTaxonomy
                         - status
                         - createdAt
@@ -245,6 +246,15 @@ nelmio_api_doc:
                         situationContext:
                             type: string
                             enum: [in_person, digital, mixed, unknown]
+                        reporterPerspective:
+                            type: string
+                            enum: [experienced, witnessed]
+                            description: >-
+                                Whether the writer lived the situation or saw it happen to someone
+                                else, set by the entry point they used rather than asked as a
+                                question. A sibling of the taxonomy, never a member of it: it says
+                                who is writing, not how severe the situation is, and carries no
+                                credibility or urgency weight of its own.
                         reporterTaxonomy:
                             $ref: '#/components/schemas/ReporterTriageTaxonomy'
                         status:
@@ -277,6 +287,7 @@ nelmio_api_doc:
                         - publicReference
                         - situationPreview
                         - situationContext
+                        - reporterPerspective
                         - reporterTaxonomy
                         - status
                         - createdAt
@@ -297,6 +308,15 @@ nelmio_api_doc:
                         situationContext:
                             type: string
                             enum: [in_person, digital, mixed, unknown]
+                        reporterPerspective:
+                            type: string
+                            enum: [experienced, witnessed]
+                            description: >-
+                                Whether the writer lived the situation or saw it happen to someone
+                                else, set by the entry point they used rather than asked as a
+                                question. A sibling of the taxonomy, never a member of it: it says
+                                who is writing, not how severe the situation is, and carries no
+                                credibility or urgency weight of its own.
                         reporterTaxonomy:
                             $ref: '#/components/schemas/ReporterTriageTaxonomy'
                         status:

@@ -61,6 +61,15 @@ final readonly class SubmitAnonymousReportRequest
             maxMessage: 'Reported people must not exceed {{ limit }} characters.',
         )]
         public ?string $reportedPeople = null,
+
+        // Which entry point was used, not a question the reporter answered.
+        // Defaults to first-person so an older client that does not send it
+        // keeps producing exactly the reports it produces today.
+        #[Assert\Choice(
+            choices: ['experienced', 'witnessed'],
+            message: 'Reporter perspective is not valid.',
+        )]
+        public string $reporterPerspective = 'experienced',
     ) {
     }
 }

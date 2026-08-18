@@ -14,6 +14,7 @@ use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Domain\ReporterAttentionCue;
 use App\Reporting\Domain\ReportedPeople;
 use App\Reporting\Domain\ReporterRecurrence;
+use App\Reporting\Domain\ReporterPerspective;
 use App\Reporting\Domain\ReporterTiming;
 use App\Shared\Infrastructure\Idempotency\IdempotencyStore;
 use App\Shared\Infrastructure\Logging\SecurityEventLogger;
@@ -230,6 +231,9 @@ final readonly class SubmitAnonymousReportController
             $reportedPeople = ReportedPeople::fromNullableString(
                 $payload->reportedPeople,
             );
+            $reporterPerspective = ReporterPerspective::from(
+                $payload->reporterPerspective,
+            );
         } catch (InvalidArgumentException|ValueError $exception) {
             throw new UnprocessableEntityHttpException(
                 'The request contains invalid report information.',
@@ -246,6 +250,7 @@ final readonly class SubmitAnonymousReportController
                 $reporterAttentionCue,
                 $reporterTiming,
                 $reportedPeople,
+                $reporterPerspective,
             ),
         );
 
