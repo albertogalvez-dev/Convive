@@ -115,3 +115,52 @@ Any missing or different confirmation token refuses the reset before a write.
 Repeat the complete verification procedure afterward. If a reserved identifier
 collision is reported, stop: investigate the database and never rename, delete
 or overwrite the conflicting row manually to force the seed.
+
+## Reporting posters
+
+A school displays a poster; a student scans it and reaches that school's
+reporting entry. Generate one per school:
+
+```
+cd apps/web
+npm run poster -- --identifier 08A-EXEMPLE
+npm run poster -- --identifier 08A-EXEMPLE --name "IES Exemple"
+```
+
+The output is a print-ready A4 SVG at true size. Posters are not committed:
+they are reproducible from the identifier, so a file in Git would only be a
+second thing to keep in step.
+
+Three things the generator enforces rather than trusts:
+
+- **The QR and the printed address come from the same value.** A poster whose
+  code and text pointed at different schools would be worse than no poster.
+- **The QR is decoded before the file is written**, by rendering it to pixels
+  and reading it back with an independent decoder ([ADR-0028](../architecture/decisions/0028-generate-qr-posters-at-build-time-with-a-zero-dependency-encoder.md)).
+  A wrong code is not a build error; it is a poster that does not scan,
+  discovered by a student standing in front of it.
+- **An identifier that would need URL-escaping is refused**, because it would
+  print differently from what it encodes.
+
+The readable address under the code is not decoration. [ADR-0009](../architecture/decisions/0009-use-public-organisation-reporting-links.md)
+requires a manual-entry fallback: a QR alone excludes a reader whose camera
+does not work, who has no phone, or whose poster has been scratched, covered
+by another notice or photocopied badly.
+
+### Reprinting after a rotation
+
+ADR-0009 requires reprinting when an identifier is rotated. Every poster
+carries its identifier in small print at the foot, so staff can confirm from
+the wall that what is displayed is current without scanning it.
+
+### Copy
+
+The poster carries Tier 1 safety-critical copy under
+[the plain-language standard](../content/plain-language-standard.md): measured
+INFLESZ 81.6 against a floor of 65, longest sentence 9 words against a limit
+of 15. Changing the wording means re-measuring it.
+
+The `--name` option is optional and off by default. Naming the school helps a
+student confirm they are in the right place; it also means a photograph of the
+poster identifies the school. That trade-off is recorded on #329 and is not
+settled by whoever runs the command.

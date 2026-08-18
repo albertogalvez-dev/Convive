@@ -16,3 +16,7 @@ Thumbs.db
 infrastructure/backup/backup-job.conf
 infrastructure/backup/backup-repository.env
 infrastructure/backup/evidence/
+
+# Generated reporting posters (npm run poster). Reproducible from an
+# identifier, so the output is not committed.
+posters/
