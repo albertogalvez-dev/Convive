@@ -4,6 +4,7 @@
 - **Date:** 17 August 2026
 - **Related issues:** [#255](https://github.com/albertogalvez-dev/Convive/issues/255), [#256](https://github.com/albertogalvez-dev/Convive/issues/256), [#257](https://github.com/albertogalvez-dev/Convive/issues/257)
 - **Depends on:** [ADR-0004](0004-use-angular-for-the-web-frontend.md)
+- Diagram: [Translation pipeline: two guarantees, on purpose](../diagrams/translation-pipeline.md)
 
 ## Context
 

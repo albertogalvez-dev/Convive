@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-13
+- Diagram: [Authorisation: organisation role versus case assignment](../diagrams/authorisation-model.md)
 
 ## Context and problem
 

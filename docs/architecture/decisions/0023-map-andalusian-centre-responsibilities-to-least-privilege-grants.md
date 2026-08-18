@@ -4,6 +4,7 @@
 - **Date:** 13 August 2026
 - **Related issue:** [#170](https://github.com/albertogalvez-dev/Convive/issues/170)
 - **Depends on:** [ADR-0017](0017-model-triage-as-append-only-decisions.md),
+- **Diagram:** [Authorisation: organisation role versus case assignment](../diagrams/authorisation-model.md)
   [ADR-0018](0018-require-case-assignments-for-case-content.md) and
   [ADR-0021](0021-use-permission-preserving-operational-case-views.md)
 

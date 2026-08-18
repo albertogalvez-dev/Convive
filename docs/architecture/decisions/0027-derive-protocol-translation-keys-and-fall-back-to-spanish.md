@@ -4,6 +4,7 @@
 - **Date:** 18 August 2026
 - **Related issues:** [#310](https://github.com/albertogalvez-dev/Convive/issues/310), [#311](https://github.com/albertogalvez-dev/Convive/issues/311), [#312](https://github.com/albertogalvez-dev/Convive/issues/312), [#318](https://github.com/albertogalvez-dev/Convive/issues/318)
 - **Depends on:** [ADR-0026](0026-use-transloco-for-runtime-internationalisation.md)
+- Diagram: [Translation pipeline: two guarantees, on purpose](../diagrams/translation-pipeline.md)
 
 ## Context
 

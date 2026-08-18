@@ -4,6 +4,7 @@
 - **Date:** 11 August 2026
 - **Related issue:** [#44](https://github.com/albertogalvez-dev/Convive/issues/44)
 - **Depends on:** [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md), [ADR-0017](0017-model-triage-as-append-only-decisions.md)
+- **Diagram:** [Authorisation: organisation role versus case assignment](../diagrams/authorisation-model.md)
 
 ## Context
 

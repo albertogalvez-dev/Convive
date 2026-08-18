@@ -3,6 +3,7 @@
 - Status: Accepted
 - Date: 2026-08-13
 - Issue: #177
+- Diagram: [Case lifecycle and the report/case boundary](../diagrams/case-lifecycle.md)
 
 ## Context and problem
 
