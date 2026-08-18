@@ -46,6 +46,14 @@ export const routes: Routes = [
         loadComponent: () => import('./reporting/report-form').then((module) => module.ReportForm),
       },
       {
+        // The witness entry. A sibling route rather than a flag on the one
+        // above, so the first-person URL keeps rendering exactly what it
+        // renders today and neither entry can be reached by accident.
+        path: 'r/:publicReportingIdentifier/testigo',
+        loadComponent: () => import('./reporting/report-form').then((module) => module.ReportForm),
+        data: { reporterPerspective: 'witnessed' },
+      },
+      {
         path: 'seguimiento',
         loadComponent: () => import('./follow-up/follow-up').then((module) => module.FollowUp),
       },

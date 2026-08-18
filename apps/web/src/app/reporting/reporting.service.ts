@@ -17,7 +17,19 @@ export interface SubmitReportRequest {
   reporterTiming: ReporterTiming;
   /** Omitted entirely when the reporter named nobody. */
   reportedPeople?: string;
+  /**
+   * Set by the entry point used, never asked as a question. Omitted by the
+   * first-person entry so its request body is byte-for-byte what it sends
+   * today; the API defaults to 'experienced'.
+   */
+  reporterPerspective?: ReporterPerspective;
 }
+
+/**
+ * Whether the writer lived the situation or saw it. Not a severity or
+ * credibility signal, and deliberately not part of the triage taxonomy.
+ */
+export type ReporterPerspective = 'experienced' | 'witnessed';
 
 export type ReporterRecurrence = 'single' | 'repeated' | 'ongoing' | 'unknown';
 export type ReporterTiming = 'within_days' | 'within_weeks' | 'longer_ago' | 'unknown';
