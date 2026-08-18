@@ -1,0 +1,53 @@
+{
+  "heading": "Probas",
+  "limits": "PDF, JPG ou PNG · 5 MB por ficheiro · ata 3 cada vez",
+  "addEvidence": "Engadir probas",
+  "preparing": "Preparando a subida segura…",
+  "retry": "Reintentar",
+  "privacyNote": "Un ficheiro pode conter nomes, localización ou outros datos. Anexa só o necesario.",
+  "sentListLabel": "Probas enviadas",
+  "noDescription": "Sen descrición",
+  "download": "Descargar",
+  "selectFiles": "Seleccionar ficheiros",
+  "capacityMessage": "Esta comunicación acadou o límite de 10 probas.",
+  "selectedListLabel": "Probas seleccionadas",
+  "remove": "Quitar",
+  "removeAria": "Quitar {{type}}",
+  "descriptionLabel": "Descrición (opcional)",
+  "queued": "Preparado para enviar",
+  "uploading": "Subindo…",
+  "uploadingAria": "Subindo {{type}}",
+  "updateStatuses": "Actualizar os estados",
+  "updatingStatuses": "Actualizando…",
+  "sendEvidence": "Enviar as probas",
+  "sendingEvidence": "Enviando…",
+  "fileType": {
+    "pdf": "PDF",
+    "imagePng": "Imaxe PNG",
+    "imageJpg": "Imaxe JPG",
+    "generic": "Proba"
+  },
+  "status": {
+    "processing": "En comprobación",
+    "available": "Dispoñible",
+    "unavailable": "Non dispoñible"
+  },
+  "errors": {
+    "unsupportedSelection": "Selecciona unicamente PDF, JPG ou PNG de ata 5 MB.",
+    "selectionLimit": "Podes seleccionar ata {{remaining}} probas agora.",
+    "confirmFailed": "Non puidemos confirmar a subida. Podes reintentalo.",
+    "prepareFailed": "Non puidemos preparar as probas. Téntao de novo.",
+    "accessExpired": "O acceso caducou. Prepárao de novo para continuar.",
+    "refreshFailed": "Non puidemos actualizar os estados. Téntao de novo.",
+    "statusesUpdated": "Estados actualizados.",
+    "reviewFailed": "Revisa as probas que non se puideron enviar.",
+    "allSent": "As probas seleccionadas enviáronse.",
+    "uploadAccessExpired": "O acceso caducou. Volve abrir a comunicación.",
+    "uploadLimitReached": "Esta comunicación acadou o límite de probas.",
+    "fileTooLarge": "O ficheiro supera o límite de 5 MB.",
+    "unsupportedFormat": "O formato do ficheiro non está permitido.",
+    "validationFailed": "Non puidemos validar este ficheiro.",
+    "tooManyAttempts": "Fixeches demasiados intentos seguidos. Agarda un intre.",
+    "uploadFailedGeneric": "Non puidemos subir este ficheiro. Podes reintentalo."
+  }
+}
