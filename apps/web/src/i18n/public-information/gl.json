@@ -1,0 +1,210 @@
+{
+  "homeLinkLabel": "Convive, inicio",
+  "professionalAccess": "Área profesional",
+  "backLink": "Volver ao inicio",
+  "reviewLine": "Revisado o {{reviewedOn}} por {{owner}}.",
+  "demonstrationNotice": {
+    "eyebrow": "AVISO DE DEMOSTRACIÓN",
+    "title": "Convive é unha demostración con información ficticia.",
+    "seoDescription": "Convive é unha demostración con información ficticia. Non é unha canle de emerxencia nin un servizo oficial de ningunha administración educativa.",
+    "description": "Todo o que ves funciona sobre un centro educativo inventado. Nada do que escribas aquí chega a un colexio, a un instituto nin a ningunha administración.",
+    "notice": "Se alguén está en perigo, este sitio non é a vía. Abaixo tes os teléfonos públicos de axuda.",
+    "sections": [
+      {
+        "heading": "Que non é Convive",
+        "paragraphs": [
+          "Convén dicilo sen rodeos, porque unha demostración que se parece a un servizo real pode confundir a quen chega buscando axuda."
+        ],
+        "items": [
+          "Non é unha canle de emerxencia nin de atención urxente.",
+          "Non é un servizo oficial de ningunha administración educativa, e non está asociado a ningunha.",
+          "Non substitúe o protocolo de convivencia de ningún centro educativo.",
+          "Non ofrece asesoramento xurídico, clínico nin psicolóxico."
+        ]
+      },
+      {
+        "heading": "Teléfonos públicos de axuda",
+        "paragraphs": [
+          "Estes son recursos públicos oficiais. Convive enuméraos tal cal, sen engadir ningunha indicación sobre cal corresponde a cada situación."
+        ],
+        "items": [
+          "112 · Emerxencias",
+          "016 · Atención a vítimas de violencia de xénero",
+          "900 20 20 10 · Teléfono ANAR de Axuda a Nenos, Nenas e Adolescentes"
+        ]
+      },
+      {
+        "heading": "Que si podes facer aquí",
+        "paragraphs": [
+          "Percorrer o produto enteiro sobre un centro ficticio: enviar unha comunicación de exemplo, seguila e ver como a traballaría un equipo profesional.",
+          "Para iso fai falta que a información que escribas sexa inventada. Nos termos da contorna de probas está explicado con detalle."
+        ]
+      },
+      {
+        "heading": "De onde sae este proxecto",
+        "paragraphs": [
+          "Convive é un proxecto persoal de código aberto, publicado con licenza MIT, desenvolvido grazas á bolsa Aircury Summer of Code 2026 de Aircury SL.",
+          "Aircury SL financia o traballo mediante esa bolsa. Non opera esta demostración, non participa no seu contido e nada do aquí publicado supón un respaldo seu."
+        ]
+      }
+    ],
+    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+  },
+  "privacyNotice": {
+    "eyebrow": "PRIVACIDADE",
+    "title": "A demostración non recolle datos persoais.",
+    "seoDescription": "A demostración pública de Convive non recolle datos persoais de quen a visita. O contido creado na contorna de probas bórrase en 24 horas.",
+    "description": "Esta demostración funciona con información ficticia e non pide, garda nin analiza datos persoais de quen a visita.",
+    "notice": "Se tes calquera dúbida sobre privacidade, escribe a {{privacyEmail}}.",
+    "sections": [
+      {
+        "heading": "Quen publica este sitio",
+        "paragraphs": [
+          "{{operatorName}} publica e mantén esta demostración. É un proxecto persoal, non unha entidade nin un servizo contratado por ningún centro.",
+          "A vía para asuntos de privacidade é {{privacyEmail}}. Para calquera outra cuestión, {{generalEmail}}."
+        ]
+      },
+      {
+        "heading": "Que ocorre co que escribes na contorna de probas",
+        "paragraphs": [
+          "A contorna de probas acepta contido para que poidas percorrer o produto, e ese contido ten unha vida curta e deliberada."
+        ],
+        "items": [
+          "Bórrase de forma automática e irreversible nun prazo máximo de 24 horas.",
+          "Non se pode exportar nin se conserva ningunha copia de seguranza del.",
+          "Os casos e perfís ficticios que mantén o propio proxecto si permanecen: son o material de demostración.",
+          "Consérvase un rexistro técnico non identificativo de aceptación de seguranza durante 30 días."
+        ]
+      },
+      {
+        "heading": "Os límites do anonimato",
+        "paragraphs": [
+          "Convive non pide unha conta para enviar unha comunicación, e iso reduce a información que se coñece de quen escribe. Non a elimina.",
+          "O contido que escribas pode identificarte polo que contas, aínda que non deas o teu nome. Existen ademais rexistros técnicos propios de calquera servizo en Internet.",
+          "Por iso o produto non promete anonimato absoluto en ningún momento: sería unha tranquilidade falsa, e nun asunto de convivencia escolar unha tranquilidade falsa fai dano."
+        ]
+      },
+      {
+        "heading": "Que non se fai",
+        "paragraphs": ["O que non ocorre importa tanto como o que ocorre."],
+        "items": [
+          "Non hai analítica nin medición de audiencia de ningún tipo.",
+          "Non hai cookies non esenciais nin etiquetas de terceiros.",
+          "Non se elabora ningún perfil de quen visita o sitio.",
+          "Non se admite información persoal real, nin de quen visita nin de terceiras persoas."
+        ]
+      },
+      {
+        "heading": "Os teus dereitos",
+        "paragraphs": [
+          "Como esta demostración non trata datos persoais de quen a visita, normalmente non hai ningún dato sobre o que exercer un dereito de acceso, rectificación ou supresión.",
+          "Aínda así a vía existe e está atendida: escribe a {{privacyEmail}} e recibirás resposta."
+        ]
+      }
+    ],
+    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+  },
+  "cookieNotice": {
+    "eyebrow": "COOKIES",
+    "title": "Non usamos cookies non esenciais.",
+    "seoDescription": "Convive non usa cookies non esenciais, analítica nin etiquetas de terceiros na súa demostración pública.",
+    "description": "Este sitio non instala cookies publicitarias, de analítica nin de terceiros, así que non hai nada que aceptar nin que rexeitar.",
+    "notice": "Por iso non verás ningún aviso pedíndoche consentimento para instalar cookies.",
+    "sections": [
+      {
+        "heading": "Que se garda no teu navegador",
+        "paragraphs": [
+          "No sitio público non se garda nada que permita recoñecerte.",
+          "Ao entrar na aplicación de demostración, o servidor mantén unha sesión técnica imprescindible para que o percorrido funcione: sen ela non sería posible enviar unha comunicación de exemplo nin volver consultala. Esa sesión non se usa para medir, seguir nin perfilar a ninguén."
+        ]
+      },
+      {
+        "heading": "Que non se garda",
+        "paragraphs": [],
+        "items": [
+          "Cookies de analítica ou de medición de audiencia.",
+          "Cookies publicitarias ou de personalización.",
+          "Etiquetas, píxeles ou scripts de terceiros."
+        ]
+      }
+    ],
+    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+  },
+  "sandboxTerms": {
+    "eyebrow": "TERMOS DA CONTORNA DE PROBAS",
+    "title": "Usa información inventada. Sempre.",
+    "seoDescription": "Condicións de uso da contorna de probas de Convive: información inventada obrigatoria, prohibido usala como canle de axuda real.",
+    "description": "Estas condicións son curtas porque só hai dúas cousas importantes: o que escribas debe ser inventado, e isto non é unha canle de axuda.",
+    "notice": "Se precisas contar algo real, faino pola canle do teu centro educativo ou polos teléfonos públicos de axuda.",
+    "sections": [
+      {
+        "heading": "Información inventada, obrigatoriamente",
+        "paragraphs": [
+          "A contorna de probas está pensada para que escribas unha situación imaxinaria sobre un centro que non existe."
+        ],
+        "items": [
+          "Non escribas nomes, apelidos, teléfonos, enderezos nin ningún outro dato dunha persoa real, nin teus nin de ninguén.",
+          "Non describas un feito real ocorrido nun centro concreto.",
+          "Non subas documentos, imaxes nin gravacións reais."
+        ]
+      },
+      {
+        "heading": "Isto non é unha canle de axuda",
+        "paragraphs": [
+          "Ninguén le o que escribes aquí coma se fose unha comunicación real. Non hai un equipo profesional ao outro lado, non se abre ningún expediente e non se avisa a ningún centro.",
+          "Usar a demostración para pedir axuda ante unha situación real non só non serve: atrasa o momento en que esa situación chega a alguén que si pode actuar."
+        ]
+      },
+      {
+        "heading": "Que podes esperar do servizo",
+        "paragraphs": [
+          "A demostración ofrécese tal cal, sen compromiso de dispoñibilidade. Pode interromperse, reiniciarse ou cambiar sen aviso previo.",
+          "O contido que crees bórrase automaticamente nun prazo máximo de 24 horas, e tamén pode retirarse antes se incumpre estas condicións."
+        ]
+      }
+    ],
+    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+  },
+  "accessibilityNotice": {
+    "eyebrow": "ACCESIBILIDADE",
+    "title": "Queremos que isto se poida usar con calquera medio.",
+    "seoDescription": "Compromiso de accesibilidade de Convive, estado real da revisión e vía de contacto para comunicar unha barreira.",
+    "description": "Convive desenvólvese co obxectivo de cumprir o nivel AA das WCAG 2.2: manexo completo con teclado, foco visible, contraste suficiente e compatibilidade con produtos de apoio.",
+    "notice": "Se atopas unha barreira, escríbenos a {{generalEmail}} e cóntanos que páxina e que che impediu continuar.",
+    "sections": [
+      {
+        "heading": "Estado da revisión",
+        "paragraphs": [
+          "As comprobacións automáticas de accesibilidade forman parte da integración continua do proxecto e execútanse en cada cambio.",
+          "O 16 de agosto de 2026 executouse unha auditoría manual dos percorridos críticos, que atopou e corrixiu dous fallos reais: un contraste insuficiente e tres estados de erro que non se anunciaban a un lector de pantalla. Falta aínda a comprobación con produtos de apoio reais. Mentres non se complete, este sitio non declara conformidade coas WCAG 2.2 AA: afirmalo sen telo comprobado sería faltar á verdade."
+        ]
+      },
+      {
+        "heading": "Que facemos co que nos contas",
+        "paragraphs": [
+          "Cada barreira comunicada rexístrase publicamente como unha incidencia no repositorio do proxecto e aténdese antes que o traballo de produto pendente.",
+          "Non fai falta que saibas describila en termos técnicos. Con saber que querías facer e onde quedaches atascado é suficiente."
+        ]
+      }
+    ],
+    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+  },
+  "contactNotice": {
+    "eyebrow": "CONTACTO",
+    "title": "Escríbenos por correo.",
+    "seoDescription": "Vías de contacto do proxecto Convive para dúbidas xerais e para asuntos de privacidade.",
+    "description": "Non hai formulario de contacto: pedir datos persoais para responder unha dúbida sería incoherente cunha demostración que non trata datos persoais.",
+    "notice": "Non envíes por esta vía información persoal nin unha situación real de convivencia escolar.",
+    "sections": [
+      {
+        "heading": "Dous enderezos",
+        "paragraphs": ["Segundo de que queiras falar."],
+        "items": [
+          "{{generalEmail}} · dúbidas sobre o proxecto, a demostración e problemas de accesibilidade.",
+          "{{privacyEmail}} · privacidade e exercicio de dereitos."
+        ]
+      }
+    ],
+    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+  }
+}
