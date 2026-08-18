@@ -971,6 +971,61 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-ML', $andalusianTerritories);
     }
 
+    public function testCatalunyaScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $catalunya = $this->createOrganisation('08A', 'Catalunya Workspace School');
+        $catalunya->assignTerritorialScope('ES-CT');
+        $this->entityManager->persist($catalunya);
+        $this->entityManager->flush();
+        $catalunyaLead = $this->createProfessional('catalunya-lead', $catalunya, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $catalunyaCase = new ManagedCase(Uuid::v7(), $catalunya, $catalunyaLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($catalunyaCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $catalunyaCase,
+            $catalunyaLead,
+            CaseAssignmentRole::Lead,
+            $catalunyaLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($catalunyaLead);
+        $url = '/api/v1/professional/cases/'.$catalunyaCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+        $templates = $this->responsePayload()['items'];
+
+        self::assertNotEmpty($templates);
+        self::assertSame(
+            array_fill(0, count($templates), 'ES-CT'),
+            array_column(array_column($templates, 'source'), 'territory'),
+        );
+
+        // Catalonia is the one territory whose source disapplies its own main
+        // circuit for sexual violence: no equip de valoracio, no exploration,
+        // straight to Barnahus. That template has to survive into the
+        // catalogue, because losing it would push a child through the very
+        // exploration the source forbids.
+        $titles = array_column($templates, 'title');
+        self::assertNotEmpty(array_filter(
+            $titles,
+            static fn (string $title): bool => str_contains($title, 'Barnahus'),
+        ));
+
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-CT', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
