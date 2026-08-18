@@ -4,7 +4,7 @@ import localeEs from '@angular/common/locales/es';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoService } from '@jsverse/transloco';
+import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
   assignmentRoleLabel,
@@ -26,12 +26,34 @@ import {
   ProfessionalCaseTaskPlanningTemplate,
 } from './professional-cases.service';
 
+const AUDIT_ACTIONS: string[] = [
+  'case_created',
+  'report_linked',
+  'assignment_created',
+  'assignment_changed',
+  'assignment_revoked',
+  'task_created',
+  'task_completed',
+  'task_marked_not_applicable',
+  'evidence_download_authorised',
+  'audit_exported',
+  'person_added',
+  'person_corrected',
+  'person_removed',
+  'status_changed',
+  'communication_recorded',
+  'communication_corrected',
+];
+
+const TIMELINE_TYPES = ['case_created', 'assignment_added', 'task_created', 'task_resolved'];
+
 registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-professional-case-detail',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, FormsModule, RouterLink],
+  imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, TranslocoPipe],
+  providers: [provideTranslocoScope('professional-case')],
   templateUrl: './professional-case-detail.html',
   styleUrl: './professional-case-detail.scss',
 })
@@ -209,7 +231,10 @@ export class ProfessionalCaseDetailPage implements OnInit {
         }));
         this.taskTemplates.set(items);
       },
-      error: () => this.taskError.set('No se puede cargar el catÃ¡logo de tareas revisadas.'),
+      error: () =>
+        this.taskError.set(
+          this.transloco.translate('professional-case.notice.taskCatalogueFailed'),
+        ),
     });
   }
 
@@ -246,7 +271,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.taskMessage.set('La tarea se ha creado. No confirma ninguna comunicación externa.');
+          this.taskMessage.set(this.transloco.translate('professional-case.notice.taskCreated'));
           this.taskSaving.set(false);
           this.load();
         },
@@ -330,13 +355,13 @@ export class ProfessionalCaseDetailPage implements OnInit {
     this.taskError.set(null);
     this.cases.completeTask(item.id, taskId).subscribe({
       next: () => {
-        this.taskMessage.set('La tarea se ha marcado como completada.');
+        this.taskMessage.set(this.transloco.translate('professional-case.notice.taskCompleted'));
         this.taskSaving.set(false);
         this.load();
       },
       error: () => {
         this.taskSaving.set(false);
-        this.taskError.set('La tarea ya no se puede actualizar o no tienes permiso.');
+        this.taskError.set(this.transloco.translate('professional-case.notice.taskNotUpdatable'));
       },
     });
   }
@@ -377,7 +402,9 @@ export class ProfessionalCaseDetailPage implements OnInit {
           this.load();
         },
         error: () => {
-          this.assignmentError.set('No se puede actualizar este nivel de acceso.');
+          this.assignmentError.set(
+            this.transloco.translate('professional-case.notice.assignmentLevelFailed'),
+          );
           this.assignmentSaving.set(false);
         },
       });
@@ -404,7 +431,9 @@ export class ProfessionalCaseDetailPage implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.assignmentMessage.set('El traspaso de responsabilidad se ha registrado.');
+          this.assignmentMessage.set(
+            this.transloco.translate('professional-case.notice.handoverRecorded'),
+          );
           this.assignmentSaving.set(false);
           this.handoverAssignmentId = null;
           this.load();
@@ -438,7 +467,9 @@ export class ProfessionalCaseDetailPage implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.assignmentMessage.set('La asignación se ha registrado de forma explícita.');
+          this.assignmentMessage.set(
+            this.transloco.translate('professional-case.notice.assignmentRecorded'),
+          );
           this.assignmentSaving.set(false);
           this.load();
         },
@@ -458,7 +489,9 @@ export class ProfessionalCaseDetailPage implements OnInit {
     this.assignmentSaving.set(true);
     this.cases.revokeAssignment(item.id, this.revokeAssignmentId, this.revokeReason).subscribe({
       next: () => {
-        this.assignmentMessage.set('El acceso se ha retirado con un motivo registrado.');
+        this.assignmentMessage.set(
+          this.transloco.translate('professional-case.notice.accessWithdrawn'),
+        );
         this.assignmentSaving.set(false);
         this.revokeAssignmentId = null;
         this.load();
@@ -483,13 +516,15 @@ export class ProfessionalCaseDetailPage implements OnInit {
       .subscribe({
         next: () => {
           this.notApplicableTaskId = null;
-          this.taskMessage.set('La tarea se ha marcado como no aplicable con su motivo.');
+          this.taskMessage.set(
+            this.transloco.translate('professional-case.notice.taskNotApplicable'),
+          );
           this.taskSaving.set(false);
           this.load();
         },
         error: () => {
           this.taskSaving.set(false);
-          this.taskError.set('Indica un motivo válido o vuelve a intentarlo.');
+          this.taskError.set(this.transloco.translate('professional-case.notice.invalidReason'));
         },
       });
   }
@@ -501,7 +536,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
       next: () => {
         this.newPerson.name = '';
         this.newPerson.role = 'affected';
-        this.peopleMessage.set('La persona vinculada se ha registrado con datos mínimos.');
+        this.peopleMessage.set(this.transloco.translate('professional-case.notice.personAdded'));
         this.peopleSaving.set(false);
         this.load();
       },
@@ -527,13 +562,17 @@ export class ProfessionalCaseDetailPage implements OnInit {
     this.cases.correctPerson(item.id, this.correctingPersonId, this.correctingPerson).subscribe({
       next: () => {
         this.correctingPersonId = null;
-        this.peopleMessage.set('La vinculación se ha corregido y queda registrada.');
+        this.peopleMessage.set(
+          this.transloco.translate('professional-case.notice.personCorrected'),
+        );
         this.peopleSaving.set(false);
         this.load();
       },
       error: () => {
         this.peopleSaving.set(false);
-        this.peopleError.set('No se puede corregir esta vinculación.');
+        this.peopleError.set(
+          this.transloco.translate('professional-case.notice.personCorrectionFailed'),
+        );
       },
     });
   }
@@ -543,49 +582,32 @@ export class ProfessionalCaseDetailPage implements OnInit {
     this.peopleError.set(null);
     this.cases.removePerson(item.id, personId).subscribe({
       next: () => {
-        this.peopleMessage.set('La retirada se ha registrado; no se ha borrado el historial.');
+        this.peopleMessage.set(this.transloco.translate('professional-case.notice.personRemoved'));
         this.peopleSaving.set(false);
         this.load();
       },
       error: () => {
         this.peopleSaving.set(false);
-        this.peopleError.set('No se puede retirar esta vinculación.');
+        this.peopleError.set(
+          this.transloco.translate('professional-case.notice.personRemovalFailed'),
+        );
       },
     });
   }
 
   protected auditActionLabel(action: CaseAuditAction): string {
-    return (
-      {
-        case_created: 'Caso creado',
-        report_linked: 'Comunicación vinculada',
-        assignment_created: 'Acceso asignado',
-        assignment_changed: 'Acceso modificado',
-        assignment_revoked: 'Acceso retirado',
-        task_created: 'Tarea creada',
-        task_completed: 'Tarea completada',
-        task_marked_not_applicable: 'Tarea marcada como no aplicable',
-        evidence_download_authorised: 'Descarga de evidencia autorizada',
-        audit_exported: 'Registro exportado',
-        person_added: 'Persona vinculada',
-        person_corrected: 'Vinculación corregida',
-        person_removed: 'Vinculación retirada',
-        status_changed: 'Estado del caso actualizado',
-        communication_recorded: 'Comunicación registrada',
-        communication_corrected: 'Comunicación corregida',
-      }[action] ?? 'Acción registrada'
-    );
+    // Keeps the old `?? 'Accion registrada'` behaviour: an action the UI does
+    // not know about still reads as a recorded action rather than leaking a
+    // raw key into an audit trail a professional may export.
+    return AUDIT_ACTIONS.includes(action)
+      ? this.transloco.translate(`professional-case.auditAction.${action}`)
+      : this.transloco.translate('professional-case.auditAction.fallback');
   }
 
   protected timelineLabel(type: string): string {
-    return (
-      {
-        case_created: 'Caso creado',
-        assignment_added: 'Profesional asignado',
-        task_created: 'Tarea creada',
-        task_resolved: 'Tarea resuelta',
-      }[type] ?? 'Actividad registrada'
-    );
+    return TIMELINE_TYPES.includes(type)
+      ? this.transloco.translate(`professional-case.timeline.${type}`)
+      : this.transloco.translate('professional-case.timeline.fallback');
   }
 
   private load(): void {
@@ -620,7 +642,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
           this.unavailable.set(true);
           return;
         }
-        this.errorMessage.set('No hemos podido cargar el caso.');
+        this.errorMessage.set(this.transloco.translate('professional-case.notice.caseLoadFailed'));
       },
     });
   }
