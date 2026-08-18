@@ -1,0 +1,74 @@
+name: convive-restore
+
+services:
+  api:
+    image: ${CONVIVE_RESTORE_API_IMAGE:?required}
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${CONVIVE_RESTORE_APP_SECRET:?required}
+      # Recovery runs the production kernel against restored fictional data.
+      # Keep reporter mutations fail-closed even in this isolated environment.
+      PUBLIC_REPORTING_MODE: fictional_demo
+      DEFAULT_URI: http://localhost
+      DATABASE_URL: postgresql://convive_restore:${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}@database:5432/convive_restore?serverVersion=18.4&charset=utf8
+      SESSION_DATABASE_URL: pgsql:host=database;port=5432;dbname=convive_restore;user=convive_restore;password=${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
+      REDIS_DSN: redis://redis:6379
+      # Recovery verifies the application against an isolated, disposable
+      # attachment boundary. Restored database rows never grant object access,
+      # and no production attachment volume is mounted into this environment.
+      ATTACHMENT_STORAGE_DIRECTORY: /var/lib/convive/attachments
+      MAILER_DSN: "null://null"
+      REPORTER_EMAIL_ENABLED: "0"
+      REPORTER_EMAIL_FROM: no-reply@conviveaula.example
+      REPORTER_EMAIL_PUBLIC_URL: https://app.conviveaula.com/verificar-correo
+      REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    tmpfs:
+      - /app/var
+    volumes:
+      - attachment-data:/var/lib/convive/attachments
+    networks:
+      - restore
+
+  database:
+    # Matches the reviewed PostgreSQL runtime used by production.
+    image: postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382
+    environment:
+      POSTGRES_DB: convive_restore
+      POSTGRES_USER: convive_restore
+      POSTGRES_PASSWORD: ${CONVIVE_RESTORE_DATABASE_PASSWORD:?required}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=$$POSTGRES_USER --dbname=$$POSTGRES_DB"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+    tmpfs:
+      - /var/lib/postgresql
+    networks:
+      - restore
+
+  redis:
+    image: redis:8.2.1-alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 2s
+    networks:
+      - restore
+
+networks:
+  restore:
+    internal: true
+
+volumes:
+  attachment-data:

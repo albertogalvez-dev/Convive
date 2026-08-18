@@ -1,0 +1,10 @@
+{
+  "close": "Cerrar",
+  "title": "Antes de empezar",
+  "steps": [
+    "Describe la situación. No necesitas decir quién eres.",
+    "Indica dónde ocurrió y comprueba la información.",
+    "Envía la comunicación y guarda tus datos de acceso."
+  ],
+  "footer": "Al finalizar recibirás una referencia y un secreto de acceso. Guárdalos en un lugar seguro."
+}

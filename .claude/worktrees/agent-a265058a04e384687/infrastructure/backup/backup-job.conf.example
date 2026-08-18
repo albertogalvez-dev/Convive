@@ -1,0 +1,14 @@
+# Non-secret systemd job configuration. Copy to /etc/convive/backup-job.conf.
+CONVIVE_BACKUP_ENV_FILE=/etc/convive/backup-repository.env
+CONVIVE_BACKUP_EVIDENCE_DIRECTORY=/var/lib/convive-backup/evidence
+CONVIVE_BACKUP_LOCK_FILE=/run/lock/convive-backup.lock
+CONVIVE_BACKUP_STORAGE_MODE=off-host
+CONVIVE_COMPOSE_PROJECT=convive
+CONVIVE_COMPOSE_FILES=/srv/convive/current/infrastructure/compose/compose.yaml:/srv/convive/current/infrastructure/compose/compose.production.yaml
+CONVIVE_RELEASE_REVISION=replace-with-deployed-git-commit
+CONVIVE_RESTORE_API_IMAGE=ghcr.io/albertogalvez-dev/convive-api@sha256:replace-with-reviewed-image-digest
+CONVIVE_RESTORE_RUNTIME_MODE=immutable-image
+CONVIVE_RESTIC_CHECK_SUBSET=5%
+CONVIVE_BACKUP_KEEP_DAILY=14
+CONVIVE_BACKUP_KEEP_WEEKLY=8
+CONVIVE_BACKUP_KEEP_MONTHLY=12

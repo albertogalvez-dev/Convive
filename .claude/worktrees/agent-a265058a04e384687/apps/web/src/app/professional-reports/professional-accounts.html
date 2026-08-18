@@ -1,0 +1,177 @@
+<section class="accounts" aria-labelledby="accounts-title">
+  <p class="eyebrow">Administración sin contenido de casos</p>
+  <h1 id="accounts-title">Cuentas profesionales</h1>
+  <p class="intro">
+    Gestiona acceso al centro. Esta área no concede visibilidad automática de comunicaciones ni
+    casos.
+  </p>
+
+  @if (loading()) {
+    <p aria-live="polite">Cargando administración&hellip;</p>
+  } @else if (organisations().length === 0) {
+    <p class="empty">Tu perfil no administra cuentas profesionales en ningún centro.</p>
+  } @else {
+    <label class="organisation">
+      Centro
+      <select [(ngModel)]="selectedOrganisationId" (change)="selectOrganisation()">
+        @for (organisation of organisations(); track organisation.id) {
+          <option [value]="organisation.id">{{ organisation.name }}</option>
+        }
+      </select>
+    </label>
+
+    @if (error(); as errorMessage) {
+      <p class="feedback error" role="alert">{{ errorMessage }}</p>
+    }
+    @if (message(); as successMessage) {
+      <p class="feedback" role="status">{{ successMessage }}</p>
+    }
+    @if (credential(); as oneTimeCredential) {
+      <section class="credential" aria-live="assertive">
+        <strong>Código de un solo uso</strong>
+        <code>{{ oneTimeCredential.secret }}</code>
+        <small
+          >Caduca: {{ oneTimeCredential.expiresAt | date: 'd MMM y, HH:mm' : undefined : 'es' }}. No
+          se guardará ni se incluirá en exportaciones.</small
+        >
+      </section>
+    }
+
+    <section class="card" aria-labelledby="invite-title">
+      <h2 id="invite-title">Crear cuenta ficticia</h2>
+      <form (ngSubmit)="invite()">
+        <label
+          >Nombre <input name="name" [(ngModel)]="invitation.name" maxlength="160" required
+        /></label>
+        <label
+          >Correo
+          <input name="email" type="email" [(ngModel)]="invitation.email" maxlength="255" required
+        /></label>
+        <label
+          >Responsabilidad técnica
+          <select name="role" [(ngModel)]="invitation.role">
+            <option value="triage">Gestión profesional</option>
+            <option value="administrator">Administración sin contenido</option>
+          </select>
+        </label>
+        <button type="submit">Crear y emitir código</button>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="list-title">
+      <h2 id="list-title">Cuentas del centro</h2>
+      <ul class="account-list">
+        @for (account of accounts(); track account.id) {
+          <li>
+            <div>
+              <strong>{{ account.name }}</strong
+              ><span>{{ account.email }} · {{ statusLabel(account.status) }}</span>
+            </div>
+            <div class="actions">
+              @if (account.status === 'active') {
+                <button type="button" (click)="resetPassword(account)">Restablecer</button
+                ><button type="button" (click)="changeStatus(account, 'suspend')">Suspender</button>
+              }
+              @if (account.status === 'suspended') {
+                <button type="button" (click)="changeStatus(account, 'reactivate')">
+                  Reactivar
+                </button>
+              }
+              @if (account.status !== 'deactivated') {
+                <button type="button" (click)="startEmailCorrection(account)">
+                  Corregir correo</button
+                ><button type="button" class="danger" (click)="changeStatus(account, 'deactivate')">
+                  Desactivar
+                </button>
+              }
+            </div>
+            @if (correctingAccountId() === account.id) {
+              <form class="correction" (ngSubmit)="correctEmail()">
+                <label [attr.for]="'correct-email-' + account.id">
+                  Nueva dirección de {{ account.name }}
+                </label>
+                <p class="hint">
+                  Al corregirla, la persona sale de sus sesiones y entrará con la nueva dirección.
+                </p>
+                <input
+                  [id]="'correct-email-' + account.id"
+                  type="email"
+                  name="email"
+                  required
+                  autocomplete="off"
+                  [(ngModel)]="correctionEmail"
+                />
+                <div class="actions">
+                  <button type="submit">Corregir</button
+                  ><button type="button" (click)="cancelEmailCorrection()">Cancelar</button>
+                </div>
+              </form>
+            }
+          </li>
+        } @empty {
+          <li class="empty">No hay cuentas en este centro.</li>
+        }
+      </ul>
+    </section>
+    <section class="card" aria-labelledby="memberships-title">
+      <h2 id="memberships-title">Membresías del centro</h2>
+      <p>
+        Una membresía permite tareas de centro; nunca muestra casos existentes. Cada caso requiere
+        una asignación explícita.
+      </p>
+      <ul class="account-list">
+        @for (membership of memberships(); track membership.id) {
+          <li>
+            <div>
+              <strong>{{ membership.name }}</strong
+              ><span>{{ membership.role }} · {{ membership.state }}</span>
+            </div>
+            <div class="actions">
+              @if (membership.state === 'active') {
+                <button type="button" (click)="changeMembership(membership, 'suspend')">
+                  Suspender membresía</button
+                ><button
+                  type="button"
+                  class="danger"
+                  (click)="changeMembership(membership, 'remove')"
+                >
+                  Eliminar membresía
+                </button>
+              }
+              @if (membership.state === 'suspended') {
+                <button type="button" (click)="changeMembership(membership, 'resume')">
+                  Reanudar membresía
+                </button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="continuity" aria-labelledby="continuity-title">
+      <h2 id="continuity-title">Casos que necesitan una decisión de continuidad</h2>
+      <p class="continuity-note">
+        Esto indica que hay trabajo sin nadie al cargo, no una valoraci&oacute;n del caso. Ver esta
+        lista no te da acceso a los casos: para retomar uno hay que reasignarlo
+        expl&iacute;citamente, y esa reasignaci&oacute;n queda registrada.
+      </p>
+      @if (continuity().length === 0) {
+        <p class="empty">No hay casos pendientes de una decisi&oacute;n de continuidad.</p>
+      } @else {
+        <ul class="continuity-list">
+          @for (entry of continuity(); track entry.caseId) {
+            <li>
+              <strong>Caso {{ entry.caseId.slice(0, 8) | uppercase }}</strong>
+              <span class="responsible">Responsable: {{ entry.responsible.name }}</span>
+              <span class="reason">{{ continuityReasonLabel(entry.reason) }}</span>
+              @if (entry.earliestOverdueAt; as overdueAt) {
+                <span class="overdue">Desde {{ overdueAt | date: 'short' }}</span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</section>

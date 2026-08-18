@@ -1,0 +1,54 @@
+@if (!loading() && state()?.enabled) {
+  <section class="email-notifications" aria-labelledby="email-notifications-title">
+    <h2 id="email-notifications-title">Avisos por correo</h2>
+
+    @switch (state()?.status) {
+      @case ('verified') {
+        <p>Recibirás un aviso sin detalles cuando el centro responda.</p>
+        <button type="button" class="secondary" [disabled]="removing()" (click)="remove()">
+          Dejar de recibir avisos
+        </button>
+      }
+      @case ('pending') {
+        <p>Falta confirmar el correo. El enlace caduca en 24 horas.</p>
+        <button type="button" class="secondary" [disabled]="removing()" (click)="remove()">
+          Cancelar avisos
+        </button>
+      }
+      @default {
+        <form [formGroup]="form" (ngSubmit)="configure()" novalidate>
+          <label for="reporter-email">Correo</label>
+          <input
+            id="reporter-email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            formControlName="email"
+            maxlength="254"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p class="error" role="alert">Escribe un correo válido.</p>
+          }
+
+          <label class="consent">
+            <input type="checkbox" formControlName="consent" />
+            <span>
+              Quiero avisos genéricos. Mi correo me hace más identificable y el servicio de envío
+              sabrá que uso Convive. No sirve para recuperar el acceso.
+            </span>
+          </label>
+          @if (form.controls.consent.touched && form.controls.consent.invalid) {
+            <p class="error" role="alert">Confirma que quieres recibir avisos.</p>
+          }
+
+          <button type="submit" class="primary" [disabled]="saving()">Activar avisos</button>
+        </form>
+      }
+    }
+
+    <p class="confirmation" role="status">{{ message() }}</p>
+    @if (error(); as errorMessage) {
+      <p class="error" role="alert">{{ errorMessage }}</p>
+    }
+  </section>
+}

@@ -1,0 +1,259 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { ReportHeader } from './report-header';
+import { ReportHelp } from './report-help';
+import { ReportResult } from './report-result';
+import { ReportSending } from './report-sending';
+import {
+  PublicReportingProfile,
+  ReporterAttentionCue,
+  ReporterTiming,
+  ReporterRecurrence,
+  ReportingService,
+  ReportSubmissionResponse,
+} from './reporting.service';
+import { describeSituationContext, SituationContext } from './situation-context';
+
+type ReportingProfileState =
+  | { status: 'loading' }
+  | { status: 'ready'; profile: PublicReportingProfile }
+  | { status: 'fictional-demo'; profile: PublicReportingProfile }
+  | { status: 'disabled'; profile: PublicReportingProfile }
+  | { status: 'invalid' }
+  | { status: 'unavailable' };
+
+@Component({
+  selector: 'app-report-form',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    ReportHeader,
+    ReportHelp,
+    ReportResult,
+    ReportSending,
+    TranslocoPipe,
+  ],
+  providers: [provideTranslocoScope('report-form')],
+  templateUrl: './report-form.html',
+  styleUrl: './report-form.scss',
+})
+export class ReportForm {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly reporting = inject(ReportingService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly transloco = inject(TranslocoService);
+  private profileLoadingTimer: ReturnType<typeof setTimeout> | null = null;
+
+  private readonly publicReportingIdentifier =
+    this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '';
+
+  protected readonly form = this.formBuilder.nonNullable.group({
+    situationDescription: [
+      '',
+      [Validators.required, Validators.pattern(/\S/), Validators.maxLength(5000)],
+    ],
+    situationContext: ['', [Validators.required]],
+    reporterRecurrence: ['unknown' as ReporterRecurrence],
+    reporterAttentionCue: ['unknown' as ReporterAttentionCue],
+    reporterTiming: ['unknown' as ReporterTiming],
+    reportedPeople: ['', [Validators.maxLength(200)]],
+  });
+
+  protected readonly submitting = signal(false);
+  protected readonly currentStep = signal<1 | 2 | 3>(1);
+  protected readonly showHelp = signal(false);
+  protected readonly result = signal<ReportSubmissionResponse | null>(null);
+  protected readonly errorMessage = signal<string | null>(null);
+  protected readonly showProfileLoading = signal(false);
+  protected readonly profileState = signal<ReportingProfileState>({
+    status: 'loading',
+  });
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.clearProfileLoadingTimer());
+    this.resolvePublicReportingProfile();
+  }
+
+  protected continue(): void {
+    const description = this.form.controls.situationDescription;
+
+    description.markAsTouched();
+
+    if (description.invalid) {
+      return;
+    }
+
+    this.currentStep.set(2);
+  }
+
+  protected goBack(): void {
+    this.errorMessage.set(null);
+    this.currentStep.update((step) => (step === 3 ? 2 : 1));
+  }
+
+  protected navigateToStep(step: number): void {
+    if (step < this.currentStep() && (step === 1 || step === 2)) {
+      this.errorMessage.set(null);
+      this.currentStep.set(step);
+    }
+  }
+
+  protected continueFromContext(): void {
+    const context = this.form.controls.situationContext;
+
+    context.markAsTouched();
+
+    if (context.invalid) {
+      return;
+    }
+
+    this.currentStep.set(3);
+  }
+
+  protected toggleContext(context: 'in_person' | 'digital' | 'unknown'): void {
+    const control = this.form.controls.situationContext;
+    const current = control.value as SituationContext | '';
+
+    if (context === 'unknown') {
+      control.setValue(current === 'unknown' ? '' : 'unknown');
+    } else if (current === context) {
+      control.setValue('');
+    } else if (current === 'mixed') {
+      control.setValue(context === 'in_person' ? 'digital' : 'in_person');
+    } else if (current === 'in_person' || current === 'digital') {
+      control.setValue('mixed');
+    } else {
+      control.setValue(context);
+    }
+
+    control.markAsTouched();
+  }
+
+  protected isContextSelected(context: 'in_person' | 'digital' | 'unknown'): boolean {
+    const current = this.form.controls.situationContext.value;
+
+    if (context === 'unknown') {
+      return current === 'unknown';
+    }
+
+    return current === context || current === 'mixed';
+  }
+
+  protected contextSummary(): string {
+    const context = this.form.controls.situationContext.value as SituationContext | '';
+
+    return context === '' ? '' : describeSituationContext(context);
+  }
+
+  protected retryProfileResolution(): void {
+    this.resolvePublicReportingProfile();
+  }
+
+  protected submit(): void {
+    if (this.profileState().status !== 'ready') {
+      return;
+    }
+
+    if (this.submitting()) {
+      return;
+    }
+
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.submitting.set(true);
+    this.errorMessage.set(null);
+
+    const value = this.form.getRawValue();
+
+    this.reporting
+      .submitReport(this.publicReportingIdentifier, {
+        situationDescription: value.situationDescription,
+        situationContext: value.situationContext as SituationContext,
+        reporterRecurrence: value.reporterRecurrence,
+        reporterAttentionCue: value.reporterAttentionCue,
+        reporterTiming: value.reporterTiming,
+        // Blank means the reporter named nobody, so the field is left out of
+        // the request rather than sent as an empty string.
+        ...(value.reportedPeople?.trim() ? { reportedPeople: value.reportedPeople.trim() } : {}),
+      })
+      .subscribe({
+        next: (response) => {
+          this.result.set(response);
+          this.submitting.set(false);
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.describeError(error));
+          this.submitting.set(false);
+        },
+      });
+  }
+
+  private resolvePublicReportingProfile(): void {
+    this.profileState.set({ status: 'loading' });
+    this.scheduleProfileLoading();
+
+    this.reporting.getPublicReportingProfile(this.publicReportingIdentifier).subscribe({
+      next: (profile) => {
+        this.hideProfileLoading();
+        const status =
+          profile.reportingMode === 'fictional_demo'
+            ? 'fictional-demo'
+            : profile.reportingMode === 'disabled'
+              ? 'disabled'
+              : 'ready';
+        this.profileState.set({
+          status,
+          profile,
+        });
+      },
+      error: (error: unknown) => {
+        this.hideProfileLoading();
+        this.profileState.set({
+          status:
+            error instanceof HttpErrorResponse && error.status === 404 ? 'invalid' : 'unavailable',
+        });
+      },
+    });
+  }
+
+  private scheduleProfileLoading(): void {
+    this.clearProfileLoadingTimer();
+    this.showProfileLoading.set(false);
+    this.profileLoadingTimer = setTimeout(() => this.showProfileLoading.set(true), 250);
+  }
+
+  private hideProfileLoading(): void {
+    this.clearProfileLoadingTimer();
+    this.showProfileLoading.set(false);
+  }
+
+  private clearProfileLoadingTimer(): void {
+    if (this.profileLoadingTimer !== null) {
+      clearTimeout(this.profileLoadingTimer);
+      this.profileLoadingTimer = null;
+    }
+  }
+
+  private describeError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      switch (error.status) {
+        case 404:
+          return this.transloco.translate('report-form.submissionError.invalidLink');
+        case 422:
+          return this.transloco.translate('report-form.submissionError.invalidData');
+        case 400:
+        case 415:
+          return this.transloco.translate('report-form.submissionError.processingFailed');
+      }
+    }
+
+    return this.transloco.translate('report-form.submissionError.generic');
+  }
+}

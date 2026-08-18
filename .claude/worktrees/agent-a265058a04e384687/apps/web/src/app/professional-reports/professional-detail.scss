@@ -1,0 +1,327 @@
+:host {
+  display: block;
+}
+.detail {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1.4rem;
+  color: #53698f;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.detail-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.eyebrow {
+  margin: 0 0 0.42rem;
+  color: #168fc5;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0;
+  color: #102b60;
+  font-size: clamp(2rem, 4vw, 2.55rem);
+  letter-spacing: -0.035em;
+}
+.status {
+  border: 1px solid #b9e1f1;
+  border-radius: 999px;
+  padding: 0.42rem 0.8rem;
+  color: #087caf;
+  background: #eaf7fc;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.status.reviewed {
+  border-color: #bcded3;
+  color: #16775f;
+  background: #edf8f4;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(18rem, 0.8fr);
+  align-items: start;
+  gap: 1.25rem;
+}
+.report-card,
+.review-card,
+.response-card,
+.page-state {
+  border: 1px solid #d4dfed;
+  border-radius: 1.1rem;
+  background: #fff;
+  box-shadow: 0 1.4rem 3rem rgba(32, 62, 111, 0.08);
+}
+.metadata {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  padding: 1.4rem 1.6rem;
+  border-bottom: 1px solid #e0e7f0;
+  background: #f9fbfd;
+  border-radius: 1.1rem 1.1rem 0 0;
+}
+.metadata > div + div {
+  padding-left: 1.5rem;
+  border-left: 1px solid #dce4ee;
+}
+dt {
+  margin-bottom: 0.4rem;
+  color: #697a99;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+dd {
+  margin: 0;
+  color: #172b57;
+  font-size: 0.92rem;
+}
+.metadata div:first-child dd {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.025em;
+}
+.report-card section {
+  padding: 1.6rem;
+}
+.report-card section + section {
+  border-top: 1px solid #e0e7f0;
+}
+h2 {
+  margin: 0 0 1rem;
+  color: #102b60;
+  font-size: 1.18rem;
+}
+.content {
+  margin: 0;
+  color: #273d68;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.history ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.history li {
+  padding: 1rem 1.1rem;
+  border: 1px solid #d9e3ef;
+  border-left: 4px solid #b9cfdf;
+  border-radius: 0.75rem;
+  background: #fbfcfe;
+}
+.history li + li {
+  margin-top: 0.75rem;
+}
+.history li.from-professional {
+  border-left-color: #159bd2;
+  background: #f6fbfd;
+}
+.history li > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #53698f;
+  font-size: 0.8rem;
+}
+.history li strong {
+  color: #172b57;
+}
+.history li p {
+  margin: 0.75rem 0 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.empty-history {
+  margin: 0;
+  color: #687a99;
+}
+.actions-column {
+  display: grid;
+  gap: 1rem;
+}
+.review-card,
+.response-card {
+  padding: 1.6rem;
+}
+.review-card label,
+.response-card label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #334a74;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.review-card textarea,
+.response-card textarea {
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  border: 1px solid #b9c9df;
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+  color: #172b57;
+  background: #fbfcfe;
+  font: inherit;
+  line-height: 1.5;
+}
+.review-card textarea:focus,
+.response-card textarea:focus {
+  border-color: #159bd2;
+  outline: 3px solid #d8f1fb;
+}
+.form-meta {
+  min-height: 2.15rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  color: #687a99;
+  font-size: 0.78rem;
+}
+.form-meta p {
+  margin: 0;
+  color: #b91c36;
+}
+.form-meta span {
+  margin-left: auto;
+}
+.review-card button,
+.response-card button {
+  width: 100%;
+  border: 0;
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  color: #fff;
+  background: #19366d;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.review-card button:hover,
+.response-card button:hover {
+  background: #112b5e;
+}
+.review-card button:disabled,
+.response-card button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.submit-error {
+  color: #b91c36;
+  font-size: 0.85rem;
+}
+.submit-confirmation {
+  margin: 0.75rem 0;
+  color: #14765e;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.visibility-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.45rem 0 1rem;
+  color: #687a99;
+  font-size: 0.78rem;
+}
+.visibility-row span:first-child {
+  color: #087caf;
+  font-weight: 700;
+}
+.review-mark {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  margin-bottom: 1.1rem;
+  border-radius: 50%;
+  color: #14765e;
+  background: #e8f7f2;
+  font-weight: 900;
+}
+.reason {
+  color: #273d68;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.review-card > time {
+  color: #687a99;
+  font-size: 0.82rem;
+}
+.page-state {
+  min-height: 24rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #627394;
+  text-align: center;
+}
+.page-state button {
+  border: 1px solid #cdd9e9;
+  border-radius: 0.7rem;
+  padding: 0.7rem 1rem;
+  background: #fff;
+  color: #172b57;
+  font: inherit;
+  font-weight: 700;
+}
+.spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 3px solid #d9e6ef;
+  border-top-color: #159bd2;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 52rem) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 38rem) {
+  .metadata {
+    grid-template-columns: 1fr;
+  }
+  .metadata > div + div {
+    margin-top: 1rem;
+    padding: 1rem 0 0;
+    border-top: 1px solid #dce4ee;
+    border-left: 0;
+  }
+  .report-card section,
+  .review-card,
+  .response-card {
+    padding: 1.25rem;
+  }
+  .history li > div {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}

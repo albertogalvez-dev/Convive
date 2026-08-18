@@ -1,0 +1,19 @@
+{
+  "boundaryTitle": "Esta es una demostración con datos ficticios",
+  "boundaryBody": "Convive no es un canal de emergencia y no es un servicio oficial de la Junta de Andalucía. Nada de lo que ocurre en la demostración llega a un centro educativo.",
+  "emergencyTitle": "Recursos públicos de ayuda",
+  "linksLabel": "Información pública",
+  "links": {
+    "notice": "Aviso de demostración",
+    "privacy": "Privacidad",
+    "cookies": "Cookies",
+    "terms": "Términos",
+    "accessibility": "Accesibilidad",
+    "blog": "Blog",
+    "demo": "Demostración",
+    "contact": "Contacto"
+  },
+  "languageSwitcher": {
+    "label": "Idioma"
+  }
+}

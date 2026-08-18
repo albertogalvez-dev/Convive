@@ -1,0 +1,181 @@
+<section class="detail">
+  <a class="back" routerLink="/profesionales/comunicaciones"
+    ><span aria-hidden="true">&larr;</span> Comunicaciones</a
+  >
+
+  @if (loading()) {
+    <div class="page-state" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Cargando comunicaci&oacute;n&hellip;</p>
+    </div>
+  } @else if (errorMessage(); as message) {
+    <div class="page-state">
+      <p role="alert">{{ message }}</p>
+      <button type="button" (click)="retry()">Volver a intentar</button>
+    </div>
+  } @else if (report(); as currentReport) {
+    <div class="detail-heading">
+      <div class="heading-copy">
+        <p class="eyebrow">{{ contextLabel(currentReport.situationContext) }}</p>
+        <div class="title-row">
+          <h1>Comunicaci&oacute;n</h1>
+          <span class="status" [class.reviewed]="currentReport.status === 'reviewed'">{{
+            currentReport.status === 'new' ? 'Nueva' : 'Revisada'
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <article class="report-card">
+        <dl class="metadata">
+          <div>
+            <dt>Referencia</dt>
+            <dd>{{ currentReport.publicReference }}</dd>
+          </div>
+          <div>
+            <dt>Recibida</dt>
+            <dd>
+              <time [attr.datetime]="currentReport.createdAt">{{
+                currentReport.createdAt | date: 'd MMMM y, HH:mm' : undefined : 'es'
+              }}</time>
+            </dd>
+          </div>
+        </dl>
+        <section>
+          <h2>Contenido original</h2>
+          <p class="content">{{ currentReport.situationDescription }}</p>
+        </section>
+        <section class="history">
+          <h2>Historial</h2>
+          @if (currentReport.followUpEntries.length === 0) {
+            <p class="empty-history">No hay informaci&oacute;n adicional.</p>
+          } @else {
+            <ol>
+              @for (entry of currentReport.followUpEntries; track entry.createdAt + entry.content) {
+                <li [class.from-professional]="entry.authorType === 'professional'">
+                  <div>
+                    <strong>{{
+                      entry.authorType === 'professional'
+                        ? 'Respuesta del centro'
+                        : 'Persona informante'
+                    }}</strong
+                    ><time [attr.datetime]="entry.createdAt">{{
+                      entry.createdAt | date: 'd MMM y, HH:mm' : undefined : 'es'
+                    }}</time>
+                  </div>
+                  <p>{{ entry.content }}</p>
+                </li>
+              }
+            </ol>
+          }
+        </section>
+      </article>
+
+      <aside class="actions-column">
+        <section class="response-card" aria-labelledby="response-title">
+          <h2 id="response-title">Responder</h2>
+          <form [formGroup]="responseForm" (ngSubmit)="respond()" novalidate>
+            <label for="professional-response">Mensaje para la persona informante</label>
+            <textarea
+              #responseField
+              id="professional-response"
+              formControlName="content"
+              rows="5"
+              maxlength="2000"
+              [attr.aria-describedby]="
+                responseForm.controls.content.touched && responseForm.controls.content.invalid
+                  ? 'response-error'
+                  : 'response-visibility'
+              "
+            ></textarea>
+            <div class="visibility-row">
+              <span id="response-visibility">Visible en su seguimiento</span>
+              <span>{{ responseForm.controls.content.value.length }} / 2000</span>
+            </div>
+            @if (responseForm.controls.content.touched && responseForm.controls.content.invalid) {
+              <p id="response-error" class="submit-error" role="alert">Escribe una respuesta.</p>
+            }
+            @if (responseError(); as message) {
+              <p class="submit-error" role="alert">{{ message }}</p>
+            }
+            @if (responseConfirmation(); as message) {
+              <p class="submit-confirmation" role="status">{{ message }}</p>
+            }
+            <button type="submit" [disabled]="responseSubmitting()">
+              {{ responseSubmitting() ? 'Enviando\u2026' : 'Enviar respuesta' }}
+            </button>
+          </form>
+        </section>
+
+        <section class="review-card">
+          @if (currentReport.review; as review) {
+            <span class="review-mark" aria-hidden="true">&#10003;</span>
+            <h2>Revisi&oacute;n registrada</h2>
+            <p class="reason">{{ review.reason }}</p>
+            @if (review.professionalTaxonomy?.concernCategory; as category) {
+              <p class="reason">Valoración registrada: {{ concernCategoryLabel(category) }}</p>
+            }
+            <time [attr.datetime]="review.reviewedAt">{{
+              review.reviewedAt | date: 'd MMMM y, HH:mm' : undefined : 'es'
+            }}</time>
+          } @else {
+            <h2>Revisi&oacute;n inicial</h2>
+            <form [formGroup]="reviewForm" (ngSubmit)="review()" novalidate>
+              <label for="review-reason">Motivo de la revisi&oacute;n</label>
+              <textarea
+                id="review-reason"
+                formControlName="reason"
+                rows="5"
+                maxlength="1000"
+                [attr.aria-describedby]="
+                  reviewForm.controls.reason.touched && reviewForm.controls.reason.invalid
+                    ? 'review-error'
+                    : null
+                "
+              ></textarea>
+              <div class="form-meta">
+                @if (reviewForm.controls.reason.touched && reviewForm.controls.reason.invalid) {
+                  <p id="review-error" role="alert">Escribe al menos 10 caracteres.</p>
+                }
+                <span>{{ reviewForm.controls.reason.value.length }} / 1000</span>
+              </div>
+              <label for="professional-concern-category">Ámbito de valoración</label>
+              <select
+                id="professional-concern-category"
+                formControlName="professionalConcernCategory"
+              >
+                <option value="unknown">No determinado</option>
+                <option value="peer_interaction">Interacción entre iguales</option>
+                <option value="digital_interaction">Entorno digital</option>
+                <option value="exclusion_or_isolation">Exclusión o aislamiento</option>
+                <option value="harmful_language_or_conduct">Lenguaje o conducta dañina</option>
+                <option value="safety_or_wellbeing_concern">Bienestar o posible seguridad</option>
+                <option value="other">Otro</option>
+              </select>
+              <label for="professional-recurrence">Recurrencia según la valoración</label>
+              <select id="professional-recurrence" formControlName="professionalRecurrence">
+                <option value="unknown">No determinado</option>
+                <option value="single">Una vez</option>
+                <option value="repeated">Repetida</option>
+                <option value="ongoing">En curso</option>
+              </select>
+              <label for="professional-attention-cue">Atención según la valoración</label>
+              <select id="professional-attention-cue" formControlName="professionalAttentionCue">
+                <option value="unknown">No determinado</option>
+                <option value="needs_prompt_attention">Requiere atención pronta</option>
+                <option value="no_prompt_attention_indicated">No se indica atención pronta</option>
+              </select>
+              @if (reviewError(); as message) {
+                <p class="submit-error" role="alert">{{ message }}</p>
+              }
+              <button type="submit" [disabled]="submitting()">
+                {{ submitting() ? 'Guardando\u2026' : 'Marcar como revisada' }}
+              </button>
+            </form>
+          }
+        </section>
+      </aside>
+    </div>
+  }
+</section>

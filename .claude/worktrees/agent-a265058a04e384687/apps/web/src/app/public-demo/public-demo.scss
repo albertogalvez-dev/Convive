@@ -1,0 +1,249 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: radial-gradient(circle at 90% 0, #e4f6fc, transparent 28rem), #f6f9fd;
+  color: #172b57;
+}
+main {
+  width: min(100%, 76rem);
+  margin: auto;
+  padding: 2rem clamp(1.25rem, 5vw, 5rem) 4rem;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+header a:last-child {
+  color: #176f9c;
+  font-weight: 700;
+  text-decoration: none;
+}
+.intro {
+  max-width: 46rem;
+  padding: clamp(3.5rem, 8vw, 6rem) 0 2.5rem;
+}
+.intro > p:first-child,
+.guide > p,
+.step-count {
+  color: #176f9c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+h1 {
+  margin: 0.6rem 0 1rem;
+  font-size: clamp(2.6rem, 7vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+.intro > p:last-child,
+.hint,
+.notice {
+  color: #526987;
+  line-height: 1.65;
+}
+.demo-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.65fr) minmax(0, 1.4fr);
+  gap: 1rem;
+  align-items: start;
+}
+.guide,
+.simulator {
+  border: 1px solid #d5e0ed;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
+}
+.guide {
+  padding: 1.4rem;
+}
+.guide > p {
+  margin: 0 0 1rem;
+}
+ol {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+ol button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.7rem;
+  border: 0;
+  border-radius: 0.65rem;
+  padding: 0.65rem;
+  background: transparent;
+  color: #526987;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+ol span {
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  place-items: center;
+  border: 1px solid #cdd9e9;
+  border-radius: 50%;
+  font-size: 0.8rem;
+}
+li.current button {
+  background: #eaf7fc;
+  color: #173367;
+}
+li.current span,
+li.done span {
+  // #1ca2db gives white text only 2.9:1, below the 4.5:1 that 12.8px text
+  // needs. #176f9c is the accent already used for links and reaches 5.54:1.
+  border-color: #176f9c;
+  background: #176f9c;
+  color: #fff;
+}
+.guide-controls {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.5rem;
+}
+.guide-controls button,
+.step-actions button {
+  border: 1px solid #cdd9e9;
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.8rem;
+  background: #fff;
+  color: #173367;
+  font: inherit;
+  font-weight: 700;
+}
+.simulator {
+  padding: clamp(1.4rem, 4vw, 2.4rem);
+}
+.fictional-label {
+  display: inline-block;
+  border: 1px solid #94d8f1;
+  border-radius: 999px;
+  padding: 0.35rem 0.6rem;
+  color: #126b96;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+h2 {
+  margin: 0.75rem 0 1.3rem;
+  font-size: clamp(1.55rem, 4vw, 2.25rem);
+}
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+textarea {
+  width: 100%;
+  min-height: 8rem;
+  resize: none;
+  border: 1px solid #b9cae0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #f9fbfe;
+  color: #304c7d;
+  font: inherit;
+  line-height: 1.55;
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.choices button {
+  border: 1px solid #b9cae0;
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  background: #fff;
+  color: #173367;
+  font: inherit;
+  font-weight: 700;
+}
+.choices .selected {
+  border-color: #1ca2db;
+  background: #eaf7fc;
+}
+.review {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.8rem;
+  border: 1px solid #d5e0ed;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.review span {
+  color: #526987;
+}
+.finish,
+.next {
+  border: 0 !important;
+  background: #173367 !important;
+  color: #fff !important;
+}
+.finish {
+  margin-top: 1rem;
+  border-radius: 0.65rem;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  font-weight: 700;
+}
+.confirmation {
+  color: #08785e;
+  font-weight: 700;
+}
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+.step-actions button:disabled {
+  opacity: 0.45;
+}
+.notice {
+  max-width: 48rem;
+  margin: 2rem 0 0;
+  font-size: 0.9rem;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  li.current span {
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.13);
+  }
+}
+@media (max-width: 42rem) {
+  main {
+    padding-top: 1.25rem;
+  }
+  header img {
+    width: 8rem;
+    height: auto;
+  }
+  .demo-layout {
+    grid-template-columns: 1fr;
+  }
+  .guide {
+    order: 2;
+  }
+}

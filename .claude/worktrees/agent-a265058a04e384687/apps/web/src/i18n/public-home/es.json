@@ -1,0 +1,38 @@
+{
+  "homeLinkLabel": "Convive, inicio",
+  "nav": {
+    "label": "Navegación principal",
+    "blog": "Blog",
+    "demo": "Demostración",
+    "contact": "Contacto"
+  },
+  "professionalAccess": "Área profesional",
+  "hero": {
+    "eyebrow": "CONVIVENCIA ESCOLAR",
+    "title": "Un canal seguro para escuchar antes.",
+    "description": "Convive ayuda a los centros a recibir, ordenar y responder comunicaciones con cuidado.",
+    "requestDemo": "Solicitar demostración",
+    "accessCentre": "Acceder al centro"
+  },
+  "cards": {
+    "label": "Cómo ayuda Convive",
+    "communication": {
+      "title": "Comunicación clara",
+      "body": "Un espacio para que el centro reciba información sin pedir una cuenta."
+    },
+    "privacy": {
+      "title": "Privacidad con límites claros",
+      "body": "No se solicita una cuenta, pero ninguna comunicación promete anonimato absoluto."
+    },
+    "work": {
+      "title": "Trabajo del centro",
+      "body": "Los equipos autorizados responden desde un entorno protegido."
+    }
+  },
+  "demo": {
+    "eyebrow": "DEMOSTRACIÓN FICTICIA",
+    "title": "Conoce el flujo completo.",
+    "description": "La demostración usa únicamente información ficticia. No sustituye la atención ante una emergencia.",
+    "cta": "Ver la demostración"
+  }
+}

@@ -1,0 +1,9 @@
+<svg width="1100" height="360" viewBox="0 0 1100 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">Convive reversed logo</title>
+  <desc id="description">Light Convive wordmark for dark backgrounds, with two blue v letters connected by a supportive curve.</desc>
+  <text x="70" y="235" font-family="Trebuchet MS, Arial, sans-serif" font-size="210" font-weight="700" letter-spacing="-9">
+    <tspan fill="#FFFFFF">Con</tspan><tspan fill="#49BDEB">v</tspan><tspan fill="#FFFFFF">i</tspan><tspan fill="#49BDEB">v</tspan><tspan fill="#FFFFFF">e</tspan>
+  </text>
+  <path d="M480 255C516 294 567 314 623 314C679 314 730 294 766 255" stroke="#49BDEB" stroke-width="13" stroke-linecap="round"/>
+</svg>
+

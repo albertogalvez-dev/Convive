@@ -1,0 +1,170 @@
+<section class="settings" aria-labelledby="settings-title">
+  <p class="eyebrow">Tu espacio</p>
+  <h1 id="settings-title">Ajustes</h1>
+
+  <div class="settings-card">
+    <h2>Cuenta</h2>
+    <p class="card-hint">Estos datos son tuyos y puedes corregirlos cuando quieras.</p>
+
+    @if (errorMessage(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+    @if (savedMessage(); as message) {
+      <p class="saved" role="status">{{ message }}</p>
+    }
+
+    <form (ngSubmit)="save()">
+      <label>
+        <span>Nombre</span>
+        <input
+          type="text"
+          name="name"
+          required
+          maxlength="255"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+        />
+      </label>
+      <label>
+        <span>Correo</span>
+        <input
+          type="email"
+          name="email"
+          required
+          maxlength="255"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          aria-describedby="email-hint"
+        />
+      </label>
+      <p id="email-hint" class="field-hint">
+        El correo es tu identificador de acceso. Si lo cambias, se cerrar&aacute; tu sesi&oacute;n y
+        tendr&aacute;s que volver a entrar con el correo nuevo.
+      </p>
+
+      @if (confirmingEmail()) {
+        <div class="confirm" role="alertdialog" aria-labelledby="confirm-title">
+          <h3 id="confirm-title">Vas a cambiar tu correo de acceso</h3>
+          <p>
+            A partir de ahora entrar&aacute;s con <strong>{{ email().trim() }}</strong
+            >. Se cerrar&aacute; tu sesi&oacute;n inmediatamente.
+          </p>
+          <p>
+            Si te equivocas al escribirlo, no podr&aacute;s volver a entrar por tu cuenta: el
+            env&iacute;o de correos est&aacute; desactivado, as&iacute; que tendr&aacute;s que
+            pedirle a la direcci&oacute;n de tu centro que te restablezca el acceso.
+          </p>
+          <div class="confirm-actions">
+            <button type="button" class="confirm-cancel" (click)="cancelEmailChange()">
+              Volver y revisarlo
+            </button>
+            <button type="button" [disabled]="saving()" (click)="confirmEmailChange()">
+              {{ saving() ? 'Guardando…' : 'Sí, cambiar mi correo' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="settings-card">
+    <h2>Centro y permisos</h2>
+    <p class="card-hint">
+      Tu centro, tu rol y el acceso a cada caso los gestiona la direcci&oacute;n del centro. No
+      puedes cambiarlos desde aqu&iacute;.
+    </p>
+    @if (memberships().length === 0) {
+      <p class="empty">No tienes ning&uacute;n centro asignado.</p>
+    } @else {
+      <ul class="memberships">
+        @for (membership of memberships(); track membership.organisation.id) {
+          <li>
+            <strong>{{ membership.organisation.name }}</strong>
+            <span>{{ roleLabel(membership.role) }}</span>
+            <span class="managed">Gestionado por direcci&oacute;n</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="settings-card">
+    <h2>Ausencias planificadas</h2>
+    <p class="card-hint">
+      Avisar de una ausencia no traspasa tus casos ni te quita el acceso: solo hace visible que
+      har&aacute; falta decidir qui&eacute;n se ocupa mientras no est&aacute;s.
+    </p>
+
+    @if (absenceError(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+
+    <form (ngSubmit)="recordAbsence()">
+      <label>
+        <span>Desde</span>
+        <input
+          type="date"
+          name="startsOn"
+          required
+          [ngModel]="absenceForm().startsOn"
+          (ngModelChange)="absenceForm.set({ ...absenceForm(), startsOn: $event })"
+        />
+      </label>
+      <label>
+        <span>Hasta</span>
+        <input
+          type="date"
+          name="endsOn"
+          required
+          [ngModel]="absenceForm().endsOn"
+          (ngModelChange)="absenceForm.set({ ...absenceForm(), endsOn: $event })"
+        />
+      </label>
+      <label>
+        <span>Nota (opcional)</span>
+        <input
+          type="text"
+          name="note"
+          maxlength="200"
+          [ngModel]="absenceForm().note"
+          (ngModelChange)="absenceForm.set({ ...absenceForm(), note: $event })"
+          aria-describedby="absence-note-hint"
+        />
+      </label>
+      <p id="absence-note-hint" class="field-hint">
+        Es una nota operativa para tu equipo. No escribas motivos de salud ni datos personales.
+      </p>
+      <button type="submit">Registrar ausencia</button>
+    </form>
+
+    @if (absences().length > 0) {
+      <ul class="absences">
+        @for (absence of absences(); track absence.id) {
+          <li>
+            <strong>{{ absence.startsOn }} &ndash; {{ absence.endsOn }}</strong>
+            @if (absence.note) {
+              <span>{{ absence.note }}</span>
+            }
+            <button type="button" (click)="cancelAbsence(absence)">Anular</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="settings-card">
+    <h2>Sesi&oacute;n</h2>
+    <div class="session-row">
+      <div>
+        <strong>Sesi&oacute;n</strong><span>Cierra el acceso profesional en este dispositivo.</span>
+      </div>
+      <button type="button" [disabled]="loggingOut()" (click)="logout()">
+        {{ loggingOut() ? 'Cerrando…' : 'Cerrar sesión' }}
+      </button>
+    </div>
+  </div>
+</section>
