@@ -2,6 +2,45 @@
 
 Convive is an open-source web application for secure student reporting and internal school case management.
 
+A student can report something happening to them, or to someone else, without
+creating an account. School staff review what arrives, decide whether it
+becomes a case, and work that case against **their own region's protocol** —
+the one that actually applies to them, cited with its source, its authority and
+its version.
+
+## The three ways in
+
+| | Who it serves | Where |
+|---|---|---|
+| **Public website** | Anyone reading about Convive | `conviveaula.com` |
+| **Reporting entry** | A student, with no account, reached per school | `app.conviveaula.com/r/<school>` |
+| **Professional area** | School staff, signed in | `app.conviveaula.com/profesionales` |
+
+Administration is a **role inside the professional area**, not a fourth system.
+[docs/access-map.md](docs/access-map.md) maps all of it, including what
+deliberately does not exist and why there are no demo credentials in this
+repository.
+
+## What makes it different from a form
+
+**It cites protocols instead of inventing them.** Nineteen jurisdictions are
+modelled — the seventeen autonomous communities plus Ceuta and Melilla — each
+against its own published protocol, read in full rather than summarised from
+secondary reporting. Each task template names the document it came from, its
+authority (`binding`, `recommended` or `internal`) and its version.
+
+Convive **states what a protocol says and calculates nothing**. Where a source
+sets a deadline, the deadline is quoted with its own units — Madrid's *días
+lectivos* and *días naturales* stay distinct because the source distinguishes
+them. Where a source sets none, as Galicia and Navarra do, none is invented,
+and a test forbids one appearing later.
+
+**A report is not a case.** Nothing is promoted automatically. A person
+decides, and the decision is recorded.
+
+**It never promises absolute anonymity**, because that would be a false
+reassurance, and the public copy says so in those terms.
+
 ## Overview
 
 Convive addresses two connected problems:
