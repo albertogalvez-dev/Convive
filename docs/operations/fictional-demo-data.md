@@ -16,7 +16,11 @@ contains no real school, student, family, reporter or professional data.
 - the Symfony environment is `prod` (the automated suite uses `test` only);
 - `APP_DEMO_MODE=1` is explicitly present in the runtime environment;
 - `DEMO_PROFESSIONAL_PASSWORD` is supplied through the API container's secret
-  environment and contains at least 20 characters;
+  environment and contains at least 20 characters. It is declared in
+  `infrastructure/production/secrets/api.env.example`, so copying that template
+  carries it; `APP_DEMO_MODE` lives in `compose.production.yaml` beside the
+  other non-secret configuration. `check-production-environment.sh` fails if
+  either stops being provided;
 - every reserved UUID, email, public reporting identifier and report reference
   is either unused or already belongs to the expected demo record.
 

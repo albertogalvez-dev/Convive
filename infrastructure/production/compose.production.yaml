@@ -54,6 +54,15 @@ services:
       CLAMAV_DSN: tcp://clamav:3310
       REPORTER_EMAIL_PUBLIC_URL: https://app.conviveaula.com/verificar-correo
       REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
+      # Absolute base for URLs generated outside a request, such as from the
+      # console. Without it the router falls back to the development value in
+      # .env (http://localhost), which is wrong here and fails silently:
+      # nothing errors, the links are simply unreachable.
+      DEFAULT_URI: https://app.conviveaula.com
+      # Required by app:demo:seed, which refuses to run without it. Not a
+      # secret, so it lives here rather than in api.env; the password it pairs
+      # with is a secret and lives there.
+      APP_DEMO_MODE: "1"
     env_file:
       - ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
     secrets: [api_env]
