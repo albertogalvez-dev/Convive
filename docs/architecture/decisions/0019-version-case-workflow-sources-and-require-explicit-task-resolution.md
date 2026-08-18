@@ -4,6 +4,7 @@
 - **Date:** 11 August 2026
 - **Related issue:** [#45](https://github.com/albertogalvez-dev/Convive/issues/45)
 - **Depends on:** [ADR-0018](0018-require-case-assignments-for-case-content.md)
+- **Diagram:** [Territorial protocol model](../diagrams/territorial-protocol-model.md)
 
 ## Context
 

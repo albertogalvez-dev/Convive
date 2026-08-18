@@ -4,6 +4,7 @@
 - **Date:** 11 August 2026
 - **Related issue:** [#43](https://github.com/albertogalvez-dev/Convive/issues/43)
 - **Depends on:** [ADR-0002](0002-use-a-modular-monolith-for-the-backend.md), [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
+- **Diagram:** [Case lifecycle and the report/case boundary](../diagrams/case-lifecycle.md)
 
 ## Context
 
