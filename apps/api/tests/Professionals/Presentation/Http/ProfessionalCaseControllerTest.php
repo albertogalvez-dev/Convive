@@ -1026,6 +1026,61 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-CT', $andalusianTerritories);
     }
 
+    public function testEuskadiScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $euskadi = $this->createOrganisation('48A', 'Euskadi Workspace School');
+        $euskadi->assignTerritorialScope('ES-PV');
+        $this->entityManager->persist($euskadi);
+        $this->entityManager->flush();
+        $euskadiLead = $this->createProfessional('euskadi-lead', $euskadi, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $euskadiCase = new ManagedCase(Uuid::v7(), $euskadi, $euskadiLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($euskadiCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $euskadiCase,
+            $euskadiLead,
+            CaseAssignmentRole::Lead,
+            $euskadiLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($euskadiLead);
+        $url = '/api/v1/professional/cases/'.$euskadiCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+        $templates = $this->responsePayload()['items'];
+
+        self::assertNotEmpty($templates);
+        self::assertSame(
+            array_fill(0, count($templates), 'ES-PV'),
+            array_column(array_column($templates, 'source'), 'territory'),
+        );
+
+        // The Basque protocol is the only one that makes protection follow
+        // the child: if the affected student changes school before closure,
+        // Informe B goes to the receiving school. Losing that template would
+        // let a transfer quietly end the protection, so it is asserted
+        // present rather than merely counted.
+        $titles = array_column($templates, 'title');
+        self::assertNotEmpty(array_filter(
+            $titles,
+            static fn (string $title): bool => str_contains($title, 'nuevo centro'),
+        ));
+
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-PV', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
