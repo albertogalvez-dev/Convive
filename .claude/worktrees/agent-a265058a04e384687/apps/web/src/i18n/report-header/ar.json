@@ -1,8 +1,0 @@
-{
-  "helpButton": "كيف يعمل هذا",
-  "stepIndicator": "الخطوة {{current}} من {{total}}",
-  "closing": "يجري الإغلاق…",
-  "closeAccess": "إغلاق الوصول",
-  "progressLabel": "تقدّم البلاغ",
-  "goToStep": "الانتقال إلى الخطوة {{step}}"
-}
