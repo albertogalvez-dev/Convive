@@ -1081,6 +1081,62 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         self::assertNotContains('ES-PV', $andalusianTerritories);
     }
 
+    public function testGaliciaScopeNeverLeaksAnotherTerritorysTemplates(): void
+    {
+        $galicia = $this->createOrganisation('15A', 'Galicia Workspace School');
+        $galicia->assignTerritorialScope('ES-GA');
+        $this->entityManager->persist($galicia);
+        $this->entityManager->flush();
+        $galiciaLead = $this->createProfessional('galicia-lead', $galicia, ProfessionalRole::Triage);
+        $now = new DateTimeImmutable('now');
+        $galiciaCase = new ManagedCase(Uuid::v7(), $galicia, $galiciaLead, $now, CaseModality::Mixed);
+        $this->entityManager->persist($galiciaCase);
+        $this->entityManager->persist(new CaseAssignment(
+            Uuid::v7(),
+            $galiciaCase,
+            $galiciaLead,
+            CaseAssignmentRole::Lead,
+            $galiciaLead,
+            $now,
+        ));
+        $this->entityManager->flush();
+
+        $this->client->loginUser($galiciaLead);
+        $url = '/api/v1/professional/cases/'.$galiciaCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+        $templates = $this->responsePayload()['items'];
+
+        self::assertNotEmpty($templates);
+        self::assertSame(
+            array_fill(0, count($templates), 'ES-GA'),
+            array_column(array_column($templates, 'source'), 'territory'),
+        );
+
+        // Galicia is the one territory whose protocol sets no deadlines of its
+        // own: it defers them to the corrective procedure. Convive must not
+        // quietly grow one here, so no Galician template may state a day or
+        // hour count.
+        foreach (array_column($templates, 'title') as $title) {
+            self::assertDoesNotMatchRegularExpression(
+                '/\d+\s*(d[ií]as?|horas?)/iu',
+                $title,
+                'Galicia states no deadlines of its own; a template must not invent one.',
+            );
+        }
+
+        [$andalusianCase, $andalusianLead] = $this->createCaseWorkspace();
+        $this->client->loginUser($andalusianLead);
+        $andalusianUrl = '/api/v1/professional/cases/'.$andalusianCase->id()->toRfc4122().'/task-planning-catalogue';
+        $this->client->request('GET', $andalusianUrl);
+        self::assertResponseIsSuccessful();
+        $andalusianTerritories = array_column(
+            array_column($this->responsePayload()['items'], 'source'),
+            'territory',
+        );
+        self::assertNotContains('ES-GA', $andalusianTerritories);
+    }
+
     public function testLeadCanAppendACommunicationRecordAndTraceableCorrection(): void
     {
         [$managedCase, $lead] = $this->createCaseWorkspace();
