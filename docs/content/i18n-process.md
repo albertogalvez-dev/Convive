@@ -76,3 +76,55 @@ Spanish source string changes in a scope that has a published translation:
 
 This makes "the Spanish copy changed" and "a locale went dark" the same
 commit, rather than two events that can drift apart in time.
+
+## Keeping a published locale in sync (#325)
+
+Completeness is checked at a moment; staying correct is a second property.
+
+`checkLocaleCompleteness` compares **key sets**. It cannot see a Spanish
+string being reworded underneath a translation that stays put: the key still
+exists everywhere, so every check passes while published locales state the
+previous version of the text. For an ordinary label that is untidy. For the
+notice saying Convive is not an emergency channel and reaches no real school,
+it means a Spanish reader and an Arabic reader are told different things, with
+nothing going red.
+
+`translation-sync.spec.ts` closes that. Each published locale carries a record
+in `src/i18n/translation-sync/<locale>.json` of the Spanish text it was last
+confirmed against, as a digest per key. If the source is reworded and the
+locale is not re-confirmed, the suite fails and names the key.
+
+### When you reword a Spanish string
+
+1. Update `es.json`.
+2. Update the same key in every locale that translates that scope.
+3. Re-confirm that locale:
+
+   ```
+   npm run i18n:confirm -- gl
+   npm run i18n:confirm -- gl --dry-run   # list first, write nothing
+   ```
+
+The command takes **one locale** and prints every key it is about to
+re-confirm. That is deliberate: confirming asserts that someone read the
+reworded string *in that language*. A command that blessed every locale at
+once would hand back the property the check exists to defend.
+
+### Failing the build, not the publication
+
+Drift fails the **test suite** rather than dropping the locale from
+`READY_LOCALES` at runtime. Both were considered. Automatic unpublication
+sounds safer and is worse: it would silently remove a language from readers who
+depend on it, as a side effect of an unrelated copy edit, and the person who
+caused it would never see it happen. Failing the build puts the problem in
+front of the person holding the reworded string, at the moment of least cost,
+with the affected keys listed.
+
+### Scope coverage is per locale, not per product
+
+A locale need not translate every scope. [ADR-0027](../architecture/decisions/0027-derive-protocol-translation-keys-and-fall-back-to-spanish.md)
+gives protocol and professional content a *fallback* guarantee rather than the
+public path's all-or-nothing gate, so `ca-valencia` and `ar` translate no
+`professional-case` and fall back to Spanish there by design. Confirmation
+covers what a locale actually translates; demanding full coverage first would
+refuse to protect the scopes it does.
