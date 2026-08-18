@@ -2,9 +2,26 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
 
+import { TranslocoService } from '@jsverse/transloco';
+
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ProfessionalCaseDetailPage } from './professional-case-detail';
+
+/**
+ * Only the one key this spec needs, in a locale that is not the default, so
+ * a locale switch has something to switch to. The Catalan wording here is a
+ * fixture, not shipped content -- the real translations arrive with the
+ * locale files.
+ */
+const templateTitleKey = 'caseWorkflow.template.es_an.immediate_actions';
+const catalanTemplateTitles = {
+  caseWorkflow: {
+    template: { es_an: { immediate_actions: 'Revisa el pla de protecció immediata fictici.' } },
+  },
+};
 
 describe('ProfessionalCaseDetailPage', () => {
   const endpoint = '/api/v1/professional/cases/case-1';
@@ -16,7 +33,7 @@ describe('ProfessionalCaseDetailPage', () => {
   beforeEach(async () => {
     navigate = vi.fn().mockResolvedValue(true);
     await TestBed.configureTestingModule({
-      imports: [ProfessionalCaseDetailPage],
+      imports: [ProfessionalCaseDetailPage, i18nTestingModule({}, { ca: catalanTemplateTitles })],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -92,6 +109,7 @@ describe('ProfessionalCaseDetailPage', () => {
         {
           id: 'template-1',
           title: 'Review fictional immediate protection plan',
+          titleKey: 'caseWorkflow.template.es_an.immediate_actions',
           stage: 'immediate_actions',
           kind: 'internal_action',
           source: {
@@ -268,4 +286,82 @@ describe('ProfessionalCaseDetailPage', () => {
       ],
     };
   }
+
+  /** Drives the page to the point where the template catalogue is on screen. */
+  function openTaskPlanningCatalogue(): void {
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      startTask(item: ReturnType<typeof detail>): void;
+    };
+    component.startTask(detail());
+    http.expectOne(`${endpoint}/task-planning-catalogue`).flush({
+      items: [
+        {
+          id: 'template-1',
+          title: 'Revisa el plan de protección inmediata ficticio.',
+          titleKey: templateTitleKey,
+          stage: 'immediate_actions',
+          kind: 'internal_action',
+          source: {
+            title: 'Andalusian fictional protocol',
+            version: '2011.1',
+            authority: 'binding',
+            territory: 'ES-AN',
+            uri: 'https://example.invalid/source',
+          },
+        },
+      ],
+    });
+    fixture.detectChanges();
+  }
+
+  function templateOptionText(): string {
+    const option = page.querySelector<HTMLOptionElement>('select[name="templateId"] option');
+
+    return (option?.textContent ?? '').trim();
+  }
+
+  async function switchToCatalan(): Promise<void> {
+    const transloco = TestBed.inject(TranslocoService);
+    await firstValueFrom(transloco.load('ca'));
+    transloco.setActiveLang('ca');
+    fixture.detectChanges();
+  }
+
+  it('shows a protocol step in the selected locale once a translation exists for it', async () => {
+    openTaskPlanningCatalogue();
+    expect(templateOptionText()).toContain('Revisa el plan de protección inmediata ficticio.');
+
+    await switchToCatalan();
+
+    expect(templateOptionText()).toContain('Revisa el pla de protecció immediata fictici.');
+  });
+
+  it('falls back to the source wording rather than showing a raw translation key', async () => {
+    openTaskPlanningCatalogue();
+    await switchToCatalan();
+
+    // The Catalan fixture deliberately covers only one key. A professional
+    // reading a bullying case must never be shown `caseWorkflow.template.…`
+    // because a locale is half-finished, so an untranslated step has to
+    // degrade to correct Spanish instead of to noise.
+    const component = fixture.componentInstance as unknown as {
+      resolveTemplateTitle: (template: { title: string; titleKey: string }) => string;
+    };
+    const untranslated = {
+      title: 'Confirma la notificación inmediata ficticia a Inspección educativa.',
+      titleKey: 'caseWorkflow.template.es_cm.inspection_communication',
+    };
+
+    expect(component.resolveTemplateTitle(untranslated)).toBe(untranslated.title);
+  });
+
+  it('never renders a translation key in the catalogue', () => {
+    openTaskPlanningCatalogue();
+
+    expect(page.textContent ?? '').not.toContain('caseWorkflow.');
+  });
 });

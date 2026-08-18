@@ -119,7 +119,14 @@ export interface ProfessionalCaseDetail extends ProfessionalCaseSummary {
 
 export interface ProfessionalCaseTaskPlanningTemplate {
   id: string;
+  /**
+   * The Spanish source wording, straight from the protocol profile. It is
+   * what a reader sees when no translation exists for their locale, so it is
+   * never a placeholder and never a key.
+   */
   title: string;
+  /** Stable key a locale file may translate; see {@link resolveTemplateTitle}. */
+  titleKey: string;
   stage: string;
   kind: 'internal_action' | 'external_communication';
   source: {

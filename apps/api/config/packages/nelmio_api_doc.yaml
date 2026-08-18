@@ -551,10 +551,11 @@ nelmio_api_doc:
                             items:
                                 type: object
                                 additionalProperties: false
-                                required: [id, title, stage, kind, source]
+                                required: [id, title, titleKey, stage, kind, source]
                                 properties:
                                     id: { type: string, format: uuid }
                                     title: { type: string, maxLength: 160 }
+                                    titleKey: { type: string, maxLength: 160 }
                                     stage:
                                         type: string
                                         enum: [identification, immediate_actions, urgent_protection, family_communication, professional_coordination, information_collection, educational_measures, inspection_communication, assessment, action_plan, family_measures, inspection_follow_up]
