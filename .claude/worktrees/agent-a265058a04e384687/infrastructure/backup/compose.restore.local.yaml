@@ -1,8 +1,0 @@
-services:
-  api:
-    pull_policy: never
-    build:
-      context: ../../apps/api
-      target: development
-    volumes:
-      - ../../apps/api:/app:ro

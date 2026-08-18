@@ -20,3 +20,15 @@ infrastructure/backup/evidence/
 # Generated reporting posters (npm run poster). Reproducible from an
 # identifier, so the output is not committed.
 posters/
+
+# Angular build cache. Regenerated on every build; never a repository artefact.
+.angular/
+
+# Claude Code local state and agent worktrees. A worktree contains a full copy
+# of the repository including node_modules, so committing this directory
+# duplicates the project inside itself.
+.claude/
+
+# Local scratch notes (meeting briefings, drafts). Useful, not repository
+# content.
+apuntes-*.html
