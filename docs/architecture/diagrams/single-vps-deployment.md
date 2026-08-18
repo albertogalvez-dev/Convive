@@ -4,6 +4,14 @@ This deployment view implements
 [ADR-0012](../decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md).
 It describes the fictional-data demonstration; it is not a real-data approval.
 
+Verified against `infrastructure/production/compose.production.yaml` on
+18 August 2026. Every service in that file appears here: `cloudflared`,
+`gateway`, `api`, `database`, `redis` and `clamav`, plus the attachment volume
+its init container prepares.
+
+ClamAV was previously missing from this diagram. A reader reasoning about what
+happens to an uploaded file would have concluded nothing scans it.
+
 ```mermaid
 flowchart LR
     browser["Reporter or professional browser"]
@@ -16,11 +24,15 @@ flowchart LR
         api["Symfony API<br/>PHP-FPM"]
         db[("Convive PostgreSQL")]
         redis[("Convive Redis")]
+        clamav["ClamAV<br/>attachment scanning"]
+        attachments[("Attachment volume<br/>outside the web root")]
 
         tunnel -->|"edge network"| gateway
         gateway -->|"application network<br/>/api/v1 only"| api
         api -->|"data network"| db
         api -->|"cache network"| redis
+        api -->|"scan before store"| clamav
+        api --> attachments
     end
 
     browser -->|"HTTPS"| cf
@@ -37,7 +49,8 @@ flowchart LR
     class browser,cf public
     class tunnel,gateway edge
     class api app
-    class db,redis data
+    class db,redis,attachments data
+    class clamav app
     class projectx unrelated
 ```
 

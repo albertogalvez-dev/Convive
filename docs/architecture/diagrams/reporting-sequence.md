@@ -1,8 +1,20 @@
-# Implemented reporting sequence
+# Reporting sequence
 
-This sequence covers the current anonymous report and follow-up journey plus
-the professional review/response path. It deliberately omits future case
-management, email, attachments and analytics.
+The anonymous report and follow-up journey, and the professional review path
+that ends at the report/case boundary.
+
+Verified against the codebase on 18 August 2026.
+
+Private attachments and optional verified reporter email notices are
+implemented and deliberately omitted here, to keep this diagram on the one
+path it exists to show. Case work *after* a case opens is out of scope for the
+same reason and belongs in a case-lifecycle diagram.
+
+The step that matters most is near the end. `link_to_case` is an **explicit
+outcome a professional chooses**, with a reason, recorded as an attributed
+decision. There is no path in this sequence where a report becomes a case
+without a person deciding it — which is the product rule the whole shape of
+this diagram exists to make visible.
 
 ```mermaid
 sequenceDiagram

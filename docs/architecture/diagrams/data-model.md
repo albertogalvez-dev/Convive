@@ -4,6 +4,25 @@ Entity–relationship view of Convive's domain schema. GitHub renders this
 diagram from its Mermaid source. It is kept in sync with the Doctrine
 mappings, the committed migrations and [`data-model.dbml`](../data-model.dbml).
 
+Verified on 18 August 2026. This is the **Doctrine ORM-mapped domain schema**,
+and `infrastructure/maintenance/check-architecture-documents.sh` enforces that
+this file, `data-model.dbml` and the Doctrine mappings declare exactly the same
+tables. That check is why this diagram cannot silently drift.
+
+Three tables exist in PostgreSQL and are deliberately absent here, because none
+is an ORM-mapped domain entity:
+
+- `professional_sessions` — Symfony's PDO session storage. Infrastructure, not
+  domain; drawing it would invite a reader to treat a session row as a modelled
+  concept.
+- `reporter_email_contacts` and `reporter_notification_outbox` — reached through
+  DBAL with explicit SQL rather than the ORM, including `FOR UPDATE` locking and
+  an outbox with a deduplication key. They are consistently absent from
+  `data-model.dbml` too.
+
+Recorded because comparing this diagram against `information_schema` makes all
+three look like omissions. They are not.
+
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E2E8F0', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#64748B', 'lineColor': '#64748B'}}}%%
 erDiagram
