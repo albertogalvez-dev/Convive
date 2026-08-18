@@ -462,6 +462,7 @@ The public demonstration and all development environments must use fictional dat
 
 ## Documentation
 
+- [How to reach each part of Convive](docs/access-map.md)
 - [Documentation index](docs/README.md)
 - [Problem statement](docs/discovery/problem-statement.md)
 - [Product scope](docs/discovery/product-scope.md)

@@ -4,6 +4,9 @@ This index points to maintained project documentation. The repository is a
 fictional-data demonstration; provider secrets, populated configuration,
 runtime evidence and meeting-specific material stay outside Git.
 
+- [How to reach each part of Convive](access-map.md): the three ways in,
+  what each is for, and what deliberately does not exist. Start here if you
+  are looking at Convive rather than building it.
 - [Architecture index](architecture/README.md): components, interfaces,
   boundaries and authoritative sources.
 - [Diagram roadmap](architecture/diagrams/README.md): audience, source and
