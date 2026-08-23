@@ -80,6 +80,13 @@ user, team, integration or repository role has a bypass. Because this bypass
 is limited to pull requests, it does not permit a direct update, branch
 deletion or non-fast-forward push to `main`.
 
+The gate was exercised on 2026-08-23 with disposable pull request
+[#368](https://github.com/albertogalvez-dev/Convive/pull/368). Its required
+`PR traceability` check was deliberately red; GitHub reported the pull request
+as `BLOCKED` with review required. The bypass was not used, the pull request
+was closed without merge, its remaining workflows were cancelled and its
+branch was deleted.
+
 ## Effective control register
 
 | Control | Observed state on 2026-08-13 | Rationale and boundary | Owner and review trigger |
