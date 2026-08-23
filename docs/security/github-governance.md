@@ -1,7 +1,7 @@
 # GitHub security governance
 
 This document records the effective GitHub security and supply-chain controls
-reviewed on **2026-08-13**. GitHub remains authoritative for live settings;
+reviewed on **2026-08-23**. GitHub remains authoritative for live settings;
 the repository records the result, ownership and review method so that a
 future maintainer can detect drift without treating this file as a settings
 API.
@@ -56,17 +56,29 @@ strictly up-to-date successful result from all of these checks before merge:
 | `Dependency review` | newly introduced dependency risk on pull requests |
 | `Encrypted recovery` | configured encrypted backup and isolated recovery exercise |
 | `End-to-end` | isolated fictional browser journey and its cleanup |
+| `PR traceability` | closing-issue reference, acceptance evidence and explicit out-of-scope boundary |
+| `CodeQL (JavaScript/TypeScript)` | source-only JavaScript/TypeScript CodeQL analysis |
+| `CodeQL` | GitHub Advanced Security's aggregate CodeQL result for the pull request |
 
 `Dependency review` intentionally has no useful comparison on a push to
 `main`, so it is skipped after merge; it is nevertheless required on the pull
-request that reaches `main`. `PR traceability` validates the closing issue
-reference and evidence headings on pull requests. It is an additional
-observed workflow, not a substitute for the six protected-branch checks.
+request that reaches `main`. Both CodeQL contexts are required: the workflow
+job proves that the configured JavaScript/TypeScript analysis ran, while the
+GitHub Advanced Security context reports its aggregate result.
 
-The ruleset currently permits merge, squash and rebase methods and requires no
-approving review count. That matches the documented solo-maintainer workflow;
-adding reviewer, CODEOWNER or merge-method restrictions is a separate owner
-decision, not an undocumented assumption.
+The ruleset requires one approving review and resolution of every review
+conversation. New commits do not dismiss an existing approval or require a
+different person to approve the last push; reviewers must still assess the
+current diff before merge. Merge, squash and rebase remain allowed.
+
+The sole repository owner has a `pull_request` ruleset bypass so that the
+solo-maintainer repository is recoverable when no independent reviewer is
+available. This is an emergency governance exception, not permission to evade
+delivery evidence: its use must be recorded in the pull request, and it must
+never be used while any required check is pending, missing or red. No other
+user, team, integration or repository role has a bypass. Because this bypass
+is limited to pull requests, it does not permit a direct update, branch
+deletion or non-fast-forward push to `main`.
 
 ## Effective control register
 
