@@ -282,6 +282,38 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await expect(leadPage.getByRole('heading', { name: 'Auditoría' })).toBeVisible();
     await expect(leadPage.getByRole('link', { name: 'Exportar CSV' })).toBeVisible();
     await expect(leadPage.getByText('Todavía no hay acciones auditables.')).toBeVisible();
+    await expectNoAccessibilityViolations(leadPage);
+
+    // The task-planning catalogue is the detail page's expandable interactive
+    // state. It is an inline form, rather than a dialog, so exercise the
+    // surface the professional can actually open.
+    await leadPage.getByRole('button', { name: 'Nueva tarea' }).click();
+    await expect(leadPage.getByLabel('Plantilla revisada')).toBeVisible();
+    await expectNoAccessibilityViolations(leadPage);
+
+    // A rejected submission exposes the page's validation/error state in the
+    // same place a real API validation response does. Keep the assertion at
+    // the DOM level: browser-native validation bubbles are not inspectable by
+    // axe and would leave this state unprotected.
+    await leadPage.route('**/api/v1/professional/cases/*/tasks', async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.continue();
+        return;
+      }
+
+      await route.fulfill({
+        status: 422,
+        contentType: 'application/json',
+        body: JSON.stringify({ detail: 'Invalid fictional task.' }),
+      });
+    });
+    await leadPage.getByRole('button', { name: 'Crear tarea' }).click();
+    await expect(
+      leadPage.getByRole('alert', {
+        name: 'No hemos podido crear la tarea. Revisa los datos e inténtalo de nuevo.',
+      }),
+    ).toBeVisible();
+    await expectNoAccessibilityViolations(leadPage);
     const assignedCaseUrl = leadPage.url();
 
     const administratorPage = await administratorContext.newPage();
