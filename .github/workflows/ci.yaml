@@ -158,6 +158,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          bash infrastructure/production/check-api-environment.sh
           secret_dir="$(mktemp -d)"
           trap 'rm -rf "$secret_dir"' EXIT
           printf '%s\n' tunnel-token > "$secret_dir/cloudflare_tunnel_token"
@@ -165,7 +166,8 @@ jobs:
             'APP_SECRET=ci-only' \
             'DATABASE_URL=postgresql://convive:database-password@database:5432/convive?serverVersion=18.4&charset=utf8' \
             'SESSION_DATABASE_URL=pgsql:host=database;port=5432;dbname=convive;user=convive;password=database-password' \
-            'REDIS_DSN=redis://:ci-only@redis:6379' > "$secret_dir/api.env"
+            'REDIS_DSN=redis://:ci-only@redis:6379' \
+            'DEMO_PROFESSIONAL_PASSWORD=fictional-ci-password-over-20-characters' > "$secret_dir/api.env"
           printf '%s\n' database-password > "$secret_dir/database_password"
           printf '%s\n' 'requirepass ci-only' 'appendonly yes' > "$secret_dir/redis.conf"
           export CONVIVE_SECRET_DIR="$secret_dir"

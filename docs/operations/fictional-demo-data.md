@@ -14,15 +14,16 @@ contains no real school, student, family, reporter or professional data.
 `app:demo:seed` refuses to run unless all of these conditions hold:
 
 - the Symfony environment is `prod` (the automated suite uses `test` only);
-- `APP_DEMO_MODE=1` is explicitly present in the runtime environment;
+- `APP_DEMO_MODE=1` is explicitly declared as non-secret configuration in the
+  production Compose contract;
 - `DEMO_PROFESSIONAL_PASSWORD` is supplied through the API container's secret
   environment and contains at least 20 characters;
 - every reserved UUID, email, public reporting identifier and report reference
   is either unused or already belongs to the expected demo record.
 
-The password must come from the production secret mount. Never commit it, put
-it in a release manifest, pass it as a command argument or copy it into logs.
-The command never prints credentials.
+The password must come from the root-only production `api.env` secret mount.
+Never commit it, put it in Compose or a release manifest, pass it as a command
+argument or copy it into logs. The command never prints credentials.
 
 ## Public reporting boundary
 
