@@ -56,7 +56,9 @@ jobs:
           tools: composer:2.10.2
 
       - name: Validate Composer configuration
-        run: composer validate --strict
+        run: |
+          composer validate --strict
+          composer check-symfony-baseline
 
       - name: Install backend dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
