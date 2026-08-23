@@ -14,6 +14,9 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'case_tasks')]
+#[ORM\Index(name: 'idx_case_task_created_by', columns: ['created_by_professional_id'])]
+#[ORM\Index(name: 'idx_case_task_resolved_by', columns: ['resolved_by_professional_id'])]
+#[ORM\Index(name: 'idx_case_task_source_version', columns: ['source_version_id'])]
 #[ORM\Index(name: 'idx_case_task_case_status_due', columns: ['case_id', 'status', 'due_at'])]
 #[ORM\Index(name: 'idx_case_task_owner_status_due', columns: ['owner_professional_id', 'status', 'due_at'])]
 class CaseTask

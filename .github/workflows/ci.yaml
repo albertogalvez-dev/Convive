@@ -96,6 +96,9 @@ jobs:
       - name: Apply database migrations
         run: php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
+      - name: Verify foreign-key index coverage
+        run: php bin/check-foreign-key-indexes.php --exercise
+
       - name: Validate Doctrine schema
         run: php bin/console doctrine:schema:validate
 

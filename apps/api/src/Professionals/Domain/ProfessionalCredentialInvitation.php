@@ -11,6 +11,8 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'professional_credential_invitations')]
+#[ORM\Index(name: 'idx_professional_credential_invitation_issued_by', columns: ['issued_by_professional_id'])]
+#[ORM\Index(name: 'idx_professional_credential_invitation_professional', columns: ['professional_id'])]
 #[ORM\Index(name: 'idx_professional_credential_invitation_hash', columns: ['secret_hash'])]
 class ProfessionalCredentialInvitation
 {

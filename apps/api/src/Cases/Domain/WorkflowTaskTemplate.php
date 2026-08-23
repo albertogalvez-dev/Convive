@@ -11,6 +11,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'case_workflow_task_templates')]
+#[ORM\Index(name: 'idx_case_workflow_template_source', columns: ['source_version_id'])]
 #[ORM\UniqueConstraint(name: 'uniq_case_workflow_task_template_title_key', columns: ['title_key'])]
 class WorkflowTaskTemplate
 {

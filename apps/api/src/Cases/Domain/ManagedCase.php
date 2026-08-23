@@ -13,6 +13,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'managed_cases')]
+#[ORM\Index(name: 'idx_managed_case_created_by', columns: ['created_by_professional_id'])]
 #[ORM\Index(name: 'idx_managed_case_operational_updated', columns: ['operational_updated_at', 'id'])]
 class ManagedCase
 {

@@ -12,6 +12,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'case_involved_people')]
+#[ORM\Index(name: 'idx_case_involved_person_added_by', columns: ['added_by_professional_id'])]
 #[ORM\Index(name: 'idx_case_involved_people_case', columns: ['case_id'])]
 class CaseInvolvedPerson
 {
