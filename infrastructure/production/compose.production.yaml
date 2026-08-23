@@ -34,6 +34,10 @@ services:
     environment:
       APP_ENV: prod
       APP_DEBUG: "0"
+      # Non-secret production configuration belongs in the reviewed Compose
+      # contract rather than the root-only API secret file.
+      APP_DEMO_MODE: "1"
+      DEFAULT_URI: https://app.conviveaula.com
       TRUSTED_PROXIES: 172.30.16.0/28
       # The only approved public production mode while Convive is a
       # fictional-data demonstration. The API rejects all reporter mutations

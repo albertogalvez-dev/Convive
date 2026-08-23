@@ -78,6 +78,21 @@ the unprivileged PHP user before the API starts; the gateway never mounts it or
 serves it as a static path. This local store is a fictional-demo boundary, not
 a selected real-data storage provider.
 
+Production configuration is split by sensitivity. The reviewed Compose
+contract declares non-secret values, including `APP_DEMO_MODE=1`, the canonical
+`DEFAULT_URI`, proxy trust, public-reporting mode, attachment storage, disabled
+email delivery and the private ClamAV endpoint. The root-only `api.env` file
+contains only values that must remain secret: `APP_SECRET`, database/session
+DSNs, the authenticated Redis DSN and `DEMO_PROFESSIONAL_PASSWORD`. The demo
+password must be unique and contain at least 20 characters; never place it in
+Compose, a release manifest or command history.
+
+`check-api-environment.sh` derives the API's environment dependencies from the
+Symfony configuration and source attributes, then verifies that every
+production dependency is declared in exactly one of those reviewed runtime
+locations. CI runs this check so adding a new API environment dependency cannot
+leave it documented only in a runbook.
+
 Redis is a private production dependency for security-sensitive cache state.
 `api.env` must set `REDIS_DSN` with the same non-empty password as
 `redis.conf`; the DSN is a root-only runtime secret, never a repository value.
