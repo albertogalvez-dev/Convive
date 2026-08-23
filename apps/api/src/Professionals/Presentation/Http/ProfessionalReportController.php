@@ -182,6 +182,7 @@ final readonly class ProfessionalReportController
                 description: 'Available attachments in the authorised report scope.',
                 content: new OA\JsonContent(
                     type: 'object',
+                    additionalProperties: false,
                     required: ['items'],
                     properties: [
                         new OA\Property(
@@ -286,6 +287,7 @@ final readonly class ProfessionalReportController
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
+                additionalProperties: false,
                 required: ['reason'],
                 properties: [
                     new OA\Property(

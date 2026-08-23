@@ -8,6 +8,7 @@ use App\Reporting\Domain\SituationDescription;
 use App\Reporting\Domain\ReportedPeople;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[\OpenApi\Attributes\Schema(additionalProperties: false)]
 final readonly class SubmitAnonymousReportRequest
 {
     public function __construct(

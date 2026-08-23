@@ -6,6 +6,7 @@ namespace App\Reporting\Presentation\Http;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[\OpenApi\Attributes\Schema(additionalProperties: false)]
 final readonly class VerifyReporterEmailRequest
 {
     public function __construct(

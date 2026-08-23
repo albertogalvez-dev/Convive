@@ -57,6 +57,7 @@ final readonly class ReporterEmailNotificationController
                 response: Response::HTTP_OK,
                 description: 'The privacy-minimised notification state.',
                 content: new OA\JsonContent(
+                    additionalProperties: false,
                     required: ['enabled', 'status'],
                     properties: [
                         new OA\Property(property: 'enabled', type: 'boolean'),
@@ -88,6 +89,7 @@ final readonly class ReporterEmailNotificationController
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
+                additionalProperties: false,
                 required: ['email', 'consentAccepted'],
                 properties: [
                     new OA\Property(property: 'email', type: 'string', format: 'email', maxLength: ReporterEmailAddress::MAX_LENGTH),
@@ -100,6 +102,7 @@ final readonly class ReporterEmailNotificationController
                 response: Response::HTTP_ACCEPTED,
                 description: 'Verification was queued or the existing verified contact was retained.',
                 content: new OA\JsonContent(
+                    additionalProperties: false,
                     required: ['enabled', 'status'],
                     properties: [
                         new OA\Property(property: 'enabled', type: 'boolean'),
@@ -172,6 +175,7 @@ final readonly class ReporterEmailNotificationController
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
+                additionalProperties: false,
                 required: ['token'],
                 properties: [
                     new OA\Property(property: 'token', type: 'string', pattern: '^[0-9a-f]{64}$'),
@@ -183,11 +187,12 @@ final readonly class ReporterEmailNotificationController
                 response: Response::HTTP_OK,
                 description: 'The mailbox was verified.',
                 content: new OA\JsonContent(
+                    additionalProperties: false,
                     required: ['verified'],
                     properties: [new OA\Property(property: 'verified', type: 'boolean', enum: [true])],
                 ),
             ),
-            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The token is invalid, expired or already used.', content: new OA\JsonContent(required: ['verified'], properties: [new OA\Property(property: 'verified', type: 'boolean', enum: [false])])),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: 'The token is invalid, expired or already used.', content: new OA\JsonContent(additionalProperties: false, required: ['verified'], properties: [new OA\Property(property: 'verified', type: 'boolean', enum: [false])])),
             new OA\Response(response: Response::HTTP_TOO_MANY_REQUESTS, description: 'The verification limit was exceeded.', content: new OA\MediaType(mediaType: 'application/problem+json', schema: new OA\Schema(ref: '#/components/schemas/ProblemDetails'))),
         ],
     )]

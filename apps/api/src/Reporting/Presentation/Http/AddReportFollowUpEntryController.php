@@ -45,6 +45,7 @@ final readonly class AddReportFollowUpEntryController
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
+                additionalProperties: false,
                 required: ['content'],
                 properties: [
                     new OA\Property(

@@ -21,6 +21,7 @@ final readonly class ProfessionalSessionController
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
+                additionalProperties: false,
                 required: ['email', 'password'],
                 properties: [
                     new OA\Property(property: 'email', type: 'string', format: 'email'),
