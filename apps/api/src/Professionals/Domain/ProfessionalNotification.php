@@ -12,6 +12,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'professional_notifications')]
+#[ORM\Index(name: 'idx_professional_notification_case', columns: ['case_id'])]
 #[ORM\Index(name: 'idx_professional_notification_recipient_created', columns: ['recipient_professional_id', 'created_at', 'id'])]
 class ProfessionalNotification
 {

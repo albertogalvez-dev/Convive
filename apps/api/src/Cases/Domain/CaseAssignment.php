@@ -13,6 +13,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'case_assignments')]
+#[ORM\Index(name: 'idx_case_assignment_assigned_by', columns: ['assigned_by_professional_id'])]
 #[ORM\UniqueConstraint(name: 'uniq_case_assignment_professional', columns: ['case_id', 'professional_id'])]
 #[ORM\Index(name: 'idx_case_assignment_professional_active', columns: ['professional_id', 'revoked_at'])]
 class CaseAssignment

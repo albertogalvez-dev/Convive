@@ -11,6 +11,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'professional_account_audit_events')]
+#[ORM\Index(name: 'idx_professional_account_audit_actor', columns: ['actor_professional_id'])]
 #[ORM\Index(name: 'idx_professional_account_audit_target_occurred', columns: ['target_professional_id', 'occurred_at'])]
 class ProfessionalAccountAuditEvent
 {
