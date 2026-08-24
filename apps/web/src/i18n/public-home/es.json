@@ -10,7 +10,7 @@
   "hero": {
     "eyebrow": "CONVIVENCIA ESCOLAR",
     "title": "Un canal seguro para escuchar antes.",
-    "description": "Convive ayuda a los centros a recibir, ordenar y responder comunicaciones con cuidado.",
+    "description": "Convive ayuda al centro. Escucha y responde con cuidado.",
     "requestDemo": "Solicitar demostración",
     "accessCentre": "Acceder al centro"
   },
@@ -18,21 +18,21 @@
     "label": "Cómo ayuda Convive",
     "communication": {
       "title": "Comunicación clara",
-      "body": "Un espacio para que el centro reciba información sin pedir una cuenta."
+      "body": "Envía un aviso al centro. No hace falta una cuenta."
     },
     "privacy": {
       "title": "Privacidad con límites claros",
-      "body": "No se solicita una cuenta, pero ninguna comunicación promete anonimato absoluto."
+      "body": "No pedimos una cuenta. No prometemos anonimato total."
     },
     "work": {
       "title": "Trabajo del centro",
-      "body": "Los equipos autorizados responden desde un entorno protegido."
+      "body": "El equipo trabaja en un lugar seguro."
     }
   },
   "demo": {
     "eyebrow": "DEMOSTRACIÓN FICTICIA",
     "title": "Conoce el flujo completo.",
-    "description": "La demostración usa únicamente información ficticia. No sustituye la atención ante una emergencia.",
+    "description": "La demo usa datos falsos. No sirve en una emergencia.",
     "cta": "Ver la demostración"
   }
 }
