@@ -103,9 +103,84 @@ h1 {
 
 .access-panel {
   display: grid;
-  min-height: 25rem;
+  min-height: 31rem;
   padding: 2.75rem;
-  align-content: center;
+  align-content: start;
+}
+
+.demo-entry > p:not(.eyebrow) {
+  margin: 0.65rem 0 0;
+  color: #53647d;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.demo-entry h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+}
+
+.demo-roles {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.demo-role {
+  display: grid;
+  width: 100%;
+  min-height: 0;
+  padding: 0.9rem 1rem;
+  text-align: start;
+  color: #172b57;
+  background: #f0f8fc;
+  border: 1px solid #c7deeb;
+  border-radius: 0.7rem;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 0.75rem;
+}
+
+.demo-role:hover {
+  background: #e4f5fb;
+  border-color: #239dd1;
+}
+
+.demo-role span,
+.demo-role b {
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.demo-role small {
+  grid-column: 1;
+  color: #53647d;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.demo-role b {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: #176f9c;
+}
+
+.credentials-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.5rem 0;
+  color: #53647d;
+  font-size: 0.76rem;
+}
+
+.credentials-divider::before,
+.credentials-divider::after {
+  flex: 1;
+  height: 1px;
+  content: '';
+  background: #d8e2ed;
 }
 
 .field + .field {

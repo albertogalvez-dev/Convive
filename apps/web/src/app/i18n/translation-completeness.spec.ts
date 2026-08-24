@@ -12,6 +12,12 @@ import publicHomeCaValencia from '../../i18n/public-home/ca-valencia.json';
 import publicHomeAr from '../../i18n/public-home/ar.json';
 import publicHomeGl from '../../i18n/public-home/gl.json';
 import publicHomeEu from '../../i18n/public-home/eu.json';
+import publicDemoEs from '../../i18n/public-demo/es.json';
+import publicDemoCa from '../../i18n/public-demo/ca.json';
+import publicDemoCaValencia from '../../i18n/public-demo/ca-valencia.json';
+import publicDemoAr from '../../i18n/public-demo/ar.json';
+import publicDemoGl from '../../i18n/public-demo/gl.json';
+import publicDemoEu from '../../i18n/public-demo/eu.json';
 import publicInformationEs from '../../i18n/public-information/es.json';
 import publicInformationCa from '../../i18n/public-information/ca.json';
 import publicInformationCaValencia from '../../i18n/public-information/ca-valencia.json';
@@ -102,6 +108,15 @@ const scopes: ReadonlyArray<{
     ar: asTranslationTree(publicHomeAr),
     gl: asTranslationTree(publicHomeGl),
     eu: asTranslationTree(publicHomeEu),
+  },
+  {
+    name: 'public-demo',
+    es: asTranslationTree(publicDemoEs),
+    ca: asTranslationTree(publicDemoCa),
+    caValencia: asTranslationTree(publicDemoCaValencia),
+    ar: asTranslationTree(publicDemoAr),
+    gl: asTranslationTree(publicDemoGl),
+    eu: asTranslationTree(publicDemoEu),
   },
   {
     name: 'public-information',

@@ -544,46 +544,51 @@ test('keeps reviewed blog content accessible, responsive and attributable', asyn
   await expectNoAccessibilityViolations(page);
 });
 
-test('keeps the reporter demonstration fictional, accessible and isolated', async ({ page }) => {
+test('offers the fictional demonstration through real, isolated example paths', async ({
+  page,
+}) => {
   await page.route('**/api/**', (route) => route.abort());
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/demostracion/');
 
-  await expect(page.getByText('EJEMPLO FICTICIO · NO OPERATIVO')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
-  await expect(page.getByLabel('Ejemplo de situación ficticia')).toHaveAttribute('readonly', '');
-  await page.getByRole('button', { name: 'Pausar guía' }).click();
-  await expect(page.getByRole('button', { name: 'Reiniciar guía' })).toBeVisible();
-  await page.getByRole('button', { name: 'Saltar guía' }).click();
-  await expect(page.getByRole('heading', { name: 'Revisa antes de enviar' })).toBeVisible();
-  await page.getByRole('button', { name: 'Finalizar ejemplo' }).click();
-  await expect(page.getByRole('status')).toContainText('No se ha enviado ni guardado');
+  await expect(page.getByText('CENTRO DEMO CONVIVE')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Descubre Convive sin enviar nada' }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle('Demostración | Convive');
+  await expect(page.getByRole('link', { name: 'Abrir el ejemplo' })).toHaveAttribute(
+    'href',
+    `/r/${PUBLIC_REPORTING_IDENTIFIER}`,
+  );
+  await expect(page.getByRole('link', { name: 'Abrir cartel a tamaño completo' })).toHaveAttribute(
+    'target',
+    '_blank',
+  );
+  await expect(page.getByRole('link', { name: 'Entrar al área profesional' })).toHaveAttribute(
+    'href',
+    '/profesionales/acceso',
+  );
+  await expect(page.locator('textarea')).toHaveCount(0);
+  await expect(page.locator('form')).toHaveCount(0);
   await expectNoAccessibilityViolations(page);
-  expect(page.url()).not.toContain('/r/');
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     ),
   ).toBe(true);
-});
 
-test('professional-demo-isolated keeps the demonstration fictional and outside professional access', async ({
-  page,
-}) => {
-  await page.route('**/api/**', (route) => route.abort());
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto('/demostracion/profesional/');
+  await page.getByRole('link', { name: 'Entrar al área profesional' }).click();
+  await expect(page).toHaveURL(/\/profesionales\/acceso$/);
+  await expect(page.getByRole('heading', { name: 'Elige una perspectiva' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Profesional de bienestar/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Administración/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Responsable de caso/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Colaborador de caso/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Observador de caso/ })).toBeVisible();
 
-  await expect(page.getByText('DATOS FICTICIOS · ENTORNO DE MUESTRA')).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Del aviso al seguimiento, con límites claros.' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'Pausar guía' }).click();
-  await page.getByRole('button', { name: 'Saltar guía' }).click();
-  await expect(page.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
-  await expect(page.getByRole('status')).toContainText('No se ha consultado ni alterado');
+  // The role buttons intentionally call the protected-workspace demo endpoint.
+  // Its complete browser journey runs against the seeded API stack, not an aborted API.
   await expectNoAccessibilityViolations(page);
-  expect(page.url()).not.toContain('/profesionales/');
 });
 
 test('keeps the fictional demo critical paths within performance budgets', async ({

@@ -3,6 +3,7 @@ import { READY_LOCALES } from './i18n-completeness';
 
 import professionalCaseEs from '../../i18n/professional-case/es.json';
 import publicHomeEs from '../../i18n/public-home/es.json';
+import publicDemoEs from '../../i18n/public-demo/es.json';
 import publicInformationEs from '../../i18n/public-information/es.json';
 import publicSiteFooterEs from '../../i18n/public-site-footer/es.json';
 import reportEvidenceEs from '../../i18n/report-evidence/es.json';
@@ -29,6 +30,7 @@ import confirmedGl from '../../i18n/translation-sync/gl.json';
 const SOURCE: Readonly<Record<string, unknown>> = {
   'professional-case': professionalCaseEs,
   'public-home': publicHomeEs,
+  'public-demo': publicDemoEs,
   'public-information': publicInformationEs,
   'public-site-footer': publicSiteFooterEs,
   'report-evidence': reportEvidenceEs,
@@ -101,15 +103,15 @@ describe('checkTranslationSync', () => {
     // This is the failure that passed every existing check: the key still
     // exists in every locale, so `checkLocaleCompleteness` is satisfied,
     // while four published locales state the previous safety notice.
-    const before = { 'public-site-footer.boundaryBody': digest('Nada llega a un centro.') };
+    const before = { 'public-site-footer.emergencyTitle': digest('Ayuda pública.') };
     const after = {
-      'public-site-footer.boundaryBody': 'Nada de lo que escribas llega a un centro.',
+      'public-site-footer.emergencyTitle': 'Recursos públicos de ayuda.',
     };
 
     const result = checkTranslationSync(Object.fromEntries(Object.entries(after)), before);
 
     expect(result.inSync).toBe(false);
-    expect(result.drifted.map((entry) => entry.key)).toEqual(['public-site-footer.boundaryBody']);
+    expect(result.drifted.map((entry) => entry.key)).toEqual(['public-site-footer.emergencyTitle']);
   });
 
   it('reports a source key that was never confirmed for this locale', () => {

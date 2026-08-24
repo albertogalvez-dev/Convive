@@ -1,81 +1,58 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import {
+  DEMO_PROFESSIONAL_ROLES,
+  demonstrationStartPath,
+  DemoProfessionalRole,
+} from './demo-professional-role';
 import { ProfessionalSessionService } from './professional-session.service';
 
 @Component({
   selector: 'app-professional-access',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [],
   templateUrl: './professional-access.html',
   styleUrl: './professional-access.scss',
 })
 export class ProfessionalAccess implements OnInit {
-  private readonly formBuilder = inject(FormBuilder);
   private readonly sessions = inject(ProfessionalSessionService);
   private readonly router = inject(Router);
 
-  protected readonly submitting = signal(false);
-  protected readonly passwordVisible = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
-
-  protected readonly form = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
+  protected readonly openingDemo = signal<DemoProfessionalRole | null>(null);
+  protected readonly demoErrorMessage = signal<string | null>(null);
+  protected readonly demoRoles = DEMO_PROFESSIONAL_ROLES;
 
   ngOnInit(): void {
     this.sessions.restore().subscribe({
-      next: () => void this.router.navigate(['/profesionales']),
+      next: ({ demonstrationRole }) =>
+        void this.router.navigateByUrl(
+          demonstrationRole ? demonstrationStartPath(demonstrationRole) : '/profesionales',
+        ),
       error: () => {
         // An absent or expired session is the normal anonymous entry state.
       },
     });
   }
 
-  protected login(): void {
-    this.form.markAllAsTouched();
-
-    if (this.submitting() || this.form.invalid) {
+  protected openDemonstration(role: DemoProfessionalRole): void {
+    if (this.openingDemo() !== null) {
       return;
     }
 
-    this.submitting.set(true);
-    this.errorMessage.set(null);
-
-    const { email, password } = this.form.getRawValue();
-
-    this.sessions.login(email.trim().toLowerCase(), password).subscribe({
+    this.openingDemo.set(role);
+    this.demoErrorMessage.set(null);
+    this.sessions.startDemonstration(role).subscribe({
       next: () => {
-        this.submitting.set(false);
-        this.form.reset();
-        void this.router.navigate(['/profesionales']);
+        this.openingDemo.set(null);
+        void this.router.navigateByUrl(demonstrationStartPath(role));
       },
-      error: (error: unknown) => {
-        this.submitting.set(false);
-        this.form.controls.password.reset();
-        this.errorMessage.set(describeLoginError(error));
+      error: () => {
+        this.openingDemo.set(null);
+        this.demoErrorMessage.set(
+          'No hemos podido abrir la demostración. Inténtalo de nuevo más tarde.',
+        );
       },
     });
   }
-
-  protected togglePasswordVisibility(): void {
-    this.passwordVisible.update((visible) => !visible);
-  }
-}
-
-function describeLoginError(error: unknown): string {
-  if (error instanceof HttpErrorResponse) {
-    if (error.status === 401) {
-      return 'El correo o la contrase\u00f1a no son correctos.';
-    }
-
-    if (error.status === 429) {
-      return 'Demasiados intentos. Espera unos minutos antes de volver a probar.';
-    }
-  }
-
-  return 'No hemos podido iniciar sesi\u00f3n. Int\u00e9ntalo de nuevo m\u00e1s tarde.';
 }

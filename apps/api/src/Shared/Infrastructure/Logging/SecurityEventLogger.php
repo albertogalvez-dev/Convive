@@ -65,6 +65,15 @@ final readonly class SecurityEventLogger
         );
     }
 
+    public function fictionalDemoProfessionalWriteDenied(Request $request): void
+    {
+        $this->logger->notice('fictional_demo_professional_write_denied', [
+            'route' => $request->attributes->getString('_route'),
+            'method' => $request->getMethod(),
+            'client_ip' => $request->getClientIp(),
+        ]);
+    }
+
     public function idempotentReplay(Request $request): void
     {
         $this->logger->info('idempotent_replay', $this->context($request));

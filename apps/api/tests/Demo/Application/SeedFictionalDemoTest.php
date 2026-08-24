@@ -197,7 +197,7 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 :id, :professional_id, :organisation_id, :role, :granted_at, NULL
              )',
             [
-                'id' => '019fe900-0000-7000-8000-000000000096',
+                'id' => '019fe900-0000-7000-8000-000000000098',
                 'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
                 'organisation_id' => '019fe900-0000-7000-8000-000000000097',
                 'role' => 'triage',
@@ -233,11 +233,14 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             'SELECT COUNT(*) FROM organisations WHERE id = :id',
             ['id' => FictionalDemoDataset::ORGANISATION_ID],
         ));
-        self::assertSame(2, (int) $this->connection->fetchOne(
-            'SELECT COUNT(*) FROM professionals WHERE id IN (:triage, :administrator)',
+        self::assertSame(5, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM professionals WHERE id IN (:triage, :administrator, :case_lead, :case_contributor, :case_observer)',
             [
                 'triage' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
                 'administrator' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
+                'case_lead' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID,
+                'case_contributor' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID,
+                'case_observer' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
             ],
         ));
         self::assertSame(4, $this->demoReportCount());
@@ -263,13 +266,15 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 ['id' => FictionalDemoDataset::MANAGED_CASE_ID],
             ),
         );
-        self::assertSame(1, (int) $this->connection->fetchOne(
+        self::assertSame(3, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM case_assignments
-             WHERE id = :assignment_id AND case_id = :case_id AND role = :role AND revoked_at IS NULL',
+             WHERE case_id = :case_id AND revoked_at IS NULL
+               AND role IN (:lead, :contributor, :observer)',
             [
-                'assignment_id' => FictionalDemoDataset::CASE_ASSIGNMENT_ID,
                 'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
-                'role' => 'lead',
+                'lead' => 'lead',
+                'contributor' => 'contributor',
+                'observer' => 'observer',
             ],
         ));
         self::assertSame(2, (int) $this->connection->fetchOne(

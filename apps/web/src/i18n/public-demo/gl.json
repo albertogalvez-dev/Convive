@@ -1,0 +1,31 @@
+{
+  "homeLinkLabel": "Convive, inicio",
+  "nav": {
+    "label": "Navegación principal",
+    "blog": "Blog",
+    "contact": "Contacto",
+    "open": "Abrir o menú",
+    "close": "Pechar o menú"
+  },
+  "professionalAccess": "Área profesional",
+  "pathsLabel": "Percorridos da demostración",
+  "seoTitle": "Demostración",
+  "seoDescription": "Proba o percorrido ficticio de Convive e descobre como o recibe un centro educativo.",
+  "eyebrow": "CENTRO DEMO CONVIVE",
+  "title": "Descubre Convive sen enviar nada",
+  "description": "Proba o percorrido e mira como o recibe o centro",
+  "reporter": {
+    "eyebrow": "PARA QUEN QUERE CONTALO",
+    "title": "Proba como persoa informante",
+    "description": "Abre o exemplo neste dispositivo ou usa o código QR sen comunicarte con ningún centro real",
+    "open": "Abrir o exemplo",
+    "openPoster": "Abrir o cartel a tamaño completo",
+    "posterAlt": "Cartel do Centro Demo Convive cun código QR para abrir o exemplo ficticio"
+  },
+  "professional": {
+    "eyebrow": "PARA VER O OUTRO LADO",
+    "title": "Mira como o recibe o centro",
+    "description": "Percorre a vista profesional con información ficticia e descobre como se ordena a comunicación",
+    "open": "Entrar na área profesional"
+  }
+}

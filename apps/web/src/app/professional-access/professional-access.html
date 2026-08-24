@@ -15,71 +15,32 @@
         </span>
         <p class="eyebrow">Acceso del centro</p>
         <h1 id="access-title">Tu espacio profesional</h1>
-        <p class="introduction">Accede para gestionar las comunicaciones de tu centro.</p>
+        <p class="introduction">Elige la perspectiva con la que quieres recorrer Convive.</p>
       </div>
 
       <div class="access-panel">
-        <form [formGroup]="form" (ngSubmit)="login()" novalidate>
-          <div class="field">
-            <label for="professional-email">Correo profesional</label>
-            <input
-              id="professional-email"
-              formControlName="email"
-              type="email"
-              autocomplete="username"
-              inputmode="email"
-              [attr.aria-describedby]="
-                form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null
-              "
-            />
-            @if (form.controls.email.touched && form.controls.email.invalid) {
-              <p id="email-error" class="field-error" role="alert">
-                Escribe un correo v&aacute;lido.
-              </p>
-            }
-          </div>
-
-          <div class="field">
-            <label for="professional-password">Contrase&ntilde;a</label>
-            <div class="password-field">
-              <input
-                id="professional-password"
-                formControlName="password"
-                [type]="passwordVisible() ? 'text' : 'password'"
-                autocomplete="current-password"
-                [attr.aria-describedby]="
-                  form.controls.password.touched && form.controls.password.invalid
-                    ? 'password-error'
-                    : null
-                "
-              />
+        <section class="demo-entry" aria-labelledby="demo-entry-title">
+          <p class="eyebrow">EXPLORA LA DEMOSTRACIÓN</p>
+          <h2 id="demo-entry-title">Elige un rol</h2>
+          <p>Todos los recorridos están preparados y son solo de consulta</p>
+          <div class="demo-roles">
+            @for (role of demoRoles; track role.id) {
               <button
                 type="button"
-                class="visibility"
-                [attr.aria-pressed]="passwordVisible()"
-                (click)="togglePasswordVisibility()"
+                class="demo-role"
+                [disabled]="openingDemo() !== null"
+                (click)="openDemonstration(role.id)"
               >
-                {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
+                <span>{{ role.label }}</span>
+                <small>{{ role.description }}</small>
+                <b aria-hidden="true">{{ openingDemo() === role.id ? 'Abriendo…' : 'Entrar →' }}</b>
               </button>
-            </div>
-            @if (form.controls.password.touched && form.controls.password.invalid) {
-              <p id="password-error" class="field-error" role="alert">
-                Escribe tu contrase&ntilde;a.
-              </p>
             }
           </div>
-
-          @if (errorMessage(); as message) {
+          @if (demoErrorMessage(); as message) {
             <p class="error-banner" role="alert">{{ message }}</p>
           }
-
-          <button type="submit" class="primary" [disabled]="submitting()">
-            {{ submitting() ? 'Accediendo…' : 'Acceder' }}
-            @if (!submitting()) {
-              <span aria-hidden="true">&rarr;</span>
-            }
-          </button>
-        </form>
+        </section>
       </div>
     </section>
   </div>

@@ -1,0 +1,31 @@
+{
+  "homeLinkLabel": "Convive, inici",
+  "nav": {
+    "label": "Navegació principal",
+    "blog": "Blog",
+    "contact": "Contacte",
+    "open": "Obrir el menú",
+    "close": "Tancar el menú"
+  },
+  "professionalAccess": "Àrea professional",
+  "pathsLabel": "Recorreguts de la demostració",
+  "seoTitle": "Demostració",
+  "seoDescription": "Prova el recorregut fictici de Convive i descobreix com el rep un centre educatiu.",
+  "eyebrow": "CENTRE DEMO CONVIVE",
+  "title": "Descobreix Convive sense enviar res",
+  "description": "Prova el recorregut i mira com el rep el centre",
+  "reporter": {
+    "eyebrow": "PER A QUI HO VOL EXPLICAR",
+    "title": "Prova-ho com a persona informant",
+    "description": "Obre l'exemple en aquest dispositiu o utilitza el codi QR sense comunicar-te amb cap centre real",
+    "open": "Obrir l'exemple",
+    "openPoster": "Obrir el cartell a mida completa",
+    "posterAlt": "Cartell del Centre Demo Convive amb un codi QR per obrir l'exemple fictici"
+  },
+  "professional": {
+    "eyebrow": "PER VEURE L'ALTRE COSTAT",
+    "title": "Mira com el rep el centre",
+    "description": "Recorre la vista professional amb informació fictícia i descobreix com s'ordena la comunicació",
+    "open": "Entrar a l'àrea professional"
+  }
+}
