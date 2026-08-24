@@ -295,8 +295,8 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     // same place a real API validation response does. Keep the assertion at
     // the DOM level: browser-native validation bubbles are not inspectable by
     // axe and would leave this state unprotected.
-    await leadPage.route('**/api/v1/professional/cases/*/tasks', async (route) => {
-      if (route.request().method() !== 'POST') {
+    await leadPage.route('**/api/v1/professional/cases/**', async (route) => {
+      if (route.request().method() !== 'POST' || !route.request().url().endsWith('/tasks')) {
         await route.continue();
         return;
       }
@@ -310,6 +310,7 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await leadPage.locator('.task-form').evaluate((form: HTMLFormElement) => {
       form.noValidate = true;
     });
+    await leadPage.locator('.task-form input[name="title"]').fill('Tarea ficticia rechazada');
     await leadPage.getByRole('button', { name: 'Crear tarea' }).click();
     await expect(
       leadPage.getByRole('alert', {
