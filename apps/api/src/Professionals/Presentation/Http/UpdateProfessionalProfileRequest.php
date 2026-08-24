@@ -8,6 +8,7 @@ use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[\OpenApi\Attributes\Schema(additionalProperties: false)]
 final readonly class UpdateProfessionalProfileRequest
 {
     public function __construct(
