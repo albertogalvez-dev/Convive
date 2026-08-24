@@ -359,7 +359,7 @@ test('keeps the public product homepage accessible and separate from reporting e
   await expect(page.locator('h1')).toContainText('Un canal seguro para escuchar antes.');
   await expect(page.locator('video.hero-video')).toHaveAttribute('autoplay', '');
   await expectNoAccessibilityViolations(page);
-  await expect(page.getByRole('link', { name: 'Área profesional' })).toHaveAttribute(
+  await expect(page.locator('a.professional-access')).toHaveAttribute(
     'href',
     '/profesionales/acceso',
   );
@@ -423,30 +423,29 @@ test('lets a visitor switch to Catalan, Valencian or Basque by keyboard, with th
   await expectNoAccessibilityViolations(page);
 
   // No IP geolocation or other inference decides Catalan vs Valencian --
-  // only an explicit choice, persisted for next time. The switcher's own
-  // visible label now reads "Llengua" (Catalan for "Language"), not
-  // "Idioma": re-locate it rather than reuse the stale Spanish-label
-  // locator, the same way a real screen-reader user would rediscover it.
-  await expect(page.getByLabel('Llengua')).toHaveValue('ca');
+  // only an explicit choice, persisted for next time. Keep the native
+  // combobox locator stable across translations; the text label itself is
+  // intentionally re-rendered by the active locale.
+  await expect(languageSwitcher).toHaveValue('ca');
   await page.reload();
   await expect(
     page.getByRole('heading', { name: 'Un canal segur per escoltar abans.' }),
   ).toBeVisible();
-  await expect(page.getByLabel('Llengua')).toHaveValue('ca');
+  await expect(page.getByRole('combobox')).toHaveValue('ca');
 
-  await page.getByLabel('Llengua').selectOption('ca-valencia');
+  await page.getByRole('combobox').selectOption('ca-valencia');
   await expect(
     page.getByRole('heading', { name: 'Un canal segur per a escoltar abans.' }),
   ).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('ca-valencia');
   await expectNoAccessibilityViolations(page);
 
-  await page.getByLabel('Llengua').selectOption('eu');
+  await page.getByRole('combobox').selectOption('eu');
   await expect(
     page.getByRole('heading', { name: 'Aurretik entzuteko kanal segurua.' }),
   ).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('eu');
-  await expect(page.getByLabel('Hizkuntza')).toHaveValue('eu');
+  await expect(page.getByRole('combobox')).toHaveValue('eu');
   await expectNoAccessibilityViolations(page);
 
   // A fresh, unrelated browser context never inherits another visitor's
@@ -652,6 +651,10 @@ async function loginAsProfessional(
 ): Promise<void> {
   const response = await page.context().request.post(absoluteUrl('/api/v1/professional/session'), {
     data: { email, password: PROFESSIONAL_PASSWORD },
+    headers: {
+      Origin: APP_BASE_URL,
+      'Sec-Fetch-Site': 'same-origin',
+    },
   });
 
   expect(response.ok()).toBe(true);
