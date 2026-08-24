@@ -7,6 +7,7 @@ import { map } from 'rxjs';
 import { PUBLIC_GENERAL_EMAIL, PUBLIC_PRIVACY_EMAIL } from '../public-identity';
 import { PublicSeoService } from '../public-seo.service';
 import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { professionalAccessUrlFor } from '../site-hosts';
 import { PublicInformationPageMeta } from './public-information-content';
 
@@ -22,6 +23,7 @@ export interface PublicInformationSection {
  */
 export interface PublicInformationTranslation {
   readonly eyebrow: string;
+  readonly seoTitle: string;
   readonly title: string;
   readonly seoDescription: string;
   readonly description: string;
@@ -64,7 +66,7 @@ function substitutePlaceholders<T>(value: T, vars: Readonly<Record<string, strin
 @Component({
   selector: 'app-public-information',
   standalone: true,
-  imports: [RouterLink, PublicSiteFooter, TranslocoPipe],
+  imports: [LanguageSwitcher, RouterLink, PublicSiteFooter, TranslocoPipe],
   providers: [provideTranslocoScope('public-information')],
   templateUrl: './public-information.html',
   styleUrl: './public-information.scss',
@@ -130,7 +132,7 @@ export class PublicInformation {
       }
 
       this.seo.update({
-        title: content.title,
+        title: content.seoTitle,
         description: content.seoDescription,
         path: this.meta.path,
       });

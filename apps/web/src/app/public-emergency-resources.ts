@@ -6,16 +6,16 @@
  * doing so would present the project as reviewed official guidance, which it is not.
  */
 export interface PublicEmergencyResource {
-  readonly name: string;
+  readonly translationKey: string;
   readonly number: string;
   readonly dial: string;
 }
 
 export const PUBLIC_EMERGENCY_RESOURCES: readonly PublicEmergencyResource[] = [
-  { name: 'Emergencias', number: '112', dial: '112' },
-  { name: 'Atención a víctimas de violencia de género', number: '016', dial: '016' },
+  { translationKey: 'emergency', number: '112', dial: '112' },
+  { translationKey: 'violenceAgainstWomen', number: '016', dial: '016' },
   {
-    name: 'Teléfono ANAR de Ayuda a Niños, Niñas y Adolescentes',
+    translationKey: 'anar',
     number: '900 20 20 10',
     dial: '900202010',
   },

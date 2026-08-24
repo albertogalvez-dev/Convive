@@ -5,6 +5,7 @@
   "reviewLine": "Revisat el {{reviewedOn}} per {{owner}}.",
   "demonstrationNotice": {
     "eyebrow": "AVÍS DE DEMOSTRACIÓ",
+    "seoTitle": "Avís de demostració",
     "title": "Convive és una demostració amb informació fictícia.",
     "seoDescription": "Convive és una demostració amb informació fictícia. No és un canal d'emergència ni un servei oficial de cap administració educativa.",
     "description": "Tot el que veus funciona sobre un centre educatiu inventat. Res del que escriguis aquí arriba a cap col·legi, a cap institut ni a cap administració.",
@@ -52,6 +53,7 @@
   },
   "privacyNotice": {
     "eyebrow": "PRIVADESA",
+    "seoTitle": "Privadesa",
     "title": "La demostració no recull dades personals.",
     "seoDescription": "La demostració pública de Convive no recull dades personals de qui la visita. El contingut creat a l'entorn de proves s'esborra en 24 hores.",
     "description": "Aquesta demostració funciona amb informació fictícia i no demana, guarda ni analitza dades personals de qui la visita.",
@@ -106,6 +108,7 @@
   },
   "cookieNotice": {
     "eyebrow": "COOKIES",
+    "seoTitle": "Galetes",
     "title": "No fem servir cookies no essencials.",
     "seoDescription": "Convive no utilitza cookies no essencials, analítica ni etiquetes de tercers a la seva demostració pública.",
     "description": "Aquest lloc no instal·la cookies publicitàries, d'analítica ni de tercers, així que no hi ha res a acceptar ni a rebutjar.",
@@ -132,6 +135,7 @@
   },
   "sandboxTerms": {
     "eyebrow": "TERMES DE L'ENTORN DE PROVES",
+    "seoTitle": "Termes",
     "title": "Fes servir informació inventada. Sempre.",
     "seoDescription": "Condicions d'ús de l'entorn de proves de Convive: informació inventada obligatòria, prohibit fer-lo servir com a canal d'ajuda real.",
     "description": "Aquestes condicions són curtes perquè només hi ha dues coses importants: el que escriguis ha de ser inventat, i això no és un canal d'ajuda.",
@@ -167,6 +171,7 @@
   },
   "accessibilityNotice": {
     "eyebrow": "ACCESSIBILITAT",
+    "seoTitle": "Accessibilitat",
     "title": "Volem que això es pugui fer servir amb qualsevol mitjà.",
     "seoDescription": "Compromís d'accessibilitat de Convive, estat real de la revisió i via de contacte per comunicar una barrera.",
     "description": "Convive es desenvolupa amb l'objectiu de complir el nivell AA de les WCAG 2.2: maneig complet amb teclat, focus visible, contrast suficient i compatibilitat amb productes de suport.",
@@ -191,6 +196,7 @@
   },
   "contactNotice": {
     "eyebrow": "CONTACTE",
+    "seoTitle": "Contacte",
     "title": "Escriu-nos per correu.",
     "seoDescription": "Vies de contacte del projecte Convive per a dubtes generals i per a qüestions de privadesa.",
     "description": "No hi ha formulari de contacte: demanar dades personals per respondre un dubte seria incoherent amb una demostració que no tracta dades personals.",

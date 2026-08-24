@@ -1,7 +1,10 @@
 {
-  "boundaryTitle": "Fikziozko datuak dituen erakustaldia.",
-  "boundaryBody": "Convive ez da larrialdietarako kanal bat. Ez da inongo hezkuntza-administrazioren zerbitzu ofiziala. Fikziozko datuak dituen erakustaldia da. Erakustaldian idazten dena ez da hezkuntza-zentro batera iristen.",
   "emergencyTitle": "Laguntza publikoko baliabideak",
+  "emergencyResources": {
+    "emergency": "Larrialdiak",
+    "violenceAgainstWomen": "Emakumeen aurkako indarkeriaren aurkako arreta",
+    "anar": "ANAR haurren eta nerabeen laguntza-telefonoa"
+  },
   "linksLabel": "Informazio publikoa",
   "links": {
     "notice": "Demo oharra",

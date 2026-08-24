@@ -1,13 +1,8 @@
 import { Component } from '@angular/core';
 import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
-import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { PUBLIC_EMERGENCY_RESOURCES } from '../public-emergency-resources';
-import {
-  PUBLIC_GENERAL_EMAIL,
-  PUBLIC_OPERATOR_NAME,
-  PUBLIC_SPONSOR_CREDIT,
-} from '../public-identity';
+import { PUBLIC_SPONSOR_CREDIT_PREFIX, PUBLIC_SPONSOR_NAME } from '../public-identity';
 
 /**
  * The footer shared by every page of the public website.
@@ -23,14 +18,13 @@ import {
 @Component({
   selector: 'app-public-site-footer',
   standalone: true,
-  imports: [TranslocoPipe, LanguageSwitcher],
+  imports: [TranslocoPipe],
   providers: [provideTranslocoScope('public-site-footer')],
   templateUrl: './public-site-footer.html',
   styleUrl: './public-site-footer.scss',
 })
 export class PublicSiteFooter {
   readonly emergencyResources = PUBLIC_EMERGENCY_RESOURCES;
-  readonly operatorName = PUBLIC_OPERATOR_NAME;
-  readonly generalEmail = PUBLIC_GENERAL_EMAIL;
-  readonly sponsorCredit = PUBLIC_SPONSOR_CREDIT;
+  readonly sponsorCreditPrefix = PUBLIC_SPONSOR_CREDIT_PREFIX;
+  readonly sponsorName = PUBLIC_SPONSOR_NAME;
 }

@@ -4,13 +4,19 @@
 
 footer {
   display: grid;
-  gap: 2rem;
-  margin-top: 3.5rem;
-  border-top: 1px solid #d5e0ed;
-  padding-top: 2rem;
-  color: #4a5d7d;
+  margin-top: 0;
+  border-top: 1px solid rgba(23, 43, 87, 0.16);
+  background: transparent;
+  color: #526987;
   font-size: 0.9rem;
   line-height: 1.65;
+}
+.footer-content {
+  display: grid;
+  width: min(100%, 76rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.25rem, 5vw, 5rem);
+  gap: clamp(1.75rem, 4vw, 3rem);
 }
 
 h2 {
@@ -35,14 +41,13 @@ a:hover {
 }
 
 a:focus-visible {
-  outline: 3px solid #8bd4f2;
+  outline: 3px solid #176f9c;
   outline-offset: 3px;
 }
 
 .emergency ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 2.5rem;
+  display: grid;
+  gap: 0.7rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -59,22 +64,29 @@ a:focus-visible {
 }
 
 .links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem 1rem;
 }
 
-.operator,
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 4rem);
+}
 .sponsor {
-  color: #5d6f8e;
+  color: #526987;
 }
 
 .sponsor {
-  margin-top: -1.25rem;
   font-size: 0.85rem;
 }
 
 @media (max-width: 42rem) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
   .emergency li {
     flex-direction: column;
     gap: 0.15rem;

@@ -50,11 +50,14 @@ describe('PublicHome', () => {
     expect(heroVideo?.hasAttribute('autoplay')).toBe(true);
     expect(heroVideo?.loop).toBe(true);
     expect(heroVideo?.muted).toBe(true);
+    expect(heroVideo?.getAttribute('preload')).toBe('auto');
     expect(page.querySelector('.wordmark img')?.getAttribute('src')).toBe(
       '/convive-logo-reversed.svg',
     );
+    expect(page.querySelector('header app-language-switcher')).not.toBeNull();
+    expect(page.querySelector('footer app-language-switcher')).toBeNull();
     expect(page.querySelector('a[href="/blog/"]')).toBeTruthy();
-    expect(page.querySelectorAll('a[href="/demostracion/"]').length).toBe(3);
+    expect(page.querySelectorAll('a[href="/demostracion/"]').length).toBe(2);
     expect(page.querySelector('.cards')).toBeNull();
     expect(page.querySelector('.journey')?.textContent).toContain(
       'Si algo preocupa, decirlo ayuda.',
@@ -63,7 +66,7 @@ describe('PublicHome', () => {
     expect(page.querySelector('a[href="/contacto/"]')).toBeTruthy();
     expect(page.querySelector('a[href="/profesionales/acceso"]')).toBeTruthy();
     expect(page.querySelector('[href*="/r/"]')).toBeNull();
-    expect(page.querySelector('footer')?.textContent).toContain('datos ficticios');
+    expect(page.querySelector('footer')?.textContent).not.toContain('datos ficticios');
   });
 
   it('keeps primary navigation operable through the labelled mobile menu control', async () => {

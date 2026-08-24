@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { READY_LOCALES } from '../i18n/i18n-completeness';
@@ -26,11 +26,18 @@ import { storeLocale } from '../i18n/i18n-locale-preference';
   selector: 'app-language-switcher',
   standalone: true,
   imports: [TranslocoPipe],
+  host: {
+    '[class.inverse]': "appearance() === 'inverse'",
+    '[class.compact]': 'compact()',
+  },
   templateUrl: './language-switcher.html',
   styleUrl: './language-switcher.scss',
 })
 export class LanguageSwitcher {
   private readonly transloco = inject(TranslocoService);
+
+  readonly appearance = input<'default' | 'inverse'>('default');
+  readonly compact = input(false);
 
   protected readonly availableLocales = LOCALES.filter((locale) =>
     READY_LOCALES.includes(locale.code),

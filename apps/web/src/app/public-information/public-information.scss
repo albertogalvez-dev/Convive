@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-height: 100dvh;
-  background: radial-gradient(circle at 90% 0, #e4f6fc, transparent 28rem), #f6f9fd;
+  background: radial-gradient(circle at 90% 0, #d3f0f9, transparent 28rem), #eaf7fc;
   color: #172b57;
 }
 
@@ -112,6 +112,15 @@ a:focus-visible {
 }
 
 @media (max-width: 42rem) {
+  header {
+    flex-wrap: wrap;
+  }
+  header > app-language-switcher {
+    margin-inline-start: auto;
+  }
+  header > a:last-child {
+    width: 100%;
+  }
   main {
     padding-top: 1.25rem;
   }

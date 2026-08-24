@@ -26,21 +26,27 @@
       <a href="/blog/" (click)="closeMobileNavigation()">{{
         'public-home.nav.blog' | transloco
       }}</a>
-      <a href="/demostracion/" (click)="closeMobileNavigation()">{{
-        'public-home.nav.demo' | transloco
-      }}</a>
       <a href="/contacto/" (click)="closeMobileNavigation()">{{
         'public-home.nav.contact' | transloco
       }}</a>
+      <a
+        class="professional-access-mobile"
+        [href]="professionalAccessUrl"
+        (click)="closeMobileNavigation()"
+        >{{ 'public-home.professionalAccess' | transloco }}</a
+      >
     </nav>
-    <a [href]="professionalAccessUrl">{{ 'public-home.professionalAccess' | transloco }}</a>
+    <a class="professional-access" [href]="professionalAccessUrl">{{
+      'public-home.professionalAccess' | transloco
+    }}</a>
+    <app-language-switcher appearance="inverse" [compact]="true" />
   </header>
   <section class="hero" aria-labelledby="home-title">
     <video
       #heroVideo
       class="hero-video"
       [class.is-unavailable]="heroVideoUnavailable()"
-      [attr.preload]="reducedMotion() ? 'none' : 'metadata'"
+      [attr.preload]="reducedMotion() ? 'none' : 'auto'"
       autoplay
       loop
       muted
@@ -49,6 +55,8 @@
       aria-hidden="true"
       tabindex="-1"
       (ended)="restartHeroVideo()"
+      (canplay)="resumeHeroVideo()"
+      (stalled)="resumeHeroVideo()"
       (error)="showHeroFallback()"
     >
       <source src="/assets/public-home/convive-school-community.mp4" type="video/mp4" />
@@ -65,9 +73,6 @@
         <p class="eyebrow">{{ 'public-home.journey.eyebrow' | transloco }}</p>
         <h2 id="journey-title">{{ 'public-home.journey.title' | transloco }}</h2>
         <p>{{ 'public-home.journey.description' | transloco }}</p>
-        <a class="journey-cta" href="/demostracion/">{{
-          'public-home.journey.demo.cta' | transloco
-        }}</a>
       </div>
       <ol class="journey-steps">
         <li>
@@ -92,6 +97,9 @@
           </div>
         </li>
       </ol>
+      <a class="journey-cta" href="/demostracion/">{{
+        'public-home.journey.demo.cta' | transloco
+      }}</a>
     </section>
   </div>
   <app-public-site-footer />

@@ -2,20 +2,62 @@
   display: block;
 }
 
+:host(.inverse) .language-switcher {
+  color: #fff;
+  text-shadow: 0 1px 1rem rgba(5, 18, 45, 0.8);
+}
+
+:host(.inverse) select {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(16, 40, 80, 0.68);
+  color: #fff;
+}
+
+:host(.inverse) select:focus-visible {
+  outline-color: #8bd4f2;
+}
+
+:host(.compact) .language-switcher {
+  gap: 0.35rem;
+}
+
+:host(.compact) label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .language-switcher {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #5d6f8e;
+  color: #172b57;
 }
 
 label {
   font-weight: 700;
 }
 
+.language-icon {
+  display: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+:host(.compact) .language-icon {
+  display: block;
+}
+
 select {
-  border: 1px solid #d5e0ed;
+  border: 1px solid #9bb5d2;
   border-radius: 0.35rem;
   padding: 0.3rem 0.5rem;
   color: #172b57;
@@ -24,6 +66,21 @@ select {
 }
 
 select:focus-visible {
-  outline: 3px solid #8bd4f2;
+  outline: 3px solid #176f9c;
   outline-offset: 2px;
+}
+
+@media (max-width: 42rem) {
+  .language-switcher {
+    gap: 0;
+  }
+
+  label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
 }

@@ -12,12 +12,13 @@ import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
 import { PublicSeoService } from '../public-seo.service';
 import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { professionalAccessUrlFor } from '../site-hosts';
 
 @Component({
   selector: 'app-public-home',
   standalone: true,
-  imports: [PublicSiteFooter, TranslocoPipe],
+  imports: [LanguageSwitcher, PublicSiteFooter, TranslocoPipe],
   providers: [provideTranslocoScope('public-home')],
   templateUrl: './public-home.html',
   styleUrl: './public-home.scss',
@@ -44,6 +45,12 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
     this.startHeroVideo();
   };
 
+  private readonly onVisibilityChange = (): void => {
+    if (!document.hidden) {
+      this.startHeroVideo();
+    }
+  };
+
   ngOnInit(): void {
     this.seo.update({
       title: 'Convive',
@@ -52,6 +59,7 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
       path: '/',
     });
     this.reducedMotionQuery?.addEventListener('change', this.onReducedMotionChange);
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
   }
 
   ngAfterViewInit(): void {
@@ -60,6 +68,7 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.reducedMotionQuery?.removeEventListener('change', this.onReducedMotionChange);
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
   }
 
   protected toggleMobileNavigation(): void {
@@ -86,6 +95,10 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
 
     video.currentTime = 0;
     this.playHeroVideo(video);
+  }
+
+  protected resumeHeroVideo(): void {
+    this.startHeroVideo();
   }
 
   private startHeroVideo(): void {

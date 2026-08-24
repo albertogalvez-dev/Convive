@@ -25,5 +25,6 @@ export const PUBLIC_GENERAL_EMAIL = `hola@${PUBLIC_WEBSITE_HOSTNAME}`;
  * operate Convive, and no endorsement of its content is implied.
  */
 export const PUBLIC_SPONSOR_NAME = 'Aircury SL';
-export const PUBLIC_SPONSOR_CREDIT =
-  'Proyecto desarrollado gracias a la beca Aircury Summer of Code 2026 de Aircury SL.';
+export const PUBLIC_SPONSOR_CREDIT_PREFIX =
+  'Proyecto desarrollado gracias a la beca Aircury Summer of Code 2026 de ';
+export const PUBLIC_SPONSOR_CREDIT = `${PUBLIC_SPONSOR_CREDIT_PREFIX}${PUBLIC_SPONSOR_NAME}.`;

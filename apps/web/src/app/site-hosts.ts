@@ -17,3 +17,13 @@ export function professionalAccessUrlFor(hostname: string): string {
 
   return `https://${APPLICATION_HOSTNAME}/profesionales/acceso`;
 }
+
+export function publicReportingUrlFor(hostname: string, publicIdentifier: string): string {
+  const path = `/r/${encodeURIComponent(publicIdentifier)}`;
+
+  if (isLocalDevelopmentHost(hostname)) {
+    return path;
+  }
+
+  return `https://${APPLICATION_HOSTNAME}${path}`;
+}
