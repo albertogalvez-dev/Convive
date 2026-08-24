@@ -15,6 +15,10 @@ do not add a decorative diagram whose nodes are not implemented.
 | [Authorisation model](authorisation-model.md) | Contributors and security reviewers | `ProfessionalRole`, `CaseAssignmentRole` and ADR-0018 | Maintained: role ≠ case access |
 | [Territorial protocol model](territorial-protocol-model.md) | Contributors and evaluators | `WorkflowSourceVersion`, the territorial migrations and their isolation tests | Maintained: citation, not decision |
 | [Translation pipeline](translation-pipeline.md) | Contributors and content reviewers | `i18n-completeness.ts`, `translation-sync.ts` and ADR-0026/0027 | Maintained: two guarantees on purpose |
+| [Sessions and capabilities](access-sessions-and-capabilities.md) | Security reviewers and contributors | ADR-0008/0010/0011 and Symfony authenticators | Maintained separate credential contexts |
+| [Attachment lifecycle](attachment-lifecycle.md) | Security reviewers and operators | Attachment lifecycle scripts and threat model | Maintained fail-closed private boundary |
+| [Observability and incident response](observability-and-incident-response.md) | Maintainer and operator | Observability scripts, systemd units and incident runbook | Maintained redacted signal-to-response path |
+| [Fictional-demo retention](fictional-demo-retention.md) | Privacy and recovery reviewers | Cleanup commands, recovery runbook and privacy register | Maintained fictional-only deletion boundary |
 
 The initial system diagram is intentionally logical rather than a second
 deployment diagram. The single-VPS diagram is the authoritative trust-boundary
