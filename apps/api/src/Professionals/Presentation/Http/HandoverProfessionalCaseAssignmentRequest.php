@@ -6,6 +6,7 @@ namespace App\Professionals\Presentation\Http;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[\OpenApi\Attributes\Schema(additionalProperties: false)]
 final readonly class HandoverProfessionalCaseAssignmentRequest
 {
     public function __construct(

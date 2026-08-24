@@ -51,10 +51,13 @@ interface ScopeUnderTest {
 
 const SCOPES: readonly ScopeUnderTest[] = [
   // Tier 1 — safety-critical. Target: INFLESZ >= 65, sentences <= 15 words.
-  // Misses its own floor by a tenth of a point and carries a 17-word
-  // sentence. Recorded as a gap rather than rounded up: this is the text
-  // telling a reader Convive is not an emergency channel.
-  { name: 'public-site-footer', tree: publicSiteFooter, baseline: 64.9, maxSentenceWords: 17 },
+  {
+    name: 'public-site-footer',
+    tree: publicSiteFooter,
+    baseline: 70.6,
+    floor: 65,
+    maxSentenceWords: 12,
+  },
 
   // Tier 2 — child-facing reporting journey. Target: INFLESZ >= 65.
   { name: 'report-result', tree: reportResult, baseline: 73.3, floor: 65, maxSentenceWords: 11 },
@@ -67,21 +70,18 @@ const SCOPES: readonly ScopeUnderTest[] = [
     floor: 65,
     maxSentenceWords: 10,
   },
-  // Below the Tier 2 floor today. Tracked as a gap rather than pretended
-  // away by lowering the tier to fit.
-  { name: 'report-help', tree: reportHelp, baseline: 63.0, maxSentenceWords: 10 },
+  { name: 'report-help', tree: reportHelp, baseline: 81.0, floor: 65, maxSentenceWords: 8 },
   // All labels, no prose — nothing for the formula to measure.
   { name: 'report-header', tree: reportHeader, baseline: 0, maxSentenceWords: 4 },
 
-  // Tier 2 by audience and the widest gap in the product: the front door,
-  // and its hardest public prose.
-  { name: 'public-home', tree: publicHome, baseline: 41.6, maxSentenceWords: 13 },
+  // Tier 2 by audience: the front door must remain as comprehensible as the
+  // reporting journey it introduces.
+  { name: 'public-home', tree: publicHome, baseline: 72.3, floor: 65, maxSentenceWords: 7 },
 
   // Tier 3 — professional and legal copy. Precision outranks simplicity, so
   // no INFLESZ floor; governed by sentence length. Target <= 25 words.
   { name: 'professional-case', tree: professionalCase, baseline: 65.1, maxSentenceWords: 23 },
-  // Meets the reading level but holds the longest sentence in the product.
-  { name: 'public-information', tree: publicInformation, baseline: 60.9, maxSentenceWords: 37 },
+  { name: 'public-information', tree: publicInformation, baseline: 62.7, maxSentenceWords: 24 },
 ];
 
 describe('countSyllables', () => {

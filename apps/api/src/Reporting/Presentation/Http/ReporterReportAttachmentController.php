@@ -69,6 +69,7 @@ final readonly class ReporterReportAttachmentController
                 mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
                     type: 'object',
+                    additionalProperties: false,
                     required: ['attachments'],
                     properties: [
                         new OA\Property(
@@ -93,6 +94,7 @@ final readonly class ReporterReportAttachmentController
                 description: 'Private attachment records were quarantined for scanning.',
                 content: new OA\JsonContent(
                     type: 'object',
+                    additionalProperties: false,
                     required: ['items'],
                     properties: [
                         new OA\Property(
@@ -155,6 +157,7 @@ final readonly class ReporterReportAttachmentController
                 description: 'The reporter attachment states.',
                 content: new OA\JsonContent(
                     type: 'object',
+                    additionalProperties: false,
                     required: ['items'],
                     properties: [
                         new OA\Property(

@@ -48,7 +48,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Se revisa cada seis meses y, además, siempre que cambien el alcance de la demostración, la identidad de quien la publica o el protocolo de referencia."
+    "reviewTrigger": "Se revisa cada seis meses. También se revisa si cambia el alcance de la demostración, quien la publica o el protocolo de referencia."
   },
   "privacyNotice": {
     "eyebrow": "PRIVACIDAD",
@@ -81,7 +81,7 @@
         "paragraphs": [
           "Convive no pide una cuenta para enviar una comunicación, y eso reduce la información que se conoce de quien escribe. No la elimina.",
           "El contenido que escribas puede identificarte por lo que cuentas, aunque no des tu nombre. Existen además registros técnicos propios de cualquier servicio en Internet.",
-          "Por eso el producto no promete anonimato absoluto en ningún momento: sería una tranquilidad falsa, y en un asunto de convivencia escolar una tranquilidad falsa hace daño."
+          "Por eso el producto no promete anonimato absoluto. Sería una tranquilidad falsa. En convivencia escolar, una falsa tranquilidad hace daño."
         ]
       },
       {
@@ -97,12 +97,12 @@
       {
         "heading": "Tus derechos",
         "paragraphs": [
-          "Como esta demostración no trata datos personales de quien la visita, normalmente no hay ningún dato sobre el que ejercer un derecho de acceso, rectificación o supresión.",
+          "Esta demostración no trata datos personales de quien la visita. Por eso, normalmente no hay datos sobre los que ejercer derechos de acceso, rectificación o supresión.",
           "Aun así la vía existe y está atendida: escribe a {{privacyEmail}} y recibirás respuesta."
         ]
       }
     ],
-    "reviewTrigger": "Se revisa cada seis meses y, además, siempre que cambien el alcance de la demostración, la identidad de quien la publica o el protocolo de referencia."
+    "reviewTrigger": "Se revisa cada seis meses. También se revisa si cambia el alcance de la demostración, quien la publica o el protocolo de referencia."
   },
   "cookieNotice": {
     "eyebrow": "COOKIES",
@@ -115,7 +115,7 @@
         "heading": "Qué se guarda en tu navegador",
         "paragraphs": [
           "En el sitio público no se guarda nada que permita reconocerte.",
-          "Al entrar en la aplicación de demostración, el servidor mantiene una sesión técnica imprescindible para que el recorrido funcione: sin ella no sería posible enviar una comunicación de ejemplo ni volver a consultarla. Esa sesión no se usa para medir, seguir ni perfilar a nadie."
+          "Al entrar en la aplicación de demostración, el servidor crea una sesión técnica esencial. Sin ella no podrías enviar una comunicación de ejemplo ni consultarla de nuevo. Esa sesión no se usa para medir, seguir ni perfilar a nadie."
         ]
       },
       {
@@ -128,7 +128,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Se revisa cada seis meses y, además, siempre que cambien el alcance de la demostración, la identidad de quien la publica o el protocolo de referencia."
+    "reviewTrigger": "Se revisa cada seis meses. También se revisa si cambia el alcance de la demostración, quien la publica o el protocolo de referencia."
   },
   "sandboxTerms": {
     "eyebrow": "TÉRMINOS DEL ENTORNO DE PRUEBAS",
@@ -152,7 +152,7 @@
         "heading": "Esto no es un canal de ayuda",
         "paragraphs": [
           "Nadie lee lo que escribes aquí como si fuera una comunicación real. No hay un equipo profesional al otro lado, no se abre ningún expediente y no se avisa a ningún centro.",
-          "Usar la demostración para pedir ayuda ante una situación real no solo no sirve: retrasa el momento en que esa situación llega a alguien que sí puede actuar."
+          "Usar la demostración para pedir ayuda ante una situación real no sirve. Además, retrasa que esa situación llegue a quien sí puede actuar."
         ]
       },
       {
@@ -163,7 +163,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Se revisa cada seis meses y, además, siempre que cambien el alcance de la demostración, la identidad de quien la publica o el protocolo de referencia."
+    "reviewTrigger": "Se revisa cada seis meses. También se revisa si cambia el alcance de la demostración, quien la publica o el protocolo de referencia."
   },
   "accessibilityNotice": {
     "eyebrow": "ACCESIBILIDAD",
@@ -176,7 +176,7 @@
         "heading": "Estado de la revisión",
         "paragraphs": [
           "Las comprobaciones automáticas de accesibilidad forman parte de la integración continua del proyecto y se ejecutan en cada cambio.",
-          "El 16 de agosto de 2026 se ejecutó una auditoría manual de los recorridos críticos, que encontró y corrigió dos fallos reales: un contraste insuficiente y tres estados de error que no se anunciaban a un lector de pantalla. Falta todavía la comprobación con productos de apoyo reales. Mientras no se complete, este sitio no declara conformidad con las WCAG 2.2 AA: afirmarlo sin haberlo comprobado sería faltar a la verdad."
+          "El 16 de agosto de 2026 se ejecutó una auditoría manual de los recorridos críticos. Encontró y corrigió dos fallos: un contraste insuficiente y tres errores que no se anunciaban al lector de pantalla. Falta comprobarlo con productos de apoyo reales. Hasta entonces, este sitio no declara conformidad con las WCAG 2.2 AA. Afirmarlo sin comprobarlo no sería verdad."
         ]
       },
       {
@@ -187,7 +187,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Se revisa cada seis meses y, además, siempre que cambien el alcance de la demostración, la identidad de quien la publica o el protocolo de referencia."
+    "reviewTrigger": "Se revisa cada seis meses. También se revisa si cambia el alcance de la demostración, quien la publica o el protocolo de referencia."
   },
   "contactNotice": {
     "eyebrow": "CONTACTO",
@@ -205,6 +205,6 @@
         ]
       }
     ],
-    "reviewTrigger": "Se revisa cada seis meses y, además, siempre que cambien el alcance de la demostración, la identidad de quien la publica o el protocolo de referencia."
+    "reviewTrigger": "Se revisa cada seis meses. También se revisa si cambia el alcance de la demostración, quien la publica o el protocolo de referencia."
   }
 }

@@ -2,9 +2,9 @@
   "close": "Tancar",
   "title": "Abans de començar",
   "steps": [
-    "Descriu la situació. No necessites dir qui eres.",
-    "Indica on va passar i comprova la informació.",
-    "Envia la comunicació i guarda les teues dades d'accés."
+    "Explica què ha passat. No cal que digues qui eres.",
+    "Digues on va passar. Revisa les dades.",
+    "Envia el missatge. Guarda les dades d’accés."
   ],
-  "footer": "En acabar rebràs una referència i un secret d'accés. Guarda'ls en un lloc segur."
+  "footer": "Al final rebràs una referència i un secret. Guarda’ls en un lloc segur."
 }

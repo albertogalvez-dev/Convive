@@ -1358,6 +1358,7 @@ paths:
                 properties:
                   items: { type: array, items: { $ref: '#/components/schemas/ProfessionalReportAttachment' } }
                 type: object
+                additionalProperties: false
         '401':
           description: 'A professional session is required.'
         '404':
@@ -1432,6 +1433,7 @@ paths:
                   type: string
                   enum: [needs_prompt_attention, no_prompt_attention_indicated, unknown]
               type: object
+              additionalProperties: false
       responses:
         '201':
           description: 'The initial review was recorded.'
@@ -1580,6 +1582,7 @@ paths:
                   type: string
                   format: password
               type: object
+              additionalProperties: false
       responses:
         '200':
           description: 'The professional session was created.'
@@ -1667,6 +1670,7 @@ paths:
                   type: string
                   maxLength: 2000
               type: object
+              additionalProperties: false
       responses:
         '201':
           description: 'The follow-up entry was added.'
@@ -1750,6 +1754,7 @@ paths:
                   enabled: { type: boolean }
                   status: { type: string, enum: [none, pending, verified] }
                 type: object
+                additionalProperties: false
         '401':
           description: 'The report access capability was not accepted.'
           content:
@@ -1782,6 +1787,7 @@ paths:
                   type: boolean
                   enum: [true]
               type: object
+              additionalProperties: false
       responses:
         '202':
           description: 'Verification was queued or the existing verified contact was retained.'
@@ -1795,6 +1801,7 @@ paths:
                   enabled: { type: boolean }
                   status: { type: string, enum: [pending, verified] }
                 type: object
+                additionalProperties: false
         '401':
           description: 'The report access capability was not accepted.'
           content:
@@ -1865,6 +1872,7 @@ paths:
                   type: string
                   pattern: '^[0-9a-f]{64}$'
               type: object
+              additionalProperties: false
       responses:
         '200':
           description: 'The mailbox was verified.'
@@ -1876,6 +1884,7 @@ paths:
                 properties:
                   verified: { type: boolean, enum: [true] }
                 type: object
+                additionalProperties: false
         '422':
           description: 'The token is invalid, expired or already used.'
           content:
@@ -1886,6 +1895,7 @@ paths:
                 properties:
                   verified: { type: boolean, enum: [false] }
                 type: object
+                additionalProperties: false
         '429':
           description: 'The verification limit was exceeded.'
           content:
@@ -1910,6 +1920,7 @@ paths:
                 properties:
                   items: { type: array, items: { $ref: '#/components/schemas/ReporterAttachment' } }
                 type: object
+                additionalProperties: false
         '401':
           description: 'The report access capability was not accepted.'
         '429':
@@ -1940,6 +1951,7 @@ paths:
                   items: { type: string, maxLength: 500 }
                   maxItems: 3
               type: object
+              additionalProperties: false
       responses:
         '201':
           description: 'Private attachment records were quarantined for scanning.'
@@ -1951,6 +1963,7 @@ paths:
                 properties:
                   items: { type: array, items: { $ref: '#/components/schemas/ReporterAttachment' } }
                 type: object
+                additionalProperties: false
         '401':
           description: 'The report access capability was not accepted.'
         '403':
@@ -3365,6 +3378,7 @@ components:
             - triage
             - administrator
       type: object
+      additionalProperties: false
     ChangeOrganisationMembershipRequest:
       properties:
         role:
@@ -3385,6 +3399,7 @@ components:
             - resume
             - remove
       type: object
+      additionalProperties: false
     RecordProfessionalAbsenceRequest:
       required:
         - startsOn
@@ -3401,6 +3416,7 @@ components:
           default: null
           maxLength: 200
       type: object
+      additionalProperties: false
     AcceptProfessionalCredentialRequest:
       required:
         - secret
@@ -3413,6 +3429,7 @@ components:
           maxLength: 255
           minLength: 15
       type: object
+      additionalProperties: false
     InviteProfessionalRequest:
       required:
         - name
@@ -3431,6 +3448,7 @@ components:
             - triage
             - administrator
       type: object
+      additionalProperties: false
     ChangeProfessionalAccountStatusRequest:
       required:
         - action
@@ -3442,6 +3460,7 @@ components:
             - reactivate
             - deactivate
       type: object
+      additionalProperties: false
     CorrectProfessionalEmailRequest:
       required:
         - email
@@ -3450,6 +3469,7 @@ components:
           type: string
           maxLength: 255
       type: object
+      additionalProperties: false
     ManageProfessionalCaseAssignmentRequest:
       required:
         - professionalId
@@ -3469,6 +3489,7 @@ components:
           maxLength: 500
           minLength: 1
       type: object
+      additionalProperties: false
     HandoverProfessionalCaseAssignmentRequest:
       required:
         - professionalId
@@ -3481,6 +3502,7 @@ components:
           maxLength: 500
           minLength: 1
       type: object
+      additionalProperties: false
     ChangeProfessionalCaseAssignmentRoleRequest:
       required:
         - role
@@ -3496,6 +3518,7 @@ components:
           maxLength: 500
           minLength: 1
       type: object
+      additionalProperties: false
     RevokeProfessionalCaseAssignmentRequest:
       required:
         - reason
@@ -3505,6 +3528,7 @@ components:
           maxLength: 500
           minLength: 1
       type: object
+      additionalProperties: false
     CreateProfessionalCaseTaskRequest:
       required:
         - ownerId
@@ -3523,6 +3547,7 @@ components:
         dueAt:
           type: string
       type: object
+      additionalProperties: false
     RecordProfessionalCaseCommunicationRequest2:
       required:
         - responsibleId
@@ -3562,6 +3587,7 @@ components:
           maxLength: 500
           minLength: 1
       type: object
+      additionalProperties: false
     MarkProfessionalCaseTaskNotApplicableRequest:
       required:
         - reason
@@ -3571,6 +3597,7 @@ components:
           maxLength: 500
           minLength: 1
       type: object
+      additionalProperties: false
     ManageCaseInvolvedPersonRequest:
       required:
         - name
@@ -3588,6 +3615,7 @@ components:
             - guardian
             - other
       type: object
+      additionalProperties: false
     TransitionManagedCaseRequest:
       required:
         - status
@@ -3606,6 +3634,7 @@ components:
           type: string
           maxLength: 500
       type: object
+      additionalProperties: false
     UpdateProfessionalProfileRequest:
       required:
         - name
@@ -3619,6 +3648,7 @@ components:
           type: string
           maxLength: 255
       type: object
+      additionalProperties: false
     ReviewProfessionalReportRequest:
       required:
         - reason
@@ -3652,6 +3682,7 @@ components:
             - no_prompt_attention_indicated
             - unknown
       type: object
+      additionalProperties: false
     TriageProfessionalReportRequest:
       properties:
         outcome:
@@ -3666,6 +3697,7 @@ components:
           type: string
           default: ''
       type: object
+      additionalProperties: false
     RespondToProfessionalReportRequest:
       required:
         - content
@@ -3673,6 +3705,7 @@ components:
         content:
           type: string
       type: object
+      additionalProperties: false
     ChangeReportingChannelRequest:
       required:
         - action
@@ -3685,6 +3718,7 @@ components:
             - rotate
             - retire
       type: object
+      additionalProperties: false
     AddReportFollowUpEntryRequest:
       required:
         - content
@@ -3692,6 +3726,7 @@ components:
         content:
           type: string
       type: object
+      additionalProperties: false
     ConfigureReporterEmailRequest:
       required:
         - email
@@ -3703,6 +3738,7 @@ components:
         consentAccepted:
           type: boolean
       type: object
+      additionalProperties: false
     VerifyReporterEmailRequest:
       required:
         - token
@@ -3710,6 +3746,7 @@ components:
         token:
           type: string
       type: object
+      additionalProperties: false
     SubmitAnonymousReportRequest:
       required:
         - situationDescription
@@ -3761,6 +3798,7 @@ components:
             - experienced
             - witnessed
       type: object
+      additionalProperties: false
     VerifyReportAccessRequest:
       required:
         - accessSecret
@@ -3768,6 +3806,7 @@ components:
         accessSecret:
           type: string
       type: object
+      additionalProperties: false
   securitySchemes:
     professionalSession:
       type: apiKey

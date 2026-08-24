@@ -48,7 +48,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Es revisa cada sis mesos i, a més, sempre que canviïn l'abast de la demostració, la identitat de qui la publica o el protocol de referència."
+    "reviewTrigger": "Es revisa cada sis mesos. També es revisa si canvia l’abast de la demostració, qui la publica o el protocol de referència."
   },
   "privacyNotice": {
     "eyebrow": "PRIVADESA",
@@ -81,7 +81,7 @@
         "paragraphs": [
           "Convive no demana un compte per enviar una comunicació, i això redueix la informació que es coneix de qui escriu. No l'elimina.",
           "El contingut que escriguis pot identificar-te per allò que expliques, encara que no donis el teu nom. A més, hi ha registres tècnics propis de qualsevol servei a internet.",
-          "Per això el producte no promet anonimat absolut en cap moment: seria una falsa tranquil·litat, i en un assumpte de convivència escolar una falsa tranquil·litat fa mal."
+          "Per això el producte no promet anonimat absolut. Seria una falsa tranquil·litat. En convivència escolar, una falsa tranquil·litat fa mal."
         ]
       },
       {
@@ -97,12 +97,12 @@
       {
         "heading": "Els teus drets",
         "paragraphs": [
-          "Com que aquesta demostració no tracta dades personals de qui la visita, normalment no hi ha cap dada sobre la qual exercir un dret d'accés, rectificació o supressió.",
+          "Aquesta demostració no tracta dades personals de qui la visita. Per això, normalment no hi ha dades sobre les quals exercir drets d’accés, rectificació o supressió.",
           "Tot i així, la via existeix i està atesa: escriu a {{privacyEmail}} i rebràs resposta."
         ]
       }
     ],
-    "reviewTrigger": "Es revisa cada sis mesos i, a més, sempre que canviïn l'abast de la demostració, la identitat de qui la publica o el protocol de referència."
+    "reviewTrigger": "Es revisa cada sis mesos. També es revisa si canvia l’abast de la demostració, qui la publica o el protocol de referència."
   },
   "cookieNotice": {
     "eyebrow": "COOKIES",
@@ -115,7 +115,7 @@
         "heading": "Què es guarda al teu navegador",
         "paragraphs": [
           "Al lloc públic no es guarda res que permeti reconèixer-te.",
-          "En entrar a l'aplicació de demostració, el servidor manté una sessió tècnica imprescindible perquè el recorregut funcioni: sense ella no seria possible enviar una comunicació d'exemple ni tornar-la a consultar. Aquesta sessió no s'utilitza per mesurar, seguir ni perfilar ningú."
+          "En entrar a l’aplicació de demostració, el servidor crea una sessió tècnica essencial. Sense ella no podries enviar una comunicació d’exemple ni tornar-la a consultar. Aquesta sessió no s’utilitza per mesurar, seguir ni perfilar ningú."
         ]
       },
       {
@@ -128,7 +128,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Es revisa cada sis mesos i, a més, sempre que canviïn l'abast de la demostració, la identitat de qui la publica o el protocol de referència."
+    "reviewTrigger": "Es revisa cada sis mesos. També es revisa si canvia l’abast de la demostració, qui la publica o el protocol de referència."
   },
   "sandboxTerms": {
     "eyebrow": "TERMES DE L'ENTORN DE PROVES",
@@ -152,7 +152,7 @@
         "heading": "Això no és un canal d'ajuda",
         "paragraphs": [
           "Ningú no llegeix el que escrius aquí com si fos una comunicació real. No hi ha cap equip professional a l'altre costat, no s'obre cap expedient i no s'avisa cap centre.",
-          "Fer servir la demostració per demanar ajuda davant una situació real no només no serveix: retarda el moment en què aquesta situació arriba a algú que sí que pot actuar."
+          "Fer servir la demostració per demanar ajuda davant d’una situació real no serveix. A més, retarda que aquesta situació arribi a qui sí que pot actuar."
         ]
       },
       {
@@ -163,7 +163,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Es revisa cada sis mesos i, a més, sempre que canviïn l'abast de la demostració, la identitat de qui la publica o el protocol de referència."
+    "reviewTrigger": "Es revisa cada sis mesos. També es revisa si canvia l’abast de la demostració, qui la publica o el protocol de referència."
   },
   "accessibilityNotice": {
     "eyebrow": "ACCESSIBILITAT",
@@ -176,7 +176,7 @@
         "heading": "Estat de la revisió",
         "paragraphs": [
           "Les comprovacions automàtiques d'accessibilitat formen part de la integració contínua del projecte i s'executen a cada canvi.",
-          "El 16 d'agost de 2026 es va executar una auditoria manual dels recorreguts crítics, que va trobar i corregir dues fallades reals: un contrast insuficient i tres estats d'error que no s'anunciaven a un lector de pantalla. Encara falta la comprovació amb productes de suport reals. Mentre no es completi, aquest lloc no declara conformitat amb les WCAG 2.2 AA: afirmar-ho sense haver-ho comprovat seria faltar a la veritat."
+          "El 16 d’agost de 2026 es va fer una auditoria manual dels recorreguts crítics. Va detectar i corregir dos errors: un contrast insuficient i tres errors que no s’anunciaven al lector de pantalla. Falta comprovar-ho amb productes de suport reals. Fins aleshores, aquest lloc no declara conformitat amb les WCAG 2.2 AA. Dir-ho sense comprovar-ho no seria veritat."
         ]
       },
       {
@@ -187,7 +187,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Es revisa cada sis mesos i, a més, sempre que canviïn l'abast de la demostració, la identitat de qui la publica o el protocol de referència."
+    "reviewTrigger": "Es revisa cada sis mesos. També es revisa si canvia l’abast de la demostració, qui la publica o el protocol de referència."
   },
   "contactNotice": {
     "eyebrow": "CONTACTE",
@@ -205,6 +205,6 @@
         ]
       }
     ],
-    "reviewTrigger": "Es revisa cada sis mesos i, a més, sempre que canviïn l'abast de la demostració, la identitat de qui la publica o el protocol de referència."
+    "reviewTrigger": "Es revisa cada sis mesos. També es revisa si canvia l’abast de la demostració, qui la publica o el protocol de referència."
   }
 }

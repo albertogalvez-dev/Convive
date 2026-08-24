@@ -10,7 +10,7 @@
   "hero": {
     "eyebrow": "CONVIVÈNCIA ESCOLAR",
     "title": "Un canal segur per a escoltar abans.",
-    "description": "Convive ajuda els centres a rebre, ordenar i respondre comunicacions amb cura.",
+    "description": "Convive ajuda el centre. Escolta i respon amb cura.",
     "requestDemo": "Sol·licitar demostració",
     "accessCentre": "Accedir al centre"
   },
@@ -18,21 +18,21 @@
     "label": "Com ajuda Convive",
     "communication": {
       "title": "Comunicació clara",
-      "body": "Un espai perquè el centre reba informació sense demanar un compte."
+      "body": "Envia un avís al centre. No cal cap compte."
     },
     "privacy": {
       "title": "Privadesa amb límits clars",
-      "body": "No es demana un compte, però cap comunicació promet anonimat absolut."
+      "body": "No demanem cap compte. No prometem anonimat total."
     },
     "work": {
       "title": "Treball del centre",
-      "body": "Els equips autoritzats responen des d'un entorn protegit."
+      "body": "L’equip treballa en un lloc segur."
     }
   },
   "demo": {
     "eyebrow": "DEMOSTRACIÓ FICTÍCIA",
     "title": "Coneix el flux complet.",
-    "description": "La demostració fa servir únicament informació fictícia. No substituïx l'atenció davant d'una emergència.",
+    "description": "La demo usa dades falses. No servix en una emergència.",
     "cta": "Veure la demostració"
   }
 }
