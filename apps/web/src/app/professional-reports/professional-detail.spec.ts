@@ -4,6 +4,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { vi } from 'vitest';
 
+import attachmentPreviewEs from '../../i18n/attachment-preview/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { ProfessionalDetail } from './professional-detail';
 
@@ -17,7 +19,10 @@ describe('ProfessionalDetail', () => {
   beforeEach(async () => {
     navigate = vi.fn().mockResolvedValue(true);
     await TestBed.configureTestingModule({
-      imports: [ProfessionalDetail],
+      imports: [
+        ProfessionalDetail,
+        i18nTestingModule({ 'attachment-preview': attachmentPreviewEs }),
+      ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -37,6 +42,7 @@ describe('ProfessionalDetail', () => {
 
   it('renders original content and reporter-visible history', () => {
     http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
     fixture.detectChanges();
     expect(page.textContent).toContain('Fictional original report');
     expect(page.textContent).toContain('Fictional follow-up');
@@ -46,6 +52,7 @@ describe('ProfessionalDetail', () => {
 
   it('validates and records the initial review', () => {
     http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
     fixture.detectChanges();
     const textarea = page.querySelector<HTMLTextAreaElement>('#review-reason')!;
     textarea.value = 'Reviewed under the fictional safeguarding protocol.';
@@ -71,6 +78,7 @@ describe('ProfessionalDetail', () => {
     TestBed.inject(ProfessionalSessionService).demonstrationRole.set('triage');
 
     http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
     fixture.detectChanges();
 
     expect(page.querySelector('.review-card form')).toBeNull();
@@ -79,8 +87,29 @@ describe('ProfessionalDetail', () => {
     expect(page.textContent).not.toContain('Marcar como revisada');
   });
 
+  it('keeps optional classification out of the way until it is needed', () => {
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
+    fixture.detectChanges();
+
+    const classification = page.querySelector<HTMLDetailsElement>('.review-classification');
+
+    expect(classification?.open).toBe(false);
+    expect(classification?.querySelector('summary')?.textContent).toContain('Valoración opcional');
+
+    classification!.open = true;
+    classification!.dispatchEvent(new Event('toggle'));
+    fixture.detectChanges();
+
+    expect(classification?.textContent).toContain('Ámbito de valoración');
+    expect(
+      classification?.querySelector<HTMLSelectElement>('#professional-concern-category')?.value,
+    ).toBe('unknown');
+  });
+
   it('publishes one reporter-visible response and appends it to history', async () => {
     http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
     fixture.detectChanges();
     const textarea = page.querySelector<HTMLTextAreaElement>('#professional-response')!;
     const form = page.querySelector<HTMLFormElement>('.response-card form')!;
@@ -113,6 +142,7 @@ describe('ProfessionalDetail', () => {
 
   it('keeps the draft and shows a safe response failure', () => {
     http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
     fixture.detectChanges();
     const textarea = page.querySelector<HTMLTextAreaElement>('#professional-response')!;
     textarea.value = 'A response that remains available for retry.';
@@ -138,6 +168,31 @@ describe('ProfessionalDetail', () => {
     http.expectOne(endpoint).flush(null, { status: 404, statusText: 'Not Found' });
     fixture.detectChanges();
     expect(page.querySelector('[role="alert"]')?.textContent).toContain('no est\u00e1 disponible');
+  });
+
+  it('lists authorised available attachments and opens their private preview', () => {
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/attachments`).flush({
+      items: [
+        {
+          id: 'attachment-1',
+          mediaType: 'image/png',
+          byteSize: 4,
+          createdAt: '2026-08-09T18:00:00+00:00',
+          description: 'Fictional image',
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Fictional image');
+    expect(page.querySelector('app-private-attachment-preview button')?.textContent).toContain(
+      'Ver archivo',
+    );
+    page.querySelector<HTMLButtonElement>('app-private-attachment-preview button')?.click();
+    const request = http.expectOne(`${endpoint}/attachments/attachment-1/download`);
+    expect(request.request.responseType).toBe('blob');
+    request.flush(new Blob(['test'], { type: 'image/png' }));
   });
 
   it('redirects after session expiry', () => {

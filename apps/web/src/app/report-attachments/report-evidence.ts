@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
   input,
   OnInit,
@@ -18,6 +19,8 @@ import {
   ReporterAttachment,
   ReporterAttachmentCollection,
 } from './report-attachment.service';
+import { PrivateAttachmentPreview } from './private-attachment-preview';
+import { PreviewableAttachment } from './private-attachment-preview';
 
 const MAXIMUM_FILE_BYTES = 5 * 1024 * 1024;
 const MAXIMUM_ATTACHMENTS_PER_SELECTION = 3;
@@ -28,7 +31,7 @@ const ACCEPTED_MEDIA_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/pn
 type AccessState = 'idle' | 'preparing' | 'ready' | 'failed';
 type DraftStatus = 'queued' | 'uploading' | 'failed';
 
-interface EvidenceDraft {
+export interface EvidenceDraft {
   key: number;
   file: File;
   description: string;
@@ -41,7 +44,7 @@ interface EvidenceDraft {
 @Component({
   selector: 'app-report-evidence',
   standalone: true,
-  imports: [TranslocoPipe],
+  imports: [PrivateAttachmentPreview, TranslocoPipe],
   providers: [provideTranslocoScope('report-evidence')],
   templateUrl: './report-evidence.html',
   styleUrl: './report-evidence.scss',
@@ -49,7 +52,16 @@ interface EvidenceDraft {
 export class ReportEvidence implements OnInit {
   readonly accessSecret = input<string | null>(null);
   readonly autoLoad = input(true);
+  /**
+   * The reporting form selects evidence before a report exists. It must stay
+   * in browser memory until the report has been created and its capability is
+   * available; this mode deliberately performs no attachment API request.
+   */
+  readonly selectionOnly = input(false);
+  readonly initialDrafts = input<readonly EvidenceDraft[]>([]);
+  readonly autoUploadQueued = input(false);
   readonly accessRejected = output<void>();
+  readonly draftsChanged = output<readonly EvidenceDraft[]>();
 
   private readonly attachments = inject(ReportAttachmentService);
   private readonly destroyRef = inject(DestroyRef);
@@ -81,8 +93,24 @@ export class ReportEvidence implements OnInit {
     ),
   );
 
+  constructor() {
+    effect(() => this.draftsChanged.emit(this.drafts()));
+  }
+
   ngOnInit(): void {
-    if (this.autoLoad()) {
+    this.drafts.set(this.initialDrafts().map((draft) => ({ ...draft })));
+
+    if (this.selectionOnly()) {
+      this.expanded.set(true);
+      this.accessState.set('ready');
+      return;
+    }
+
+    // Standalone evidence views still load their existing state by default.
+    // In a fresh result, however, do not exchange the report capability until
+    // the reporter either prepared evidence in the flow or explicitly opens
+    // this optional section.
+    if (this.autoLoad() && (this.accessSecret() === null || this.drafts().length > 0)) {
       this.prepare();
     }
   }
@@ -108,6 +136,9 @@ export class ReportEvidence implements OnInit {
         next: ({ items }) => {
           this.remoteAttachments.set(items);
           this.accessState.set('ready');
+          if (this.autoUploadQueued() && this.hasQueuedDrafts()) {
+            this.startUploads();
+          }
         },
         error: (error: unknown) => this.failAccess(error),
       });
@@ -165,7 +196,7 @@ export class ReportEvidence implements OnInit {
   }
 
   protected startUploads(): void {
-    if (this.uploading() || !this.hasQueuedDrafts()) {
+    if (this.selectionOnly() || this.uploading() || !this.hasQueuedDrafts()) {
       return;
     }
 
@@ -268,6 +299,20 @@ export class ReportEvidence implements OnInit {
 
   protected downloadUrl(id: string): string {
     return this.attachments.downloadUrl(id);
+  }
+
+  protected previewAttachment = (id: string) => this.attachments.preview(id);
+
+  protected previewableAttachment(attachment: ReporterAttachment): PreviewableAttachment | null {
+    if (
+      attachment.mediaType !== 'application/pdf' &&
+      attachment.mediaType !== 'image/jpeg' &&
+      attachment.mediaType !== 'image/png'
+    ) {
+      return null;
+    }
+
+    return { id: attachment.id, mediaType: attachment.mediaType };
   }
 
   private uploadNext(): void {

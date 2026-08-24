@@ -60,9 +60,23 @@
     "attentionUnknown": "Nahiago dut ez adierazi"
   },
   "step3": {
-    "title": "Egiaztatu bidali aurretik",
+    "title": "Kontatu pixka bat gehiago, nahi baduzu",
+    "introduction": "Galdera hauek aukerakoak dira. Hutsik utz ditzakezu eta oharrak berdin iritsiko da.",
     "descriptionLabel": "Gertatu dena",
     "contextLabel": "Non gertatu zen"
+  },
+  "step4": {
+    "title": "Gehitu dokumentuak, badituzu",
+    "introduction": "Gehienez hiru irudi edo PDF presta ditzakezu. Komunikazioa bidaltzen duzunean soilik gordeko dira.",
+    "safetyNote": "Ez gehitu zentroarekin partekatu nahi ez duzun informazioa duten dokumentuak."
+  },
+  "step5": {
+    "title": "Egiaztatu bidali aurretik",
+    "descriptionLabel": "Gertatu dena",
+    "contextLabel": "Non gertatu zen",
+    "evidenceLabel": "Dokumentuak",
+    "evidenceSelected": "Prestatutako dokumentuak: {{count}}",
+    "noEvidenceSelected": "Ez duzu dokumenturik gehitu"
   },
   "submissionError": {
     "invalidLink": "Komunikazio-esteka hau baliogabea da. Egiaztatu eta saiatu berriro.",

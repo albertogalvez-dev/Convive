@@ -45,4 +45,8 @@ export class ReportAttachmentService {
   downloadUrl(id: string): string {
     return `${this.endpoint}/${encodeURIComponent(id)}/download`;
   }
+
+  preview(id: string): Observable<Blob> {
+    return this.http.get(this.downloadUrl(id), { responseType: 'blob' });
+  }
 }

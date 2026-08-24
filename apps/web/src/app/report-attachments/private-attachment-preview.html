@@ -1,0 +1,22 @@
+<button type="button" class="preview-trigger" (click)="open()">
+  {{ copy('open') }}
+</button>
+
+<dialog #dialog class="preview-dialog" (close)="closed()" [attr.aria-label]="copy('title')">
+  <div class="preview-dialog__header">
+    <h2>{{ copy('title') }}</h2>
+    <button type="button" class="close" (click)="close()">
+      {{ copy('close') }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p class="state" role="status">{{ copy('loading') }}</p>
+  } @else if (errorMessage(); as message) {
+    <p class="state error" role="alert">{{ message }}</p>
+  } @else if (isPdf() && documentUrl(); as url) {
+    <iframe [src]="url" sandbox referrerpolicy="no-referrer" [title]="copy('pdfTitle')"></iframe>
+  } @else if (imageUrl(); as url) {
+    <img [src]="url" [alt]="copy('imageAlt')" />
+  }
+</dialog>

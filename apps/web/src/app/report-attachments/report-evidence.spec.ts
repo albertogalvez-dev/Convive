@@ -133,7 +133,7 @@ describe('ReportEvidence', () => {
     expect(page.textContent).toContain('En comprobación');
     expect(page.querySelector('.draft-list')).toBeNull();
     expect(page.querySelector('.status-message')?.textContent).toContain(
-      'Las pruebas seleccionadas se han enviado.',
+      'Los archivos seleccionados se han enviado.',
     );
   });
 
@@ -149,7 +149,7 @@ describe('ReportEvidence', () => {
     fixture.detectChanges();
 
     expect(page.querySelector('.upload-failure')?.textContent).toContain(
-      'No hemos podido subir este archivo.',
+      'No pudimos subir este archivo.',
     );
 
     page.querySelector<HTMLButtonElement>('.retry')?.click();
@@ -198,7 +198,7 @@ describe('ReportEvidence', () => {
     selectFiles([new File(['fictional'], 'notes.txt', { type: 'text/plain' })]);
 
     expect(page.querySelector('[role=alert]')?.textContent).toContain(
-      'Selecciona únicamente PDF, JPG o PNG de hasta 5 MB.',
+      'Elige solo PDF, JPG o PNG de hasta 5 MB.',
     );
     expect(page.querySelector('.draft-list')).toBeNull();
     httpTesting.expectNone(

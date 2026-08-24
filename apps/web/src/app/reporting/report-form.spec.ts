@@ -81,6 +81,17 @@ describe('ReportForm', () => {
     expect(page.querySelector('form')).not.toBeNull();
   });
 
+  it('should return to the public home from the Convive logo', () => {
+    createForm();
+    resolveOrganisation();
+
+    const homeLink = page.querySelector<HTMLAnchorElement>('app-report-header .home-link');
+
+    expect(homeLink?.getAttribute('href')).toBe('/');
+    expect(homeLink?.getAttribute('aria-label')).toBe('Convive, inicio');
+    expect(homeLink?.querySelector('img')?.getAttribute('alt')).toBe('');
+  });
+
   it('should show a non-persistent message instead of the form in fictional demo mode', () => {
     createForm();
     resolveOrganisation('IES Horizonte Ficticio', 'fictional_demo');
@@ -210,14 +221,14 @@ describe('ReportForm', () => {
     writeDescription('Una situación ocurrió durante el recreo.');
     continueToNextStep();
     selectContext('En persona');
+    continueToNextStep();
 
     // Every optional field explains what it is for before it is answered.
     const purposes = [...page.querySelectorAll('.field-purpose')].map(
       (element) => element.textContent ?? '',
     );
-    // Every collected field on this step, including the required one.
-    expect(purposes.length).toBeGreaterThanOrEqual(5);
-    expect(purposes.join(' ')).toContain('el protocolo es distinto');
+    expect(page.querySelector('#step-title')?.textContent).toContain('Cuéntanos un poco más');
+    expect(purposes.length).toBeGreaterThanOrEqual(4);
     expect(purposes.join(' ')).toContain('Puedes no contestarlo');
     expect(purposes.join(' ')).toContain('No hace falta una fecha exacta');
     expect(purposes.join(' ')).toContain('Puedes dejarlo en blanco y el aviso llega igual');
@@ -228,8 +239,88 @@ describe('ReportForm', () => {
     expect(people?.required).toBe(false);
 
     // Nothing added here blocks moving on: the account alone is enough.
-    continueToNextStep();
+    continueFromDetailsToReview();
     expect(page.querySelector('#step-title')?.textContent).toContain('Revisa antes de enviar');
+  });
+
+  it('keeps selected evidence in the flow and shows it before submission', async () => {
+    startValidForm();
+
+    writeDescription('Una situación ocurrió durante el recreo.');
+    continueToNextStep();
+    selectContext('En persona');
+    continueToNextStep();
+    continueToNextStep();
+
+    expect(page.querySelector('#step-title')?.textContent).toContain('Añade documentos');
+
+    const picker = page.querySelector<HTMLInputElement>('#evidence-files');
+    const file = new File(['evidence'], 'captura.png', { type: 'image/png' });
+    Object.defineProperty(picker, 'files', { configurable: true, value: [file] });
+    picker?.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Imagen PNG');
+    continueToNextStep();
+
+    expect(page.querySelector('#step-title')?.textContent).toContain('Revisa antes de enviar');
+    expect(page.textContent).toContain('Documentos preparados: 1');
+  });
+
+  it('uploads prepared evidence only after the report capability exists', async () => {
+    startValidForm();
+
+    writeDescription('Una situación ocurrió durante el recreo.');
+    continueToNextStep();
+    selectContext('En persona');
+    continueToNextStep();
+    continueToNextStep();
+
+    const picker = page.querySelector<HTMLInputElement>('#evidence-files');
+    const file = new File(['evidence'], 'captura.png', { type: 'image/png' });
+    Object.defineProperty(picker, 'files', { configurable: true, value: [file] });
+    picker?.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    continueToNextStep();
+    submitReport();
+    httpTesting.expectOne(`${organisationEndpoint}/reports`).flush(
+      {
+        publicReference: 'WITH-EVIDENCE',
+        accessSecret: 'evidence-secret',
+        status: 'received',
+        createdAt: '2026-08-04T12:00:00.000+00:00',
+      },
+      { status: 201, statusText: 'Created' },
+    );
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const grant = httpTesting.expectOne('/api/v1/public/report-access-grants');
+    expect(grant.request.body).toEqual({ accessSecret: 'evidence-secret' });
+    grant.flush(null, { status: 204, statusText: 'No Content' });
+
+    httpTesting.expectOne('/api/v1/reporter/report/attachments').flush({ items: [] });
+    const upload = httpTesting.expectOne('/api/v1/reporter/report/attachments');
+    expect(upload.request.method).toBe('POST');
+    expect((upload.request.body as FormData).getAll('attachments[]')).toEqual([file]);
+    expect((upload.request.body as FormData).getAll('descriptions[]')).toEqual(['']);
+    upload.flush({
+      items: [
+        {
+          id: '0192a5c0-9999-7000-8000-000000000038',
+          status: 'processing',
+          createdAt: '2026-08-04T12:00:00.000+00:00',
+          description: '',
+          mediaType: 'image/png',
+        },
+      ],
+    });
   });
 
   it('should submit the report and display the access credentials', async () => {
@@ -239,7 +330,7 @@ describe('ReportForm', () => {
     continueToNextStep();
 
     selectContext('En persona');
-    continueToNextStep();
+    continueToReview();
 
     expect(page.querySelector('#step-title')?.textContent).toContain('Revisa antes de enviar');
 
@@ -423,7 +514,7 @@ describe('ReportForm', () => {
     continueToNextStep();
 
     selectContext('En persona');
-    continueToNextStep();
+    continueToReview();
     submitReport();
 
     const request = httpTesting.expectOne(`${organisationEndpoint}/reports`);
@@ -457,7 +548,7 @@ describe('ReportForm', () => {
     continueToNextStep();
 
     selectContext('En persona');
-    continueToNextStep();
+    continueToReview();
     submitReport();
 
     const request = httpTesting.expectOne(`${organisationEndpoint}/reports`);
@@ -494,7 +585,7 @@ describe('ReportForm', () => {
 
     selectContext('En persona');
     selectContext('Online');
-    continueToNextStep();
+    continueToReview();
 
     expect(page.textContent).toContain('En persona y online');
 
@@ -668,6 +759,17 @@ describe('ReportForm', () => {
     fixture.detectChanges();
   }
 
+  function continueToReview(): void {
+    continueToNextStep();
+    continueToNextStep();
+    continueToNextStep();
+  }
+
+  function continueFromDetailsToReview(): void {
+    continueToNextStep();
+    continueToNextStep();
+  }
+
   function submitValidReport(): void {
     startValidForm();
 
@@ -675,7 +777,7 @@ describe('ReportForm', () => {
     continueToNextStep();
 
     selectContext('En persona');
-    continueToNextStep();
+    continueToReview();
     submitReport();
 
     httpTesting.expectOne(`${organisationEndpoint}/reports`).flush(

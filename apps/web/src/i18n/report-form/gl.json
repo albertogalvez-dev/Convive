@@ -60,9 +60,23 @@
     "attentionUnknown": "Prefiro non indicalo"
   },
   "step3": {
-    "title": "Revisa antes de enviar",
+    "title": "Cóntanos un pouco máis, se queres",
+    "introduction": "Estas preguntas son opcionais. Podes deixalas en branco e o aviso chegará igual.",
     "descriptionLabel": "Que ocorreu",
     "contextLabel": "Onde ocorreu"
+  },
+  "step4": {
+    "title": "Engade documentos, se os tes",
+    "introduction": "Podes preparar ata tres imaxes ou PDF. Só se gardarán cando envíes a comunicación.",
+    "safetyNote": "Non engadas documentos se conteñen información que non queres compartir co centro."
+  },
+  "step5": {
+    "title": "Revisa antes de enviar",
+    "descriptionLabel": "Que ocorreu",
+    "contextLabel": "Onde ocorreu",
+    "evidenceLabel": "Documentos",
+    "evidenceSelected": "Documentos preparados: {{count}}",
+    "noEvidenceSelected": "Non engadiches documentos"
   },
   "submissionError": {
     "invalidLink": "Esta ligazón de comunicación non é válida. Compróbaa e téntao de novo.",
