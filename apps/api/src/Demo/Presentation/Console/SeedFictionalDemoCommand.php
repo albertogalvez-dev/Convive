@@ -86,7 +86,7 @@ final class SeedFictionalDemoCommand extends Command
         }
 
         $output->writeln(sprintf(
-            '<info>Fictional demo %s: %d organisation, %d professionals, %d reports, %d conversation entries, %d case, %d assignment and %d involved people.</info>',
+            '<info>Fictional demo %s: %d organisation, %d professionals, %d reports, %d conversation entries, %d cases, %d assignments and %d involved people.</info>',
             $result->reset ? 'restored' : 'seeded',
             $result->organisations,
             $result->professionals,
