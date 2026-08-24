@@ -39,6 +39,38 @@ test.afterEach(async ({ context, page }, testInfo) => {
   await context.close();
 });
 
+test('keeps the public-home journey truthful and keyboard-operable on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const navigationToggle = page.getByRole('button', { name: 'Abrir navegación principal' });
+  const primaryNavigation = page.getByRole('navigation', { name: 'Navegación principal' });
+  await expect(navigationToggle).toBeVisible();
+  await expect(navigationToggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(primaryNavigation.getByRole('link', { name: 'Blog' })).toBeHidden();
+
+  await navigationToggle.press('Enter');
+
+  await expect(page.getByRole('button', { name: 'Cerrar navegación principal' })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  );
+  await expect(primaryNavigation.getByRole('link', { name: 'Blog' })).toBeVisible();
+  await primaryNavigation.getByRole('link', { name: 'Blog' }).press('Escape');
+  await expect(page.getByRole('button', { name: 'Abrir navegación principal' })).toBeFocused();
+
+  const demonstrationLink = page.getByRole('link', { name: 'Conocer la demostración' });
+  await expect(demonstrationLink).toHaveAttribute('href', '/demostracion/');
+  await expect(page.locator('[href*="/r/"]')).toHaveCount(0);
+  await expectNoAccessibilityViolations(page);
+
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+});
+
 test('completes the fictional reporter-professional conversation loop', async ({
   browser,
   context,

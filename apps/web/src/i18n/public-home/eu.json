@@ -4,14 +4,16 @@
     "label": "Nabigazio nagusia",
     "blog": "bloga",
     "demo": "Demo",
-    "contact": "Kontaktua"
+    "contact": "Kontaktua",
+    "open": "Ireki nabigazio nagusia",
+    "close": "Itxi nabigazio nagusia"
   },
   "professionalAccess": "Lanbide arloa",
   "hero": {
     "eyebrow": "ESKOLA ELKARBIZITZA",
     "title": "Aurretik entzuteko kanal segurua.",
     "description": "Elkarrekin bizitzen lagundu zentroari. Entzun eta erantzun arretaz.",
-    "requestDemo": "Eskatu demoa",
+    "exploreDemo": "Ezagutu demoa",
     "accessCentre": "Sartu zentrora"
   },
   "cards": {

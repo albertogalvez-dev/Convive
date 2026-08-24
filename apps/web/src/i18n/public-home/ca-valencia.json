@@ -4,14 +4,16 @@
     "label": "Navegació principal",
     "blog": "Blog",
     "demo": "Demostració",
-    "contact": "Contacte"
+    "contact": "Contacte",
+    "open": "Obrir la navegació principal",
+    "close": "Tancar la navegació principal"
   },
   "professionalAccess": "Àrea professional",
   "hero": {
     "eyebrow": "CONVIVÈNCIA ESCOLAR",
     "title": "Un canal segur per a escoltar abans.",
     "description": "Convive ajuda el centre. Escolta i respon amb cura.",
-    "requestDemo": "Sol·licitar demostració",
+    "exploreDemo": "Conéixer la demostració",
     "accessCentre": "Accedir al centre"
   },
   "cards": {
