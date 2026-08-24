@@ -291,30 +291,19 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await expect(leadPage.getByLabel('Plantilla revisada')).toBeVisible();
     await expectNoAccessibilityViolations(leadPage);
 
-    // A rejected submission exposes the page's validation/error state in the
-    // same place a real API validation response does. Keep the assertion at
-    // the DOM level: browser-native validation bubbles are not inspectable by
-    // axe and would leave this state unprotected.
-    await leadPage.route('**/api/v1/professional/cases/**', async (route) => {
-      if (route.request().method() !== 'POST' || !route.request().url().endsWith('/tasks')) {
-        await route.continue();
-        return;
-      }
-
+    // An unavailable catalogue exposes the page's visible error state. Axe
+    // must cover that announced state as well as the normal inline form.
+    await leadPage.route('**/task-planning-catalogue', async (route) => {
       await route.fulfill({
-        status: 422,
+        status: 503,
         contentType: 'application/json',
-        body: JSON.stringify({ detail: 'Invalid fictional task.' }),
+        body: JSON.stringify({ detail: 'Catalogue unavailable.' }),
       });
     });
-    await leadPage.locator('.task-form').evaluate((form: HTMLFormElement) => {
-      form.noValidate = true;
-    });
-    await leadPage.locator('.task-form input[name="title"]').fill('Tarea ficticia rechazada');
-    await leadPage.getByRole('button', { name: 'Crear tarea' }).click();
+    await leadPage.getByRole('button', { name: 'Nueva tarea' }).click();
     await expect(
       leadPage.getByRole('alert', {
-        name: 'No hemos podido crear la tarea. Revisa los datos e inténtalo de nuevo.',
+        name: 'No se puede cargar el catálogo de tareas revisadas.',
       }),
     ).toBeVisible();
     await expectNoAccessibilityViolations(leadPage);
