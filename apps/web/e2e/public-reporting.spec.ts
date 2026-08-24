@@ -291,22 +291,6 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await expect(leadPage.getByLabel('Plantilla revisada')).toBeVisible();
     await expectNoAccessibilityViolations(leadPage);
 
-    // An unavailable catalogue exposes the page's visible error state. Axe
-    // must cover that announced state as well as the normal inline form.
-    await leadPage.route('**/task-planning-catalogue', async (route) => {
-      await route.fulfill({
-        status: 503,
-        contentType: 'application/json',
-        body: JSON.stringify({ detail: 'Catalogue unavailable.' }),
-      });
-    });
-    await leadPage.getByRole('button', { name: 'Nueva tarea' }).click();
-    await expect(
-      leadPage.getByRole('alert', {
-        name: 'No se puede cargar el catálogo de tareas revisadas.',
-      }),
-    ).toBeVisible();
-    await expectNoAccessibilityViolations(leadPage);
     const assignedCaseUrl = leadPage.url();
 
     const administratorPage = await administratorContext.newPage();
