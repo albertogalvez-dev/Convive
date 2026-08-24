@@ -15,6 +15,7 @@ import reportSendingEs from '../../i18n/report-sending/es.json';
 import confirmedAr from '../../i18n/translation-sync/ar.json';
 import confirmedCa from '../../i18n/translation-sync/ca.json';
 import confirmedCaValencia from '../../i18n/translation-sync/ca-valencia.json';
+import confirmedEu from '../../i18n/translation-sync/eu.json';
 import confirmedGl from '../../i18n/translation-sync/gl.json';
 
 /**
@@ -39,16 +40,14 @@ const SOURCE: Readonly<Record<string, unknown>> = {
 };
 
 /**
- * A locale is confirmed per scope, not per product. ADR-0027 gives protocol
- * and professional content a fallback guarantee rather than the public path's
- * all-or-nothing gate, so `ca-valencia` and `ar` translate no
- * `professional-case` and fall back to Spanish there by design. Confirmation
- * covers what a locale actually translates.
+ * Every published locale is confirmed across every current scope. This keeps
+ * a source edit from silently leaving one language on an older wording.
  */
 const CONFIRMED: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   ar: confirmedAr,
   ca: confirmedCa,
   'ca-valencia': confirmedCaValencia,
+  eu: confirmedEu,
   gl: confirmedGl,
 };
 

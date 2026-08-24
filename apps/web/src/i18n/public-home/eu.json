@@ -1,0 +1,38 @@
+{
+  "homeLinkLabel": "Elkarbizitza, hasi",
+  "nav": {
+    "label": "Nabigazio nagusia",
+    "blog": "bloga",
+    "demo": "Demo",
+    "contact": "Kontaktua"
+  },
+  "professionalAccess": "Lanbide arloa",
+  "hero": {
+    "eyebrow": "ESKOLA ELKARBIZITZA",
+    "title": "Aurretik entzuteko kanal segurua.",
+    "description": "Elkarrekin bizitzen lagundu zentroari. Entzun eta erantzun arretaz.",
+    "requestDemo": "Eskatu demoa",
+    "accessCentre": "Sartu zentrora"
+  },
+  "cards": {
+    "label": "Nola laguntzen duen Convive-k",
+    "communication": {
+      "title": "Komunikazio argia",
+      "body": "Bidali oharra zentrora. Ez duzu konturik behar."
+    },
+    "privacy": {
+      "title": "Pribatutasuna muga argiekin",
+      "body": "Ez dugu konturik eskatzen. Ez dugu erabateko anonimotasuna agintzen."
+    },
+    "work": {
+      "title": "Zentroko lana",
+      "body": "Taldeak leku seguru batean lan egiten du."
+    }
+  },
+  "demo": {
+    "eyebrow": "FIKZIOZKO DEMOSTRAZIOA",
+    "title": "Ezagutu fluxu osoa.",
+    "description": "Demoak datu faltsuak erabiltzen ditu. Ez du funtzionatzen larrialdietan.",
+    "cta": "Ikusi demoa"
+  }
+}

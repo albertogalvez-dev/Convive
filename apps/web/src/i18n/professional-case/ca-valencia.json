@@ -1,0 +1,234 @@
+{
+  "nav": {
+    "backToCases": "← Tornar a casos"
+  },
+  "state": {
+    "loading": "Carregant cas…",
+    "unavailableTitle": "Cas no disponible",
+    "unavailableBody": "No existeix o no està assignat al vostre perfil.",
+    "myCases": "Veure els meus casos",
+    "retry": "Tornar a intentar"
+  },
+  "tracking": {
+    "title": "Seguiment del cas",
+    "operationalState": "Estat operatiu"
+  },
+  "transition": {
+    "title": "Transició del cas",
+    "newState": "Nou estat",
+    "reason": "Motiu",
+    "record": "Constància operativa",
+    "submit": "Registrar transició"
+  },
+  "summary": {
+    "pendingTasks": "Tasques pendents",
+    "overdue": "Fora de termini",
+    "linkedPeople": "Persones vinculades",
+    "availableEvidence": "Evidències disponibles"
+  },
+  "tasks": {
+    "section": "Properes accions",
+    "heading": "Tasques",
+    "new": "Nova tasca",
+    "create": "Crear tasca",
+    "empty": "No hi ha tasques enregistrades.",
+    "owner": "Responsable:",
+    "overdue": "Fora de l'objectiu temporal",
+    "action": "Acció",
+    "complete": "Completar",
+    "notApplicable": "No aplica",
+    "confirmReason": "Confirmar motiu",
+    "sourceGuidance": "{{authority}}: {{title}} ({{version}}). Aquesta guia no decideix una obligació ni calcula un termini: revisa i adapta lacció, responsable i objectiu temporal abans de guardar-la.",
+    "reviewedTemplate": "Plantilla revisada",
+    "dueLabel": "Objectiu temporal",
+    "dueValue": "Objectiu: {{value}}"
+  },
+  "comms": {
+    "section": "Registre operatiu",
+    "heading": "Comunicacions",
+    "recipient": "Destinatari",
+    "channel": "Canal",
+    "owner": "Responsable",
+    "datetime": "Data i hora",
+    "note": "Nota operativa breu",
+    "record": "Registrar comunicació",
+    "disclaimer": "Aquest registre no envia res ni acredita lliurament, recepció o notificació legal. Les correccions quedaran com un registre posterior.",
+    "empty": "No hi ha comunicacions registrades.",
+    "correct": "Corregir",
+    "correction": "Correcció traçable d'un registre anterior",
+    "recipientOption": {
+      "family": "Família",
+      "external_service": "Servei extern",
+      "inspection": "Inspecció educativa",
+      "other": "Un altre"
+    },
+    "channelOption": {
+      "in_person": "Presencial",
+      "phone": "Telèfon",
+      "secure_channel": "Canal segur",
+      "written_record": "Registre escrit",
+      "other": "Un altre"
+    },
+    "statusLabel": "Estat explícit",
+    "statusOption": {
+      "planned": "Prevista",
+      "recorded": "Acció registrada",
+      "not_applicable": "No escau"
+    }
+  },
+  "people": {
+    "section": "Abast del cas",
+    "heading": "Persones vinculades",
+    "minimalData": "Dades mínimes",
+    "disclaimer": "Només nom i vinculació funcional. Aquestes etiquetes no determinen fets.",
+    "name": "Nom",
+    "relation": "Vinculació",
+    "add": "Afegir persona",
+    "empty": "No hi ha persones vinculades.",
+    "correct": "Corregir",
+    "saveCorrection": "Desar correcció"
+  },
+  "evidence": {
+    "section": "Documentació privada",
+    "heading": "Evidències",
+    "viewCommunication": "Veure comunicació",
+    "empty": "No hi ha cap evidència disponible.",
+    "download": "Descarregar",
+    "leadOnly": "Només la persona responsable del cas la pot descarregar",
+    "sizeKb": "{{size}} KB"
+  },
+  "origin": {
+    "section": "Origen del cas",
+    "heading": "Decisió registrada",
+    "openedAsCase": "Obert com a cas"
+  },
+  "access": {
+    "section": "Accés al cas",
+    "heading": "Equip",
+    "confirmAssignment": "Confirmar assignació",
+    "withdraw": "Retirar",
+    "handover": "Traspassar",
+    "change": "Canviar accés",
+    "handoverOrWithdrawReason": "Motiu del traspàs o retirada",
+    "changeReason": "Motiu del canvi",
+    "confirmChange": "Confirmar canvi",
+    "transferReason": "Motiu del traspàs",
+    "confirmWithdraw": "Confirmar retirada",
+    "confirmHandover": "Confirmar traspàs",
+    "professional": "Professional",
+    "newLevel": "Nou accés",
+    "newLead": "Nou responsable"
+  },
+  "activity": {
+    "section": "Activitat del cas",
+    "heading": "Activitat"
+  },
+  "documents": {
+    "exportSection": "Registre controlat",
+    "exportHeading": "Exportar expedient",
+    "downloadPdf": "Descarregar PDF",
+    "section": "Documents controlats",
+    "generate": "Generar document",
+    "disclaimer": "Cada document recull només el que ja veus en aquest cas, indica'n la versió i la data, i deixa constància a l'auditoria. Són documents de demostració fictícia: cap no és un formulari oficial."
+  },
+  "audit": {
+    "section": "Registre protegit",
+    "heading": "Auditoria",
+    "exportCsv": "Exportar CSV",
+    "loading": "Carregant registre…",
+    "unavailable": "El registre no està disponible en aquest moment.",
+    "empty": "Encara no hi ha accions auditables."
+  },
+  "caseStatus": {
+    "assessment": "En valoració",
+    "active": "Actiu",
+    "closed": "Tancat"
+  },
+  "modality": {
+    "in_person": "Presencial",
+    "digital": "Digital",
+    "mixed": "Mixt",
+    "unknown": "Sense concretar"
+  },
+  "assignmentRole": {
+    "lead": "Responsable",
+    "contributor": "Col·labora",
+    "observer": "Consulta"
+  },
+  "taskStatus": {
+    "pending": "Pendent",
+    "completed": "Completada",
+    "not_applicable": "No aplica"
+  },
+  "sourceAuthority": {
+    "binding": "Normativa aplicable",
+    "recommended": "Recomanació",
+    "internal": "Objectiu intern"
+  },
+  "personRole": {
+    "affected": "Persona afectada",
+    "alleged_actor": "Persona presumptament implicada",
+    "witness": "Testimoni",
+    "guardian": "Responsable legal",
+    "other": "Una altra vinculació"
+  },
+  "stage": {
+    "identification": "Identificació",
+    "immediate_actions": "Actuacions immediates",
+    "urgent_protection": "Protecció urgent",
+    "family_communication": "Comunicació amb famílies",
+    "professional_coordination": "Coordinació professional",
+    "information_collection": "Recollida d'informació",
+    "educational_measures": "Mesures educatives",
+    "inspection_communication": "Comunicació amb Inspecció",
+    "assessment": "Valoració",
+    "action_plan": "Pla d'actuació",
+    "family_measures": "Mesures amb les famílies",
+    "inspection_follow_up": "Seguiment d'Inspecció"
+  },
+  "auditAction": {
+    "case_created": "Cas creat",
+    "report_linked": "Comunicació vinculada",
+    "assignment_created": "Accés assignat",
+    "assignment_changed": "Accés modificat",
+    "assignment_revoked": "Accés retirat",
+    "task_created": "Tasca creada",
+    "task_completed": "Tasca completada",
+    "task_marked_not_applicable": "Tasca marcada com a no aplicable",
+    "evidence_download_authorised": "Descàrrega d'evidència autoritzada",
+    "audit_exported": "Registre exportat",
+    "person_added": "Persona vinculada",
+    "person_corrected": "Vinculació corregida",
+    "person_removed": "Vinculació retirada",
+    "status_changed": "Estat del cas actualitzat",
+    "communication_recorded": "Comunicació registrada",
+    "communication_corrected": "Comunicació corregida",
+    "fallback": "Acció registrada"
+  },
+  "timeline": {
+    "case_created": "Cas creat",
+    "assignment_added": "Professional assignat",
+    "task_created": "Tasca creada",
+    "task_resolved": "Tasca resolta",
+    "fallback": "Activitat registrada"
+  },
+  "notice": {
+    "caseLoadFailed": "No hem pogut carregar el cas.",
+    "taskCatalogueFailed": "No es pot carregar el catàleg de tasques revisades.",
+    "taskCreated": "S'ha creat la tasca. No confirma cap comunicació externa.",
+    "taskCompleted": "La tasca ha estat marcada com a completada.",
+    "taskNotApplicable": "La tasca s'ha marcat com a no aplicable amb el motiu.",
+    "taskNotUpdatable": "La tasca ja no es pot actualitzar o no teniu permís.",
+    "invalidReason": "Indica un motiu vàlid o torna a intentar-ho.",
+    "assignmentRecorded": "L'assignació s'ha registrat de manera explícita.",
+    "assignmentLevelFailed": "Aquest nivell d'accés no es pot actualitzar.",
+    "accessWithdrawn": "L'accés s'ha retirat amb motiu registrat.",
+    "handoverRecorded": "El traspàs de responsabilitat ha estat registrat.",
+    "personAdded": "La persona vinculada s'ha registrat amb dades mínimes.",
+    "personCorrected": "La vinculació s'ha corregit i queda enregistrada.",
+    "personCorrectionFailed": "Aquesta vinculació no es pot corregir.",
+    "personRemoved": "La retirada s'ha enregistrat; no heu esborrat l'historial.",
+    "personRemovalFailed": "Aquesta vinculació no es pot retirar."
+  },
+  "caseRef": "Cas {{ref}}"
+}

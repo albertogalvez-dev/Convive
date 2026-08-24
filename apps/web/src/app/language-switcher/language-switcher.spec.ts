@@ -29,16 +29,24 @@ describe('LanguageSwitcher', () => {
     };
   }
 
-  it('offers every signed-off locale by its own name, not a translation of its name', async () => {
+  it('offers every published locale by its own name, not a translation of its name', async () => {
     const { page } = await render();
 
     const options = Array.from(page.querySelectorAll<HTMLOptionElement>('option'));
 
-    expect(options.map((option) => option.value)).toEqual(['es', 'ca', 'ca-valencia', 'gl', 'ar']);
+    expect(options.map((option) => option.value)).toEqual([
+      'es',
+      'ca',
+      'ca-valencia',
+      'eu',
+      'gl',
+      'ar',
+    ]);
     expect(options.map((option) => option.textContent?.trim())).toEqual([
       'Español',
       'Català',
       'Valencià',
+      'Euskara',
       'Galego',
       'العربية',
     ]);
@@ -81,7 +89,7 @@ describe('LanguageSwitcher', () => {
     expect(select?.value).toBe('ca-valencia');
   });
 
-  it('ignores a change event carrying a value that is not a signed-off locale', async () => {
+  it('ignores a change event carrying a value that is not a published locale', async () => {
     const { page, transloco } = await render();
 
     const select = page.querySelector<HTMLSelectElement>('select');

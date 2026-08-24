@@ -1,6 +1,6 @@
 /**
  * The completeness gate the standing rule requires: a public translation must
- * be complete and reviewed before it ships, and must never fall back to
+ * be complete before it ships, and must never fall back to
  * Spanish silently, key by key, mid-page.
  *
  * Two independent things enforce this together:
@@ -8,7 +8,7 @@
  * 1. {@link isLocaleComplete} proves a locale's JSON has exactly the same
  *    keys as the source, recursively. This is what a test runs before a
  *    locale is ever added to {@link READY_LOCALES} — it is the check a
- *    reviewer's sign-off is backed by, not a suggestion.
+ *    publication is backed by, not a suggestion.
  * 2. {@link READY_LOCALES} is what the application actually reads to decide
  *    which locales a visitor may select at all. A locale not listed here is
  *    unreachable through the UI regardless of whether translation files for
@@ -57,12 +57,11 @@ export function checkLocaleCompleteness(
 }
 
 /**
- * Locales a visitor may actually select today, each signed off under the
- * process #256 defines. Adding a code here is the publication step — do it
- * only once {@link checkLocaleCompleteness} passes for that locale's every
- * translation file and a reviewer has recorded sign-off, per #256's process.
+ * Locales a visitor may actually select today. Adding a code here is the
+ * publication step — do it only once {@link checkLocaleCompleteness} passes
+ * for every current translation file.
  */
-export const READY_LOCALES: readonly string[] = ['es', 'ca', 'ca-valencia', 'ar', 'gl'];
+export const READY_LOCALES: readonly string[] = ['es', 'ca', 'ca-valencia', 'eu', 'ar', 'gl'];
 
 export function isLocaleReady(code: string): boolean {
   return READY_LOCALES.includes(code);

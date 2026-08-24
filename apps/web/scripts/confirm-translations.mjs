@@ -51,15 +51,9 @@ function scopes() {
 }
 
 /**
- * Digests of the Spanish source, for the scopes this locale actually
- * translates.
- *
- * A locale is not required to cover every scope. ADR-0027 gives protocol and
- * professional content a *fallback* guarantee rather than the public path's
- * all-or-nothing gate, so `ca-valencia` and `ar` legitimately have no
- * `professional-case` file and fall back to Spanish there. Demanding full
- * coverage before confirming would refuse to protect the scopes they do
- * translate, which is backwards.
+ * Digests of the Spanish source for every resource present in the locale.
+ * Published locales cover every current source scope; handling an absent file
+ * here keeps the command useful while a new locale is being assembled.
  */
 function sourceDigests(locale) {
   const out = {};
@@ -95,10 +89,7 @@ if (Object.keys(current).length === 0) {
 }
 
 if (skipped.length > 0) {
-  console.log(
-    `Not translated by "${locale}", falling back to Spanish per ADR-0027: ${skipped.join(', ')}
-`,
-  );
+  console.log(`No resource file for "${locale}": ${skipped.join(', ')}\n`);
 }
 const recordFile = join(SYNC, `${locale}.json`);
 const previous = existsSync(recordFile) ? JSON.parse(readFileSync(recordFile, 'utf8')) : {};

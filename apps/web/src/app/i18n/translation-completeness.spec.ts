@@ -5,57 +5,67 @@ import footerCa from '../../i18n/public-site-footer/ca.json';
 import footerCaValencia from '../../i18n/public-site-footer/ca-valencia.json';
 import footerAr from '../../i18n/public-site-footer/ar.json';
 import footerGl from '../../i18n/public-site-footer/gl.json';
+import footerEu from '../../i18n/public-site-footer/eu.json';
 import publicHomeEs from '../../i18n/public-home/es.json';
 import publicHomeCa from '../../i18n/public-home/ca.json';
 import publicHomeCaValencia from '../../i18n/public-home/ca-valencia.json';
 import publicHomeAr from '../../i18n/public-home/ar.json';
 import publicHomeGl from '../../i18n/public-home/gl.json';
+import publicHomeEu from '../../i18n/public-home/eu.json';
 import publicInformationEs from '../../i18n/public-information/es.json';
 import publicInformationCa from '../../i18n/public-information/ca.json';
 import publicInformationCaValencia from '../../i18n/public-information/ca-valencia.json';
 import publicInformationAr from '../../i18n/public-information/ar.json';
 import publicInformationGl from '../../i18n/public-information/gl.json';
+import publicInformationEu from '../../i18n/public-information/eu.json';
 import reportEvidenceEs from '../../i18n/report-evidence/es.json';
 import reportEvidenceCa from '../../i18n/report-evidence/ca.json';
 import reportEvidenceCaValencia from '../../i18n/report-evidence/ca-valencia.json';
 import reportEvidenceAr from '../../i18n/report-evidence/ar.json';
 import reportEvidenceGl from '../../i18n/report-evidence/gl.json';
+import reportEvidenceEu from '../../i18n/report-evidence/eu.json';
 import reportFormEs from '../../i18n/report-form/es.json';
 import reportFormCa from '../../i18n/report-form/ca.json';
 import reportFormCaValencia from '../../i18n/report-form/ca-valencia.json';
 import reportFormAr from '../../i18n/report-form/ar.json';
 import reportFormGl from '../../i18n/report-form/gl.json';
+import reportFormEu from '../../i18n/report-form/eu.json';
 import reportHeaderEs from '../../i18n/report-header/es.json';
 import reportHeaderCa from '../../i18n/report-header/ca.json';
 import reportHeaderCaValencia from '../../i18n/report-header/ca-valencia.json';
 import reportHeaderAr from '../../i18n/report-header/ar.json';
 import reportHeaderGl from '../../i18n/report-header/gl.json';
+import reportHeaderEu from '../../i18n/report-header/eu.json';
 import reportHelpEs from '../../i18n/report-help/es.json';
 import reportHelpCa from '../../i18n/report-help/ca.json';
 import reportHelpCaValencia from '../../i18n/report-help/ca-valencia.json';
 import reportHelpAr from '../../i18n/report-help/ar.json';
 import reportHelpGl from '../../i18n/report-help/gl.json';
+import reportHelpEu from '../../i18n/report-help/eu.json';
 import reportResultEs from '../../i18n/report-result/es.json';
 import reportResultCa from '../../i18n/report-result/ca.json';
 import reportResultCaValencia from '../../i18n/report-result/ca-valencia.json';
 import reportResultAr from '../../i18n/report-result/ar.json';
 import reportResultGl from '../../i18n/report-result/gl.json';
+import reportResultEu from '../../i18n/report-result/eu.json';
 import reportSendingEs from '../../i18n/report-sending/es.json';
 import reportSendingCa from '../../i18n/report-sending/ca.json';
 import reportSendingCaValencia from '../../i18n/report-sending/ca-valencia.json';
 import reportSendingAr from '../../i18n/report-sending/ar.json';
 import reportSendingGl from '../../i18n/report-sending/gl.json';
+import reportSendingEu from '../../i18n/report-sending/eu.json';
 import professionalCaseEs from '../../i18n/professional-case/es.json';
+import professionalCaseAr from '../../i18n/professional-case/ar.json';
 import professionalCaseCa from '../../i18n/professional-case/ca.json';
+import professionalCaseCaValencia from '../../i18n/professional-case/ca-valencia.json';
 import professionalCaseGl from '../../i18n/professional-case/gl.json';
+import professionalCaseEu from '../../i18n/professional-case/eu.json';
 
 /**
  * The completeness gate #255 built (`checkLocaleCompleteness`), run for real
- * against every scope's actual `ca`, `ca-valencia` and `ar` content, not a
- * synthetic fixture. This is the check a locale's sign-off is backed by
- * (see `docs/content/i18n-process.md`): a passing result here is what makes
- * adding a locale to `READY_LOCALES` a documented fact rather than an
- * assumption.
+ * against every current published locale's actual content, not a synthetic
+ * fixture. A passing result is what makes adding a locale to `READY_LOCALES`
+ * a documented fact rather than an assumption.
  */
 // JSON imports include arrays (`sections`, `paragraphs`, `items`, `steps`),
 // which TypeScript's structural typing does not consider assignable to
@@ -73,6 +83,7 @@ const scopes: ReadonlyArray<{
   readonly caValencia: TranslationTree;
   readonly ar: TranslationTree;
   readonly gl: TranslationTree;
+  readonly eu: TranslationTree;
 }> = [
   {
     name: 'public-site-footer',
@@ -81,6 +92,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(footerCaValencia),
     ar: asTranslationTree(footerAr),
     gl: asTranslationTree(footerGl),
+    eu: asTranslationTree(footerEu),
   },
   {
     name: 'public-home',
@@ -89,6 +101,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(publicHomeCaValencia),
     ar: asTranslationTree(publicHomeAr),
     gl: asTranslationTree(publicHomeGl),
+    eu: asTranslationTree(publicHomeEu),
   },
   {
     name: 'public-information',
@@ -97,6 +110,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(publicInformationCaValencia),
     ar: asTranslationTree(publicInformationAr),
     gl: asTranslationTree(publicInformationGl),
+    eu: asTranslationTree(publicInformationEu),
   },
   {
     name: 'report-evidence',
@@ -105,6 +119,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(reportEvidenceCaValencia),
     ar: asTranslationTree(reportEvidenceAr),
     gl: asTranslationTree(reportEvidenceGl),
+    eu: asTranslationTree(reportEvidenceEu),
   },
   {
     name: 'report-form',
@@ -113,6 +128,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(reportFormCaValencia),
     ar: asTranslationTree(reportFormAr),
     gl: asTranslationTree(reportFormGl),
+    eu: asTranslationTree(reportFormEu),
   },
   {
     name: 'report-header',
@@ -121,6 +137,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(reportHeaderCaValencia),
     ar: asTranslationTree(reportHeaderAr),
     gl: asTranslationTree(reportHeaderGl),
+    eu: asTranslationTree(reportHeaderEu),
   },
   {
     name: 'report-help',
@@ -129,6 +146,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(reportHelpCaValencia),
     ar: asTranslationTree(reportHelpAr),
     gl: asTranslationTree(reportHelpGl),
+    eu: asTranslationTree(reportHelpEu),
   },
   {
     name: 'report-result',
@@ -137,6 +155,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(reportResultCaValencia),
     ar: asTranslationTree(reportResultAr),
     gl: asTranslationTree(reportResultGl),
+    eu: asTranslationTree(reportResultEu),
   },
   {
     name: 'report-sending',
@@ -145,6 +164,7 @@ const scopes: ReadonlyArray<{
     caValencia: asTranslationTree(reportSendingCaValencia),
     ar: asTranslationTree(reportSendingAr),
     gl: asTranslationTree(reportSendingGl),
+    eu: asTranslationTree(reportSendingEu),
   },
 ];
 
@@ -183,12 +203,6 @@ describe('ca and ca-valencia pass the completeness gate on every scope', () => {
 });
 
 describe('ar passes the completeness gate on every scope (#257)', () => {
-  // Arabic is the first right-to-left locale and the first non-co-official
-  // inclusion language (#257). It is drafted and self-reviewed by the same
-  // author under the authorisation recorded on #256 and reaffirmed on #257 --
-  // see "Translation review passes" in the pull request description, and the
-  // honesty note next to `LOCALES` in `i18n-locales.ts`, for what that review
-  // did and did not cover (no independent native-speaker review).
   for (const scope of scopes) {
     it(`${scope.name}: ar matches es key-for-key`, () => {
       const result = checkLocaleCompleteness(scope.es, scope.ar);
@@ -196,6 +210,45 @@ describe('ar passes the completeness gate on every scope (#257)', () => {
       expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
     });
   }
+
+  it('professional-case: ar matches es key-for-key', () => {
+    const result = checkLocaleCompleteness(
+      asTranslationTree(professionalCaseEs),
+      asTranslationTree(professionalCaseAr),
+    );
+
+    expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+  });
+});
+
+describe('eu passes the completeness gate on every scope (#312)', () => {
+  for (const scope of scopes) {
+    it(`${scope.name}: eu matches es key-for-key`, () => {
+      const result = checkLocaleCompleteness(scope.es, scope.eu);
+
+      expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+    });
+  }
+
+  it('professional-case: eu matches es key-for-key', () => {
+    const result = checkLocaleCompleteness(
+      asTranslationTree(professionalCaseEs),
+      asTranslationTree(professionalCaseEu),
+    );
+
+    expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+  });
+
+  it('keeps every interpolation parameter the source declares', () => {
+    const params = (tree: unknown): string[] =>
+      [...JSON.stringify(tree).matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((match) => match[1]).sort();
+
+    for (const scope of scopes) {
+      expect(params(scope.eu), scope.name).toEqual(params(scope.es));
+    }
+
+    expect(params(professionalCaseEu)).toEqual(params(professionalCaseEs));
+  });
 });
 
 describe('professional-case: ca matches es key-for-key (#320)', () => {
@@ -214,6 +267,15 @@ describe('professional-case: ca matches es key-for-key (#320)', () => {
     expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
   });
 
+  it('ca-valencia matches es key-for-key', () => {
+    const result = checkLocaleCompleteness(
+      asTranslationTree(professionalCaseEs),
+      asTranslationTree(professionalCaseCaValencia),
+    );
+
+    expect(result).toEqual({ complete: true, missing: [], unexpected: [] });
+  });
+
   it('keeps every interpolation parameter the source declares', () => {
     // A translated sentence that drops `{{version}}` still reads fluently and
     // still cites nothing. Fluency is exactly why this needs a test rather
@@ -222,16 +284,12 @@ describe('professional-case: ca matches es key-for-key (#320)', () => {
       [...JSON.stringify(tree).matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((match) => match[1]).sort();
 
     expect(params(professionalCaseCa)).toEqual(params(professionalCaseEs));
+    expect(params(professionalCaseCaValencia)).toEqual(params(professionalCaseEs));
+    expect(params(professionalCaseAr)).toEqual(params(professionalCaseEs));
   });
 });
 
 describe('gl passes the completeness gate on every scope (#322)', () => {
-  // Galician is the first locale published after the professional-case scope
-  // existed, so it is the first that has to be complete for a professional as
-  // well as for a child. Drafted and self-reviewed by the same author under
-  // the authorisation recorded on #256 -- see "Translation review passes" in
-  // the pull request description for what that review did and did not cover
-  // (no independent native-speaker review).
   for (const scope of scopes) {
     it(`${scope.name}: gl matches es key-for-key`, () => {
       const result = checkLocaleCompleteness(scope.es, scope.gl);

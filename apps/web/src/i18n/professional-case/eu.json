@@ -1,0 +1,234 @@
+{
+  "nav": {
+    "backToCases": "← Itzuli kasuetara"
+  },
+  "state": {
+    "loading": "Kasua kargatzen…",
+    "unavailableTitle": "Kasua ez dago eskuragarri",
+    "unavailableBody": "Ez dago edo ez dago zure profilera esleitu.",
+    "myCases": "Ikusi nire kasuak",
+    "retry": "saiatu berriro"
+  },
+  "tracking": {
+    "title": "Kasuaren jarraipena",
+    "operationalState": "Egoera operatiboa"
+  },
+  "transition": {
+    "title": "Kasuen trantsizioa",
+    "newState": "Egoera berria",
+    "reason": "Arrazoia",
+    "record": "Erregistro operatiboa",
+    "submit": "Erregistratu trantsizioa"
+  },
+  "summary": {
+    "pendingTasks": "Zain dauden zereginak",
+    "overdue": "Epetik kanpo",
+    "linkedPeople": "Erlazionatutako pertsonak",
+    "availableEvidence": "Eskuragarri dauden frogak"
+  },
+  "tasks": {
+    "section": "Hurrengo ekintzak",
+    "heading": "Zereginak",
+    "new": "Zeregin berria",
+    "create": "Sortu zeregina",
+    "empty": "Ez dago erregistratutako zereginik.",
+    "owner": "Arduraduna:",
+    "overdue": "Helburuko denboratik kanpo",
+    "action": "Ekintza",
+    "complete": "Osatu",
+    "notApplicable": "Ez dago aplikagarri",
+    "confirmReason": "Berretsi arrazoia",
+    "sourceGuidance": "{{authority}}: {{title}} ({{version}}). Gida honek ez du betebeharrik erabakitzen edo eperik kalkulatzen: berrikusi eta egokitu ekintza, arduraduna eta behin-behineko helburua gorde aurretik.",
+    "reviewedTemplate": "Txantiloi berrikusia",
+    "dueLabel": "Behin-behineko helburua",
+    "dueValue": "Helburua: {{value}}"
+  },
+  "comms": {
+    "section": "Erregistro operatiboa",
+    "heading": "Komunikazioak",
+    "recipient": "Hartzailea",
+    "channel": "Kanala",
+    "owner": "Arduraduna",
+    "datetime": "Data eta ordua",
+    "note": "Ohar operatibo laburra",
+    "record": "Erregistratu komunikazioa",
+    "disclaimer": "Erregistro honek ez du ezer bidaltzen edo ez du egiaztatzen entrega, jaso edo legezko jakinarazpenik. Zuzenketak geroko erregistro gisa geratuko dira.",
+    "empty": "Ez dago grabatutako komunikaziorik.",
+    "correct": "Zuzena",
+    "correction": "Aurreko erregistro baten zuzenketa trazagarria",
+    "recipientOption": {
+      "family": "Familia",
+      "external_service": "Kanpoko zerbitzua",
+      "inspection": "Hezkuntza ikuskapena",
+      "other": "beste"
+    },
+    "channelOption": {
+      "in_person": "Pertsonalki",
+      "phone": "Telefonoa",
+      "secure_channel": "Kanal segurua",
+      "written_record": "Erregistro idatzia",
+      "other": "beste"
+    },
+    "statusLabel": "Egoera esplizitua",
+    "statusOption": {
+      "planned": "Planifikatua",
+      "recorded": "Erregistratutako ekintza",
+      "not_applicable": "Ez dago aplikagarri"
+    }
+  },
+  "people": {
+    "section": "Kasuaren irismena",
+    "heading": "Erlazionatutako pertsonak",
+    "minimalData": "Gutxieneko datuak",
+    "disclaimer": "Izena eta lotura funtzionala soilik. Etiketa hauek ez dituzte gertaerak zehazten.",
+    "name": "Izena",
+    "relation": "Lotura",
+    "add": "Gehitu pertsona",
+    "empty": "Ez dago pertsona lotuta.",
+    "correct": "Zuzena",
+    "saveCorrection": "Gorde zuzenketa"
+  },
+  "evidence": {
+    "section": "Dokumentazio pribatua",
+    "heading": "Frogak",
+    "viewCommunication": "Ikus komunikazioa",
+    "empty": "Ez dago frogarik eskuragarri.",
+    "download": "Deskargatu",
+    "leadOnly": "Kasuaren arduradunak bakarrik deskarga dezake",
+    "sizeKb": "{{size}} KB"
+  },
+  "origin": {
+    "section": "Kasuaren jatorria",
+    "heading": "Erabaki grabatua",
+    "openedAsCase": "Ireki kasu gisa"
+  },
+  "access": {
+    "section": "Kasurako sarbidea",
+    "heading": "Taldea",
+    "confirmAssignment": "Berretsi esleipena",
+    "withdraw": "Erretiratu",
+    "handover": "Transferentzia",
+    "change": "Aldatu sarbidea",
+    "handoverOrWithdrawReason": "Lagatzeko edo kentzeko arrazoia",
+    "changeReason": "Aldaketaren arrazoia",
+    "confirmChange": "Berretsi aldaketa",
+    "transferReason": "Transferentziaren arrazoia",
+    "confirmWithdraw": "Berretsi erretiratzea",
+    "confirmHandover": "Berretsi transferentzia",
+    "professional": "Profesionala",
+    "newLevel": "Sarbide berria",
+    "newLead": "Kudeatzaile berria"
+  },
+  "activity": {
+    "section": "Kasuaren jarduera",
+    "heading": "Jarduera"
+  },
+  "documents": {
+    "exportSection": "Erregistro kontrolatua",
+    "exportHeading": "Esportatu fitxategia",
+    "downloadPdf": "Deskargatu PDFa",
+    "section": "Kontrolatutako dokumentuak",
+    "generate": "Sortu dokumentua",
+    "disclaimer": "Dokumentu bakoitzak kasu honetan lehendik ikusten duzuna baino ez du jasotzen, bere bertsioa eta data adierazten ditu eta erregistro bat uzten du auditorian. Fikziozko erakustaldi dokumentuak dira: bat ere ez da inprimaki ofiziala."
+  },
+  "audit": {
+    "section": "Erregistro babestua",
+    "heading": "Ikuskaritza",
+    "exportCsv": "Esportatu CSV",
+    "loading": "Erregistroa kargatzen…",
+    "unavailable": "Une honetan ez dago izena emateko aukera.",
+    "empty": "Oraindik ez dago ikuska daitekeen ekintzarik."
+  },
+  "caseStatus": {
+    "assessment": "Balorazioan",
+    "active": "Aktiboa",
+    "closed": "Itxita"
+  },
+  "modality": {
+    "in_person": "Pertsonalki",
+    "digital": "Digitala",
+    "mixed": "Mistoa",
+    "unknown": "Zehaztu gabe"
+  },
+  "assignmentRole": {
+    "lead": "Arduraduna",
+    "contributor": "Elkarlanean aritu",
+    "observer": "Kontsulta"
+  },
+  "taskStatus": {
+    "pending": "Zain",
+    "completed": "Osatua",
+    "not_applicable": "Ez dago aplikagarri"
+  },
+  "sourceAuthority": {
+    "binding": "Aplikatu beharreko araudia",
+    "recommended": "Gomendioa",
+    "internal": "Barne helburua"
+  },
+  "personRole": {
+    "affected": "Erasandako pertsona",
+    "alleged_actor": "Ustez inplikatuta dagoen pertsona",
+    "witness": "Lekukoa",
+    "guardian": "Lege arduraduna",
+    "other": "Beste esteka bat"
+  },
+  "stage": {
+    "identification": "Identifikazioa",
+    "immediate_actions": "Berehalako ekintzak",
+    "urgent_protection": "Premiazko babesa",
+    "family_communication": "Familiekin komunikazioa",
+    "professional_coordination": "Koordinazio profesionala",
+    "information_collection": "Informazio bilketa",
+    "educational_measures": "Hezkuntza-neurriak",
+    "inspection_communication": "Ikuskapenarekin komunikazioa",
+    "assessment": "Balorazioa",
+    "action_plan": "Ekintza plana",
+    "family_measures": "Familiekiko neurriak",
+    "inspection_follow_up": "Ikuskapenen Jarraipena"
+  },
+  "auditAction": {
+    "case_created": "Kasua sortu",
+    "report_linked": "Lotutako komunikazioa",
+    "assignment_created": "Esleitutako sarbidea",
+    "assignment_changed": "Sarbide aldatua",
+    "assignment_revoked": "Sarbidea kenduta",
+    "task_created": "Sortu da zeregina",
+    "task_completed": "Ataza amaitu da",
+    "task_marked_not_applicable": "Ataza ez da aplikagarri gisa markatuta",
+    "evidence_download_authorised": "Baimendutako froga deskargatzea",
+    "audit_exported": "Esportatutako erregistroa",
+    "person_added": "Lotutako pertsona",
+    "person_corrected": "Lotura finkoa",
+    "person_removed": "Lotura kendu da",
+    "status_changed": "Kasuaren egoera eguneratua",
+    "communication_recorded": "Erregistratutako komunikazioa",
+    "communication_corrected": "Komunikazioa zuzendua",
+    "fallback": "Erregistratutako ekintza"
+  },
+  "timeline": {
+    "case_created": "Kasua sortu",
+    "assignment_added": "Esleitutako profesionala",
+    "task_created": "Sortu da zeregina",
+    "task_resolved": "Ebatzitako zeregina",
+    "fallback": "Erregistratutako jarduera"
+  },
+  "notice": {
+    "caseLoadFailed": "Ezin izan dugu kasua igo.",
+    "taskCatalogueFailed": "Ezin da kargatu berrikusitako zereginen katalogoa.",
+    "taskCreated": "Egitekoa sortu da. Ez du kanpoko komunikaziorik berresten.",
+    "taskCompleted": "Ataza amaitutzat jo da.",
+    "taskNotApplicable": "Ataza ez da aplikagarri gisa markatu da zure arrazoiarekin.",
+    "taskNotUpdatable": "Ataza ezin da eguneratu edo ez duzu baimenik.",
+    "invalidReason": "Mesedez, eman baliozko arrazoi bat edo saiatu berriro.",
+    "assignmentRecorded": "Esleipena berariaz grabatu da.",
+    "assignmentLevelFailed": "Ezin duzu sarbide-maila berritu.",
+    "accessWithdrawn": "Sarbidea kendu da erregistratutako arrazoi batekin.",
+    "handoverRecorded": "Erantzukizunaren transferentzia erregistratu da.",
+    "personAdded": "Lotutako pertsona gutxieneko datuekin erregistratu da.",
+    "personCorrected": "Esteka zuzendu eta grabatu da.",
+    "personCorrectionFailed": "Esteka hau ezin da zuzendu.",
+    "personRemoved": "Erretiratzea erregistratu da; historia ez da ezabatu.",
+    "personRemovalFailed": "Esteka hau ezin da kendu."
+  },
+  "caseRef": "{{ref}} kasua"
+}

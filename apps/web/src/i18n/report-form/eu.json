@@ -1,0 +1,80 @@
+{
+  "organisationLabel": "Zentroa",
+  "askedQuestion": "Zer gertatu da?",
+  "descriptionPlaceholder": "Idatzi hemen…",
+  "preparingForm": "Formularioa prestatzen",
+  "descriptionCounter": "{{count}} / {{max}}",
+  "continue": "Jarraitu",
+  "back": "atzera",
+  "submit": "Bidali",
+  "invalid": {
+    "label": "Esteka baliogabea",
+    "title": "Ezin dugu formulario hau ireki",
+    "message": "Eskaneatu zentroko QR kodea berriro eta egiaztatu esteka osatuta dagoela.",
+    "help": "Berriro gertatzen bada, jakinarazi zentroari kodea berrikus dezan."
+  },
+  "unavailable": {
+    "label": "Konexio arazoa",
+    "retry": "Saiatu berriro",
+    "title": "Ezin dugu formularioa kargatu",
+    "message": "Mesedez, egiaztatu zure konexioa edo saiatu berriro segundo batzuk barru."
+  },
+  "fictionalDemo": {
+    "label": "Fikziozko erakustaldia",
+    "title": "Hemen ez da komunikaziorik gordetzen",
+    "message": "Convive demo segurua erakusten ari da. Ez idatzi informazio pertsonala, egoera errealak edo beste pertsonen datuak.",
+    "help": "Ingurune hau prozesuak nola funtzionatuko lukeen ulertzeko soilik erabiltzen da."
+  },
+  "disabled": {
+    "label": "Kanala ez dago erabilgarri",
+    "title": "Inprimaki hau ez dago gaituta",
+    "message": "Ez bidali informazio pertsonalik edo elkarbizitzarako komunikazioak modu honetan."
+  },
+  "step1": {
+    "descriptionError": "Idatzi zer gertatu den jarraitzeko."
+  },
+  "step2": {
+    "title": "Non gertatu da?",
+    "contextPurpose": "Orientazioak jakin behar du zentroan, sarean edo bi lekuetan gertatzen den, protokoloa ezberdina delako. Ziur ez bazaude, aukeratu azken aukera.",
+    "inPerson": "pertsonalki",
+    "online": "Sarean",
+    "preferNotToSay": "Nahiago dut ez esatea",
+    "contextError": "Hautatu aukera bat jarraitzeko.",
+    "recurrenceTitle": "Behin baino gehiagotan gertatu al da?",
+    "recurrencePurpose": "Zerbait zehatza den edo errepikatzen den zerbait den jakiteko orientazioa laguntzen du. Ezin duzu erantzun.",
+    "recurrenceSingle": "behin",
+    "recurrenceRepeated": "hainbat aldiz",
+    "recurrenceOngoing": "Gertatzen jarraitzen du",
+    "unknownOption": "Ez dakit / nahiago dut ez esatea",
+    "timingTitle": "Noiz gertatu edo hasi zen?",
+    "timingPurpose": "Oraindik orain gertatzen ari den jakiteak laguntzen du. Data zehatza ez da beharrezkoa.",
+    "timingWithinDays": "Egun hauetan",
+    "timingWithinWeeks": "Aste hauetan",
+    "timingLongerAgo": "Luzeagoa izan da",
+    "peopleLabel": "Nork hartzen du parte?",
+    "peoplePurpose": "Nahi baduzu bakarrik. Lagundu iezaguzu nori eragiten dion, nahiago dituzun hitzetan. Hutsik utzi dezakezu eta hala ere oharra iritsiko da.",
+    "attentionTitle": "Arreta berehala behar duela uste duzu?",
+    "attentionPurpose": "Berrikuspena antolatzen laguntzen du. Ez du ezer erabakitzen bere kabuz.",
+    "attentionYes": "Bai, eskertuko nuke berehalako berrikuspena.",
+    "attentionNo": "Ez da berehalako arretarik adierazi",
+    "attentionUnknown": "Nahiago dut ez adierazi"
+  },
+  "step3": {
+    "title": "Egiaztatu bidali aurretik",
+    "descriptionLabel": "Gertatu dena",
+    "contextLabel": "Non gertatu zen"
+  },
+  "submissionError": {
+    "invalidLink": "Komunikazio-esteka hau baliogabea da. Egiaztatu eta saiatu berriro.",
+    "invalidData": "Informazio batzuk ez dira baliozkoak. Mesedez, berrikusi eta saiatu berriro.",
+    "processingFailed": "Ezin izan dugu komunikazioa prozesatu. Saiatu berriro.",
+    "generic": "Ezin izan dugu komunikazioa bidali orain. Saiatu berriro geroago."
+  },
+  "witness": {
+    "askedQuestion": "Zer ikusi duzu?",
+    "descriptionError": "Idatzi ikusi duzuna jarraitzeko.",
+    "notice": "Beste pertsona bati gertatzen zaion zerbait kontatzen duzu.",
+    "toWitness": "Beste bati gertatzen zaio",
+    "toFirstPerson": "gertatzen zait"
+  }
+}

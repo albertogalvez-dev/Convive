@@ -1,0 +1,25 @@
+{
+  "title": "Bidalitako komunikazioa",
+  "accessTitle": "Sarbide datuak",
+  "warningStrong": "Sekretu hori duen edonor sar daiteke.",
+  "warningBody": "Ezin da berreskuratu: gorde itxi aurretik eta ez partekatu.",
+  "referenceLabel": "Erreferentzia",
+  "secretLabel": "Sekretua",
+  "saveInBrowser": "Gorde arakatzailean",
+  "copySecret": "Kopiatu sekretua",
+  "print": "Inprimatu edo gorde PDF gisa",
+  "browserSaveHelp": "Zure pasahitzekin batera gordetzen da. Saihestu partekatutako gailu batean.",
+  "followUpHintPrefix": "Nola doan ikusi edo informazioa gehitu nahi duzunean, joan hona",
+  "followUpLinkText": "Jarraipena",
+  "printReceiptTitle": "Zure komunikaziorako sarbidea",
+  "printAccessPrefix": "Sartu",
+  "printWarning": "Sekretu hori duen edonork sar dezake zure komunikazioa. Mantendu leku batean pribatua eta ez partekatu.",
+  "status": {
+    "credentialUnsupported": "Arakatzaile honek ezin du gorde. Kopiatu sekretua eta gorde ezazu zeure burua.",
+    "credentialRequested": "Zure nabigatzaileari galdetu diogu. Onartu sarbidea ez galtzeko.",
+    "credentialFailed": "Ezin izan da arakatzailean gorde. Kopiatu sekretua eta gorde ezazu zeure burua.",
+    "copySuccess": "Kopiatutako sekretua. Orain orri hau itxi dezakezu.",
+    "copyFailed": "Ezin izan da kopiatu. Hautatu eta kopiatu sekretua eskuz."
+  },
+  "credentialName": "Elkarbizitza · jarraipena"
+}

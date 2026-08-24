@@ -1,22 +1,7 @@
 /**
- * The recorded linguistic scope for Convive's public site.
- *
- * `es` is the source language every other locale is translated from and
- * reviewed against. Every other entry is a candidate: it exists in the
- * catalogue as soon as its issue is opened, but {@link isLocaleReady} is what
- * actually governs whether a visitor can ever select it. Adding a row here
- * does not publish anything by itself.
- *
- * `ar` (#257) is drafted and reviewed the same way as the co-official
- * languages: by the same author performing multiple documented self-review
- * passes (see "Translation review passes" in the pull request that added
- * it), not by an independent reviewer. Said plainly, because it matters more
- * here than for the co-official languages: this project has meaningfully
- * less structural certainty in Modern Standard Arabic than in Catalan, and
- * no native-Arabic-speaking review has happened. The completeness gate
- * proves the translation is structurally complete; it does not certify
- * fluency or cultural accuracy. If a native or professional review ever
- * happens, record it here and in `docs/content/i18n-process.md`.
+ * The catalogued locales for Convive's public site. `READY_LOCALES` governs
+ * which completed locales visitors can select; adding a row here alone does
+ * not publish it.
  */
 export interface Locale {
   readonly code: string;

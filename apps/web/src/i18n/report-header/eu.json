@@ -1,0 +1,8 @@
+{
+  "helpButton": "Nola funtzionatzen duen",
+  "stepIndicator": "{{current}} urratsa {{total}}",
+  "closing": "Itxiera…",
+  "closeAccess": "Itxi sarbidea",
+  "progressLabel": "Komunikazioaren aurrerapena",
+  "goToStep": "Joan {{step}} urratsera"
+}

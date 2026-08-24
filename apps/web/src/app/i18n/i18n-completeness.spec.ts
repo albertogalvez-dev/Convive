@@ -51,12 +51,9 @@ describe('isLocaleReady', () => {
     }
   });
 
-  it('refuses a locale that has translation files but has not been added to READY_LOCALES', () => {
-    // Publishing a locale is adding its code here after sign-off, not
-    // creating the JSON file — a file existing on disk must not be enough.
-    // `ca`/`ca-valencia` are signed off as of #256, `ar` as of #257 and `gl`
-    // as of #322; `eu` is still not.
-    expect(isLocaleReady('eu')).toBe(false);
+  it('refuses a catalogued locale that has not been published', () => {
+    // Publishing a locale is adding its code here, not merely cataloguing it.
+    expect(isLocaleReady('oc-aranes')).toBe(false);
   });
 
   it('refuses a locale that does not exist at all', () => {
