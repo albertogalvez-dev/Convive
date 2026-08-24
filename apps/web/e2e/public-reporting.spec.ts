@@ -374,7 +374,9 @@ test('keeps the public product homepage accessible and separate from reporting e
   );
 
   await page.goto('/demostracion/');
-  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Descubre Convive sin enviar nada' }),
+  ).toBeVisible();
   await expectNoAccessibilityViolations(page);
 
   await page.goto('/');
@@ -405,7 +407,7 @@ test('lets a visitor switch to Catalan, Valencian or Basque by keyboard, with th
     page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
   ).toBeVisible();
 
-  const languageSwitcher = page.getByLabel('Idioma');
+  const languageSwitcher = page.getByRole('combobox');
 
   await expect(languageSwitcher).toHaveValue('es');
 
