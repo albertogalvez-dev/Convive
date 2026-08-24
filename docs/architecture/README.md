@@ -91,6 +91,12 @@ as amended by
 and
 [ADR-0011](decisions/0011-allow-the-reporter-browser-password-manager-to-store-the-access-secret.md).
 
+The [access-control decision matrix](access-control-matrix.md) maps the
+organisation roles, exact-case assignments and reporter capability to each
+protected action, with the enforcing controllers/services and authoritative
+tests. It makes explicit that administration does not imply case access and
+that there is no break-glass route.
+
 The reporter may keep the access secret in their own browser credential
 manager, chosen through the browser's own prompt. Convive never writes the
 secret or the capability handle to storage the application controls, and never
