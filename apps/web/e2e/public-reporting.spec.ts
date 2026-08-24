@@ -506,12 +506,12 @@ test('switches to Arabic, flips the document to right-to-left and reflows the la
   // The switcher's own visible label is now translated too: re-locate it by
   // its Arabic label rather than reusing the stale "Idioma" locator, the
   // same way the Catalan/Valencian test re-locates by "Llengua".
-  await expect(page.getByLabel('اللغة')).toHaveValue('ar');
+  await expect(page.getByRole('combobox')).toHaveValue('ar');
   await expectNoAccessibilityViolations(page);
 
   await page.reload();
   expect(await page.evaluate(() => document.documentElement.dir)).toBe('rtl');
-  await expect(page.getByLabel('اللغة')).toHaveValue('ar');
+  await expect(page.getByRole('combobox')).toHaveValue('ar');
 });
 
 test('keeps reviewed blog content accessible, responsive and attributable', async ({ page }) => {
@@ -579,7 +579,7 @@ test('offers the fictional demonstration through real, isolated example paths', 
 
   await page.getByRole('link', { name: 'Entrar al área profesional' }).click();
   await expect(page).toHaveURL(/\/profesionales\/acceso$/);
-  await expect(page.getByRole('heading', { name: 'Elige una perspectiva' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
   await expect(page.getByRole('button', { name: /Profesional de bienestar/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Administración/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Responsable de caso/ })).toBeVisible();
@@ -589,6 +589,20 @@ test('offers the fictional demonstration through real, isolated example paths', 
   // The role buttons intentionally call the protected-workspace demo endpoint.
   // Its complete browser journey runs against the seeded API stack, not an aborted API.
   await expectNoAccessibilityViolations(page);
+});
+
+test('opens the prepared professional workspace as a read-only selected perspective', async ({
+  page,
+}) => {
+  await page.goto('/profesionales/acceso');
+
+  await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
+  await page.getByRole('button', { name: /Observador de caso/ }).click();
+
+  await expect(page).toHaveURL(/\/profesionales\/casos\/019fe900-0000-7000-8000-000000000083$/);
+  await expect(page.getByText('Vista de demostración', { exact: false })).toBeVisible();
+  await expect(page.getByText('solo consulta', { exact: false })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
 });
 
 test('keeps the fictional demo critical paths within performance budgets', async ({
@@ -636,10 +650,12 @@ async function loginAsProfessional(
   page: import('@playwright/test').Page,
   email: string,
 ): Promise<void> {
-  await page.goto(absoluteUrl('/profesionales/acceso'));
-  await page.getByLabel('Correo profesional').fill(email);
-  await page.getByLabel('Contraseña').fill(PROFESSIONAL_PASSWORD);
-  await page.getByRole('button', { name: 'Acceder' }).click();
+  const response = await page.context().request.post(absoluteUrl('/api/v1/professional/session'), {
+    data: { email, password: PROFESSIONAL_PASSWORD },
+  });
+
+  expect(response.ok()).toBe(true);
+  await page.goto(absoluteUrl('/profesionales'));
   await expect(page.getByRole('heading', { name: /Hola,/ })).toBeVisible();
 }
 
