@@ -4,7 +4,7 @@
 
 **Owner:** repository maintainer
 
-**Last reviewed:** 11 August 2026
+**Last reviewed:** 24 August 2026
 
 ## Safety boundary
 
@@ -22,12 +22,12 @@ responsibilities, and every applicable technical gate below has evidence.
 ```text
 Untrusted reporter browser
   -> public HTTPS / same-origin Angular and API
-  -> trusted edge and request controls (#63, not implemented)
+  -> trusted edge and request controls (implemented fictional boundary; ingress selection #350 remains open)
   -> Symfony validation, authentication and authorisation boundary
   -> PostgreSQL
-  -> encrypted backup and restore boundary (#66, implementation in progress)
+  -> encrypted backup and restore boundary (#66, fictional recovery exercise verified; deployed operation remains open)
 
-Professional browser -> professional session (#30) -> Symfony API
+Professional browser -> server-side professional session -> Symfony API
 ```
 
 The browser, network metadata and all submitted content are untrusted. Angular
@@ -39,7 +39,7 @@ application-mediated retrieval and a fail-closed scanner port, as defined in
 the [attachment security boundary](attachment-threat-model.md). No reporter
 attachment UI is exposed until #38 implements and verifies that experience.
 
-Anonymous capability and future professional cookies may share an origin but
+Anonymous capabilities and professional session cookies may share an origin but
 are mutually exclusive security contexts for an operation. No endpoint may
 upgrade anonymous possession into professional authority.
 
@@ -87,7 +87,7 @@ upgrade anonymous possession into professional authority.
 | ID   | Priority | Threat                                                              | Current evidence                                                                                                                                                                                                                                                                             | Residual risk / owner                                                                                                                                                                                                                                      |
 | ---- | -------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | T-01 | Critical | Real submissions enter an unattended demo                           | Repository/product rules require fictional data                                                                                                                                                                                                                                              | Unmistakable demo boundary and repeatable seed/reset are gates in [#70](https://github.com/albertogalvez-dev/Convive/issues/70)                                                                                                                            |
-| T-02 | Critical | Unauthorised or cross-organisation professional access              | Membership/role domain model only                                                                                                                                                                                                                                                            | Authentication, sessions, API authorisation and negative isolation tests: [#30](https://github.com/albertogalvez-dev/Convive/issues/30)-[#31](https://github.com/albertogalvez-dev/Convive/issues/31)                                                      |
+| T-02 | Critical | Unauthorised or cross-organisation professional access              | Server-side sessions, active memberships, exact-case policy, security-revision invalidation and negative isolation tests                                                                                                                                                                     | Real-data identity proofing, MFA and accountable operational ownership remain gates                                                                                                                                                                        |
 | T-03 | Critical | VPS/database/deployment-secret compromise                           | Development Compose; secrets excluded from Git                                                                                                                                                                                                                                               | Edge, least privilege, secret injection, release and patching: [#63](https://github.com/albertogalvez-dev/Convive/issues/63), [#64](https://github.com/albertogalvez-dev/Convive/issues/64), [#67](https://github.com/albertogalvez-dev/Convive/issues/67) |
 | T-04 | High     | Backup theft or restore revives revoked access                      | ADR-0008 requires invalidation                                                                                                                                                                                                                                                               | Encryption, off-host control and restore exercises: [#66](https://github.com/albertogalvez-dev/Convive/issues/66)                                                                                                                                          |
 | T-05 | High     | Reporter secret leaks                                               | 256-bit secret, SHA-256 lookup, body-only exchange, E2E storage/artifact checks                                                                                                                                                                                                              | Credential-manager/shared-profile and XSS risk remain; review ADR-0011 on new evidence                                                                                                                                                                     |
@@ -113,6 +113,15 @@ upgrade anonymous possession into professional authority.
   and retained artifacts for secret leakage.
 
 This proves only the implemented slice, not future production security.
+
+## Implemented-boundary evidence
+
+The [sessions and capabilities](../architecture/diagrams/access-sessions-and-capabilities.md),
+[attachment lifecycle](../architecture/diagrams/attachment-lifecycle.md),
+[observability and incident response](../architecture/diagrams/observability-and-incident-response.md)
+and [recovery flow](../architecture/diagrams/recovery-flow.md) diagrams map the
+implemented fictional controls to their source and verification evidence. They
+do not select the still-open ingress topology or attest a deployed service.
 
 ## Real-data blockers
 
