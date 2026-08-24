@@ -307,6 +307,9 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
         body: JSON.stringify({ detail: 'Invalid fictional task.' }),
       });
     });
+    await leadPage.locator('.task-form').evaluate((form: HTMLFormElement) => {
+      form.noValidate = true;
+    });
     await leadPage.getByRole('button', { name: 'Crear tarea' }).click();
     await expect(
       leadPage.getByRole('alert', {
