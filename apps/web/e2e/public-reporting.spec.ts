@@ -622,6 +622,8 @@ test('ends the selected demonstration session and returns to professional access
   await page.getByRole('button', { name: 'Entrar con esta perspectiva' }).click();
   await expect(page).toHaveURL(/\/profesionales\/cuentas$/);
 
+  await skipWorkspaceIntroduction(page);
+
   await page.getByRole('button', { name: 'Cerrar sesión' }).click();
 
   await expect(page).toHaveURL(/\/profesionales\/acceso$/);
