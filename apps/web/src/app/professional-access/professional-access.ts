@@ -22,6 +22,7 @@ export class ProfessionalAccess implements OnInit {
   protected readonly openingDemo = signal<DemoProfessionalRole | null>(null);
   protected readonly demoErrorMessage = signal<string | null>(null);
   protected readonly demoRoles = DEMO_PROFESSIONAL_ROLES;
+  protected readonly selectedDemoRole = signal<DemoProfessionalRole>('triage');
 
   ngOnInit(): void {
     this.sessions.restore().subscribe({
@@ -54,5 +55,13 @@ export class ProfessionalAccess implements OnInit {
         );
       },
     });
+  }
+
+  protected selectDemonstration(event: Event): void {
+    const role = (event.target as HTMLSelectElement).value as DemoProfessionalRole;
+
+    if (this.demoRoles.some((option) => option.id === role)) {
+      this.selectedDemoRole.set(role);
+    }
   }
 }
