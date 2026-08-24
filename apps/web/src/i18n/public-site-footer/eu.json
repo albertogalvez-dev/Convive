@@ -1,0 +1,19 @@
+{
+  "boundaryTitle": "Fikziozko datuak dituen erakustaldia.",
+  "boundaryBody": "Convive ez da larrialdietarako kanal bat. Ez da inongo hezkuntza-administrazioren zerbitzu ofiziala. Fikziozko datuak dituen erakustaldia da. Erakustaldian idazten dena ez da hezkuntza-zentro batera iristen.",
+  "emergencyTitle": "Laguntza publikoko baliabideak",
+  "linksLabel": "Informazio publikoa",
+  "links": {
+    "notice": "Demo oharra",
+    "privacy": "Pribatutasuna",
+    "cookies": "Cookieak",
+    "terms": "Baldintzak",
+    "accessibility": "Irisgarritasuna",
+    "blog": "bloga",
+    "demo": "Demo",
+    "contact": "Kontaktua"
+  },
+  "languageSwitcher": {
+    "label": "Hizkuntza"
+  }
+}

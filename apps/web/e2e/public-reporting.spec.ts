@@ -341,7 +341,7 @@ test('keeps the public product homepage accessible and separate from reporting e
   ).toHaveCount(0);
 });
 
-test('lets a visitor switch to Catalan or Valencian by keyboard, with the choice remembered', async ({
+test('lets a visitor switch to Catalan, Valencian or Basque by keyboard, with the choice remembered', async ({
   page,
   context,
 }) => {
@@ -385,6 +385,14 @@ test('lets a visitor switch to Catalan or Valencian by keyboard, with the choice
     page.getByRole('heading', { name: 'Un canal segur per a escoltar abans.' }),
   ).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('ca-valencia');
+  await expectNoAccessibilityViolations(page);
+
+  await page.getByLabel('Llengua').selectOption('eu');
+  await expect(
+    page.getByRole('heading', { name: 'Aurretik entzuteko kanal segurua.' }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('eu');
+  await expect(page.getByLabel('Hizkuntza')).toHaveValue('eu');
   await expectNoAccessibilityViolations(page);
 
   // A fresh, unrelated browser context never inherits another visitor's

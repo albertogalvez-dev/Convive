@@ -16,7 +16,7 @@ const STORAGE_KEY = 'convive-locale';
 /**
  * @returns the visitor's previously chosen locale, or `null` if none was
  * ever stored, storage is unavailable (private browsing, disabled storage),
- * or the stored value is no longer a signed-off locale.
+ * or the stored value is no longer a published locale.
  */
 export function readStoredLocale(): string | null {
   try {

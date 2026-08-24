@@ -20,7 +20,7 @@ import { SOURCE_LOCALE } from './i18n/i18n-locales';
 // bootstrap -- never inferred from geolocation or any other automatic
 // signal (#256). Falls back to the source locale when nothing was ever
 // chosen, storage is unavailable, or the stored value is no longer a
-// signed-off locale.
+// published locale.
 const initialLocale = readStoredLocale() ?? SOURCE_LOCALE;
 
 export const appConfig: ApplicationConfig = {
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideTransloco({
       config: {
-        // Only signed-off locales are ever offered as the active language;
+        // Only published locales are ever offered as the active language;
         // reReRenderOnLangChange keeps every translated view in sync when a
         // visitor switches without a page reload.
         availableLangs: [...READY_LOCALES],

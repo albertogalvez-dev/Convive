@@ -72,21 +72,19 @@ degrades to correct Spanish, never to noise.
 
 **Keep the two guarantees separate and say so.** The public path stays
 all-or-nothing under `READY_LOCALES`. Protocol and professional-facing content
-degrades gracefully. The `professional-case` scope is therefore deliberately
-not part of the public completeness suite.
+retain a source-language fallback as a defensive rendering safeguard. Every
+published locale nevertheless covers the current `professional-case` scope
+and is checked against it for completeness and source drift.
 
 ## Consequences
 
-**Positive.** A new territorial migration needs no translation work to be
-correct; it inherits the key rule and the fallback. Translations live in
-reviewed JSON, not in migrations. A professional can work in their own
-language before every territory's titles are translated.
+**Positive.** A new territorial migration inherits the key rule and safe
+source-language fallback. Translations live in JSON, not in migrations, and
+published locales cover the current territorial titles.
 
-**Negative, and accepted.** A professional may see an occasional Spanish title
-inside an otherwise translated page — the trade made knowingly above. Missing
-protocol translations are also less visible than missing public ones, since
-nothing fails loudly; the mitigation is that translation coverage is tracked
-on its issue rather than discovered in production.
+**Residual risk.** A newly added source key has a safe fallback before its
+locale resources are updated. Completeness and source-drift tests make that
+gap visible during delivery rather than to a visitor.
 
 **A rule this creates.** Every territorial migration must supply `title_key`
 explicitly, because #311 made the column `NOT NULL` with a unique index. The

@@ -9,7 +9,7 @@ describe('i18n locale preference', () => {
     localStorage.clear();
   });
 
-  it('reads back a stored, signed-off locale', () => {
+  it('reads back a stored, published locale', () => {
     storeLocale('ca');
 
     expect(readStoredLocale()).toBe('ca');
@@ -19,7 +19,7 @@ describe('i18n locale preference', () => {
     expect(readStoredLocale()).toBeNull();
   });
 
-  it('refuses a stored value that is not a signed-off locale', () => {
+  it('refuses a stored value that is not a published locale', () => {
     // Not `storeLocale()`: this simulates a stale or tampered value, not
     // the normal write path, which only ever writes a ready locale.
     localStorage.setItem('convive-locale', 'xx');
@@ -27,10 +27,8 @@ describe('i18n locale preference', () => {
     expect(readStoredLocale()).toBeNull();
   });
 
-  it('refuses a stored value for a locale that exists but is not ready', () => {
-    // `eu` (Basque) is a real entry in `LOCALES` but has not been signed off
-    // under #256's process yet, unlike `ar` (#257).
-    localStorage.setItem('convive-locale', 'eu');
+  it('refuses a stored value for a catalogued locale that is not published', () => {
+    localStorage.setItem('convive-locale', 'oc-aranes');
 
     expect(readStoredLocale()).toBeNull();
   });

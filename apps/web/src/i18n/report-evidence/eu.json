@@ -1,0 +1,53 @@
+{
+  "heading": "Probak",
+  "limits": "PDF, JPG edo PNG · 5 MB fitxategi bakoitzeko · 3 gehienez aldi berean",
+  "addEvidence": "Gehitu probak",
+  "preparing": "Igoera segurua prestatzen...",
+  "retry": "Saiatu berriro",
+  "privacyNote": "Fitxategi batek izenak, kokapena edo bestelako datuak izan ditzake. Erantsi behar dena bakarrik.",
+  "sentListLabel": "Bidalitako probak",
+  "noDescription": "Ez dago deskribapenik",
+  "download": "Deskargatu",
+  "selectFiles": "Hautatu fitxategiak",
+  "capacityMessage": "Komunikazio hau 10 probaren mugara iritsi da.",
+  "selectedListLabel": "Hautatutako probak",
+  "remove": "Kendu",
+  "removeAria": "Kendu {{type}}",
+  "descriptionLabel": "Deskribapena (aukerakoa)",
+  "queued": "Bidaltzeko prest",
+  "uploading": "Igotzen...",
+  "uploadingAria": "{{type}} kargatzen",
+  "updateStatuses": "Eguneratu egoerak",
+  "updatingStatuses": "Eguneratzen…",
+  "sendEvidence": "Bidali probak",
+  "sendingEvidence": "Bidaltzen…",
+  "fileType": {
+    "pdf": "PDFa",
+    "imagePng": "PNG Irudia",
+    "imageJpg": "JPG irudia",
+    "generic": "Proba"
+  },
+  "status": {
+    "processing": "egiaztatzen",
+    "available": "Eskuragarri",
+    "unavailable": "Ez dago eskuragarri"
+  },
+  "errors": {
+    "unsupportedSelection": "Hautatu PDF, JPG edo PNG soilik 5 MB arte.",
+    "selectionLimit": "{{remaining}} probak hauta ditzakezu orain.",
+    "confirmFailed": "Ezin izan dugu igoera berretsi. Berriro saia zaitezke.",
+    "prepareFailed": "Ezin izan ditugu probak prestatu. Saiatu berriro.",
+    "accessExpired": "Sarbidea iraungi da. Presta ezazu berriro jarraitzeko.",
+    "refreshFailed": "Ezin izan ditugu egoerak eguneratu. Saiatu berriro.",
+    "statusesUpdated": "Egoera eguneratuak.",
+    "reviewFailed": "Berrikusi bidali ezin izan diren probak.",
+    "allSent": "Hautatutako probak bidali dira.",
+    "uploadAccessExpired": "Sarbidea iraungi da. Komunikazioa berriro ireki.",
+    "uploadLimitReached": "Komunikazio hau froga-mugara iritsi da.",
+    "fileTooLarge": "Fitxategiak 5 MB-ko muga gainditzen du.",
+    "unsupportedFormat": "Fitxategiaren formatua ez da onartzen.",
+    "validationFailed": "Ezin izan dugu fitxategi hau balioztatu.",
+    "tooManyAttempts": "Saiakera gehiegi egin dituzu jarraian. Itxaron minutu bat.",
+    "uploadFailedGeneric": "Ezin izan dugu fitxategi hau kargatu. Berriro saia zaitezke."
+  }
+}

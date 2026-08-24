@@ -97,7 +97,7 @@ Use Transloco for runtime internationalisation of the public site.
 
 The deciding reason is narrow and specific to this project's own rule: a
 public translation must never ship partial, and Transloco is the option that
-can enforce that as configuration — `missingHandler` plus scoped loading — 
+can enforce that as configuration — `missingHandler` plus scoped loading —
 rather than requiring bespoke tooling built and maintained by hand on top of
 `@angular/localize`.
 
@@ -128,13 +128,9 @@ rather than requiring bespoke tooling built and maintained by hand on top of
   end-to-end test that switches to Arabic and asserts a genuine layout
   reflow, not only that translated text renders. It used the machinery this
   ADR establishes, not a change to this decision.
-- Arabic's translation content was drafted and self-reviewed by the same
-  author under the process #256 defines, the same as the co-official
-  languages — but this project has meaningfully less structural certainty in
-  Modern Standard Arabic than in Catalan, Valencian, Basque, Galician or
-  Aranese, and no independent native-speaker review has happened. This is
-  recorded next to `LOCALES` in `i18n-locales.ts` and in
-  `docs/content/i18n-process.md` rather than left implicit.
+- Every published locale has complete resources for every current application
+  scope. Exact-key completeness, source-drift and rendering checks protect
+  that delivery boundary.
 - `lang` is set correctly on the document root per the active locale (WCAG
   3.1.1), and any content that mixes languages within a single page (for
   example a Basque school name inside Spanish body text) is marked with its

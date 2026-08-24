@@ -1,0 +1,234 @@
+{
+  "nav": {
+    "backToCases": "← العودة إلى الحالات"
+  },
+  "state": {
+    "loading": "جارٍ تحميل الحالة…",
+    "unavailableTitle": "الحالة غير متوفرة",
+    "unavailableBody": "غير موجود أو لم يتم تعيينه إلى ملف التعريف الخاص بك.",
+    "myCases": "انظر حالاتي",
+    "retry": "حاول مرة أخرى"
+  },
+  "tracking": {
+    "title": "متابعة الحالة",
+    "operationalState": "الحالة التشغيلية"
+  },
+  "transition": {
+    "title": "انتقال الحالة",
+    "newState": "الوضع الجديد",
+    "reason": "السبب",
+    "record": "السجل التشغيلي",
+    "submit": "تسجيل الانتقال"
+  },
+  "summary": {
+    "pendingTasks": "المهام المعلقة",
+    "overdue": "خارج الموعد النهائي",
+    "linkedPeople": "الأشخاص ذوي الصلة",
+    "availableEvidence": "الأدلة المتاحة"
+  },
+  "tasks": {
+    "section": "الإجراءات التالية",
+    "heading": "المهام",
+    "new": "مهمة جديدة",
+    "create": "إنشاء مهمة",
+    "empty": "لا توجد مهام مسجلة.",
+    "owner": "المسؤول:",
+    "overdue": "خارج الوقت المستهدف",
+    "action": "العمل",
+    "complete": "كامل",
+    "notApplicable": "لا ينطبق",
+    "confirmReason": "تأكيد السبب",
+    "sourceGuidance": "{{authority}}: {{title}} ({{version}}). لا يحدد هذا الدليل التزامًا أو يحسب موعدًا نهائيًا: قم بمراجعة الإجراء وتكييفه والجهة المسؤولة والهدف المؤقت قبل حفظه.",
+    "reviewedTemplate": "القالب المنقح",
+    "dueLabel": "هدف مؤقت",
+    "dueValue": "الهدف: {{value}}"
+  },
+  "comms": {
+    "section": "السجل التشغيلي",
+    "heading": "الاتصالات",
+    "recipient": "المستلم",
+    "channel": "قناة",
+    "owner": "مسؤول",
+    "datetime": "التاريخ والوقت",
+    "note": "مذكرة تشغيلية مختصرة",
+    "record": "سجل التواصل",
+    "disclaimer": "ولا يرسل هذا السجل أي شيء أو يثبت التسليم أو الاستلام أو الإخطار القانوني. ستبقى التصحيحات كسجل لاحق.",
+    "empty": "لا توجد اتصالات مسجلة.",
+    "correct": "صحيح",
+    "correction": "تصحيح يمكن تتبعه من السجل السابق",
+    "recipientOption": {
+      "family": "العائلة",
+      "external_service": "خدمة خارجية",
+      "inspection": "التفتيش التربوي",
+      "other": "أخرى"
+    },
+    "channelOption": {
+      "in_person": "شخصيا",
+      "phone": "هاتف",
+      "secure_channel": "قناة آمنة",
+      "written_record": "سجل مكتوب",
+      "other": "أخرى"
+    },
+    "statusLabel": "حالة صريحة",
+    "statusOption": {
+      "planned": "المخطط لها",
+      "recorded": "الإجراء المسجل",
+      "not_applicable": "لا ينطبق"
+    }
+  },
+  "people": {
+    "section": "نطاق القضية",
+    "heading": "الأشخاص ذوي الصلة",
+    "minimalData": "الحد الأدنى من البيانات",
+    "disclaimer": "الاسم والربط الوظيفي فقط. هذه التسميات لا تحدد الحقائق.",
+    "name": "الاسم",
+    "relation": "الترابط",
+    "add": "إضافة شخص",
+    "empty": "لا يوجد أشخاص مرتبطين.",
+    "correct": "صحيح",
+    "saveCorrection": "حفظ التصحيح"
+  },
+  "evidence": {
+    "section": "وثائق خاصة",
+    "heading": "الأدلة",
+    "viewCommunication": "انظر الاتصالات",
+    "empty": "لا يوجد دليل متاح.",
+    "download": "تحميل",
+    "leadOnly": "لا يستطيع تنزيله إلا الشخص المسؤول عن القضية",
+    "sizeKb": "{{size}} كيلو بايت"
+  },
+  "origin": {
+    "section": "أصل القضية",
+    "heading": "قرار مسجل",
+    "openedAsCase": "افتح حسب الحالة"
+  },
+  "access": {
+    "section": "الوصول إلى القضية",
+    "heading": "فريق",
+    "confirmAssignment": "تأكيد المهمة",
+    "withdraw": "انسحاب",
+    "handover": "نقل",
+    "change": "تغيير الوصول",
+    "handoverOrWithdrawReason": "سبب النقل أو الانسحاب",
+    "changeReason": "سبب التغيير",
+    "confirmChange": "تأكيد التغيير",
+    "transferReason": "سبب النقل",
+    "confirmWithdraw": "تأكيد الانسحاب",
+    "confirmHandover": "تأكيد النقل",
+    "professional": "محترف",
+    "newLevel": "وصول جديد",
+    "newLead": "مدير جديد"
+  },
+  "activity": {
+    "section": "نشاط القضية",
+    "heading": "النشاط"
+  },
+  "documents": {
+    "exportSection": "التسجيل المتحكم فيه",
+    "exportHeading": "تصدير الملف",
+    "downloadPdf": "تحميل قوات الدفاع الشعبي",
+    "section": "المستندات الخاضعة للرقابة",
+    "generate": "إنشاء وثيقة",
+    "disclaimer": "تتضمن كل وثيقة فقط ما تراه بالفعل في هذه الحالة، وتشير إلى نسختها وتاريخها، وتترك سجلاً في عملية التدقيق. إنها وثائق توضيحية وهمية: لا يوجد أي منها شكل رسمي."
+  },
+  "audit": {
+    "section": "سجل محمي",
+    "heading": "التدقيق",
+    "exportCsv": "تصدير CSV",
+    "loading": "جارٍ تحميل السجل…",
+    "unavailable": "التسجيل غير متاح في هذا الوقت.",
+    "empty": "لا توجد إجراءات قابلة للتدقيق حتى الآن."
+  },
+  "caseStatus": {
+    "assessment": "في التقييم",
+    "active": "نشط",
+    "closed": "مغلق"
+  },
+  "modality": {
+    "in_person": "شخصيا",
+    "digital": "رقمي",
+    "mixed": "مختلط",
+    "unknown": "غير محدد"
+  },
+  "assignmentRole": {
+    "lead": "مسؤول",
+    "contributor": "التعاون",
+    "observer": "التشاور"
+  },
+  "taskStatus": {
+    "pending": "في انتظار",
+    "completed": "مكتمل",
+    "not_applicable": "لا ينطبق"
+  },
+  "sourceAuthority": {
+    "binding": "اللوائح المعمول بها",
+    "recommended": "توصية",
+    "internal": "الهدف الداخلي"
+  },
+  "personRole": {
+    "affected": "الشخص المتأثر",
+    "alleged_actor": "الشخص المزعوم تورطه",
+    "witness": "شاهد",
+    "guardian": "المسؤول القانوني",
+    "other": "رابط آخر"
+  },
+  "stage": {
+    "identification": "تحديد الهوية",
+    "immediate_actions": "إجراءات فورية",
+    "urgent_protection": "الحماية العاجلة",
+    "family_communication": "التواصل مع العائلات",
+    "professional_coordination": "التنسيق المهني",
+    "information_collection": "جمع المعلومات",
+    "educational_measures": "التدابير التعليمية",
+    "inspection_communication": "التواصل مع التفتيش",
+    "assessment": "التقييم",
+    "action_plan": "خطة العمل",
+    "family_measures": "التدابير مع العائلات",
+    "inspection_follow_up": "تتبع التفتيش"
+  },
+  "auditAction": {
+    "case_created": "تم إنشاء الحالة",
+    "report_linked": "الاتصالات المرتبطة",
+    "assignment_created": "الوصول المعين",
+    "assignment_changed": "الوصول المعدل",
+    "assignment_revoked": "تم سحب الوصول",
+    "task_created": "تم إنشاء المهمة",
+    "task_completed": "اكتملت المهمة",
+    "task_marked_not_applicable": "تم وضع علامة على المهمة بأنها غير قابلة للتطبيق",
+    "evidence_download_authorised": "تحميل الأدلة المعتمدة",
+    "audit_exported": "سجل المصدرة",
+    "person_added": "شخص مرتبط",
+    "person_corrected": "الربط الثابت",
+    "person_removed": "تمت إزالة الارتباط",
+    "status_changed": "حالة الحالة المحدثة",
+    "communication_recorded": "الاتصال المسجل",
+    "communication_corrected": "التواصل المصحح",
+    "fallback": "الإجراء المسجل"
+  },
+  "timeline": {
+    "case_created": "تم إنشاء الحالة",
+    "assignment_added": "المهنية المخصصة",
+    "task_created": "تم إنشاء المهمة",
+    "task_resolved": "مهمة محلولة",
+    "fallback": "النشاط المسجل"
+  },
+  "notice": {
+    "caseLoadFailed": "لم نتمكن من تحميل القضية.",
+    "taskCatalogueFailed": "غير قادر على تحميل كتالوج المهام التي تمت مراجعتها.",
+    "taskCreated": "تم إنشاء المهمة. لا يؤكد أي اتصال خارجي.",
+    "taskCompleted": "تم وضع علامة على المهمة كمكتملة.",
+    "taskNotApplicable": "تم وضع علامة على المهمة على أنها غير قابلة للتطبيق مع السبب الخاص بك.",
+    "taskNotUpdatable": "لم يعد من الممكن تحديث المهمة أو ليس لديك إذن.",
+    "invalidReason": "يرجى تقديم سبب وجيه أو حاول مرة أخرى.",
+    "assignmentRecorded": "تم تسجيل المهمة صراحة.",
+    "assignmentLevelFailed": "لا يمكنك ترقية مستوى الوصول هذا.",
+    "accessWithdrawn": "تم سحب الوصول لسبب مسجل.",
+    "handoverRecorded": "تم تسجيل نقل المسؤولية.",
+    "personAdded": "لقد قام الشخص المرتبط بالتسجيل بأقل قدر من البيانات.",
+    "personCorrected": "تم تصحيح الرابط وتسجيله.",
+    "personCorrectionFailed": "لا يمكن تصحيح هذا الارتباط.",
+    "personRemoved": "تم تسجيل الانسحاب. لم يتم حذف التاريخ.",
+    "personRemovalFailed": "لا يمكن إزالة هذا الرابط."
+  },
+  "caseRef": "حالة {{ref}}"
+}

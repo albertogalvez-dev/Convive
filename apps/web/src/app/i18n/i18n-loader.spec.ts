@@ -6,7 +6,7 @@ import { vi } from 'vitest';
 import { HttpTranslocoLoader } from './i18n-loader';
 
 describe('HttpTranslocoLoader', () => {
-  it('fetches a signed-off locale from its scoped path', async () => {
+  it('fetches a published locale from its scoped path', async () => {
     const get = vi.fn().mockReturnValue(of({ hello: 'hola' }));
     TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: { get } }],
@@ -31,7 +31,7 @@ describe('HttpTranslocoLoader', () => {
     expect(get).toHaveBeenCalledWith('/i18n/es.json');
   });
 
-  it('refuses to request a locale that is not signed off, without making a network call', async () => {
+  it('refuses to request a locale that is not published, without making a network call', async () => {
     const get = vi.fn().mockReturnValue(of({}));
     TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: { get } }],
@@ -39,9 +39,9 @@ describe('HttpTranslocoLoader', () => {
 
     const loader = TestBed.inject(HttpTranslocoLoader);
 
-    await expect(firstValueFrom(loader.getTranslation('public-site-footer/eu'))).rejects.toThrow(
-      /not signed off/,
-    );
+    await expect(
+      firstValueFrom(loader.getTranslation('public-site-footer/oc-aranes')),
+    ).rejects.toThrow(/not published/);
     expect(get).not.toHaveBeenCalled();
   });
 });

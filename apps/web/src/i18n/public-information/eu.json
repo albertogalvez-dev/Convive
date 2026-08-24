@@ -1,0 +1,210 @@
+{
+  "homeLinkLabel": "Convive, hasiera",
+  "professionalAccess": "Lanbide arloa",
+  "backLink": "Itzuli hasierara",
+  "reviewLine": "{{reviewedOn}} egunean {{owner}}-k berrikusia.",
+  "demonstrationNotice": {
+    "eyebrow": "DEMO OHARRA",
+    "title": "Convive fikziozko informazioa duen demo bat da.",
+    "seoDescription": "Convive fikziozko informazioa duen demo bat da. Ez da larrialdietarako kanala edo edozein hezkuntza administrazioren zerbitzu ofiziala.",
+    "description": "Ikusten duzun guztia asmatutako hezkuntza-zentro batean gertatzen da. Hemen idazten duzun ezer ez da eskola, institutu edo administrazio batera iristen.",
+    "notice": "Norbait arriskuan badago, leku hau ez da bidea. Jarraian dituzu laguntza publikoko telefono zenbakiak.",
+    "sections": [
+      {
+        "heading": "Zer ez den Convive",
+        "paragraphs": [
+          "Hobe da garbi esatea, benetako zerbitzu baten itxura duen erakustaldi batek laguntza bila datozenak nahas ditzakeelako."
+        ],
+        "items": [
+          "Ez da larrialdietarako edo premiazko arretarako kanala.",
+          "Ez da inongo hezkuntza-administrazioren zerbitzu ofiziala, eta ez dago inolako loturarik.",
+          "Ez du ordezkatzen inongo hezkuntza-zentroren bizikidetza-protokoloa.",
+          "Ez du aholkularitza juridiko, kliniko edo psikologikorik eskaintzen."
+        ]
+      },
+      {
+        "heading": "Laguntza publikoko telefonoak",
+        "paragraphs": [
+          "Baliabide publiko ofizialak dira. Convive-k dauden moduan zerrendatzen ditu, egoera bakoitzari zein dagokion inongo zantzurik gehitu gabe."
+        ],
+        "items": [
+          "112 · Larrialdiak",
+          "016 · Genero indarkeriaren biktimei arreta",
+          "900 20 20 10 · ANAR Haur eta Nerabeentzako Laguntza Telefonoa"
+        ]
+      },
+      {
+        "heading": "Zer egin dezakezu hemen?",
+        "paragraphs": [
+          "Ibili produktu osoa fikziozko zentro batean: bidali adibidezko komunikazio bat, jarraitu eta ikusi nola lan egingo lukeen talde profesional batek.",
+          "Horretarako, idazten duzun informazioa asmatu behar da. Proba-inguruneari dagokionez, zehatz-mehatz azaltzen da."
+        ]
+      },
+      {
+        "heading": "Nondik dator proiektu hau?",
+        "paragraphs": [
+          "Convive kode irekiko proiektu pertsonal bat da, MIT lizentziapean argitaratua, Aircury SL-ren Aircury Summer of Code 2026 bekari esker garatua.",
+          "Aircury SLk lana beka horren bidez finantzatzen du. Ez du erakustaldi hau kudeatzen, ez du edukian parte hartzen, eta hemen argitaratutako ezer ez da haren babesa."
+        ]
+      }
+    ],
+    "reviewTrigger": "Sei hilean behin berrikusten da. Era berean, frogaren esparrua, nork argitaratzen duen edo erreferentziako protokoloa aldatzen bada ere berrikusten da."
+  },
+  "privacyNotice": {
+    "eyebrow": "PRIBATUTASUNA",
+    "title": "Demoak ez du datu pertsonalik biltzen.",
+    "seoDescription": "Convive manifestazio publikoak ez du bisitatzen dutenen datu pertsonalik biltzen. Sandbox-ean sortutako edukia 24 orduko epean ezabatzen da.",
+    "description": "Demo honek fikziozko informazioarekin lan egiten du eta ez ditu bisitatzen dutenen datu pertsonalak eskatzen, gordetzen edo aztertzen.",
+    "notice": "Pribatutasunari buruzko galderarik baduzu, idatzi {{privacyEmail}} helbidera.",
+    "sections": [
+      {
+        "heading": "Nork argitaratzen duen gune hau",
+        "paragraphs": [
+          "Demo hau {{operatorName}}k argitaratu eta mantentzen du. Proiektu pertsonal bat da, ez edozein zentrok kontratatutako entitate edo zerbitzu bat.",
+          "Pribatutasun-arazoetarako bidea {{privacyEmail}} da. Beste edozein galdera egiteko, {{generalEmail}}."
+        ]
+      },
+      {
+        "heading": "Zer gertatzen zaio proba-ingurunean idazten duzunari",
+        "paragraphs": [
+          "Sandbox-ek edukia onartzen du, produktuan zehar ibili ahal izateko, eta eduki horrek nahitako bizitza laburra du."
+        ],
+        "items": [
+          "24 orduko gehienezko epean automatikoki eta atzeraezin ezabatzen da.",
+          "Ezin da esportatu ezta haren babeskopiarik ere.",
+          "Proiektuak berak mantentzen dituen fikziozko kasuak eta profilak mantentzen dira: erakusteko materiala dira.",
+          "Segurtasun-onarpenaren erregistro tekniko ez-identifikatzailea 30 egunez mantentzen da."
+        ]
+      },
+      {
+        "heading": "Anonimotasunaren mugak",
+        "paragraphs": [
+          "Convive-k ez du konturik behar komunikazio bat bidaltzeko, eta horrek idazleari buruz ezagutzen den informazioa murrizten du. Ez du ezabatzen.",
+          "Idazten duzun edukiak esaten duzunaren arabera identifikatu zaitu, nahiz eta zure izena eman ez. Interneten edozein zerbitzuren erregistro teknikoak ere badaude.",
+          "Horregatik produktuak ez du erabateko anonimotasuna agintzen. Lasaitasun faltsua izango litzateke. Eskolako bizikidetzan, lasaitasun faltsua kaltegarria da."
+        ]
+      },
+      {
+        "heading": "Egiten ez dena",
+        "paragraphs": ["Gertatzen ez dena gertatzen denak bezainbeste axola du."],
+        "items": [
+          "Ez dago inolako analisirik edo audientzia-neurketarik.",
+          "Ez dago funtsezkoak ez diren cookierik edo hirugarrenen etiketarik.",
+          "Ez da gunea bisitatzen duenaren profilik sortzen.",
+          "Ez da onartzen benetako informazio pertsonalik, ez bisitariarena ez hirugarrenena."
+        ]
+      },
+      {
+        "heading": "Zure eskubideak",
+        "paragraphs": [
+          "Erakustaldi honek ez ditu bisitatzen dutenen datu pertsonalak tratatzen. Hori dela eta, normalean ez dago atzitzeko, zuzentzeko edo ezabatzeko eskubiderik erabiltzeko daturik.",
+          "Hala ere, ibilbidea existitzen da eta bertaratzen da: idatzi {{privacyEmail}} helbidera eta erantzuna jasoko duzu."
+        ]
+      }
+    ],
+    "reviewTrigger": "Sei hilean behin berrikusten da. Era berean, frogaren esparrua, nork argitaratzen duen edo erreferentziako protokoloa aldatzen bada ere berrikusten da."
+  },
+  "cookieNotice": {
+    "eyebrow": "COOKIES",
+    "title": "Ez ditugu funtsezkoak ez diren cookierik erabiltzen.",
+    "seoDescription": "Convive-k ez ditu funtsezkoak ez diren cookieak, analitikoak edo hirugarrenen etiketak erabiltzen bere erakustaldi publikoan.",
+    "description": "Gune honek ez du publizitate, analisi edo hirugarrenen cookierik instalatzen, beraz, ez dago ezer onartzeko edo baztertzeko.",
+    "notice": "Horregatik ez duzu ikusiko cookieak instalatzeko baimena eskatzen duen oharrik.",
+    "sections": [
+      {
+        "heading": "Zure nabigatzailean gordetzen dena",
+        "paragraphs": [
+          "Ez da ezer gordetzen gune publikoan ezagutu zaitzaten.",
+          "Demo aplikazioan sartzen zarenean, zerbitzariak ezinbesteko saio tekniko bat sortzen du. Hori gabe ezingo zenuke adibidezko komunikaziorik bidali edo berriro kontsultatu. Saio hori ez da inor neurtzeko, jarraipena egiteko edo profila egiteko erabiltzen."
+        ]
+      },
+      {
+        "heading": "Gordetzen ez dena",
+        "paragraphs": [],
+        "items": [
+          "Analytics edo audientzia neurtzeko cookieak.",
+          "Publizitate edo pertsonalizazio cookieak.",
+          "Hirugarrenen etiketak, pixelak edo scriptak."
+        ]
+      }
+    ],
+    "reviewTrigger": "Sei hilean behin berrikusten da. Era berean, frogaren esparrua, nork argitaratzen duen edo erreferentziako protokoloa aldatzen bada ere berrikusten da."
+  },
+  "sandboxTerms": {
+    "eyebrow": "PROBA INGURUNEAREN BALDINTZAK",
+    "title": "Erabili asmatutako informazioa. Beti.",
+    "seoDescription": "Erabilera-baldintzak konbinatu: fabrikatutako informazioa beharrezkoa da, benetako laguntza-kanal gisa erabiltzea debekatuta.",
+    "description": "Baldintza hauek laburrak dira, bi gauza garrantzitsu baino ez daudelako: idazten duzuna asmatu behar da, eta hau ez da laguntza kanal bat.",
+    "notice": "Benetako zerbait kontatu behar baduzu, egin ezazu zure hezkuntza zentroaren bidez edo laguntza publikoko telefonoen bidez.",
+    "sections": [
+      {
+        "heading": "Asmatutako informazioa nahitaezkoa",
+        "paragraphs": [
+          "Proba-ingurunea existitzen ez den zentro bati buruzko irudimenezko egoera bat idatzi ahal izateko diseinatuta dago."
+        ],
+        "items": [
+          "Ez idatzi izen-abizenak, telefono-zenbakiak, helbideak edo benetako pertsona baten beste informaziorik, ez zurea ez inorena.",
+          "Ez deskribatu zentro zehatz batean gertatutako benetako gertaerarik.",
+          "Ez kargatu benetako dokumentuak, irudiak edo grabazioak."
+        ]
+      },
+      {
+        "heading": "Hau ez da laguntza kanal bat",
+        "paragraphs": [
+          "Inork ez du irakurtzen hemen idazten duzuna benetako komunikazioa balitz bezala. Beste aldean ez dago talde profesionalik, ez da fitxategirik irekitzen eta ez da zentrorik jakinarazi.",
+          "Manifestazioa egoera erreal batean laguntza eskatzeko erabiltzeak ez du funtzionatzen. Gainera, egoera hori jarduteko gai direnengana iristeko atzeratzen du."
+        ]
+      },
+      {
+        "heading": "Zer espero dezakezu zerbitzutik",
+        "paragraphs": [
+          "Demoa dagoen moduan eskaintzen da, erabilgarritasunarekiko konpromisorik gabe. Abisatu gabe eten, berrabiarazi edo alda daiteke.",
+          "Sortzen duzun edukia automatikoki ezabatzen da 24 orduko epean, eta baliteke lehenago kentzea ere baldintza hauek urratzen badituzu."
+        ]
+      }
+    ],
+    "reviewTrigger": "Sei hilean behin berrikusten da. Era berean, frogaren esparrua, nork argitaratzen duen edo erreferentziako protokoloa aldatzen bada ere berrikusten da."
+  },
+  "accessibilityNotice": {
+    "eyebrow": "IRISGARRITASUNA",
+    "title": "Hau edozein euskarrirekin erabilgarri izatea nahi dugu.",
+    "seoDescription": "Convive-ren irisgarritasun-konpromisoa, berrikuspenaren benetako egoera eta harremanetarako metodoa oztopo bat komunikatzeko.",
+    "description": "Convive WCAG 2.2 AA maila betetzeko helburuarekin garatu da: teklatuaren funtzionamendu osoa, foku ikusgaia, kontraste nahikoa eta laguntza produktuekin bateragarritasuna.",
+    "notice": "Oztoporen bat aurkitzen baduzu, idatzi iezaguzu {{generalEmail}} helbidera eta esan zein orrialde eta zerk eragotzi dizun jarraitzea.",
+    "sections": [
+      {
+        "heading": "Berrikusi egoera",
+        "paragraphs": [
+          "Irisgarritasun egiaztapen automatikoak proiektuaren etengabeko integrazioaren parte dira eta aldaketa guztietan egiten dira.",
+          "2026ko abuztuaren 16an, bide kritikoen eskuzko auditoria egin zen. Bi akats aurkitu eta konpondu ditu: kontraste nahikoa eta pantaila-irakurleari jakinarazi ez zaizkion hiru errore. Benetako laguntza produktuekin egiaztatu behar da. Ordura arte, gune honek ez du WCAG 2.2 AA betetzen dela adierazten. Egiaztatu gabe esatea ez litzateke egia izango."
+        ]
+      },
+      {
+        "heading": "Zer egiten dugu esaten diguzunarekin?",
+        "paragraphs": [
+          "Salatutako oztopo bakoitza proiektuaren biltegian arazo gisa erregistratzen da publikoki eta atzeratutako produktuen lanaren aurretik zuzentzen da.",
+          "Ez duzu termino teknikoetan deskribatzen jakin behar. Nahikoa da zer egin nahi zenuen eta non geratu zaren jakitea."
+        ]
+      }
+    ],
+    "reviewTrigger": "Sei hilean behin berrikusten da. Era berean, frogaren esparrua, nork argitaratzen duen edo erreferentziako protokoloa aldatzen bada ere berrikusten da."
+  },
+  "contactNotice": {
+    "eyebrow": "KONTAKTU",
+    "title": "Idatzi iezaguzu posta elektronikoz.",
+    "seoDescription": "Convive proiektuaren harremanetarako metodoak galdera orokorrak eta pribatutasun kontuetarako.",
+    "description": "Ez dago harremanetarako formulariorik: galdera bati erantzuteko datu pertsonalak eskatzea ez litzateke bat etorriko datu pertsonalak prozesatzen ez dituen demo batekin.",
+    "notice": "Ez bidali informazio pertsonalik edo ikastetxeko bizikidetza-egoera erreal bat bide honetatik.",
+    "sections": [
+      {
+        "heading": "Bi norabide",
+        "paragraphs": ["Hitz egin nahi denaren arabera."],
+        "items": [
+          "{{generalEmail}} · proiektuaren, erakustaldiaren eta irisgarritasun arazoen inguruko zalantzak.",
+          "{{privacyEmail}} · pribatutasuna eta eskubideen erabilera."
+        ]
+      }
+    ],
+    "reviewTrigger": "Sei hilean behin berrikusten da. Era berean, frogaren esparrua, nork argitaratzen duen edo erreferentziako protokoloa aldatzen bada ere berrikusten da."
+  }
+}

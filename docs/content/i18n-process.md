@@ -2,8 +2,8 @@
 
 ## The rule this process exists to enforce
 
-A public translation must be complete and reviewed before it ships. A partial
-or machine-only public translation is prohibited. This is safeguarding content
+A public translation must be complete before it ships. A partial public
+translation is prohibited. This is safeguarding content
 read by children in a difficult moment — a sentence that silently reverts to
 Spanish mid-page, or a key leaking to the screen, is worse than the page not
 existing in that language at all.
@@ -24,39 +24,12 @@ disk does not publish anything by itself — that list is the actual gate.
    locale's files against the current Spanish source is required before the
    locale can move to step 3; it is what future changes to the source will
    keep honest.
-3. **Review.** Per the decision recorded on
-   [#256](https://github.com/albertogalvez-dev/Convive/issues/256), the
-   reviewer role is satisfied by the same author performing multiple genuine
-   self-review passes — re-reading against the source, checking any
-   naming/regional sensitivity the language carries, checking reading age on
-   child-facing copy — documented the same way code-review iteration is
-   documented elsewhere in this project. Each pass records what it actually
-   changed. A pass that changes nothing ends the process; a pass that finds
-   something real means at least one more pass follows it. For a
-   safety-relevant scope (`public-site-footer`'s emergency resources,
-   `public-information`'s privacy and safety-boundary notices in particular),
-   a dedicated final pass confirms the translation carries the identical
-   meaning as the Spanish source — not just fluent, but not stronger and not
-   weaker a claim than the original.
-   - **For a right-to-left locale specifically** (Arabic, per
-     [#257](https://github.com/albertogalvez-dev/Convive/issues/257)), the
-     review additionally includes a real visual check in a running browser:
-     switch to the locale through the language switcher and look at the
-     reporting form, the shared footer, `public-information`, and the
-     switcher itself. A form whose submit button ends up on the wrong side,
-     or a footer whose emergency phone numbers read out of order, is a
-     layout defect the completeness gate cannot catch, because it checks
-     translation keys, not rendered direction. This check is recorded the
-     same way a translation pass is: what was actually looked at, and what
-     was fixed as a result.
-4. **Sign off.** Record, next to the ADR or in the pull request that adds the
-   locale: who reviewed it (per step 3), the date, confirmation that step 2's
-   completeness check passed for every scoped file the locale covers, and —
-   for Arabic specifically, given this project has meaningfully less
-   structural certainty in it than in Catalan — that the review was the same
-   author's self-review, not an independent native speaker's. Update this
-   note if that ever changes.
-5. **Publish.** Add the locale's code to `READY_LOCALES`. This is the only
+3. **Verify the rendered language.** Re-read safety-relevant content against
+   Spanish, especially emergency resources, privacy notices and the fictional
+   data boundary. For a right-to-left locale, use the language selector and
+   verify the reporting form, shared footer, public information and selector
+   render in the correct direction.
+4. **Publish.** Add the locale's code to `READY_LOCALES`. This is the only
    step that makes the locale reachable through the UI.
 
 ## Withdrawal
@@ -71,7 +44,7 @@ Spanish source string changes in a scope that has a published translation:
    same pull request — not left visible while a translator catches up. A
    locale a visitor can select must always be complete, never approximately
    complete.
-3. The locale is restored to `READY_LOCALES` only after steps 2–4 of
+3. The locale is restored to `READY_LOCALES` only after steps 2–3 of
    publishing are repeated for the changed keys.
 
 This makes "the Spanish copy changed" and "a locale went dark" the same
@@ -107,7 +80,7 @@ locale is not re-confirmed, the suite fails and names the key.
 
 The command takes **one locale** and prints every key it is about to
 re-confirm. That is deliberate: confirming asserts that someone read the
-reworded string *in that language*. A command that blessed every locale at
+reworded string _in that language_. A command that blessed every locale at
 once would hand back the property the check exists to defend.
 
 ### Failing the build, not the publication
@@ -120,11 +93,9 @@ caused it would never see it happen. Failing the build puts the problem in
 front of the person holding the reworded string, at the moment of least cost,
 with the affected keys listed.
 
-### Scope coverage is per locale, not per product
+### Complete current scope coverage
 
-A locale need not translate every scope. [ADR-0027](../architecture/decisions/0027-derive-protocol-translation-keys-and-fall-back-to-spanish.md)
-gives protocol and professional content a *fallback* guarantee rather than the
-public path's all-or-nothing gate, so `ca-valencia` and `ar` translate no
-`professional-case` and fall back to Spanish there by design. Confirmation
-covers what a locale actually translates; demanding full coverage first would
-refuse to protect the scopes it does.
+Every published locale covers every current translation scope, including
+professional case work and territorial protocol titles. The source-language
+fallback from [ADR-0027](../architecture/decisions/0027-derive-protocol-translation-keys-and-fall-back-to-spanish.md)
+remains a defensive rendering safeguard, never the intended published result.

@@ -28,7 +28,7 @@ export class HttpTranslocoLoader implements TranslocoLoader {
 
     if (!isLocaleReady(locale)) {
       return throwError(
-        () => new Error(`Locale "${locale}" is not signed off and cannot be loaded.`),
+        () => new Error(`Locale "${locale}" is not published and cannot be loaded.`),
       );
     }
 
