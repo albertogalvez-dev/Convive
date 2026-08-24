@@ -3,10 +3,35 @@
     <a class="wordmark" href="/" [attr.aria-label]="'public-home.homeLinkLabel' | transloco">
       <img src="/convive-logo.svg" alt="" width="158" height="52" />
     </a>
-    <nav [attr.aria-label]="'public-home.nav.label' | transloco">
-      <a href="/blog/">{{ 'public-home.nav.blog' | transloco }}</a>
-      <a href="/demostracion/">{{ 'public-home.nav.demo' | transloco }}</a>
-      <a href="/contacto/">{{ 'public-home.nav.contact' | transloco }}</a>
+    <button
+      #navigationToggle
+      class="mobile-navigation-toggle"
+      type="button"
+      aria-controls="primary-navigation"
+      [attr.aria-expanded]="mobileNavigationOpen()"
+      [attr.aria-label]="
+        (mobileNavigationOpen() ? 'public-home.nav.close' : 'public-home.nav.open') | transloco
+      "
+      (click)="toggleMobileNavigation()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+    </button>
+    <nav
+      id="primary-navigation"
+      class="primary-navigation"
+      [class.is-open]="mobileNavigationOpen()"
+      [attr.aria-label]="'public-home.nav.label' | transloco"
+      (keydown.escape)="closeMobileNavigation(true)"
+    >
+      <a href="/blog/" (click)="closeMobileNavigation()">{{
+        'public-home.nav.blog' | transloco
+      }}</a>
+      <a href="/demostracion/" (click)="closeMobileNavigation()">{{
+        'public-home.nav.demo' | transloco
+      }}</a>
+      <a href="/contacto/" (click)="closeMobileNavigation()">{{
+        'public-home.nav.contact' | transloco
+      }}</a>
     </nav>
     <a [href]="professionalAccessUrl">{{ 'public-home.professionalAccess' | transloco }}</a>
   </header>
@@ -15,7 +40,7 @@
     <h1 id="home-title">{{ 'public-home.hero.title' | transloco }}</h1>
     <p>{{ 'public-home.hero.description' | transloco }}</p>
     <div>
-      <a href="/demostracion/">{{ 'public-home.hero.requestDemo' | transloco }}</a
+      <a href="/demostracion/">{{ 'public-home.hero.exploreDemo' | transloco }}</a
       ><a [href]="professionalAccessUrl">{{ 'public-home.hero.accessCentre' | transloco }}</a>
     </div>
   </section>

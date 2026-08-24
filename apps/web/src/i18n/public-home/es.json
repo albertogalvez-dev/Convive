@@ -4,14 +4,16 @@
     "label": "Navegación principal",
     "blog": "Blog",
     "demo": "Demostración",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "open": "Abrir navegación principal",
+    "close": "Cerrar navegación principal"
   },
   "professionalAccess": "Área profesional",
   "hero": {
     "eyebrow": "CONVIVENCIA ESCOLAR",
     "title": "Un canal seguro para escuchar antes.",
     "description": "Convive ayuda al centro. Escucha y responde con cuidado.",
-    "requestDemo": "Solicitar demostración",
+    "exploreDemo": "Conocer la demostración",
     "accessCentre": "Acceder al centro"
   },
   "cards": {

@@ -4,14 +4,16 @@
     "label": "Navegación principal",
     "blog": "Blog",
     "demo": "Demostración",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "open": "Abrir a navegación principal",
+    "close": "Pechar a navegación principal"
   },
   "professionalAccess": "Área profesional",
   "hero": {
     "eyebrow": "CONVIVENCIA ESCOLAR",
     "title": "Unha canle segura para escoitar antes.",
     "description": "Convive axuda ao centro. Escoita e responde con coidado.",
-    "requestDemo": "Solicitar unha demostración",
+    "exploreDemo": "Coñecer a demostración",
     "accessCentre": "Acceder ao centro"
   },
   "cards": {

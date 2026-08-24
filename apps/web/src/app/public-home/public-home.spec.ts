@@ -33,9 +33,46 @@ describe('PublicHome', () => {
     expect(page.querySelector('h1')?.textContent).toContain('Un canal seguro');
     expect(page.querySelector('a[href="/blog/"]')).toBeTruthy();
     expect(page.querySelectorAll('a[href="/demostracion/"]').length).toBe(4);
+    expect(page.textContent).toContain('Conocer la demostración');
     expect(page.querySelector('a[href="/contacto/"]')).toBeTruthy();
     expect(page.querySelector('a[href="/profesionales/acceso"]')).toBeTruthy();
     expect(page.querySelector('[href*="/r/"]')).toBeNull();
     expect(page.querySelector('footer')?.textContent).toContain('datos ficticios');
+  });
+
+  it('keeps primary navigation operable through the labelled mobile menu control', async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        PublicHome,
+        i18nTestingModule({
+          'public-home': publicHomeEs,
+          'public-site-footer': publicSiteFooterEs,
+        }),
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(PublicHome);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+    const toggle = page.querySelector<HTMLButtonElement>('[aria-controls="primary-navigation"]');
+    const navigation = page.querySelector<HTMLElement>('#primary-navigation');
+
+    expect(toggle?.getAttribute('aria-label')).toBe('Abrir navegación principal');
+    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
+    expect(navigation?.classList.contains('is-open')).toBe(false);
+
+    toggle?.click();
+    fixture.detectChanges();
+
+    expect(toggle?.getAttribute('aria-label')).toBe('Cerrar navegación principal');
+    expect(toggle?.getAttribute('aria-expanded')).toBe('true');
+    expect(navigation?.classList.contains('is-open')).toBe(true);
+
+    navigation?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
+    expect(navigation?.classList.contains('is-open')).toBe(false);
   });
 });

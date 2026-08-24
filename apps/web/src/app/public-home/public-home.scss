@@ -17,9 +17,10 @@ nav {
   gap: 1rem;
 }
 header {
+  position: relative;
   justify-content: space-between;
 }
-header nav {
+header .primary-navigation {
   margin-inline-start: auto;
 }
 header a {
@@ -32,6 +33,23 @@ nav a {
   font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
+}
+.mobile-navigation-toggle {
+  display: none;
+  border: 1px solid #cdd9e9;
+  border-radius: 0.65rem;
+  padding: 0.55rem;
+  background: #fff;
+  color: #173367;
+}
+.mobile-navigation-toggle svg {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2;
 }
 .hero {
   max-width: 48rem;
@@ -119,7 +137,38 @@ a:focus-visible {
     width: 8rem;
     height: auto;
   }
-  header nav {
+  .mobile-navigation-toggle {
+    display: grid;
+    place-items: center;
+    order: 2;
+  }
+  header > a:last-child {
+    order: 3;
+  }
+  header .primary-navigation {
     display: none;
+    position: absolute;
+    z-index: 1;
+    top: calc(100% + 0.75rem);
+    inset-inline: 0;
+    margin: 0;
+    padding: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+    border: 1px solid #cdd9e9;
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.16);
+  }
+  header .primary-navigation.is-open {
+    display: flex;
+  }
+  header .primary-navigation a {
+    padding: 0.7rem;
+    border-radius: 0.55rem;
+    color: #173367;
+  }
+  header .primary-navigation a:hover {
+    background: #eaf7fc;
   }
 }
