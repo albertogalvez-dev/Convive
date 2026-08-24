@@ -30,13 +30,6 @@ describe('ProfessionalShell', () => {
   afterEach(() => http.verify());
 
   it('shows a compact identity, a real notification count and an accessible collapse action', () => {
-    const requests = http.match((request) => request.url === '/api/v1/professional/reports');
-    requests
-      .find((request) => request.request.params.get('status') === 'new')
-      ?.flush(pageOf([summary('new-1', 'new')]));
-    requests
-      .find((request) => request.request.params.get('status') === 'reviewed')
-      ?.flush(pageOf([]));
     http.expectOne('/api/v1/professional/notifications').flush({ items: [], unreadCount: 1 });
     fixture.detectChanges();
 
@@ -59,19 +52,4 @@ describe('ProfessionalShell', () => {
       'Abrir menú lateral',
     );
   });
-
-  function pageOf(items: unknown[]) {
-    return { items, pagination: { limit: 50, nextCursor: null } };
-  }
-
-  function summary(id: string, status: 'new' | 'reviewed') {
-    return {
-      id,
-      publicReference: id,
-      situationPreview: 'Fictional situation',
-      situationContext: 'digital',
-      status,
-      createdAt: '2026-08-09T18:00:00+00:00',
-    };
-  }
 });

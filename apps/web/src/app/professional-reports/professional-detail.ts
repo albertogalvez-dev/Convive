@@ -1,10 +1,11 @@
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { reportContextLabel } from './report-context';
 import {
   ProfessionalReportDetail,
@@ -24,10 +25,12 @@ export class ProfessionalDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly reports = inject(ProfessionalReportsService);
+  private readonly sessions = inject(ProfessionalSessionService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly id = this.route.snapshot.paramMap.get('id') ?? '';
 
   protected readonly report = signal<ProfessionalReportDetail | null>(null);
+  protected readonly isDemonstration = computed(() => this.sessions.demonstrationRole() !== null);
   protected readonly loading = signal(true);
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);

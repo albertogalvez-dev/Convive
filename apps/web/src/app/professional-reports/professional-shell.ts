@@ -7,7 +7,6 @@ import {
   isCaseDemonstrationRole,
 } from '../professional-access/demo-professional-role';
 import { ProfessionalNotificationsService } from './professional-notifications.service';
-import { ProfessionalPortalStore } from './professional-portal.store';
 import { WorkspaceIntroduction } from './workspace-introduction/workspace-introduction';
 
 @Component({
@@ -20,7 +19,6 @@ import { WorkspaceIntroduction } from './workspace-introduction/workspace-introd
 export class ProfessionalShell implements OnInit {
   private readonly sessions = inject(ProfessionalSessionService);
   private readonly router = inject(Router);
-  private readonly portal = inject(ProfessionalPortalStore);
   private readonly notifications = inject(ProfessionalNotificationsService);
 
   protected readonly professional = this.sessions.professional;
@@ -37,7 +35,6 @@ export class ProfessionalShell implements OnInit {
     ) {
       return;
     }
-    this.portal.load();
     this.notifications
       .list()
       .subscribe({ next: ({ unreadCount }) => this.newNotificationCount.set(unreadCount) });

@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { vi } from 'vitest';
 
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { ProfessionalDetail } from './professional-detail';
 
 describe('ProfessionalDetail', () => {
@@ -64,6 +65,18 @@ describe('ProfessionalDetail', () => {
     fixture.detectChanges();
     expect(page.textContent).toContain('Revisi\u00f3n registrada');
     expect(page.querySelector('.review-card form')).toBeNull();
+  });
+
+  it('shows a compact read-only review state for a demonstration session', () => {
+    TestBed.inject(ProfessionalSessionService).demonstrationRole.set('triage');
+
+    http.expectOne(endpoint).flush(detail());
+    fixture.detectChanges();
+
+    expect(page.querySelector('.review-card form')).toBeNull();
+    expect(page.querySelector('.response-card')).toBeNull();
+    expect(page.textContent).toContain('Pendiente de valoración');
+    expect(page.textContent).not.toContain('Marcar como revisada');
   });
 
   it('publishes one reporter-visible response and appends it to history', async () => {
