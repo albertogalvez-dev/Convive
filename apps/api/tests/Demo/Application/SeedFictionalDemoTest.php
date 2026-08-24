@@ -286,6 +286,9 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             ],
         ));
         self::assertSame(5, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_assignments WHERE revoked_at IS NULL',
+        ));
+        self::assertSame(3, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM case_assignments WHERE professional_id = :professional_id AND revoked_at IS NULL',
             ['professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
         ));
