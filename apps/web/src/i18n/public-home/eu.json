@@ -16,25 +16,26 @@
     "exploreDemo": "Ezagutu demoa",
     "accessCentre": "Sartu zentrora"
   },
-  "cards": {
-    "label": "Nola laguntzen duen Convive-k",
-    "communication": {
-      "title": "Komunikazio argia",
-      "body": "Bidali oharra zentrora. Ez duzu konturik behar."
+  "journey": {
+    "eyebrow": "LEHEN URRATSA",
+    "title": "Zerbait kezkatzen badu, esateak laguntzen du.",
+    "description": "Convive-k zentroari entzuten laguntzen dio.",
+    "steps": {
+      "share": {
+        "title": "Norbaitek hitz egitera ausartzen da",
+        "body": "Ikusi duena kontatzen du. Ez du konturik behar."
+      },
+      "context": {
+        "title": "Zentroak testuingurua jasotzen du",
+        "body": "Laneko gune seguru batera iristen da."
+      },
+      "followUp": {
+        "title": "Elkarrizketak arreta jasotzen du",
+        "body": "Zentroak erantzun eta laguntzen du."
+      }
     },
-    "privacy": {
-      "title": "Pribatutasuna muga argiekin",
-      "body": "Ez dugu konturik eskatzen. Ez dugu erabateko anonimotasuna agintzen."
-    },
-    "work": {
-      "title": "Zentroko lana",
-      "body": "Taldeak leku seguru batean lan egiten du."
+    "demo": {
+      "cta": "Arakatu demoa"
     }
-  },
-  "demo": {
-    "eyebrow": "FIKZIOZKO DEMOSTRAZIOA",
-    "title": "Ezagutu fluxu osoa.",
-    "description": "Demoak datu faltsuak erabiltzen ditu. Ez du funtzionatzen larrialdietan.",
-    "cta": "Ikusi demoa"
   }
 }

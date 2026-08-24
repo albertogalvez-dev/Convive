@@ -8,6 +8,14 @@ import { professionalAccessUrlFor } from '../site-hosts';
 import { PublicHome } from './public-home';
 
 describe('PublicHome', () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('uses the isolated application host for professional access from the public host', () => {
     expect(professionalAccessUrlFor('conviveaula.com')).toBe(
       'https://app.conviveaula.com/profesionales/acceso',
@@ -31,9 +39,27 @@ describe('PublicHome', () => {
 
     const page = fixture.nativeElement as HTMLElement;
     expect(page.querySelector('h1')?.textContent).toContain('Un canal seguro');
+    expect(page.querySelector('video.hero-video source')?.getAttribute('src')).toBe(
+      '/assets/public-home/convive-school-community.mp4',
+    );
+    expect(page.querySelector('video.hero-video')?.getAttribute('poster')).toBe(
+      '/assets/public-home/convive-school-community-poster.jpg',
+    );
+    expect(page.querySelector('.hero-brand')).toBeNull();
+    const heroVideo = page.querySelector<HTMLVideoElement>('video.hero-video');
+    expect(heroVideo?.hasAttribute('autoplay')).toBe(true);
+    expect(heroVideo?.loop).toBe(true);
+    expect(heroVideo?.muted).toBe(true);
+    expect(page.querySelector('.wordmark img')?.getAttribute('src')).toBe(
+      '/convive-logo-reversed.svg',
+    );
     expect(page.querySelector('a[href="/blog/"]')).toBeTruthy();
-    expect(page.querySelectorAll('a[href="/demostracion/"]').length).toBe(4);
-    expect(page.textContent).toContain('Conocer la demostración');
+    expect(page.querySelectorAll('a[href="/demostracion/"]').length).toBe(3);
+    expect(page.querySelector('.cards')).toBeNull();
+    expect(page.querySelector('.journey')?.textContent).toContain(
+      'Si algo preocupa, decirlo ayuda.',
+    );
+    expect(page.textContent).toContain('Explorar la demostración');
     expect(page.querySelector('a[href="/contacto/"]')).toBeTruthy();
     expect(page.querySelector('a[href="/profesionales/acceso"]')).toBeTruthy();
     expect(page.querySelector('[href*="/r/"]')).toBeNull();

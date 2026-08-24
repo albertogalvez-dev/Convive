@@ -43,6 +43,8 @@ test('keeps the public-home journey truthful and keyboard-operable on mobile', a
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
+  await expect(page).toHaveTitle('Convive');
+
   const navigationToggle = page.getByRole('button', { name: 'Abrir navegación principal' });
   const primaryNavigation = page.getByRole('navigation', { name: 'Navegación principal' });
   await expect(navigationToggle).toBeVisible();
@@ -59,8 +61,18 @@ test('keeps the public-home journey truthful and keyboard-operable on mobile', a
   await primaryNavigation.getByRole('link', { name: 'Blog' }).press('Escape');
   await expect(page.getByRole('button', { name: 'Abrir navegación principal' })).toBeFocused();
 
-  const demonstrationLink = page.getByRole('link', { name: 'Conocer la demostración' });
+  const demonstrationLink = page.getByRole('link', { name: 'Explorar la demostración' });
   await expect(demonstrationLink).toHaveAttribute('href', '/demostracion/');
+  await expect(page.locator('video.hero-video')).toHaveAttribute(
+    'poster',
+    '/assets/public-home/convive-school-community-poster.jpg',
+  );
+  await expect(page.locator('video.hero-video')).toHaveAttribute('loop', '');
+  expect(await page.locator('video.hero-video').evaluate((video) => video.muted)).toBe(true);
+  await expect(page.locator('video.hero-video source')).toHaveAttribute(
+    'src',
+    '/assets/public-home/convive-school-community.mp4',
+  );
   await expect(page.locator('[href*="/r/"]')).toHaveCount(0);
   await expectNoAccessibilityViolations(page);
 
@@ -344,9 +356,8 @@ test('keeps the public product homepage accessible and separate from reporting e
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
-  await expect(
-    page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
-  ).toBeVisible();
+  await expect(page.locator('h1')).toContainText('Un canal seguro para escuchar antes.');
+  await expect(page.locator('video.hero-video')).toHaveAttribute('autoplay', '');
   await expectNoAccessibilityViolations(page);
   await expect(page.getByRole('link', { name: 'Área profesional' })).toHaveAttribute(
     'href',
@@ -367,8 +378,10 @@ test('keeps the public product homepage accessible and separate from reporting e
   await expectNoAccessibilityViolations(page);
 
   await page.goto('/');
+  const homeLink = page.getByRole('link', { name: 'Convive, inicio' });
+  await expect(homeLink).toBeVisible();
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('link', { name: 'Convive, inicio' })).toBeFocused();
+  await expect(homeLink).toBeFocused();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,

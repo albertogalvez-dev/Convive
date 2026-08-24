@@ -16,25 +16,26 @@
     "exploreDemo": "Conèixer la demostració",
     "accessCentre": "Accedir al centre"
   },
-  "cards": {
-    "label": "Com ajuda Convive",
-    "communication": {
-      "title": "Comunicació clara",
-      "body": "Envia un avís al centre. No cal cap compte."
+  "journey": {
+    "eyebrow": "EL PRIMER PAS",
+    "title": "Si alguna cosa preocupa, dir-ho ajuda.",
+    "description": "Convive ajuda el centre a escoltar.",
+    "steps": {
+      "share": {
+        "title": "Algú s’atreveix a parlar",
+        "body": "Explica què ha vist. No necessita cap compte."
+      },
+      "context": {
+        "title": "El centre rep el context",
+        "body": "Arriba a un espai segur."
+      },
+      "followUp": {
+        "title": "La conversa rep atenció",
+        "body": "El centre respon i acompanya."
+      }
     },
-    "privacy": {
-      "title": "Privadesa amb límits clars",
-      "body": "No demanem cap compte. No prometem anonimat total."
-    },
-    "work": {
-      "title": "Treball del centre",
-      "body": "L’equip treballa en un lloc segur."
+    "demo": {
+      "cta": "Explorar la demostració"
     }
-  },
-  "demo": {
-    "eyebrow": "DEMOSTRACIÓ FICTÍCIA",
-    "title": "Coneix el flux complet.",
-    "description": "La demo usa dades falses. No serveix en una emergència.",
-    "cta": "Veure la demostració"
   }
 }
