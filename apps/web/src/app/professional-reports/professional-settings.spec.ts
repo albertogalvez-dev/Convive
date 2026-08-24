@@ -63,6 +63,16 @@ describe('ProfessionalSettings', () => {
     expect(page.querySelector('select[name=role]')).toBeNull();
   });
 
+  it('shows the prepared account read-only in a demonstration session', async () => {
+    TestBed.inject(ProfessionalSessionService).demonstrationRole.set('triage');
+    await flushProfile();
+
+    expect(page.textContent).toContain('Consulta la cuenta preparada para esta demostración');
+    expect(page.querySelector('input[name=name]')).toBeNull();
+    expect(page.querySelector('input[name=startsOn]')).toBeNull();
+    expect(page.textContent).toContain('Laura Martin');
+  });
+
   it('saves a corrected name and keeps the session', async () => {
     await flushProfile();
 

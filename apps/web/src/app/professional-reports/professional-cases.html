@@ -4,7 +4,9 @@
       <p class="eyebrow">Trabajo asignado</p>
       <h1 id="cases-title">Casos</h1>
     </div>
-    <a class="overview-export" [href]="operationalOverviewExportUrl()">Descargar resumen PDF</a>
+    @if (!isDemonstration()) {
+      <a class="overview-export" [href]="operationalOverviewExportUrl()">Descargar resumen PDF</a>
+    }
   </header>
 
   <section class="operational-summary" aria-label="Resumen operativo de casos">
@@ -96,7 +98,18 @@
     } @else if (items().length === 0) {
       <div class="state empty">
         <span aria-hidden="true">&#10003;</span>
-        <h2>{{ hasFilters() ? 'No hay casos que coincidan' : 'No tienes casos asignados' }}</h2>
+        <h2>
+          {{
+            hasFilters()
+              ? 'No hay casos que coincidan'
+              : isDemonstration()
+                ? 'Aún no hay casos preparados'
+                : 'No tienes casos asignados'
+          }}
+        </h2>
+        @if (isDemonstration() && !hasFilters()) {
+          <p>La demostración está preparando los casos que podrás consultar aquí.</p>
+        }
       </div>
     } @else {
       <ul>

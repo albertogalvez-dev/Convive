@@ -5,6 +5,7 @@ import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
 
 import { ProfessionalCases } from './professional-cases';
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 
 describe('ProfessionalCases', () => {
   interface CaseSummaryFixture {
@@ -68,6 +69,16 @@ describe('ProfessionalCases', () => {
       upcoming: 0,
     });
     expect(navigate).toHaveBeenCalledWith(['/profesionales/acceso']);
+  });
+
+  it('explains an empty demonstration list without suggesting a missing permission', () => {
+    TestBed.inject(ProfessionalSessionService).demonstrationRole.set('triage');
+    flushInitial([]);
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Aún no hay casos preparados');
+    expect(page.textContent).toContain('podrás consultar aquí');
+    expect(page.querySelector('.overview-export')).toBeNull();
   });
 
   it('uses operational views, filters and a continuation cursor without client-side data', () => {
