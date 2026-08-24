@@ -1,87 +1,70 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { PublicSeoService } from '../public-seo.service';
 import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
+import { professionalAccessUrlFor, publicReportingUrlFor } from '../site-hosts';
+import { DEMO_PUBLIC_REPORTING_IDENTIFIER } from './demo-public-reporting';
 
-const STEPS = ['Describe una situación', 'Indica el contexto', 'Revisa el ejemplo'] as const;
+export { DEMO_PUBLIC_REPORTING_IDENTIFIER } from './demo-public-reporting';
 
 @Component({
   selector: 'app-public-demo',
   standalone: true,
-  imports: [RouterLink, PublicSiteFooter],
+  imports: [LanguageSwitcher, RouterLink, PublicSiteFooter, TranslocoPipe],
+  providers: [provideTranslocoScope('public-demo')],
   templateUrl: './public-demo.html',
   styleUrl: './public-demo.scss',
 })
-export class PublicDemo implements OnInit, OnDestroy {
+export class PublicDemo {
+  @ViewChild('navigationToggle') private navigationToggle?: ElementRef<HTMLButtonElement>;
+
   private readonly seo = inject(PublicSeoService);
-  private timer: ReturnType<typeof setInterval> | undefined;
-  protected readonly steps = STEPS;
-  protected currentStep = 0;
-  protected guideRunning = false;
-  protected guideSkipped = false;
-  protected selectedContext = 'En el centro';
+  private readonly transloco = inject(TranslocoService);
 
-  ngOnInit(): void {
-    this.seo.update({
-      title: 'Demostración ficticia',
-      description:
-        'Explora un ejemplo ficticio del recorrido de comunicación de Convive sin enviar información.',
-      path: '/demostracion/',
-    });
+  readonly professionalAccessUrl = professionalAccessUrlFor(globalThis.location.hostname);
+  readonly reporterExampleUrl = publicReportingUrlFor(
+    globalThis.location.hostname,
+    DEMO_PUBLIC_REPORTING_IDENTIFIER,
+  );
+  readonly activeLanguage = toSignal(this.transloco.langChanges$, {
+    initialValue: this.transloco.getActiveLang(),
+  });
+  private readonly translations = toSignal(this.transloco.selectTranslation('public-demo'), {
+    initialValue: null,
+  });
+  protected readonly mobileNavigationOpen = signal(false);
 
-    if (!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      this.restartGuide();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.stopGuide();
-  }
-
-  protected selectStep(step: number): void {
-    this.currentStep = step;
-    this.guideSkipped = true;
-    this.stopGuide();
-  }
-
-  protected next(): void {
-    this.currentStep = Math.min(this.currentStep + 1, this.steps.length - 1);
-  }
-
-  protected previous(): void {
-    this.currentStep = Math.max(this.currentStep - 1, 0);
-  }
-
-  protected pauseGuide(): void {
-    this.stopGuide();
-  }
-
-  protected restartGuide(): void {
-    this.currentStep = 0;
-    this.guideSkipped = false;
-    this.stopGuide();
-    this.guideRunning = true;
-    this.timer = setInterval(() => {
-      if (this.currentStep === this.steps.length - 1) {
-        this.stopGuide();
+  constructor() {
+    effect(() => {
+      if (this.translations() === null) {
         return;
       }
-      this.currentStep += 1;
-    }, 2600);
+
+      this.seo.update({
+        title: this.transloco.translate('public-demo.seoTitle'),
+        description: this.transloco.translate('public-demo.seoDescription'),
+        path: '/demostracion/',
+      });
+    });
   }
 
-  protected skipGuide(): void {
-    this.currentStep = this.steps.length - 1;
-    this.guideSkipped = true;
-    this.stopGuide();
+  protected posterUrl(): string {
+    return `/assets/public-demo/convive-poster-${DEMO_PUBLIC_REPORTING_IDENTIFIER}-${this.activeLanguage()}.png?v=3`;
   }
 
-  private stopGuide(): void {
-    if (this.timer !== undefined) {
-      clearInterval(this.timer);
-      this.timer = undefined;
+  protected toggleMobileNavigation(): void {
+    this.mobileNavigationOpen.update((open) => !open);
+  }
+
+  protected closeMobileNavigation(returnFocus = false): void {
+    this.mobileNavigationOpen.set(false);
+
+    if (returnFocus) {
+      queueMicrotask(() => this.navigationToggle?.nativeElement.focus());
     }
-    this.guideRunning = false;
   }
 }

@@ -198,6 +198,17 @@ nav svg,
     radial-gradient(circle at 95% 3%, #edf6fb 0, transparent 28rem),
     radial-gradient(circle at 5% 95%, #eaf8fc 0, transparent 28rem);
 }
+.demonstration-banner {
+  width: min(100%, 85rem);
+  margin: 0 auto 1rem;
+  padding: 0.65rem 0.85rem;
+  color: #176f9c;
+  background: #e5f5fb;
+  border: 1px solid #c6e2ef;
+  border-radius: 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
 .desktop-topbar {
   display: flex;
   justify-content: flex-end;

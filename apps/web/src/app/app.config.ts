@@ -5,11 +5,12 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { provideTransloco, TranslocoService } from '@jsverse/transloco';
 
 import { routes } from './app.routes';
+import { ConviveTitleStrategy } from './convive-title.strategy';
 import { EAGER_TRANSLOCO_SCOPES } from './i18n/i18n-eager-scopes';
 import { HttpTranslocoLoader } from './i18n/i18n-loader';
 import { READY_LOCALES } from './i18n/i18n-completeness';
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
     provideRouter(routes),
+    { provide: TitleStrategy, useClass: ConviveTitleStrategy },
     provideTransloco({
       config: {
         // Only published locales are ever offered as the active language;

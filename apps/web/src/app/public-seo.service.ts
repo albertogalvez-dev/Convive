@@ -22,7 +22,7 @@ export class PublicSeoService {
 
   update(metadata: PublicSeoMetadata): void {
     const canonicalUrl = `https://${PUBLIC_WEBSITE_HOSTNAME}${metadata.path}`;
-    const pageTitle = `${metadata.title} | Convive`;
+    const pageTitle = metadata.title === 'Convive' ? 'Convive' : `${metadata.title} | Convive`;
     const type = metadata.type ?? 'website';
 
     this.title.setTitle(pageTitle);

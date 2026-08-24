@@ -43,6 +43,8 @@ test('keeps the public-home journey truthful and keyboard-operable on mobile', a
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
+  await expect(page).toHaveTitle('Convive');
+
   const navigationToggle = page.getByRole('button', { name: 'Abrir navegación principal' });
   const primaryNavigation = page.getByRole('navigation', { name: 'Navegación principal' });
   await expect(navigationToggle).toBeVisible();
@@ -59,8 +61,18 @@ test('keeps the public-home journey truthful and keyboard-operable on mobile', a
   await primaryNavigation.getByRole('link', { name: 'Blog' }).press('Escape');
   await expect(page.getByRole('button', { name: 'Abrir navegación principal' })).toBeFocused();
 
-  const demonstrationLink = page.getByRole('link', { name: 'Conocer la demostración' });
+  const demonstrationLink = page.getByRole('link', { name: 'Explorar la demostración' });
   await expect(demonstrationLink).toHaveAttribute('href', '/demostracion/');
+  await expect(page.locator('video.hero-video')).toHaveAttribute(
+    'poster',
+    '/assets/public-home/convive-school-community-poster.jpg',
+  );
+  await expect(page.locator('video.hero-video')).toHaveAttribute('loop', '');
+  expect(await page.locator('video.hero-video').evaluate((video) => video.muted)).toBe(true);
+  await expect(page.locator('video.hero-video source')).toHaveAttribute(
+    'src',
+    '/assets/public-home/convive-school-community.mp4',
+  );
   await expect(page.locator('[href*="/r/"]')).toHaveCount(0);
   await expectNoAccessibilityViolations(page);
 
@@ -344,11 +356,10 @@ test('keeps the public product homepage accessible and separate from reporting e
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
-  await expect(
-    page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
-  ).toBeVisible();
+  await expect(page.locator('h1')).toContainText('Un canal seguro para escuchar antes.');
+  await expect(page.locator('video.hero-video')).toHaveAttribute('autoplay', '');
   await expectNoAccessibilityViolations(page);
-  await expect(page.getByRole('link', { name: 'Área profesional' })).toHaveAttribute(
+  await expect(page.locator('a.professional-access')).toHaveAttribute(
     'href',
     '/profesionales/acceso',
   );
@@ -363,12 +374,16 @@ test('keeps the public product homepage accessible and separate from reporting e
   );
 
   await page.goto('/demostracion/');
-  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Descubre Convive sin enviar nada' }),
+  ).toBeVisible();
   await expectNoAccessibilityViolations(page);
 
   await page.goto('/');
+  const homeLink = page.getByRole('link', { name: 'Convive, inicio' });
+  await expect(homeLink).toBeVisible();
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('link', { name: 'Convive, inicio' })).toBeFocused();
+  await expect(homeLink).toBeFocused();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
@@ -392,7 +407,7 @@ test('lets a visitor switch to Catalan, Valencian or Basque by keyboard, with th
     page.getByRole('heading', { name: 'Un canal seguro para escuchar antes.' }),
   ).toBeVisible();
 
-  const languageSwitcher = page.getByLabel('Idioma');
+  const languageSwitcher = page.getByRole('combobox');
 
   await expect(languageSwitcher).toHaveValue('es');
 
@@ -410,30 +425,29 @@ test('lets a visitor switch to Catalan, Valencian or Basque by keyboard, with th
   await expectNoAccessibilityViolations(page);
 
   // No IP geolocation or other inference decides Catalan vs Valencian --
-  // only an explicit choice, persisted for next time. The switcher's own
-  // visible label now reads "Llengua" (Catalan for "Language"), not
-  // "Idioma": re-locate it rather than reuse the stale Spanish-label
-  // locator, the same way a real screen-reader user would rediscover it.
-  await expect(page.getByLabel('Llengua')).toHaveValue('ca');
+  // only an explicit choice, persisted for next time. Keep the native
+  // combobox locator stable across translations; the text label itself is
+  // intentionally re-rendered by the active locale.
+  await expect(languageSwitcher).toHaveValue('ca');
   await page.reload();
   await expect(
     page.getByRole('heading', { name: 'Un canal segur per escoltar abans.' }),
   ).toBeVisible();
-  await expect(page.getByLabel('Llengua')).toHaveValue('ca');
+  await expect(page.getByRole('combobox')).toHaveValue('ca');
 
-  await page.getByLabel('Llengua').selectOption('ca-valencia');
+  await page.getByRole('combobox').selectOption('ca-valencia');
   await expect(
     page.getByRole('heading', { name: 'Un canal segur per a escoltar abans.' }),
   ).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('ca-valencia');
   await expectNoAccessibilityViolations(page);
 
-  await page.getByLabel('Llengua').selectOption('eu');
+  await page.getByRole('combobox').selectOption('eu');
   await expect(
     page.getByRole('heading', { name: 'Aurretik entzuteko kanal segurua.' }),
   ).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('eu');
-  await expect(page.getByLabel('Hizkuntza')).toHaveValue('eu');
+  await expect(page.getByRole('combobox')).toHaveValue('eu');
   await expectNoAccessibilityViolations(page);
 
   // A fresh, unrelated browser context never inherits another visitor's
@@ -493,12 +507,12 @@ test('switches to Arabic, flips the document to right-to-left and reflows the la
   // The switcher's own visible label is now translated too: re-locate it by
   // its Arabic label rather than reusing the stale "Idioma" locator, the
   // same way the Catalan/Valencian test re-locates by "Llengua".
-  await expect(page.getByLabel('اللغة')).toHaveValue('ar');
+  await expect(page.getByRole('combobox')).toHaveValue('ar');
   await expectNoAccessibilityViolations(page);
 
   await page.reload();
   expect(await page.evaluate(() => document.documentElement.dir)).toBe('rtl');
-  await expect(page.getByLabel('اللغة')).toHaveValue('ar');
+  await expect(page.getByRole('combobox')).toHaveValue('ar');
 });
 
 test('keeps reviewed blog content accessible, responsive and attributable', async ({ page }) => {
@@ -531,46 +545,65 @@ test('keeps reviewed blog content accessible, responsive and attributable', asyn
   await expectNoAccessibilityViolations(page);
 });
 
-test('keeps the reporter demonstration fictional, accessible and isolated', async ({ page }) => {
+test('offers the fictional demonstration through real, isolated example paths', async ({
+  page,
+}) => {
   await page.route('**/api/**', (route) => route.abort());
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/demostracion/');
 
-  await expect(page.getByText('EJEMPLO FICTICIO · NO OPERATIVO')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Así se vive el primer paso.' })).toBeVisible();
-  await expect(page.getByLabel('Ejemplo de situación ficticia')).toHaveAttribute('readonly', '');
-  await page.getByRole('button', { name: 'Pausar guía' }).click();
-  await expect(page.getByRole('button', { name: 'Reiniciar guía' })).toBeVisible();
-  await page.getByRole('button', { name: 'Saltar guía' }).click();
-  await expect(page.getByRole('heading', { name: 'Revisa antes de enviar' })).toBeVisible();
-  await page.getByRole('button', { name: 'Finalizar ejemplo' }).click();
-  await expect(page.getByRole('status')).toContainText('No se ha enviado ni guardado');
+  await expect(page.getByText('CENTRO DEMO CONVIVE')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Descubre Convive sin enviar nada' }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle('Demostración | Convive');
+  await expect(page.getByRole('link', { name: 'Abrir el ejemplo' })).toHaveAttribute(
+    'href',
+    `/r/${PUBLIC_REPORTING_IDENTIFIER}`,
+  );
+  await expect(page.getByRole('link', { name: 'Abrir cartel a tamaño completo' })).toHaveAttribute(
+    'target',
+    '_blank',
+  );
+  await expect(page.getByRole('link', { name: 'Entrar al área profesional' })).toHaveAttribute(
+    'href',
+    '/profesionales/acceso',
+  );
+  await expect(page.locator('textarea')).toHaveCount(0);
+  await expect(page.locator('form')).toHaveCount(0);
   await expectNoAccessibilityViolations(page);
-  expect(page.url()).not.toContain('/r/');
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     ),
   ).toBe(true);
+
+  await page.getByRole('link', { name: 'Entrar al área profesional' }).click();
+  await expect(page).toHaveURL(/\/profesionales\/acceso$/);
+  await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Profesional de bienestar/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Administración/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Responsable de caso/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Colaborador de caso/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Observador de caso/ })).toBeVisible();
+
+  // The role buttons intentionally call the protected-workspace demo endpoint.
+  // Its complete browser journey runs against the seeded API stack, not an aborted API.
+  await expectNoAccessibilityViolations(page);
 });
 
-test('professional-demo-isolated keeps the demonstration fictional and outside professional access', async ({
+test('opens the prepared professional workspace as a read-only selected perspective', async ({
   page,
 }) => {
-  await page.route('**/api/**', (route) => route.abort());
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto('/demostracion/profesional/');
+  await page.goto('/profesionales/acceso');
 
-  await expect(page.getByText('DATOS FICTICIOS · ENTORNO DE MUESTRA')).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Del aviso al seguimiento, con límites claros.' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'Pausar guía' }).click();
-  await page.getByRole('button', { name: 'Saltar guía' }).click();
+  await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
+  await page.getByRole('button', { name: /Observador de caso/ }).click();
+
+  await expect(page).toHaveURL(/\/profesionales\/casos\/019fe900-0000-7000-8000-000000000083$/);
+  await expect(page.getByText('Vista de demostración', { exact: false })).toBeVisible();
+  await expect(page.getByText('solo consulta', { exact: false })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
-  await expect(page.getByRole('status')).toContainText('No se ha consultado ni alterado');
-  await expectNoAccessibilityViolations(page);
-  expect(page.url()).not.toContain('/profesionales/');
 });
 
 test('keeps the fictional demo critical paths within performance budgets', async ({
@@ -618,10 +651,16 @@ async function loginAsProfessional(
   page: import('@playwright/test').Page,
   email: string,
 ): Promise<void> {
-  await page.goto(absoluteUrl('/profesionales/acceso'));
-  await page.getByLabel('Correo profesional').fill(email);
-  await page.getByLabel('Contraseña').fill(PROFESSIONAL_PASSWORD);
-  await page.getByRole('button', { name: 'Acceder' }).click();
+  const response = await page.context().request.post(absoluteUrl('/api/v1/professional/session'), {
+    data: { email, password: PROFESSIONAL_PASSWORD },
+    headers: {
+      Origin: APP_BASE_URL,
+      'Sec-Fetch-Site': 'same-origin',
+    },
+  });
+
+  expect(response.ok()).toBe(true);
+  await page.goto(absoluteUrl('/profesionales'));
   await expect(page.getByRole('heading', { name: /Hola,/ })).toBeVisible();
 }
 

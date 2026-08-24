@@ -74,6 +74,7 @@ final class ProfessionalSessionControllerTest extends WebTestCase
                     'name' => 'Alex Rivera',
                     'email' => 'alex@session-test.example',
                 ],
+                'demonstrationRole' => null,
             ], JSON_THROW_ON_ERROR),
             $loginResponse,
         );

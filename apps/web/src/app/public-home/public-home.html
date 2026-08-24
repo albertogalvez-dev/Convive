@@ -1,7 +1,7 @@
 <main>
   <header>
     <a class="wordmark" href="/" [attr.aria-label]="'public-home.homeLinkLabel' | transloco">
-      <img src="/convive-logo.svg" alt="" width="158" height="52" />
+      <img src="/convive-logo-reversed.svg" alt="" width="158" height="52" />
     </a>
     <button
       #navigationToggle
@@ -26,43 +26,81 @@
       <a href="/blog/" (click)="closeMobileNavigation()">{{
         'public-home.nav.blog' | transloco
       }}</a>
-      <a href="/demostracion/" (click)="closeMobileNavigation()">{{
-        'public-home.nav.demo' | transloco
-      }}</a>
       <a href="/contacto/" (click)="closeMobileNavigation()">{{
         'public-home.nav.contact' | transloco
       }}</a>
+      <a
+        class="professional-access-mobile"
+        [href]="professionalAccessUrl"
+        (click)="closeMobileNavigation()"
+        >{{ 'public-home.professionalAccess' | transloco }}</a
+      >
     </nav>
-    <a [href]="professionalAccessUrl">{{ 'public-home.professionalAccess' | transloco }}</a>
+    <a class="professional-access" [href]="professionalAccessUrl">{{
+      'public-home.professionalAccess' | transloco
+    }}</a>
+    <app-language-switcher appearance="inverse" [compact]="true" />
   </header>
   <section class="hero" aria-labelledby="home-title">
-    <p>{{ 'public-home.hero.eyebrow' | transloco }}</p>
-    <h1 id="home-title">{{ 'public-home.hero.title' | transloco }}</h1>
-    <p>{{ 'public-home.hero.description' | transloco }}</p>
-    <div>
-      <a href="/demostracion/">{{ 'public-home.hero.exploreDemo' | transloco }}</a
-      ><a [href]="professionalAccessUrl">{{ 'public-home.hero.accessCentre' | transloco }}</a>
+    <video
+      #heroVideo
+      class="hero-video"
+      [class.is-unavailable]="heroVideoUnavailable()"
+      [attr.preload]="reducedMotion() ? 'none' : 'auto'"
+      autoplay
+      loop
+      muted
+      playsinline
+      poster="/assets/public-home/convive-school-community-poster.jpg"
+      aria-hidden="true"
+      tabindex="-1"
+      (ended)="restartHeroVideo()"
+      (canplay)="resumeHeroVideo()"
+      (stalled)="resumeHeroVideo()"
+      (error)="showHeroFallback()"
+    >
+      <source src="/assets/public-home/convive-school-community.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-treatment" aria-hidden="true"></div>
+    <div class="visually-hidden">
+      <h1 id="home-title">{{ 'public-home.hero.title' | transloco }}</h1>
+      <p>{{ 'public-home.hero.description' | transloco }}</p>
     </div>
   </section>
-  <section class="cards" [attr.aria-label]="'public-home.cards.label' | transloco">
-    <article>
-      <h2>{{ 'public-home.cards.communication.title' | transloco }}</h2>
-      <p>{{ 'public-home.cards.communication.body' | transloco }}</p>
-    </article>
-    <article>
-      <h2>{{ 'public-home.cards.privacy.title' | transloco }}</h2>
-      <p>{{ 'public-home.cards.privacy.body' | transloco }}</p>
-    </article>
-    <article>
-      <h2>{{ 'public-home.cards.work.title' | transloco }}</h2>
-      <p>{{ 'public-home.cards.work.body' | transloco }}</p>
-    </article>
-  </section>
-  <section class="demo" aria-labelledby="demo-title">
-    <p>{{ 'public-home.demo.eyebrow' | transloco }}</p>
-    <h2 id="demo-title">{{ 'public-home.demo.title' | transloco }}</h2>
-    <p>{{ 'public-home.demo.description' | transloco }}</p>
-    <a href="/demostracion/">{{ 'public-home.demo.cta' | transloco }}</a>
-  </section>
+  <div class="home-content">
+    <section class="journey" aria-labelledby="journey-title">
+      <div class="journey-introduction">
+        <p class="eyebrow">{{ 'public-home.journey.eyebrow' | transloco }}</p>
+        <h2 id="journey-title">{{ 'public-home.journey.title' | transloco }}</h2>
+        <p>{{ 'public-home.journey.description' | transloco }}</p>
+      </div>
+      <ol class="journey-steps">
+        <li>
+          <span aria-hidden="true">01</span>
+          <div>
+            <h3>{{ 'public-home.journey.steps.share.title' | transloco }}</h3>
+            <p>{{ 'public-home.journey.steps.share.body' | transloco }}</p>
+          </div>
+        </li>
+        <li>
+          <span aria-hidden="true">02</span>
+          <div>
+            <h3>{{ 'public-home.journey.steps.context.title' | transloco }}</h3>
+            <p>{{ 'public-home.journey.steps.context.body' | transloco }}</p>
+          </div>
+        </li>
+        <li>
+          <span aria-hidden="true">03</span>
+          <div>
+            <h3>{{ 'public-home.journey.steps.followUp.title' | transloco }}</h3>
+            <p>{{ 'public-home.journey.steps.followUp.body' | transloco }}</p>
+          </div>
+        </li>
+      </ol>
+      <a class="journey-cta" href="/demostracion/">{{
+        'public-home.journey.demo.cta' | transloco
+      }}</a>
+    </section>
+  </div>
   <app-public-site-footer />
 </main>

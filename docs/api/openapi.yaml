@@ -18,6 +18,32 @@ paths:
       security:
         -
           professionalSession: []
+  /api/v1/demo/professional-session:
+    post:
+      tags:
+        - 'Fictional demonstration'
+      summary: 'Create a read-only fictional professional demonstration session'
+      operationId: createFictionalDemoProfessionalSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - role
+              properties:
+                role:
+                  type: string
+                  enum: [triage, administrator, case_lead, case_contributor, case_observer]
+              type: object
+              additionalProperties: false
+      responses:
+        '200':
+          description: 'The read-only fictional session was created.'
+        '404':
+          description: 'The fictional demonstration is unavailable.'
+        '422':
+          description: 'The requested demonstration role is invalid.'
   '/api/v1/public/organisations/{publicReportingIdentifier}':
     get:
       tags:
@@ -3822,6 +3848,9 @@ tags:
   -
     name: 'Professional cases'
     description: 'Professional cases'
+  -
+    name: 'Fictional demonstration'
+    description: 'Fictional demonstration'
   -
     name: 'Public reporting'
     description: 'Public reporting'

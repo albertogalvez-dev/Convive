@@ -3,12 +3,13 @@ import { RouterLink } from '@angular/router';
 
 import { PublicSeoService } from '../public-seo.service';
 import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { BLOG_ARTICLES } from './blog-content';
 
 @Component({
   selector: 'app-blog-index',
   standalone: true,
-  imports: [RouterLink, PublicSiteFooter],
+  imports: [LanguageSwitcher, RouterLink, PublicSiteFooter],
   templateUrl: './blog-index.html',
   styleUrl: './blog.scss',
 })

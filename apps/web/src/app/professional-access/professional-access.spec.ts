@@ -11,16 +11,16 @@ describe('ProfessionalAccess', () => {
   let fixture: ComponentFixture<ProfessionalAccess>;
   let page: HTMLElement;
   let httpTesting: HttpTestingController;
-  let navigate: ReturnType<typeof vi.fn>;
+  let navigateByUrl: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
-    navigate = vi.fn().mockResolvedValue(true);
+    navigateByUrl = vi.fn().mockResolvedValue(true);
     await TestBed.configureTestingModule({
       imports: [ProfessionalAccess],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: Router, useValue: { navigate } },
+        { provide: Router, useValue: { navigateByUrl } },
       ],
     }).compileComponents();
     httpTesting = TestBed.inject(HttpTestingController);
@@ -33,75 +33,37 @@ describe('ProfessionalAccess', () => {
 
   afterEach(() => httpTesting.verify());
 
-  it('renders an accessible professional login after checking the session', () => {
+  it('renders an accessible selector for every real demonstration perspective', () => {
     expect(page.querySelector('h1')?.textContent).toContain('Tu espacio profesional');
-    expect(page.querySelector('#professional-email')?.getAttribute('autocomplete')).toBe(
-      'username',
+    expect(page.querySelectorAll('.demo-role')).toHaveLength(5);
+    expect(page.textContent).toContain('Profesional de bienestar');
+    expect(page.textContent).toContain('Responsable de caso');
+    expect(page.textContent).toContain('Colaborador de caso');
+    expect(page.textContent).toContain('Observador de caso');
+    expect(page.querySelector('form')).toBeNull();
+  });
+
+  it('opens the real read-only workspace for the selected organisation role', () => {
+    const role = Array.from(page.querySelectorAll<HTMLButtonElement>('.demo-role')).find((button) =>
+      button.textContent?.includes('Administración'),
     );
-    expect(page.querySelector('#professional-password')?.getAttribute('autocomplete')).toBe(
-      'current-password',
-    );
+
+    role?.click();
+
+    const request = httpTesting.expectOne('/api/v1/demo/professional-session');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ role: 'administrator' });
+    request.flush({ professional: identity(), demonstrationRole: 'administrator' });
+    expect(navigateByUrl).toHaveBeenCalledWith('/profesionales/cuentas');
   });
 
   it('sends an existing session to the inbox', () => {
     fixture.destroy();
     fixture = TestBed.createComponent(ProfessionalAccess);
     fixture.detectChanges();
-    httpTesting.expectOne(endpoint).flush({ professional: identity() });
-    expect(navigate).toHaveBeenCalledWith(['/profesionales']);
+    httpTesting.expectOne(endpoint).flush({ professional: identity(), demonstrationRole: null });
+    expect(navigateByUrl).toHaveBeenCalledWith('/profesionales');
   });
-
-  it('validates both fields before authentication', () => {
-    submit();
-    expect(page.querySelector('#email-error')).not.toBeNull();
-    expect(page.querySelector('#password-error')).not.toBeNull();
-    httpTesting.expectNone(endpoint);
-  });
-
-  it('normalises the email, authenticates and opens the inbox', () => {
-    write('#professional-email', '  Alex.Rivera@Example.com  ');
-    write('#professional-password', 'a long fictional password');
-    submit();
-    const request = httpTesting.expectOne(endpoint);
-    expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual({
-      email: 'alex.rivera@example.com',
-      password: 'a long fictional password',
-    });
-    request.flush({ professional: identity() });
-    expect(navigate).toHaveBeenCalledWith(['/profesionales']);
-  });
-
-  it('shows a safe authentication failure and clears the password', () => {
-    write('#professional-email', 'alex@example.com');
-    write('#professional-password', 'wrong password');
-    submit();
-    httpTesting
-      .expectOne(endpoint)
-      .flush({ detail: 'Private detail.' }, { status: 401, statusText: 'Unauthorized' });
-    fixture.detectChanges();
-    expect(page.querySelector('[role="alert"]')?.textContent).toContain(
-      'El correo o la contrase\u00f1a no son correctos.',
-    );
-    expect(input('#professional-password').value).toBe('');
-    expect(page.textContent).not.toContain('Private detail');
-  });
-
-  function submit(): void {
-    page.querySelector<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
-  }
-  function write(selector: string, value: string): void {
-    const field = input(selector);
-    field.value = value;
-    field.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-  }
-  function input(selector: string): HTMLInputElement {
-    const field = page.querySelector<HTMLInputElement>(selector);
-    if (!field) throw new Error(`Missing field: ${selector}`);
-    return field;
-  }
   function identity() {
     return {
       id: '0192a5c0-3333-7000-8000-000000000030',

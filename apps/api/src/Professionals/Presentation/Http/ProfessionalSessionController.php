@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Professionals\Presentation\Http;
 
+use App\Demo\Application\FictionalDemoProfessionalSession;
 use App\Professionals\Domain\Professional;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,8 +42,9 @@ final readonly class ProfessionalSessionController
     ): JsonResponse
     {
         $request->getSession()->migrate(true);
+        FictionalDemoProfessionalSession::clear($request);
 
-        return $this->sessionResponse($professional);
+        return $this->sessionResponse($professional, $request);
     }
 
     #[Route('/api/v1/professional/session', name: 'api_v1_professional_session', methods: ['GET'])]
@@ -56,9 +58,9 @@ final readonly class ProfessionalSessionController
             new OA\Response(response: 401, description: 'No active professional session.'),
         ],
     )]
-    public function current(#[CurrentUser] Professional $professional): JsonResponse
+    public function current(#[CurrentUser] Professional $professional, Request $request): JsonResponse
     {
-        return $this->sessionResponse($professional);
+        return $this->sessionResponse($professional, $request);
     }
 
     #[Route('/api/v1/professional/session', name: 'api_v1_professional_logout', methods: ['DELETE'])]
@@ -74,7 +76,7 @@ final readonly class ProfessionalSessionController
         throw new \LogicException('The firewall must intercept professional logout.');
     }
 
-    private function sessionResponse(Professional $professional): JsonResponse
+    private function sessionResponse(Professional $professional, Request $request): JsonResponse
     {
         $response = new JsonResponse([
             'professional' => [
@@ -82,6 +84,7 @@ final readonly class ProfessionalSessionController
                 'name' => $professional->name(),
                 'email' => $professional->email()->toString(),
             ],
+            'demonstrationRole' => FictionalDemoProfessionalSession::roleFor($request, $professional),
         ]);
         $response->setCache(['private' => true, 'no_store' => true]);
 

@@ -18,35 +18,41 @@
     </div>
 
     <nav class="desktop-nav" aria-label="Navegaci&oacute;n profesional">
-      <a
-        routerLink="/profesionales"
-        aria-label="Inicio"
-        [routerLinkActiveOptions]="{ exact: true }"
-        routerLinkActive="active"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4v-8.5Z" />
-        </svg>
-        <span>Inicio</span>
-      </a>
-      <a
-        routerLink="/profesionales/comunicaciones"
-        routerLinkActive="active"
-        aria-label="Comunicaciones"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 6h16v11H9l-5 3V6Z" />
-          <path d="M8 10h8M8 13h5" />
-        </svg>
-        <span>Comunicaciones</span>
-      </a>
-      <a routerLink="/profesionales/casos" routerLinkActive="active" aria-label="Casos">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 7h5l1.5 2H19v10H5V7Z" />
-          <path d="M8 13h8M8 16h5" />
-        </svg>
-        <span>Casos</span>
-      </a>
+      @if (showCentreNavigation()) {
+        <a
+          routerLink="/profesionales"
+          aria-label="Inicio"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4v-8.5Z" />
+          </svg>
+          <span>Inicio</span>
+        </a>
+      }
+      @if (showCentreNavigation()) {
+        <a
+          routerLink="/profesionales/comunicaciones"
+          routerLinkActive="active"
+          aria-label="Comunicaciones"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16v11H9l-5 3V6Z" />
+            <path d="M8 10h8M8 13h5" />
+          </svg>
+          <span>Comunicaciones</span>
+        </a>
+      }
+      @if (showCases()) {
+        <a routerLink="/profesionales/casos" routerLinkActive="active" aria-label="Casos">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 7h5l1.5 2H19v10H5V7Z" />
+            <path d="M8 13h8M8 16h5" />
+          </svg>
+          <span>Casos</span>
+        </a>
+      }
       <a routerLink="/profesionales/ajustes" routerLinkActive="active" aria-label="Ajustes">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
@@ -56,14 +62,16 @@
         </svg>
         <span>Ajustes</span>
       </a>
-      <a routerLink="/profesionales/cuentas" routerLinkActive="active" aria-label="Cuentas">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M4 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17 8h4m-2-2v4"
-          />
-        </svg>
-        <span>Cuentas</span>
-      </a>
+      @if (showAccounts()) {
+        <a routerLink="/profesionales/cuentas" routerLinkActive="active" aria-label="Cuentas">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17 8h4m-2-2v4"
+            />
+          </svg>
+          <span>Cuentas</span>
+        </a>
+      }
     </nav>
 
     <div class="sidebar-profile">
@@ -87,17 +95,24 @@
   </aside>
 
   <section class="portal-content">
+    @if (demonstrationRole(); as role) {
+      <p class="demonstration-banner" role="status">
+        Vista de demostración · {{ demonstrationRoleLabel(role) }} · solo consulta
+      </p>
+    }
     <div class="desktop-topbar">
-      <a class="notification-button" routerLink="/profesionales/avisos" aria-label="Ver avisos">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
-        </svg>
-        @if (newNotificationCount(); as count) {
-          @if (count !== 0) {
-            <span>{{ count }}</span>
+      @if (showCentreNavigation()) {
+        <a class="notification-button" routerLink="/profesionales/avisos" aria-label="Ver avisos">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
+          </svg>
+          @if (newNotificationCount(); as count) {
+            @if (count !== 0) {
+              <span>{{ count }}</span>
+            }
           }
-        }
-      </a>
+        </a>
+      }
     </div>
     <header class="mobile-header">
       <div class="mobile-brand-row">
@@ -107,30 +122,34 @@
         </button>
       </div>
       <nav aria-label="Navegaci&oacute;n profesional">
-        <a
-          routerLink="/profesionales"
-          [routerLinkActiveOptions]="{ exact: true }"
-          routerLinkActive="active"
-          aria-label="Inicio"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4v-8.5Z" /></svg
-          ><span>Inicio</span>
-        </a>
-        <a
-          routerLink="/profesionales/comunicaciones"
-          routerLinkActive="active"
-          aria-label="Comunicaciones"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 6h16v11H9l-5 3V6Z" />
-            <path d="M8 10h8M8 13h5" /></svg
-          ><span>Comunicaciones</span>
-        </a>
-        <a routerLink="/profesionales/casos" routerLinkActive="active" aria-label="Casos">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h5l1.5 2H19v10H5V7Z" /></svg
-          ><span>Casos</span>
-        </a>
+        @if (showCentreNavigation()) {
+          <a
+            routerLink="/profesionales"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active"
+            aria-label="Inicio"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4v-8.5Z" /></svg
+            ><span>Inicio</span>
+          </a>
+          <a
+            routerLink="/profesionales/comunicaciones"
+            routerLinkActive="active"
+            aria-label="Comunicaciones"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16v11H9l-5 3V6Z" />
+              <path d="M8 10h8M8 13h5" /></svg
+            ><span>Comunicaciones</span>
+          </a>
+        }
+        @if (showCases()) {
+          <a routerLink="/profesionales/casos" routerLinkActive="active" aria-label="Casos">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h5l1.5 2H19v10H5V7Z" /></svg
+            ><span>Casos</span>
+          </a>
+        }
         <a routerLink="/profesionales/ajustes" routerLinkActive="active" aria-label="Ajustes">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
@@ -140,11 +159,13 @@
           </svg>
           <span>Ajustes</span>
         </a>
-        <a routerLink="/profesionales/cuentas" routerLinkActive="active" aria-label="Cuentas">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 20v-1a4 4 0 0 1 4-4h4a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17 8h4m-2-2v4" /></svg
-          ><span>Cuentas</span>
-        </a>
+        @if (showAccounts()) {
+          <a routerLink="/profesionales/cuentas" routerLinkActive="active" aria-label="Cuentas">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 20v-1a4 4 0 0 1 4-4h4a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17 8h4m-2-2v4" /></svg
+            ><span>Cuentas</span>
+          </a>
+        }
       </nav>
     </header>
     <router-outlet />

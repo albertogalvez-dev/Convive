@@ -41,7 +41,7 @@ final readonly class SeedFictionalDemo
             $this->upsertConversationEntries();
             $this->upsertManagedCase();
 
-            return new FictionalDemoSeedResult(1, 2, 4, 4, 1, 1, 2, $reset);
+            return new FictionalDemoSeedResult(1, 5, 4, 4, 1, 3, 2, $reset);
         });
     }
 
@@ -65,18 +65,27 @@ final readonly class SeedFictionalDemo
 
         $professionals = $this->connection->fetchAllAssociative(
             'SELECT id, email FROM professionals
-             WHERE id IN (:triage_id, :administrator_id)
-                OR email IN (:triage_email, :administrator_email)',
+             WHERE id IN (:triage_id, :administrator_id, :case_lead_id, :case_contributor_id, :case_observer_id)
+                OR email IN (:triage_email, :administrator_email, :case_lead_email, :case_contributor_email, :case_observer_email)',
             [
-                'triage_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
-                'administrator_id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
-                'triage_email' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_EMAIL,
-                'administrator_email' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_EMAIL,
+            'triage_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+            'administrator_id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
+            'case_lead_id' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID,
+            'case_contributor_id' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID,
+            'case_observer_id' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
+            'triage_email' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_EMAIL,
+            'administrator_email' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_EMAIL,
+            'case_lead_email' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_EMAIL,
+            'case_contributor_email' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_EMAIL,
+            'case_observer_email' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_EMAIL,
             ],
         );
         $expectedProfessionals = [
             FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID => FictionalDemoDataset::TRIAGE_PROFESSIONAL_EMAIL,
             FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_EMAIL,
+            FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_EMAIL,
+            FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_EMAIL,
+            FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_EMAIL,
         ];
 
         foreach ($professionals as $professional) {
@@ -87,11 +96,14 @@ final readonly class SeedFictionalDemo
 
         $externalMemberships = $this->connection->fetchOne(
             'SELECT COUNT(*) FROM organisation_memberships
-             WHERE professional_id IN (:triage_id, :administrator_id)
+             WHERE professional_id IN (:triage_id, :administrator_id, :case_lead_id, :case_contributor_id, :case_observer_id)
                AND organisation_id <> :organisation_id',
             [
                 'triage_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
                 'administrator_id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
+                'case_lead_id' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID,
+                'case_contributor_id' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID,
+                'case_observer_id' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
                 'organisation_id' => FictionalDemoDataset::ORGANISATION_ID,
             ],
         );
@@ -201,10 +213,13 @@ final readonly class SeedFictionalDemo
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         );
         $this->connection->executeStatement(
-            'DELETE FROM professionals WHERE id IN (:triage_id, :administrator_id)',
+            'DELETE FROM professionals WHERE id IN (:triage_id, :administrator_id, :case_lead_id, :case_contributor_id, :case_observer_id)',
             [
                 'triage_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
                 'administrator_id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
+                'case_lead_id' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID,
+                'case_contributor_id' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID,
+                'case_observer_id' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
             ],
         );
         $this->connection->executeStatement(
@@ -245,10 +260,25 @@ final readonly class SeedFictionalDemo
                 'email' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_EMAIL,
             ],
             [
-                'id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
-                'name' => 'Carlos Demo',
-                'email' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_EMAIL,
-            ],
+            'id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
+            'name' => 'Carlos Demo',
+            'email' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_EMAIL,
+        ],
+        [
+            'id' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID,
+            'name' => 'Ana Responsable',
+            'email' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_EMAIL,
+        ],
+        [
+            'id' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID,
+            'name' => 'Marta Colaboradora',
+            'email' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_EMAIL,
+        ],
+        [
+            'id' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
+            'name' => 'Óscar Observador',
+            'email' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_EMAIL,
+        ],
         ];
 
         foreach ($professionals as $data) {
@@ -294,6 +324,21 @@ final readonly class SeedFictionalDemo
                 'id' => '019fe900-0000-7000-8000-000000000078',
                 'professional_id' => FictionalDemoDataset::ADMINISTRATOR_PROFESSIONAL_ID,
                 'role' => 'administrator',
+            ],
+            [
+                'id' => '019fe900-0000-7000-8000-000000000094',
+                'professional_id' => FictionalDemoDataset::CASE_LEAD_PROFESSIONAL_ID,
+                'role' => 'triage',
+            ],
+            [
+                'id' => '019fe900-0000-7000-8000-000000000095',
+                'professional_id' => FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID,
+                'role' => 'triage',
+            ],
+            [
+                'id' => '019fe900-0000-7000-8000-000000000096',
+                'professional_id' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
+                'role' => 'triage',
             ],
         ];
 
@@ -437,6 +482,33 @@ final readonly class SeedFictionalDemo
                 'modality' => 'mixed',
             ],
         );
+
+        foreach ([
+            [FictionalDemoDataset::CASE_CONTRIBUTOR_ASSIGNMENT_ID, FictionalDemoDataset::CASE_CONTRIBUTOR_PROFESSIONAL_ID, 'contributor'],
+            [FictionalDemoDataset::CASE_OBSERVER_ASSIGNMENT_ID, FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID, 'observer'],
+        ] as [$id, $professionalId, $role]) {
+            $this->connection->executeStatement(
+                'INSERT INTO case_assignments (
+                    id, case_id, professional_id, role, assigned_by_professional_id, assigned_at, revoked_at
+                 ) VALUES (
+                    :id, :case_id, :professional_id, :role, :assigned_by_professional_id, :assigned_at, NULL
+                 )
+                 ON CONFLICT (case_id, professional_id) DO UPDATE SET
+                    id = EXCLUDED.id,
+                    role = EXCLUDED.role,
+                    assigned_by_professional_id = EXCLUDED.assigned_by_professional_id,
+                    assigned_at = EXCLUDED.assigned_at,
+                    revoked_at = NULL',
+                [
+                    'id' => $id,
+                    'case_id' => FictionalDemoDataset::MANAGED_CASE_ID,
+                    'professional_id' => $professionalId,
+                    'role' => $role,
+                    'assigned_by_professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID,
+                    'assigned_at' => '2026-08-10T09:35:00+02:00',
+                ],
+            );
+        }
 
         $this->connection->executeStatement(
             'INSERT INTO report_triage_decisions (

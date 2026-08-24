@@ -3,7 +3,6 @@
   "nav": {
     "label": "Navegación principal",
     "blog": "Blog",
-    "demo": "Demostración",
     "contact": "Contacto",
     "open": "Abrir navegación principal",
     "close": "Cerrar navegación principal"
@@ -16,25 +15,26 @@
     "exploreDemo": "Conocer la demostración",
     "accessCentre": "Acceder al centro"
   },
-  "cards": {
-    "label": "Cómo ayuda Convive",
-    "communication": {
-      "title": "Comunicación clara",
-      "body": "Envía un aviso al centro. No hace falta una cuenta."
+  "journey": {
+    "eyebrow": "EL PRIMER PASO",
+    "title": "Si algo preocupa, decirlo ayuda.",
+    "description": "Convive ayuda al centro a escuchar.",
+    "steps": {
+      "share": {
+        "title": "Alguien se atreve a hablar",
+        "body": "Cuenta lo que ha visto. No necesita una cuenta."
+      },
+      "context": {
+        "title": "El centro recibe el contexto",
+        "body": "Llega a un espacio seguro."
+      },
+      "followUp": {
+        "title": "La conversación recibe cuidado",
+        "body": "El centro responde y acompaña."
+      }
     },
-    "privacy": {
-      "title": "Privacidad con límites claros",
-      "body": "No pedimos una cuenta. No prometemos anonimato total."
-    },
-    "work": {
-      "title": "Trabajo del centro",
-      "body": "El equipo trabaja en un lugar seguro."
+    "demo": {
+      "cta": "Explorar la demostración"
     }
-  },
-  "demo": {
-    "eyebrow": "DEMOSTRACIÓN FICTICIA",
-    "title": "Conoce el flujo completo.",
-    "description": "La demo usa datos falsos. No sirve en una emergencia.",
-    "cta": "Ver la demostración"
   }
 }

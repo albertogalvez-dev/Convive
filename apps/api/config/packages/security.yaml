@@ -30,6 +30,7 @@ security:
                 invalidate_session: true
 
     access_control:
+        - { path: ^/api/v1/demo/professional-session$, methods: [POST], roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/professional/session$, methods: [POST], roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/professional/account-credentials/accept$, methods: [POST], roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/professional, roles: ROLE_PROFESSIONAL }

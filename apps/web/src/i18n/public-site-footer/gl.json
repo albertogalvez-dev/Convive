@@ -1,7 +1,10 @@
 {
-  "boundaryTitle": "Datos ficticios nesta demostración.",
-  "boundaryBody": "Convive non é unha canle de emerxencia. Non é un servizo oficial de ningunha administración educativa. É unha demo con datos ficticios. Nada desta demo chega a unha escola.",
   "emergencyTitle": "Recursos públicos de axuda",
+  "emergencyResources": {
+    "emergency": "Emerxencias",
+    "violenceAgainstWomen": "Atención ante a violencia contra as mulleres",
+    "anar": "Teléfono ANAR de axuda a nenos, nenas e adolescentes"
+  },
   "linksLabel": "Información pública",
   "links": {
     "notice": "Aviso de demostración",

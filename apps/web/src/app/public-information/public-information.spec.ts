@@ -69,7 +69,7 @@ describe('PublicInformation', () => {
     const page = await renderWith(PUBLIC_CONTACT_NOTICE);
 
     const footer = page.querySelector('footer')?.textContent ?? '';
-    expect(footer).toContain('datos ficticios');
+    expect(footer).not.toContain('datos ficticios');
     expect(footer).toContain('112');
   });
 });

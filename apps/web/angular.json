@@ -26,8 +26,14 @@
             "assets": [
               "src/favicon.svg",
               "src/convive-logo.svg",
+              "src/convive-logo-reversed.svg",
               "src/robots.txt",
               "src/sitemap.xml",
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
               {
                 "glob": "**/*.json",
                 "input": "src/i18n",

@@ -596,18 +596,17 @@ export class ProfessionalCaseDetailPage implements OnInit {
   }
 
   protected auditActionLabel(action: CaseAuditAction): string {
-    // Keeps the old `?? 'Accion registrada'` behaviour: an action the UI does
-    // not know about still reads as a recorded action rather than leaking a
-    // raw key into an audit trail a professional may export.
+    // The template owns the translation. Unknown API actions still use the
+    // safe fallback rather than leaking an unrecognised action key.
     return AUDIT_ACTIONS.includes(action)
-      ? this.transloco.translate(`professional-case.auditAction.${action}`)
-      : this.transloco.translate('professional-case.auditAction.fallback');
+      ? `professional-case.auditAction.${action}`
+      : 'professional-case.auditAction.fallback';
   }
 
   protected timelineLabel(type: string): string {
     return TIMELINE_TYPES.includes(type)
-      ? this.transloco.translate(`professional-case.timeline.${type}`)
-      : this.transloco.translate('professional-case.timeline.fallback');
+      ? `professional-case.timeline.${type}`
+      : 'professional-case.timeline.fallback';
   }
 
   private load(): void {

@@ -1,0 +1,31 @@
+{
+  "homeLinkLabel": "Convive, hasiera",
+  "nav": {
+    "label": "Nabigazio nagusia",
+    "blog": "Bloga",
+    "contact": "Kontaktua",
+    "open": "Ireki menua",
+    "close": "Itxi menua"
+  },
+  "professionalAccess": "Arlo profesionala",
+  "pathsLabel": "Demostrazioaren ibilbideak",
+  "seoTitle": "Demostrazioa",
+  "seoDescription": "Probatu Conviveren fikziozko ibilbidea eta ikusi hezkuntza-zentro batek nola jasotzen duen.",
+  "eyebrow": "CONVIVE DEMO IKASTETXEA",
+  "title": "Ezagutu Convive ezer bidali gabe",
+  "description": "Probatu ibilbidea eta ikusi ikastetxeak nola jasotzen duen",
+  "reporter": {
+    "eyebrow": "KONTATU NAHI DUENARENTZAT",
+    "title": "Probatu berriemaile gisa",
+    "description": "Ireki adibidea gailu honetan edo erabili QR kodea benetako ikastetxe batekin komunikatu gabe",
+    "open": "Ireki adibidea",
+    "openPoster": "Ireki kartela tamaina osoan",
+    "posterAlt": "Convive Demo Ikastetxearen kartela, fikziozko adibidea irekitzeko QR kodearekin"
+  },
+  "professional": {
+    "eyebrow": "BESTE ALDEA IKUSTEKO",
+    "title": "Ikusi ikastetxeak nola jasotzen duen",
+    "description": "Egin ibilbidea ikuspegi profesionalean fikziozko informazioarekin eta ikusi komunikazioa nola antolatzen den",
+    "open": "Sartu arlo profesionalera"
+  }
+}

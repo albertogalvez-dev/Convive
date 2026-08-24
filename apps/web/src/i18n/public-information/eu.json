@@ -5,6 +5,7 @@
   "reviewLine": "{{reviewedOn}} egunean {{owner}}-k berrikusia.",
   "demonstrationNotice": {
     "eyebrow": "DEMO OHARRA",
+    "seoTitle": "Demostrazio-oharra",
     "title": "Convive fikziozko informazioa duen demo bat da.",
     "seoDescription": "Convive fikziozko informazioa duen demo bat da. Ez da larrialdietarako kanala edo edozein hezkuntza administrazioren zerbitzu ofiziala.",
     "description": "Ikusten duzun guztia asmatutako hezkuntza-zentro batean gertatzen da. Hemen idazten duzun ezer ez da eskola, institutu edo administrazio batera iristen.",
@@ -52,6 +53,7 @@
   },
   "privacyNotice": {
     "eyebrow": "PRIBATUTASUNA",
+    "seoTitle": "Pribatutasuna",
     "title": "Demoak ez du datu pertsonalik biltzen.",
     "seoDescription": "Convive manifestazio publikoak ez du bisitatzen dutenen datu pertsonalik biltzen. Sandbox-ean sortutako edukia 24 orduko epean ezabatzen da.",
     "description": "Demo honek fikziozko informazioarekin lan egiten du eta ez ditu bisitatzen dutenen datu pertsonalak eskatzen, gordetzen edo aztertzen.",
@@ -106,6 +108,7 @@
   },
   "cookieNotice": {
     "eyebrow": "COOKIES",
+    "seoTitle": "Cookieak",
     "title": "Ez ditugu funtsezkoak ez diren cookierik erabiltzen.",
     "seoDescription": "Convive-k ez ditu funtsezkoak ez diren cookieak, analitikoak edo hirugarrenen etiketak erabiltzen bere erakustaldi publikoan.",
     "description": "Gune honek ez du publizitate, analisi edo hirugarrenen cookierik instalatzen, beraz, ez dago ezer onartzeko edo baztertzeko.",
@@ -132,6 +135,7 @@
   },
   "sandboxTerms": {
     "eyebrow": "PROBA INGURUNEAREN BALDINTZAK",
+    "seoTitle": "Baldintzak",
     "title": "Erabili asmatutako informazioa. Beti.",
     "seoDescription": "Erabilera-baldintzak konbinatu: fabrikatutako informazioa beharrezkoa da, benetako laguntza-kanal gisa erabiltzea debekatuta.",
     "description": "Baldintza hauek laburrak dira, bi gauza garrantzitsu baino ez daudelako: idazten duzuna asmatu behar da, eta hau ez da laguntza kanal bat.",
@@ -167,6 +171,7 @@
   },
   "accessibilityNotice": {
     "eyebrow": "IRISGARRITASUNA",
+    "seoTitle": "Irisgarritasuna",
     "title": "Hau edozein euskarrirekin erabilgarri izatea nahi dugu.",
     "seoDescription": "Convive-ren irisgarritasun-konpromisoa, berrikuspenaren benetako egoera eta harremanetarako metodoa oztopo bat komunikatzeko.",
     "description": "Convive WCAG 2.2 AA maila betetzeko helburuarekin garatu da: teklatuaren funtzionamendu osoa, foku ikusgaia, kontraste nahikoa eta laguntza produktuekin bateragarritasuna.",
@@ -191,6 +196,7 @@
   },
   "contactNotice": {
     "eyebrow": "KONTAKTU",
+    "seoTitle": "Harremana",
     "title": "Idatzi iezaguzu posta elektronikoz.",
     "seoDescription": "Convive proiektuaren harremanetarako metodoak galdera orokorrak eta pribatutasun kontuetarako.",
     "description": "Ez dago harremanetarako formulariorik: galdera bati erantzuteko datu pertsonalak eskatzea ez litzateke bat etorriko datu pertsonalak prozesatzen ez dituen demo batekin.",
