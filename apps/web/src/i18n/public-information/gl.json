@@ -48,7 +48,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+    "reviewTrigger": "Revísase cada seis meses. Tamén se revisa se cambia o alcance da demostración, quen a publica ou o protocolo de referencia."
   },
   "privacyNotice": {
     "eyebrow": "PRIVACIDADE",
@@ -81,7 +81,7 @@
         "paragraphs": [
           "Convive non pide unha conta para enviar unha comunicación, e iso reduce a información que se coñece de quen escribe. Non a elimina.",
           "O contido que escribas pode identificarte polo que contas, aínda que non deas o teu nome. Existen ademais rexistros técnicos propios de calquera servizo en Internet.",
-          "Por iso o produto non promete anonimato absoluto en ningún momento: sería unha tranquilidade falsa, e nun asunto de convivencia escolar unha tranquilidade falsa fai dano."
+          "Por iso o produto non promete anonimato absoluto. Sería unha falsa tranquilidade. Na convivencia escolar, unha falsa tranquilidade fai dano."
         ]
       },
       {
@@ -97,12 +97,12 @@
       {
         "heading": "Os teus dereitos",
         "paragraphs": [
-          "Como esta demostración non trata datos persoais de quen a visita, normalmente non hai ningún dato sobre o que exercer un dereito de acceso, rectificación ou supresión.",
+          "Esta demostración non trata datos persoais de quen a visita. Por iso, normalmente non hai datos sobre os que exercer dereitos de acceso, rectificación ou supresión.",
           "Aínda así a vía existe e está atendida: escribe a {{privacyEmail}} e recibirás resposta."
         ]
       }
     ],
-    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+    "reviewTrigger": "Revísase cada seis meses. Tamén se revisa se cambia o alcance da demostración, quen a publica ou o protocolo de referencia."
   },
   "cookieNotice": {
     "eyebrow": "COOKIES",
@@ -115,7 +115,7 @@
         "heading": "Que se garda no teu navegador",
         "paragraphs": [
           "No sitio público non se garda nada que permita recoñecerte.",
-          "Ao entrar na aplicación de demostración, o servidor mantén unha sesión técnica imprescindible para que o percorrido funcione: sen ela non sería posible enviar unha comunicación de exemplo nin volver consultala. Esa sesión non se usa para medir, seguir nin perfilar a ninguén."
+          "Ao entrar na aplicación de demostración, o servidor crea unha sesión técnica esencial. Sen ela non poderías enviar unha comunicación de exemplo nin consultala de novo. Esta sesión non se usa para medir, seguir nin crear perfís."
         ]
       },
       {
@@ -128,7 +128,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+    "reviewTrigger": "Revísase cada seis meses. Tamén se revisa se cambia o alcance da demostración, quen a publica ou o protocolo de referencia."
   },
   "sandboxTerms": {
     "eyebrow": "TERMOS DA CONTORNA DE PROBAS",
@@ -152,7 +152,7 @@
         "heading": "Isto non é unha canle de axuda",
         "paragraphs": [
           "Ninguén le o que escribes aquí coma se fose unha comunicación real. Non hai un equipo profesional ao outro lado, non se abre ningún expediente e non se avisa a ningún centro.",
-          "Usar a demostración para pedir axuda ante unha situación real non só non serve: atrasa o momento en que esa situación chega a alguén que si pode actuar."
+          "Usar a demostración para pedir axuda ante unha situación real non serve. Ademais, atrasa que esa situación chegue a quen si pode actuar."
         ]
       },
       {
@@ -163,7 +163,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+    "reviewTrigger": "Revísase cada seis meses. Tamén se revisa se cambia o alcance da demostración, quen a publica ou o protocolo de referencia."
   },
   "accessibilityNotice": {
     "eyebrow": "ACCESIBILIDADE",
@@ -176,7 +176,7 @@
         "heading": "Estado da revisión",
         "paragraphs": [
           "As comprobacións automáticas de accesibilidade forman parte da integración continua do proxecto e execútanse en cada cambio.",
-          "O 16 de agosto de 2026 executouse unha auditoría manual dos percorridos críticos, que atopou e corrixiu dous fallos reais: un contraste insuficiente e tres estados de erro que non se anunciaban a un lector de pantalla. Falta aínda a comprobación con produtos de apoio reais. Mentres non se complete, este sitio non declara conformidade coas WCAG 2.2 AA: afirmalo sen telo comprobado sería faltar á verdade."
+          "O 16 de agosto de 2026 fíxose unha auditoría manual dos percorridos críticos. Atopou e corrixiu dous fallos: un contraste insuficiente e tres erros que non se anunciaban ao lector de pantalla. Falta comprobalo con produtos de apoio reais. Ata entón, este sitio non declara conformidade coas WCAG 2.2 AA. Afirmalo sen comprobalo non sería verdade."
         ]
       },
       {
@@ -187,7 +187,7 @@
         ]
       }
     ],
-    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+    "reviewTrigger": "Revísase cada seis meses. Tamén se revisa se cambia o alcance da demostración, quen a publica ou o protocolo de referencia."
   },
   "contactNotice": {
     "eyebrow": "CONTACTO",
@@ -205,6 +205,6 @@
         ]
       }
     ],
-    "reviewTrigger": "Revísase cada seis meses e, ademais, sempre que cambien o alcance da demostración, a identidade de quen a publica ou o protocolo de referencia."
+    "reviewTrigger": "Revísase cada seis meses. Tamén se revisa se cambia o alcance da demostración, quen a publica ou o protocolo de referencia."
   }
 }

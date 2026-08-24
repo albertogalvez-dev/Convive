@@ -2,9 +2,9 @@
   "close": "Cerrar",
   "title": "Antes de empezar",
   "steps": [
-    "Describe la situación. No necesitas decir quién eres.",
-    "Indica dónde ocurrió y comprueba la información.",
-    "Envía la comunicación y guarda tus datos de acceso."
+    "Cuenta lo que ha pasado. No necesitas decir quién eres.",
+    "Di dónde pasó. Revisa los datos.",
+    "Envía el mensaje. Guarda los datos de acceso."
   ],
-  "footer": "Al finalizar recibirás una referencia y un secreto de acceso. Guárdalos en un lugar seguro."
+  "footer": "Al final recibirás una referencia y un secreto. Guárdalos en un lugar seguro."
 }
