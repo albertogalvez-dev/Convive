@@ -282,6 +282,15 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await expect(leadPage.getByRole('heading', { name: 'Auditoría' })).toBeVisible();
     await expect(leadPage.getByRole('link', { name: 'Exportar CSV' })).toBeVisible();
     await expect(leadPage.getByText('Todavía no hay acciones auditables.')).toBeVisible();
+    await expectNoAccessibilityViolations(leadPage);
+
+    // The task-planning catalogue is the detail page's expandable interactive
+    // state. It is an inline form, rather than a dialog, so exercise the
+    // surface the professional can actually open.
+    await leadPage.getByRole('button', { name: 'Nueva tarea' }).click();
+    await expect(leadPage.getByLabel('Plantilla revisada')).toBeVisible();
+    await expectNoAccessibilityViolations(leadPage);
+
     const assignedCaseUrl = leadPage.url();
 
     const administratorPage = await administratorContext.newPage();
