@@ -188,7 +188,13 @@ jobs:
           export CONVIVE_TRUSTED_PROXIES=172.31.0.0/24
           docker network create --attachable px-convive-edge
           docker network create --attachable --internal --subnet "$CONVIVE_TRUSTED_PROXIES" px-convive-internal
-          production_compose=(--project-name convive-production-boundary -f infrastructure/production/compose.production.yaml)
+          production_compose=(
+            sudo
+            --preserve-env=CONVIVE_SECRET_DIR,CONVIVE_API_IMAGE,CONVIVE_GATEWAY_IMAGE,CONVIVE_TRUSTED_PROXIES
+            docker compose
+            --project-name convive-production-boundary
+            -f infrastructure/production/compose.production.yaml
+          )
           cleanup_production_boundary() {
             docker compose "${production_compose[@]}" down --volumes --remove-orphans || true
             docker network rm px-convive-edge px-convive-internal || true
