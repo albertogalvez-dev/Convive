@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Professionals\Presentation\Http;
 
+use App\Demo\Application\FictionalDemoProfessionalSession;
 use App\Cases\Application\CaseWorkspaceDetail;
 use App\Cases\Application\CaseWorkspaceSummary;
 use App\Cases\Application\CasePdfRenderer;
@@ -686,16 +687,18 @@ final readonly class ProfessionalCaseController
             throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
         }
         $this->securityEventLogger->professionalAttachmentDownloaded($request);
-        $this->auditEvents->append(new CaseAuditEvent(
-            Uuid::v7(),
-            $detail->managedCase,
-            $professional,
-            CaseAuditAction::EvidenceDownloadAuthorised,
-            CaseAuditTarget::Attachment,
-            $attachment->id(),
-            DateTimeImmutable::createFromTimestamp(microtime(true)),
-        ));
-        $this->auditEvents->flush();
+        if (!$this->isFictionalDemo($request, $professional)) {
+            $this->auditEvents->append(new CaseAuditEvent(
+                Uuid::v7(),
+                $detail->managedCase,
+                $professional,
+                CaseAuditAction::EvidenceDownloadAuthorised,
+                CaseAuditTarget::Attachment,
+                $attachment->id(),
+                DateTimeImmutable::createFromTimestamp(microtime(true)),
+            ));
+            $this->auditEvents->flush();
+        }
 
         return $response;
     }
@@ -747,20 +750,26 @@ final readonly class ProfessionalCaseController
             new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
         ],
     )]
-    public function exportAuditEvents(string $id, #[CurrentUser] Professional $professional): StreamedResponse
+    public function exportAuditEvents(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        Request $request,
+    ): StreamedResponse
     {
         $detail = $this->resolveAuditDetail($id, $professional);
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
-        $this->auditEvents->append(new CaseAuditEvent(
-            Uuid::v7(),
-            $detail->managedCase,
-            $professional,
-            CaseAuditAction::AuditExported,
-            CaseAuditTarget::AuditTrail,
-            $detail->managedCase->id(),
-            $now,
-        ));
-        $this->auditEvents->flush();
+        if (!$this->isFictionalDemo($request, $professional)) {
+            $this->auditEvents->append(new CaseAuditEvent(
+                Uuid::v7(),
+                $detail->managedCase,
+                $professional,
+                CaseAuditAction::AuditExported,
+                CaseAuditTarget::AuditTrail,
+                $detail->managedCase->id(),
+                $now,
+            ));
+            $this->auditEvents->flush();
+        }
         $events = $this->auditEvents->findByCase($detail->managedCase);
 
         return new StreamedResponse(
@@ -807,20 +816,26 @@ final readonly class ProfessionalCaseController
             new OA\Response(response: Response::HTTP_NOT_FOUND, description: 'The case is unavailable in this scope.'),
         ],
     )]
-    public function exportCaseRecord(string $id, #[CurrentUser] Professional $professional): Response
+    public function exportCaseRecord(
+        string $id,
+        #[CurrentUser] Professional $professional,
+        Request $request,
+    ): Response
     {
         $detail = $this->resolveExportDetail($id, $professional);
         $pdf = $this->pdfRenderer->caseRecord($detail, $this->auditEvents->findByCase($detail->managedCase));
-        $this->auditEvents->append(new CaseAuditEvent(
-            Uuid::v7(),
-            $detail->managedCase,
-            $professional,
-            CaseAuditAction::CaseRecordExported,
-            CaseAuditTarget::CaseRecord,
-            $detail->managedCase->id(),
-            DateTimeImmutable::createFromTimestamp(microtime(true)),
-        ));
-        $this->auditEvents->flush();
+        if (!$this->isFictionalDemo($request, $professional)) {
+            $this->auditEvents->append(new CaseAuditEvent(
+                Uuid::v7(),
+                $detail->managedCase,
+                $professional,
+                CaseAuditAction::CaseRecordExported,
+                CaseAuditTarget::CaseRecord,
+                $detail->managedCase->id(),
+                DateTimeImmutable::createFromTimestamp(microtime(true)),
+            ));
+            $this->auditEvents->flush();
+        }
 
         return $this->pdfResponse($pdf, 'case-record.pdf');
     }
@@ -861,6 +876,7 @@ final readonly class ProfessionalCaseController
         string $id,
         string $template,
         #[CurrentUser] Professional $professional,
+        Request $request,
     ): Response {
         $documentTemplate = CaseDocumentTemplate::tryFrom($template);
         if ($documentTemplate === null) {
@@ -880,16 +896,18 @@ final readonly class ProfessionalCaseController
 
         $generatedAt = DateTimeImmutable::createFromTimestamp(microtime(true));
         $pdf = $this->pdfRenderer->caseDocument($detail, $documentTemplate, $generatedAt);
-        $this->auditEvents->append(new CaseAuditEvent(
-            Uuid::v7(),
-            $detail->managedCase,
-            $professional,
-            CaseAuditAction::DocumentGenerated,
-            CaseAuditTarget::Document,
-            $detail->managedCase->id(),
-            $generatedAt,
-        ));
-        $this->auditEvents->flush();
+        if (!$this->isFictionalDemo($request, $professional)) {
+            $this->auditEvents->append(new CaseAuditEvent(
+                Uuid::v7(),
+                $detail->managedCase,
+                $professional,
+                CaseAuditAction::DocumentGenerated,
+                CaseAuditTarget::Document,
+                $detail->managedCase->id(),
+                $generatedAt,
+            ));
+            $this->auditEvents->flush();
+        }
 
         return $this->pdfResponse($pdf, $documentTemplate->value.'.pdf');
     }
@@ -910,17 +928,22 @@ final readonly class ProfessionalCaseController
             new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: 'A professional session is required.'),
         ],
     )]
-    public function exportOperationalOverview(#[CurrentUser] Professional $professional): Response
+    public function exportOperationalOverview(
+        #[CurrentUser] Professional $professional,
+        Request $request,
+    ): Response
     {
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
         $pdf = $this->pdfRenderer->operationalOverview($this->workspace->operationalCounts($professional, $now));
-        $this->professionalExportEvents->append(new ProfessionalExportEvent(
-            Uuid::v7(),
-            $professional,
-            ProfessionalExportKind::OperationalOverview,
-            $now,
-        ));
-        $this->professionalExportEvents->flush();
+        if (!$this->isFictionalDemo($request, $professional)) {
+            $this->professionalExportEvents->append(new ProfessionalExportEvent(
+                Uuid::v7(),
+                $professional,
+                ProfessionalExportKind::OperationalOverview,
+                $now,
+            ));
+            $this->professionalExportEvents->flush();
+        }
 
         return $this->pdfResponse($pdf, 'operational-overview.pdf');
     }
@@ -934,6 +957,11 @@ final readonly class ProfessionalCaseController
             'X-Content-Type-Options' => 'nosniff',
             'X-Robots-Tag' => 'noindex, noarchive',
         ]);
+    }
+
+    private function isFictionalDemo(Request $request, Professional $professional): bool
+    {
+        return FictionalDemoProfessionalSession::roleFor($request, $professional) !== null;
     }
 
     private function parseWorkspaceQuery(Request $request, DateTimeImmutable $now): CaseWorkspaceQuery

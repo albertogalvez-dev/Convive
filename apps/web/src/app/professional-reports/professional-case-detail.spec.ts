@@ -9,6 +9,7 @@ import { TranslocoService } from '@jsverse/transloco';
 
 import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 import professionalCaseEs from '../../i18n/professional-case/es.json';
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { ProfessionalCaseDetailPage } from './professional-case-detail';
 
 /**
@@ -87,6 +88,21 @@ describe('ProfessionalCaseDetailPage', () => {
     expect(page.querySelector<HTMLAnchorElement>('.export-panel a')?.getAttribute('href')).toBe(
       '/api/v1/professional/cases/case-1/export',
     );
+  });
+
+  it('keeps a demonstration case detail genuinely read-only', () => {
+    TestBed.inject(ProfessionalSessionService).demonstrationRole.set('case_lead');
+    http.expectOne(endpoint).flush(detail());
+    http.expectOne(`${endpoint}/audit-events`).flush({ items: [] });
+    fixture.detectChanges();
+
+    expect(page.querySelector('.tasks-panel .quiet-action')).toBeNull();
+    expect(page.querySelector('form')).toBeNull();
+    expect(page.querySelector('.evidence-list a')).toBeNull();
+    expect(page.querySelector('.export-panel')).toBeNull();
+    expect(page.querySelector('.document-panel')).toBeNull();
+    expect(page.querySelector('.audit-panel a')).toBeNull();
+    expect(page.textContent).toContain('Auditoría');
   });
 
   it('uses the indistinguishable unavailable state and redirects expired sessions', () => {

@@ -40,7 +40,7 @@
       </div>
     </header>
 
-    @if (item.permissions.manageAssignments) {
+    @if (item.permissions.manageAssignments && !isDemonstration()) {
       <section class="panel" aria-labelledby="lifecycle-title">
         <div class="panel-heading">
           <div>
@@ -119,7 +119,7 @@
               <p class="section-label">{{ 'professional-case.tasks.section' | transloco }}</p>
               <h2 id="tasks-title">{{ 'professional-case.tasks.heading' | transloco }}</h2>
             </div>
-            @if (item.permissions.manage) {
+            @if (item.permissions.manage && !isDemonstration()) {
               <button type="button" class="quiet-action" (click)="startTask(item)">
                 {{ 'professional-case.tasks.new' | transloco }}
               </button>
@@ -130,7 +130,7 @@
           } @else if (taskMessage(); as message) {
             <p class="task-feedback" role="status">{{ message }}</p>
           }
-          @if (item.permissions.manage && taskTemplates().length > 0) {
+          @if (item.permissions.manage && !isDemonstration() && taskTemplates().length > 0) {
             <form class="task-form" (ngSubmit)="createTask(item)">
               <label
                 >{{ 'professional-case.tasks.reviewedTemplate' | transloco }}
@@ -247,7 +247,7 @@
                   @if (task.status === 'not_applicable' && task.notApplicableReason) {
                     <p class="resolution">{{ task.notApplicableReason }}</p>
                   }
-                  @if (item.permissions.manage && task.status === 'pending') {
+                  @if (item.permissions.manage && !isDemonstration() && task.status === 'pending') {
                     <div class="task-actions">
                       <button
                         type="button"
@@ -293,7 +293,7 @@
               <p class="section-label">{{ 'professional-case.comms.section' | transloco }}</p>
               <h2 id="communications-title">{{ 'professional-case.comms.heading' | transloco }}</h2>
             </div>
-            @if (item.permissions.manage) {
+            @if (item.permissions.manage && !isDemonstration()) {
               <button type="button" class="quiet-action" (click)="startCommunication(item)">
                 {{ 'professional-case.comms.record' | transloco }}
               </button>
@@ -305,7 +305,7 @@
           @if (communicationMessage(); as message) {
             <p class="task-feedback" role="status">{{ message }}</p>
           }
-          @if (item.permissions.manage && newCommunication().occurredAt) {
+          @if (item.permissions.manage && !isDemonstration() && newCommunication().occurredAt) {
             <form class="task-form" (ngSubmit)="recordCommunication(item)">
               <label
                 >{{ 'professional-case.comms.recipient' | transloco
@@ -422,7 +422,7 @@
                     @if (communication.supersedesId !== null) {
                       <small>{{ 'professional-case.comms.correction' | transloco }}</small>
                     }
-                    @if (item.permissions.manage) {
+                    @if (item.permissions.manage && !isDemonstration()) {
                       <button
                         type="button"
                         class="quiet-action"
@@ -446,7 +446,7 @@
               <p class="section-label">{{ 'professional-case.people.section' | transloco }}</p>
               <h2 id="people-title">{{ 'professional-case.summary.linkedPeople' | transloco }}</h2>
             </div>
-            @if (item.permissions.manage) {
+            @if (item.permissions.manage && !isDemonstration()) {
               <span class="section-label">{{
                 'professional-case.people.minimalData' | transloco
               }}</span>
@@ -457,7 +457,7 @@
           } @else if (peopleMessage(); as message) {
             <p class="task-feedback" role="status">{{ message }}</p>
           }
-          @if (item.permissions.manage) {
+          @if (item.permissions.manage && !isDemonstration()) {
             <form class="resolution-form" (ngSubmit)="addPerson(item)">
               <p class="empty">
                 {{ 'professional-case.people.disclaimer' | transloco }}
@@ -505,7 +505,7 @@
                       }}{{ person.state === 'removed' ? ' · Retirada' : '' }}</small
                     ></span
                   >
-                  @if (item.permissions.manage && person.state === 'active') {
+                  @if (item.permissions.manage && !isDemonstration() && person.state === 'active') {
                     <span class="person-actions"
                       ><button
                         type="button"
@@ -592,11 +592,11 @@
                       }}</small
                     ></span
                   >
-                  @if (item.permissions.export) {
+                  @if (item.permissions.export && !isDemonstration()) {
                     <a [href]="evidenceUrl(item.id, evidence.id)">{{
                       'professional-case.evidence.download' | transloco
                     }}</a>
-                  } @else {
+                  } @else if (!isDemonstration()) {
                     <span class="evidence-restricted">{{
                       'professional-case.evidence.leadOnly' | transloco
                     }}</span>
@@ -639,7 +639,9 @@
           } @else if (assignmentMessage(); as message) {
             <p class="task-feedback" role="status">{{ message }}</p>
           }
-          @if (item.permissions.manageAssignments && assignmentProfessionalId) {
+          @if (
+            item.permissions.manageAssignments && !isDemonstration() && assignmentProfessionalId
+          ) {
             <form class="resolution-form" (ngSubmit)="assignProfessional(item)">
               <label
                 >{{ 'professional-case.access.professional' | transloco }}
@@ -687,7 +689,7 @@
                   ><strong>{{ assignment.professional.name }}</strong
                   ><small>{{ assignmentRoleLabel(assignment.role) | transloco }}</small></span
                 >
-                @if (item.permissions.manageAssignments) {
+                @if (item.permissions.manageAssignments && !isDemonstration()) {
                   @if (assignment.role === 'lead') {
                     <button
                       type="button"
@@ -822,7 +824,7 @@
           </ol>
         </section>
 
-        @if (item.permissions.export) {
+        @if (item.permissions.export && !isDemonstration()) {
           <section class="panel export-panel" aria-labelledby="export-title">
             <div class="panel-heading">
               <div>
@@ -840,7 +842,7 @@
           </section>
         }
 
-        @if (item.permissions.manage) {
+        @if (item.permissions.manage && !isDemonstration()) {
           <section class="panel document-panel" aria-labelledby="documents-title">
             <div class="panel-heading">
               <div>
@@ -875,9 +877,11 @@
                 <p class="section-label">{{ 'professional-case.audit.section' | transloco }}</p>
                 <h2 id="audit-title">{{ 'professional-case.audit.heading' | transloco }}</h2>
               </div>
-              <a [href]="auditExportUrl(item.id)">{{
-                'professional-case.audit.exportCsv' | transloco
-              }}</a>
+              @if (!isDemonstration()) {
+                <a [href]="auditExportUrl(item.id)">{{
+                  'professional-case.audit.exportCsv' | transloco
+                }}</a>
+              }
             </div>
             @if (auditLoading()) {
               <p class="empty" aria-live="polite">

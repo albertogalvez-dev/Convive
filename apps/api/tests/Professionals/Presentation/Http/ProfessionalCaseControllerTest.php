@@ -20,6 +20,8 @@ use App\Cases\Domain\CaseTaskKind;
 use App\Cases\Domain\ManagedCase;
 use App\Cases\Domain\WorkflowSourceAuthority;
 use App\Cases\Domain\WorkflowSourceVersion;
+use App\Demo\Application\FictionalDemoProfessionalSession;
+use App\Demo\Domain\FictionalDemoDataset;
 use App\Organisations\Domain\Organisation;
 use App\Organisations\Domain\PublicReportingIdentifier;
 use App\Professionals\Domain\OrganisationMembership;
@@ -193,6 +195,51 @@ final class ProfessionalCaseControllerTest extends WebTestCase
                 'professionalId' => $lead->id()->toRfc4122(),
                 'kind' => 'operational_overview',
             ],
+        ));
+    }
+
+    public function testFictionalDemoReadsDoNotPersistExportOrAuditEvents(): void
+    {
+        [$managedCase, $lead, , $attachment] = $this->createCaseWorkspace(
+            leadEmail: FictionalDemoDataset::TRIAGE_PROFESSIONAL_EMAIL,
+        );
+        $this->client->loginUser($lead);
+
+        // The marker is server-side session state. The production demo-session
+        // controller sets exactly this value after it has resolved the fixed
+        // fictional professional; it is not a browser-provided role.
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122());
+        $this->client->getRequest()->getSession()->set(
+            FictionalDemoProfessionalSession::ROLE_KEY,
+            FictionalDemoProfessionalSession::TRIAGE,
+        );
+        $this->client->getRequest()->getSession()->save();
+
+        $this->client->request(
+            'GET',
+            '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/evidence/'.$attachment->id()->toRfc4122().'/download',
+        );
+        self::assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events/export');
+        self::assertResponseIsSuccessful();
+        self::assertStringNotContainsString('audit_exported', (string) $this->client->getInternalResponse()->getContent());
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/export');
+        self::assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/documents/action_record');
+        self::assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/api/v1/professional/cases/operational-overview/export');
+        self::assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/api/v1/professional/cases/'.$managedCase->id()->toRfc4122().'/audit-events');
+        self::assertResponseIsSuccessful();
+        self::assertSame([], $this->responsePayload()['items']);
+        self::assertSame(0, (int) $this->entityManager->getConnection()->fetchOne(
+            'SELECT COUNT(*) FROM professional_export_events WHERE professional_id = :professionalId',
+            ['professionalId' => $lead->id()->toRfc4122()],
         ));
     }
 
@@ -1904,10 +1951,15 @@ final class ProfessionalCaseControllerTest extends WebTestCase
     }
 
     /** @return array{ManagedCase, Professional, Organisation, ReportAttachment, Report} */
-    private function createCaseWorkspace(?DateTimeImmutable $now = null): array
+    private function createCaseWorkspace(
+        ?DateTimeImmutable $now = null,
+        ?string $leadEmail = null,
+    ): array
     {
         $organisation = $this->createOrganisation('46A', 'Case Workspace School');
-        $lead = $this->createProfessional('case-lead', $organisation, ProfessionalRole::Triage);
+        $lead = $leadEmail === null
+            ? $this->createProfessional('case-lead', $organisation, ProfessionalRole::Triage)
+            : $this->createProfessionalForWorkspace($leadEmail, $organisation);
         $now ??= new DateTimeImmutable('now');
         $managedCase = new ManagedCase(Uuid::v7(), $organisation, $lead, $now, CaseModality::Mixed);
         $assignment = new CaseAssignment(
@@ -1973,6 +2025,30 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         $attachment = $this->persistAvailableAttachment($report);
 
         return [$managedCase, $lead, $organisation, $attachment, $report];
+    }
+
+    private function createProfessionalForWorkspace(string $email, Organisation $organisation): Professional
+    {
+        $id = $this->entityManager->getConnection()->fetchOne(
+            'SELECT id FROM professionals WHERE email = :email',
+            ['email' => $email],
+        );
+        if (!is_string($id)) {
+            return $this->createProfessional('case-lead', $organisation, ProfessionalRole::Triage, $email);
+        }
+
+        $professional = $this->entityManager->find(Professional::class, Uuid::fromString($id));
+        self::assertInstanceOf(Professional::class, $professional);
+        $this->entityManager->persist(new OrganisationMembership(
+            Uuid::v7(),
+            $professional,
+            $organisation,
+            ProfessionalRole::Triage,
+            new DateTimeImmutable(),
+        ));
+        $this->entityManager->flush();
+
+        return $professional;
     }
 
     /** @return array{ManagedCase, CaseTask} */
@@ -2068,11 +2144,12 @@ final class ProfessionalCaseControllerTest extends WebTestCase
         string $name,
         Organisation $organisation,
         ProfessionalRole $role,
+        ?string $email = null,
     ): Professional {
         $professional = new Professional(
             Uuid::v7(),
             ucfirst($name).' Professional',
-            ProfessionalEmail::fromString($name.'@case-workspace-test.example'),
+            ProfessionalEmail::fromString($email ?? $name.'@case-workspace-test.example'),
             new DateTimeImmutable(),
         );
         $membership = new OrganisationMembership(
