@@ -74,6 +74,22 @@ if ! grep -Eq '^# .*at least 20 characters' "$secret_template"; then
   missing=1
 fi
 
+if grep --fixed-strings --quiet '/run/secrets/api_env' \
+  "$production_compose" "$repository_root/infrastructure/production/api.Dockerfile"; then
+  printf 'The API environment must be injected through env_file, not sourced from a second secret mount.\n' >&2
+  missing=1
+fi
+
+if ! awk '
+  /^  api:$/ { in_api = 1; next }
+  in_api && /^  [[:alnum:]_-]+:$/ { exit }
+  in_api && /^    env_file:$/ { found = 1 }
+  END { exit(found ? 0 : 1) }
+' "$production_compose"; then
+  printf 'The root-only API environment file must be injected through the API env_file contract.\n' >&2
+  missing=1
+fi
+
 if (( missing != 0 )); then
   exit 1
 fi

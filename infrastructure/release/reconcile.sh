@@ -137,7 +137,7 @@ if [[ ${RELEASE_PHASE} == prepare ]]; then
     compose config --quiet
     compose pull
     compose up --detach database redis
-    compose run --rm --no-deps --entrypoint /bin/sh api -c 'set -a; . /run/secrets/api_env; set +a; php bin/console doctrine:migrations:migrate --env=prod --no-debug --no-interaction --allow-no-migration'
+    compose run --rm --no-deps --entrypoint php api bin/console doctrine:migrations:migrate --env=prod --no-debug --no-interaction --allow-no-migration
     compose up --detach --remove-orphans --wait api gateway clamav
     echo "Convive release ${RELEASE_ID} is healthy inside its project boundary."
     echo 'Install and validate the reviewed platform Caddy route, then run this command again with the verify phase.'
