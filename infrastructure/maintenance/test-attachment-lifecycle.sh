@@ -33,5 +33,6 @@ grep --fixed-strings -- "--env-file ${RELEASE_DIRECTORY}/compose.production.env"
 grep --fixed-strings -- "--file ${RELEASE_DIRECTORY}/compose.production.yaml" "${DOCKER_LOG}" > /dev/null
 grep --fixed-strings -- 'app:attachments:process-pending' "${DOCKER_LOG}" > /dev/null
 grep --fixed-strings -- 'app:attachments:clean-expired' "${DOCKER_LOG}" > /dev/null
+grep --fixed-strings -- 'APP_RUNTIME_OPTIONS={"disable_dotenv":true}' "${DOCKER_LOG}" > /dev/null
 
 echo 'Attachment lifecycle maintenance command test passed.'

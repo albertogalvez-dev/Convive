@@ -9,6 +9,7 @@ readonly SECRET_DIRECTORY="${TEST_DIRECTORY}/secrets"
 readonly EVIDENCE_DIRECTORY="${TEST_DIRECTORY}/evidence"
 readonly RUNTIME_DIRECTORY="${TEST_DIRECTORY}/runtime"
 readonly RELEASE_DIRECTORY="${TEST_DIRECTORY}/release"
+readonly DOCKER_LOG="${TEST_DIRECTORY}/docker.log"
 
 cleanup() {
     rm -rf "${TEST_DIRECTORY}"
@@ -37,6 +38,7 @@ if [[ $1 == network && $2 == inspect ]]; then
 fi
 
 if [[ $1 == compose ]]; then
+    printf '%s\n' "$*" >> "${MOCK_DOCKER_LOG}"
     exit 0
 fi
 
@@ -53,6 +55,7 @@ run_prepare() {
         CONVIVE_RUNTIME_DIR="${RUNTIME_DIRECTORY}" \
         CONVIVE_PUBLIC_URL=https://app.conviveaula.test \
         CONVIVE_COMPOSE_PROJECT=convive-platform-network-test \
+        MOCK_DOCKER_LOG="${DOCKER_LOG}" \
         bash "${REPOSITORY_ROOT}/infrastructure/release/reconcile.sh" \
         "${RELEASE_DIRECTORY}" "${release_id}" \
         "example.test/api@sha256:$(printf 'a%.0s' {1..64})" \
@@ -68,6 +71,7 @@ fi
 run_prepare prepared-network
 grep --fixed-strings 'CONVIVE_TRUSTED_PROXIES=172.26.16.0/28' \
     "${RUNTIME_DIRECTORY}/releases/prepared-network/compose.production.env" > /dev/null
+grep --fixed-strings 'APP_RUNTIME_OPTIONS={"disable_dotenv":true}' "${DOCKER_LOG}" > /dev/null
 
 if MOCK_NETWORK_INTERNAL=false run_prepare rejected-network; then
     echo 'Expected a non-internal platform network to be rejected.' >&2
