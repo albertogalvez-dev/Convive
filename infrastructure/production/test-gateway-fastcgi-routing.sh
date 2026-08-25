@@ -21,4 +21,4 @@ docker run --rm --entrypoint sh "${GATEWAY_IMAGE}" -ec '
     test -f /srv/web/index.csr.html
 '
 
-echo 'Production gateway contains the FastCGI front-controller bootstrap.'
+echo 'Production gateway resolves FastCGI from its API front-controller root.'
