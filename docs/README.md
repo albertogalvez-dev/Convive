@@ -12,6 +12,9 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Diagram roadmap](architecture/diagrams/README.md): audience, source and
   status of every maintained diagram.
 - [Architecture decisions](architecture/decisions/README.md): accepted ADRs.
+- [Technical project reports](project/technical-report-es.md): verified Spanish
+  and English summaries of the fictional-demo product, architecture, security
+  boundary, verification and controlled-release state.
 - [Operations index](operations/README.md): local-to-release, deployment,
   recovery, monitoring and support procedures.
 - [Security index](security/README.md): threat, privacy, dependency and
