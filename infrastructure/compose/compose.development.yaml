@@ -28,13 +28,13 @@ services:
       context: ../../apps/api
       target: development
     command:
-      - php
-      - bin/console
-      - app:reporter-notifications:deliver
-      - --limit=20
-      - --watch
-      - --sleep=2
-      - --quiet
+      - /bin/sh
+      - -ec
+      - |
+        until php bin/console doctrine:query:sql 'SELECT 1 FROM reporter_email_contacts LIMIT 0' --no-interaction --quiet >/dev/null 2>&1; do
+          sleep 2
+        done
+        exec php bin/console app:reporter-notifications:deliver --limit=20 --watch --sleep=2 --quiet
     depends_on:
       database:
         condition: service_healthy
