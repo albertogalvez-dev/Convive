@@ -170,6 +170,7 @@ jobs:
         run: |
           set -euo pipefail
           bash infrastructure/production/check-api-environment.sh
+          bash infrastructure/production/test-attachment-store-init.sh
           secret_dir="$(mktemp -d)"
           trap 'rm -rf "$secret_dir"' EXIT
           printf '%s\n' \
