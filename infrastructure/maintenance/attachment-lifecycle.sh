@@ -37,9 +37,9 @@ compose() {
         "$@"
 }
 
-# api runs as www-data. Source its mounted environment only inside that
-# container; never copy a secret to the host environment or timer output.
-compose exec -T api /bin/sh -ec \
-    'set -a; . /run/secrets/api_env; set +a; exec php bin/console app:attachments:process-pending --env=prod --no-debug --no-interaction --limit=50'
-compose exec -T api /bin/sh -ec \
-    'set -a; . /run/secrets/api_env; set +a; exec php bin/console app:attachments:clean-expired --env=prod --no-debug --no-interaction --limit=50'
+# Docker Compose reads the root-only api.env file on the host and injects it
+# into this unprivileged API container. Keep the secret out of the host shell,
+# command line and timer output; the application already has its own runtime
+# environment and must not source a second bind-mounted copy.
+compose exec -T api php bin/console app:attachments:process-pending --env=prod --no-debug --no-interaction --limit=50
+compose exec -T api php bin/console app:attachments:clean-expired --env=prod --no-debug --no-interaction --limit=50

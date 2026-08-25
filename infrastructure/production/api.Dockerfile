@@ -54,4 +54,4 @@ RUN rm --force .env .env.dev .env.test \
 
 USER www-data
 
-ENTRYPOINT ["/bin/sh", "-c", "set -a; . /run/secrets/api_env; set +a; exec php-fpm --nodaemonize"]
+ENTRYPOINT ["php-fpm", "--nodaemonize"]

@@ -57,7 +57,6 @@ services:
       REPORTER_EMAIL_FOLLOW_UP_URL: https://app.conviveaula.com/seguimiento
     env_file:
       - ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
-    secrets: [api_env]
     depends_on:
       database:
         condition: service_healthy
@@ -230,8 +229,6 @@ networks:
     name: px-convive-signature-refresh
 
 secrets:
-  api_env:
-    file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/api.env
   database_password:
     file: ${CONVIVE_SECRET_DIR:?CONVIVE_SECRET_DIR is required}/database_password
   redis_conf:

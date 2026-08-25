@@ -23,7 +23,8 @@ school, student, family, reporter or professional data.
 - every reserved UUID, email, public reporting identifier and report reference
   is either unused or already belongs to the expected demo record.
 
-The password must come from the root-only production `api.env` secret mount.
+The password must come from the root-only production `api.env` file injected
+only into the API runtime by Docker Compose.
 Never commit it, put it in Compose or a release manifest, pass it as a command
 argument or copy it into logs. The command never prints credentials.
 
