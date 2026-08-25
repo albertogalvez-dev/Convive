@@ -17,8 +17,9 @@
   "reporter": {
     "eyebrow": "PER A QUI HO VOL CONTAR",
     "title": "Prova-ho com a persona informant",
-    "description": "Obri l'exemple en este dispositiu o utilitza el codi QR sense comunicar-te amb cap centre real",
-    "open": "Obrir l'exemple",
+    "description": "Pots recórrer el formulari buit o consultar un exemple fictici ja completat",
+    "open": "Començar una comunicació",
+    "preview": "Vore un exemple completat",
     "openPoster": "Obrir el cartell a mida completa",
     "posterAlt": "Cartell del Centre Demo Convive amb un codi QR per a obrir l'exemple fictici"
   },
@@ -27,5 +28,24 @@
     "title": "Mira com el rep el centre",
     "description": "Recorre la vista professional amb informació fictícia i descobrix com s'ordena la comunicació",
     "open": "Entrar a l'àrea professional"
+  },
+  "example": {
+    "seoTitle": "Exemple fictici",
+    "eyebrow": "EXEMPLE FICTICI · NOMÉS LECTURA",
+    "title": "Així pot vore's una comunicació",
+    "description": "Este exemple ja està completat i no permet editar, enviar ni guardar res.",
+    "summaryLabel": "Comunicació fictícia preparada",
+    "situationLabel": "Què ha passat",
+    "situation": "Una alumna fictícia ha deixat de participar al pati i pareix preocupada des de fa diversos dies.",
+    "contextLabel": "On ha passat",
+    "context": "En persona i en línia",
+    "recurrenceLabel": "Freqüència",
+    "recurrence": "Ha passat diverses vegades.",
+    "attentionLabel": "Atenció",
+    "attention": "S'ha indicat una revisió prompte.",
+    "note": "Les dades són inventades i esta vista no crea cap comunicació.",
+    "form": "Vore el formulari buit",
+    "professional": "Vore com ho rep el centre",
+    "back": "Tornar a la demostració"
   }
 }

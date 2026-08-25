@@ -565,9 +565,13 @@ test('offers the fictional demonstration through real, isolated example paths', 
     page.getByRole('heading', { name: 'Descubre Convive sin enviar nada' }),
   ).toBeVisible();
   await expect(page).toHaveTitle('Demostración | Convive');
-  await expect(page.getByRole('link', { name: 'Abrir el ejemplo' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Empezar una comunicación' })).toHaveAttribute(
     'href',
     `/r/${PUBLIC_REPORTING_IDENTIFIER}`,
+  );
+  await expect(page.getByRole('link', { name: 'Ver un ejemplo completado' })).toHaveAttribute(
+    'href',
+    `/r/${PUBLIC_REPORTING_IDENTIFIER}?ejemplo=completo`,
   );
   await expect(page.getByRole('link', { name: 'Abrir cartel a tamaño completo' })).toHaveAttribute(
     'target',

@@ -23,10 +23,17 @@ describe('ReportForm', () => {
   let page: HTMLElement;
   let httpTesting: HttpTestingController;
   const writeText = vi.fn<(value: string) => Promise<void>>();
+  const routeSnapshot = {
+    paramMap: convertToParamMap({
+      publicReportingIdentifier: organisationIdentifier,
+    }),
+    queryParamMap: convertToParamMap({}),
+  };
 
   beforeEach(async () => {
     writeText.mockReset();
     writeText.mockResolvedValue();
+    routeSnapshot.queryParamMap = convertToParamMap({});
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText },
@@ -50,11 +57,7 @@ describe('ReportForm', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: {
-              paramMap: convertToParamMap({
-                publicReportingIdentifier: organisationIdentifier,
-              }),
-            },
+            snapshot: routeSnapshot,
           },
         },
       ],
@@ -100,6 +103,19 @@ describe('ReportForm', () => {
     expect(page.textContent).toContain('Aquí no se guardan comunicaciones');
     expect(page.textContent).toContain('No escribas información personal');
     expect(page.querySelector('form')).toBeNull();
+    httpTesting.expectNone(`${organisationEndpoint}/reports`);
+  });
+
+  it('renders the completed fictional example as a static review without any API request', () => {
+    routeSnapshot.queryParamMap = convertToParamMap({ ejemplo: 'completo' });
+
+    createForm();
+
+    expect(page.textContent).toContain('Revisa antes de enviar');
+    expect(page.textContent).toContain('Una alumna ficticia ha dejado de participar');
+    expect(page.querySelector('button')).toBeNull();
+    expect(page.querySelector('textarea')).toBeNull();
+    httpTesting.expectNone(organisationEndpoint);
     httpTesting.expectNone(`${organisationEndpoint}/reports`);
   });
 
@@ -197,6 +213,13 @@ describe('ReportForm', () => {
 
     expect(page.querySelector('#step-title')?.textContent).toContain('¿Dónde ocurrió?');
     expect(page.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('keeps one clear reporting entry without a second-person route', () => {
+    startValidForm();
+
+    expect(page.querySelector('.other-entry')).toBeNull();
+    expect(page.textContent).not.toContain('Le ocurre a otra persona');
   });
 
   it('should associate the context error with its option group', () => {

@@ -78,6 +78,9 @@
     "evidenceSelected": "Documents preparats: {{count}}",
     "noEvidenceSelected": "No has afegit documents"
   },
+  "completedExample": {
+    "notice": "Este és un exemple fictici ja completat. Pots vore com es veu la revisió, però no es pot editar, enviar ni guardar res."
+  },
   "submissionError": {
     "invalidLink": "Este enllaç de comunicació no és vàlid. Comprova'l i torna-ho a provar.",
     "invalidData": "Alguna informació no és vàlida. Revisa-la i torna-ho a provar.",

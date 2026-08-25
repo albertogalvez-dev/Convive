@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ReportHeader } from './report-header';
@@ -39,7 +39,6 @@ type ReporterStep = 1 | 2 | 3 | 4 | 5;
     ReportEvidence,
     ReportResult,
     ReportSending,
-    RouterLink,
     TranslocoPipe,
   ],
   providers: [provideTranslocoScope('report-form')],
@@ -56,33 +55,8 @@ export class ReportForm {
 
   private readonly publicReportingIdentifier =
     this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '';
-
-  /**
-   * Decided by which route was matched, never by anything the reporter fills
-   * in. Anything other than the witness route is the first-person journey,
-   * unchanged.
-   */
-  protected readonly isWitness = this.route.snapshot.data?.['reporterPerspective'] === 'witnessed';
-
-  /** Lets someone choose the correct entry without interrupting the main action. */
-  protected readonly otherEntryLink = this.isWitness
-    ? ['/r', this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '']
-    : ['/r', this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '', 'testigo'];
-
-  protected readonly otherEntryLabelKey = this.isWitness
-    ? 'report-form.witness.toFirstPerson'
-    : 'report-form.witness.toWitness';
-
-  // Only the framing changes between the two entries. Every other question --
-  // where it happened, how often, when -- reads identically for a witness, so
-  // it is deliberately not duplicated.
-  protected readonly questionKey = this.isWitness
-    ? 'report-form.witness.askedQuestion'
-    : 'report-form.askedQuestion';
-
-  protected readonly descriptionErrorKey = this.isWitness
-    ? 'report-form.witness.descriptionError'
-    : 'report-form.step1.descriptionError';
+  protected readonly isCompletedExample =
+    this.route.snapshot.queryParamMap.get('ejemplo') === 'completo';
 
   protected readonly form = this.formBuilder.nonNullable.group({
     situationDescription: [
@@ -111,6 +85,27 @@ export class ReportForm {
 
   constructor() {
     this.destroyRef.onDestroy(() => this.clearProfileLoadingTimer());
+    if (this.isCompletedExample) {
+      this.form.patchValue({
+        situationDescription:
+          'Una alumna ficticia ha dejado de participar en el recreo y parece preocupada desde hace varios días.',
+        situationContext: 'mixed',
+        reporterRecurrence: 'repeated',
+        reporterAttentionCue: 'needs_prompt_attention',
+        reporterTiming: 'within_days',
+        reportedPeople: 'Una alumna del grupo',
+      });
+      this.form.disable({ emitEvent: false });
+      this.currentStep.set(5);
+      this.profileState.set({
+        status: 'ready',
+        profile: {
+          name: 'IES Horizonte Ficticio',
+          reportingMode: 'fictional_demo',
+        },
+      });
+      return;
+    }
     this.resolvePublicReportingProfile();
   }
 
@@ -198,6 +193,9 @@ export class ReportForm {
   }
 
   protected submit(): void {
+    if (this.isCompletedExample) {
+      return;
+    }
     if (this.profileState().status !== 'ready') {
       return;
     }
@@ -229,9 +227,6 @@ export class ReportForm {
         // Blank means the reporter named nobody, so the field is left out of
         // the request rather than sent as an empty string.
         ...(value.reportedPeople?.trim() ? { reportedPeople: value.reportedPeople.trim() } : {}),
-        // Only sent by the witness entry, so the first-person request body
-        // stays byte-for-byte what it is today.
-        ...(this.isWitness ? { reporterPerspective: 'witnessed' as const } : {}),
       })
       .subscribe({
         next: (response) => {

@@ -27,6 +27,7 @@ describe('PublicDemo', () => {
     expect(page.querySelector('textarea')).toBeNull();
     expect(page.querySelector('form')).toBeNull();
     expect(page.querySelector('a[href="/r/ORG_DEM0000000000000"]')).not.toBeNull();
+    expect(page.querySelector('a[href="/r/ORG_DEM0000000000000?ejemplo=completo"]')).not.toBeNull();
     const posterLink = page.querySelector('a.poster-link') as HTMLAnchorElement;
 
     expect(posterLink).toBeTruthy();

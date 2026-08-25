@@ -78,6 +78,9 @@
     "evidenceSelected": "Documentos preparados: {{count}}",
     "noEvidenceSelected": "No has añadido documentos"
   },
+  "completedExample": {
+    "notice": "Este es un ejemplo ficticio ya completado. Puedes recorrer cómo se ve la revisión, pero no se puede editar, enviar ni guardar nada."
+  },
   "submissionError": {
     "invalidLink": "Este enlace de comunicación no es válido. Compruébalo e inténtalo de nuevo.",
     "invalidData": "Alguna información no es válida. Revísala e inténtalo de nuevo.",

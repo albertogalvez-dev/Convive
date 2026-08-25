@@ -30,6 +30,7 @@ export class PublicDemo {
     globalThis.location.hostname,
     DEMO_PUBLIC_REPORTING_IDENTIFIER,
   );
+  readonly completedExampleUrl = `${this.reporterExampleUrl}?ejemplo=completo`;
   readonly activeLanguage = toSignal(this.transloco.langChanges$, {
     initialValue: this.transloco.getActiveLang(),
   });

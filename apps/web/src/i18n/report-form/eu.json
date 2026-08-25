@@ -78,6 +78,9 @@
     "evidenceSelected": "Prestatutako dokumentuak: {{count}}",
     "noEvidenceSelected": "Ez duzu dokumenturik gehitu"
   },
+  "completedExample": {
+    "notice": "Dagoeneko osatutako fikziozko adibidea da hau. Berrikuspena nolakoa den ikus dezakezu, baina ezin da ezer editatu, bidali edo gorde."
+  },
   "submissionError": {
     "invalidLink": "Komunikazio-esteka hau baliogabea da. Egiaztatu eta saiatu berriro.",
     "invalidData": "Informazio batzuk ez dira baliozkoak. Mesedez, berrikusi eta saiatu berriro.",

@@ -3,7 +3,7 @@
     <app-report-header
       [currentStep]="currentStep()"
       [totalSteps]="5"
-      [showProgress]="profileState().status === 'ready' && !result()"
+      [showProgress]="profileState().status === 'ready' && !result() && !isCompletedExample"
       (helpRequested)="showHelp.set(true)"
       (stepRequested)="navigateToStep($event)"
     />
@@ -21,7 +21,7 @@
 
             <form class="form-loading" aria-busy="true">
               <div class="step">
-                <h1>{{ questionKey | transloco }}</h1>
+                <h1>{{ 'report-form.askedQuestion' | transloco }}</h1>
                 <div class="form-loading-field">
                   <textarea
                     rows="10"
@@ -153,14 +153,10 @@
             <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
               @if (currentStep() === 1) {
                 <div class="step">
-                  <h1 id="step-title">{{ questionKey | transloco }}</h1>
-
-                  @if (isWitness) {
-                    <p class="witness-notice">{{ 'report-form.witness.notice' | transloco }}</p>
-                  }
+                  <h1 id="step-title">{{ 'report-form.askedQuestion' | transloco }}</h1>
 
                   <label class="visually-hidden" for="situationDescription">{{
-                    questionKey | transloco
+                    'report-form.askedQuestion' | transloco
                   }}</label>
                   <textarea
                     id="situationDescription"
@@ -182,7 +178,7 @@
                       form.controls.situationDescription.invalid
                     ) {
                       <p id="description-error" class="error" role="alert">
-                        {{ descriptionErrorKey | transloco }}
+                        {{ 'report-form.step1.descriptionError' | transloco }}
                       </p>
                     }
                     <span id="description-counter">
@@ -200,9 +196,6 @@
                       <span class="continue-arrow" aria-hidden="true">→</span>
                     </button>
                   </div>
-                  <a class="other-entry" [routerLink]="otherEntryLink">{{
-                    otherEntryLabelKey | transloco
-                  }}</a>
                 </div>
               } @else if (currentStep() === 2) {
                 <div class="step">
@@ -428,6 +421,12 @@
                   } @else {
                     <h1 id="step-title">{{ 'report-form.step5.title' | transloco }}</h1>
 
+                    @if (isCompletedExample) {
+                      <p class="completed-example-notice" role="status">
+                        {{ 'report-form.completedExample.notice' | transloco }}
+                      </p>
+                    }
+
                     <dl class="review-details">
                       <div>
                         <dt>{{ 'report-form.step3.descriptionLabel' | transloco }}</dt>
@@ -479,12 +478,14 @@
                     }
 
                     <div class="actions">
-                      <button type="button" class="secondary" (click)="goBack()">
-                        {{ 'report-form.back' | transloco }}
-                      </button>
-                      <button type="submit" class="primary">
-                        {{ 'report-form.submit' | transloco }}
-                      </button>
+                      @if (!isCompletedExample) {
+                        <button type="button" class="secondary" (click)="goBack()">
+                          {{ 'report-form.back' | transloco }}
+                        </button>
+                        <button type="submit" class="primary">
+                          {{ 'report-form.submit' | transloco }}
+                        </button>
+                      }
                     </div>
                   }
                 </div>
