@@ -22,7 +22,7 @@ responsibilities, and every applicable technical gate below has evidence.
 ```text
 Untrusted reporter browser
   -> public HTTPS / same-origin Angular and API
-  -> trusted edge and request controls (implemented fictional boundary; ingress selection #350 remains open)
+  -> reviewed Cloudflare hostname policy and platform Caddy edge (ADR-0029)
   -> Symfony validation, authentication and authorisation boundary
   -> PostgreSQL
   -> encrypted backup and restore boundary (#66, fictional recovery exercise verified; deployed operation remains open)
@@ -121,7 +121,10 @@ The [sessions and capabilities](../architecture/diagrams/access-sessions-and-cap
 [observability and incident response](../architecture/diagrams/observability-and-incident-response.md)
 and [recovery flow](../architecture/diagrams/recovery-flow.md) diagrams map the
 implemented fictional controls to their source and verification evidence. They
-do not select the still-open ingress topology or attest a deployed service.
+do not attest a deployed service. The [security data-flow and trust-boundary
+view](../architecture/diagrams/security-data-flow.md) records the accepted
+platform-Caddy ingress boundary and the separate reporter, professional and
+operational credential flows.
 
 ## Real-data blockers
 
