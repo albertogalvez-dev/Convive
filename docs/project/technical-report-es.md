@@ -1,6 +1,6 @@
 # Memoria técnica de Convive
 
-**Estado:** memoria verificable de la demostración con datos ficticios  
+**Estado:** memoria verificable de la demostración con datos ficticios
 **Última revisión:** 25 de agosto de 2026
 
 ## Resumen

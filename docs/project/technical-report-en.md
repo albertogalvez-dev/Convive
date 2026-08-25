@@ -1,6 +1,6 @@
 # Convive technical project report
 
-**Status:** verified fictional-demo project report  
+**Status:** verified fictional-demo project report
 **Last reviewed:** 25 August 2026
 
 ## Executive summary
