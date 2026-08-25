@@ -25,6 +25,7 @@ import {
   ProfessionalCasesService,
   ProfessionalCaseTaskPlanningTemplate,
 } from './professional-cases.service';
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 
 const AUDIT_ACTIONS: string[] = [
   'case_created',
@@ -62,6 +63,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly transloco = inject(TranslocoService);
+  private readonly sessions = inject(ProfessionalSessionService);
 
   /**
    * Shows a protocol step in the reader's own language where a translation
@@ -150,6 +152,7 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected readonly sourceAuthorityLabel = sourceAuthorityLabel;
   protected readonly stageLabel = stageLabel;
   protected readonly taskStatusLabel = taskStatusLabel;
+  protected readonly isDemonstration = this.sessions.demonstrationRole;
 
   ngOnInit(): void {
     this.load();

@@ -687,7 +687,7 @@ final readonly class ProfessionalCaseController
             throw new ProfessionalCaseNotFoundHttpException(previous: $exception);
         }
         $this->securityEventLogger->professionalAttachmentDownloaded($request);
-        if (!$this->isFictionalDemo($request)) {
+        if (!$this->isFictionalDemo($request, $professional)) {
             $this->auditEvents->append(new CaseAuditEvent(
                 Uuid::v7(),
                 $detail->managedCase,
@@ -758,7 +758,7 @@ final readonly class ProfessionalCaseController
     {
         $detail = $this->resolveAuditDetail($id, $professional);
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
-        if (!$this->isFictionalDemo($request)) {
+        if (!$this->isFictionalDemo($request, $professional)) {
             $this->auditEvents->append(new CaseAuditEvent(
                 Uuid::v7(),
                 $detail->managedCase,
@@ -824,7 +824,7 @@ final readonly class ProfessionalCaseController
     {
         $detail = $this->resolveExportDetail($id, $professional);
         $pdf = $this->pdfRenderer->caseRecord($detail, $this->auditEvents->findByCase($detail->managedCase));
-        if (!$this->isFictionalDemo($request)) {
+        if (!$this->isFictionalDemo($request, $professional)) {
             $this->auditEvents->append(new CaseAuditEvent(
                 Uuid::v7(),
                 $detail->managedCase,
@@ -896,7 +896,7 @@ final readonly class ProfessionalCaseController
 
         $generatedAt = DateTimeImmutable::createFromTimestamp(microtime(true));
         $pdf = $this->pdfRenderer->caseDocument($detail, $documentTemplate, $generatedAt);
-        if (!$this->isFictionalDemo($request)) {
+        if (!$this->isFictionalDemo($request, $professional)) {
             $this->auditEvents->append(new CaseAuditEvent(
                 Uuid::v7(),
                 $detail->managedCase,
@@ -935,7 +935,7 @@ final readonly class ProfessionalCaseController
     {
         $now = DateTimeImmutable::createFromTimestamp(microtime(true));
         $pdf = $this->pdfRenderer->operationalOverview($this->workspace->operationalCounts($professional, $now));
-        if (!$this->isFictionalDemo($request)) {
+        if (!$this->isFictionalDemo($request, $professional)) {
             $this->professionalExportEvents->append(new ProfessionalExportEvent(
                 Uuid::v7(),
                 $professional,
@@ -959,9 +959,9 @@ final readonly class ProfessionalCaseController
         ]);
     }
 
-    private function isFictionalDemo(Request $request): bool
+    private function isFictionalDemo(Request $request, Professional $professional): bool
     {
-        return FictionalDemoProfessionalSession::role($request) !== null;
+        return FictionalDemoProfessionalSession::roleFor($request, $professional) !== null;
     }
 
     private function parseWorkspaceQuery(Request $request, DateTimeImmutable $now): CaseWorkspaceQuery
