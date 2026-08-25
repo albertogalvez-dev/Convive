@@ -70,7 +70,12 @@ Platform Caddy is the only public listener. The gateway only exposes port
 `8080` to the external `px-convive-edge` network shared with Caddy; Convive
 publishes no host port and carries no Cloudflare Tunnel token or connector.
 The project must be registered in `PROJECTX-INFRA` and enrolled with the
-platform procedure before a release can create any Convive service.
+platform procedure before a release can create any Convive service. The
+platform owns the external `px-convive-internal` network. During `prepare`,
+the release reads and validates that network's actual CIDR, then records it as
+the API's narrowly trusted proxy range. The remaining private Compose networks
+deliberately use Docker-selected non-overlapping ranges rather than assuming a
+host-wide subnet allocation.
 
 The API is the only long-running service with the private `attachment-data`
 named volume. A network-isolated one-shot initializer assigns that volume to

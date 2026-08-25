@@ -183,9 +183,13 @@ jobs:
           export CONVIVE_SECRET_DIR="$secret_dir"
           export CONVIVE_API_IMAGE="ghcr.io/albertogalvez-dev/convive/api@sha256:$(printf 'a%.0s' {1..64})"
           export CONVIVE_GATEWAY_IMAGE="ghcr.io/albertogalvez-dev/convive/gateway@sha256:$(printf 'b%.0s' {1..64})"
+          export CONVIVE_TRUSTED_PROXIES=172.31.0.0/24
+          docker network create --attachable px-convive-edge
+          docker network create --attachable --internal --subnet "$CONVIVE_TRUSTED_PROXIES" px-convive-internal
           production_compose=(--project-name convive-production-boundary -f infrastructure/production/compose.production.yaml)
           cleanup_production_boundary() {
             docker compose "${production_compose[@]}" down --volumes --remove-orphans || true
+            docker network rm px-convive-edge px-convive-internal || true
             rm -rf "$secret_dir"
           }
           trap cleanup_production_boundary EXIT
@@ -215,6 +219,7 @@ jobs:
             'APP_ENV=prod APP_DEBUG=0 APP_RUNTIME_OPTIONS="{\"disable_dotenv\":true}" exec php bin/console cache:pool:clear cache.rate_limiter app.idempotency --no-interaction'
           docker compose "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
+          sudo bash infrastructure/release/test-reconcile-platform-network.sh
           bash -n infrastructure/maintenance/*.sh
           bash infrastructure/maintenance/test-attachment-lifecycle.sh
           bash infrastructure/maintenance/test-architecture-document-check.sh
