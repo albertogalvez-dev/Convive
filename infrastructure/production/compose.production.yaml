@@ -204,10 +204,11 @@ services:
       FRESHCLAM_CHECKS: "1"
     volumes: [clamav-signatures:/var/lib/clamav]
     # The upstream entrypoint creates a runtime directory, assigns its private
-    # signature database, then starts scanner processes as the unprivileged
-    # clamav account. Retain exactly the capabilities for those transitions;
-    # every network and administrative capability remains removed.
-    cap_add: ["CHOWN", "FOWNER", "SETGID", "SETUID"]
+    # signature database, and clamd opens its configured log as root before it
+    # transitions to the unprivileged clamav account. Retain exactly the
+    # capabilities for those file ownership and access transitions; every
+    # network and administrative capability remains removed.
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]
     cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
     restart: unless-stopped
