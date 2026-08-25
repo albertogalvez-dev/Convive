@@ -4,10 +4,12 @@ This procedure creates the public demonstration's known fictional state. It is
 separate from development fixtures: `doctrine:fixtures:load` purges a database
 and must never be used for the public demonstration.
 
-The dataset is unmistakably fictional. It reserves one organisation, two
-professional identities, four reports, four conversation entries and one
-managed case with one lead assignment and two case-local fictional people. It
-contains no real school, student, family, reporter or professional data.
+The dataset is unmistakably fictional. It reserves one organisation, five
+fictional professional identities, four reports, four conversation entries and
+three managed cases at different operational stages. It includes two
+purpose-created empty-school images as private evidence: no people, faces,
+school name, logos, documents or third-party material. It contains no real
+school, student, family, reporter or professional data.
 
 ## Safety contract
 
@@ -62,10 +64,23 @@ hashes are not rotated by an ordinary repeat run.
 Expected non-secret output includes:
 
 ```text
-Fictional demo seeded: 1 organisation, 2 professionals, 4 reports, 4 conversation entries, 1 case, 1 assignment and 2 involved people.
+Fictional demo seeded: 1 organisation, 5 professionals, 4 reports, 4 conversation entries, 3 cases, 5 assignments, 4 involved people and 2 private evidence records awaiting the normal scan lifecycle.
 Public reporting identifier: ORG_DEM0000000000000
 No credentials were printed.
 ```
+
+The two evidence records begin in private quarantine. Do not mark them
+available by hand or expose their storage path. With the production scanner
+healthy, run the normal bounded lifecycle and verify only its count/status:
+
+```bash
+php bin/console app:attachments:process-pending --env=prod --no-debug --limit=50
+```
+
+An unavailable scanner is a release blocker for evidence preview. It is not a
+reason to bypass scanning, replace the files or make storage public. The
+reviewed demonstration evidence supports PNG preview only; video is not a
+supported safe attachment type in this release.
 
 ## Verification
 
@@ -78,12 +93,15 @@ After seeding:
    verify that the dashboard contains two new and two reviewed fictional
    communications.
 4. Open one seeded communication and verify that only fictional text appears.
-5. Verify that the managed-case tables contain only the reserved case, its
-   triage lead and the two case-local fictional people.
-6. Attempt a synthetic report submission and reporter follow-up request; both
+5. Verify that the managed-case tables contain the three reserved fictional
+   cases, their prepared assignments, tasks, histories and people.
+6. Verify that the two private image records become available only after the
+   scanner succeeds, and that an authorised professional can preview them in
+   the browser without receiving a storage URL.
+7. Attempt a synthetic report submission and reporter follow-up request; both
    must return the public-reporting-unavailable problem response and no content
    may be persisted.
-7. Confirm that the public page is visibly labelled as a fictional
+8. Confirm that the public page is visibly labelled as a fictional
    demonstration before sharing its URL.
 
 Do not record the password, session cookie, report capability or any newly
