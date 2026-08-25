@@ -168,13 +168,13 @@ services:
         max-size: "10m"
         max-file: "3"
     healthcheck:
-      # Health checks execute as the unprivileged Redis user, so they recover
-      # the already-supplied process argument rather than rereading the
-      # root-only secret mount.
+      # Docker executes this check as the container's root configuration user.
+      # Redis itself has already dropped to its dedicated unprivileged user and
+      # cannot reread this root-only mount.
       test:
         [
           "CMD-SHELL",
-          "redis-cli --no-auth-warning -a \"$$(tr '\\000' '\\n' </proc/1/cmdline | sed -n '/^--requirepass$$/{n;p;}')\" ping | grep -F PONG",
+          "redis-cli --no-auth-warning -a \"$$(sed -n 's/^requirepass //p' /run/secrets/redis_conf)\" ping | grep -F PONG",
         ]
       interval: 10s
       timeout: 5s
