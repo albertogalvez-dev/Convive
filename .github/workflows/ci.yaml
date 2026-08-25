@@ -227,6 +227,7 @@ jobs:
           bash infrastructure/production/test-gateway-routing.sh
           "${production_compose[@]}" up --detach --wait database redis
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
+          bash infrastructure/production/test-gateway-fastcgi-routing.sh
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
           grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
