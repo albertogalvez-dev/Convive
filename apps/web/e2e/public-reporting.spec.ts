@@ -606,6 +606,28 @@ test('opens the prepared professional workspace as a read-only selected perspect
   await expect(page.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
 });
 
+test('opens a prepared communication from the professional inbox', async ({ page }) => {
+  test.setTimeout(240_000);
+
+  await page.goto('/profesionales/acceso');
+  await page.getByRole('button', { name: /Profesional de bienestar/ }).click();
+  await expect(page).toHaveURL(/\/profesionales$/);
+  await skipWorkspaceIntroduction(page);
+
+  await page.getByRole('link', { name: 'Comunicaciones' }).first().click();
+  await expect(page).toHaveURL(/\/profesionales\/comunicaciones$/);
+  await page
+    .getByText(
+      'Una alumna ficticia ha dejado de participar en el recreo y parece preocupada desde hace varios días.',
+      { exact: true },
+    )
+    .click();
+
+  await expect(page).toHaveURL(/\/profesionales\/comunicaciones\/[0-9a-f-]+$/);
+  await expect(page.getByRole('heading', { name: 'Comunicación', exact: true })).toBeVisible();
+  await expect(page.getByText('Contenido original', { exact: true })).toBeVisible();
+});
+
 test('keeps the fictional demo critical paths within performance budgets', async ({
   browser,
   page,

@@ -8,6 +8,11 @@ services:
 
   api:
     environment:
+      # The PHP built-in development server otherwise handles one request at a
+      # time. A browser view often needs its session and protected content at
+      # once, so keep a small worker pool for responsive local review. This
+      # development-only setting is not present in the production image.
+      PHP_CLI_SERVER_WORKERS: "4"
       DATABASE_URL: "postgresql://convive:convive-development-only@database:5432/convive?serverVersion=18.4&charset=utf8"
       SESSION_DATABASE_URL: "pgsql:host=database;port=5432;dbname=convive;user=convive;password=convive-development-only"
       SESSION_DATABASE_URL_TEST: "pgsql:host=database;port=5432;dbname=convive_test;user=convive;password=convive-development-only"
