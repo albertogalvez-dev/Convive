@@ -1,0 +1,404 @@
+[
+  {
+    "slug": "escuchar-y-ordenar-comunicaciones",
+    "publicationStatus": "published",
+    "publishedAt": "2026-08-11",
+    "updatedAt": "2026-08-11",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/escuchar-y-ordenar-comunicaciones-cover-v1.png"
+  },
+  {
+    "slug": "explicar-limites-antes-de-abrir-un-canal",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-08-31",
+    "updatedAt": "2026-08-31",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/explicar-limites-canal-cover-v1.png"
+  },
+  {
+    "slug": "confidencialidad-no-es-anonimato-absoluto",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-09-07",
+    "updatedAt": "2026-09-07",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/confidencialidad-limites-cover-v1.png"
+  },
+  {
+    "slug": "una-respuesta-inicial-que-abre-el-siguiente-paso",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-09-14",
+    "updatedAt": "2026-09-14",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/primera-respuesta-responsable-cover-v1.png"
+  },
+  {
+    "slug": "acoso-conflicto-y-malestar-no-significan-lo-mismo",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-09-21",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/acoso-conflicto-malestar-cover-v1.png"
+  },
+  {
+    "slug": "la-escucha-empieza-antes-del-formulario",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-09-28",
+    "updatedAt": "2026-09-28",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/escucha-antes-formulario-cover-v1.png"
+  },
+  {
+    "slug": "que-significa-un-enfoque-de-centro-completo",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-10-05",
+    "updatedAt": "2026-10-05",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/enfoque-centro-completo-cover-v1.png"
+  },
+  {
+    "slug": "disenar-un-aviso-de-privacidad-que-se-pueda-entender",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-10-12",
+    "updatedAt": "2026-10-12",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/aviso-privacidad-comprensible-cover-v1.png"
+  },
+  {
+    "slug": "ciberconvivencia-prevenir-no-es-vigilar-a-toda-la-comunidad",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-10-19",
+    "updatedAt": "2026-10-19",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/ciberconvivencia-prevenir-sin-vigilar-cover-v1.png"
+  },
+  {
+    "slug": "hablar-de-seguridad-sin-convertir-el-miedo-en-el-mensaje",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-10-26",
+    "updatedAt": "2026-10-26",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/seguridad-sin-miedo-cover-v1.png"
+  },
+  {
+    "slug": "cuando-un-canal-digital-no-es-la-via-adecuada",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-11-02",
+    "updatedAt": "2026-11-02",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/cuando-canal-no-es-via-adecuada-cover-v1.png"
+  },
+  {
+    "slug": "la-primera-conversacion-despues-de-un-aviso",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-11-09",
+    "updatedAt": "2026-11-09",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/primera-conversacion-despues-aviso-cover-v1.png"
+  },
+  {
+    "slug": "un-recurso-accesible-es-un-recurso-que-llega",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-11-16",
+    "updatedAt": "2026-11-16",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/recurso-accesible-cover-v1.png"
+  },
+  {
+    "slug": "datos-minimos-contexto-suficiente",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-11-23",
+    "updatedAt": "2026-11-23",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/datos-minimos-contexto-suficiente-cover-v1.png"
+  },
+  {
+    "slug": "una-cultura-de-cuidado-no-cabe-en-un-boton",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-11-30",
+    "updatedAt": "2026-11-30",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/cultura-cuidado-no-boton-cover-v1.png"
+  },
+  {
+    "slug": "como-explicar-a-las-familias-el-recorrido-de-una-comunicacion",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-12-07",
+    "updatedAt": "2026-12-07",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/explicar-recorrido-familias-cover-v1.png"
+  },
+  {
+    "slug": "el-papel-de-la-reparacion-cuando-hay-dano",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-12-14",
+    "updatedAt": "2026-12-14",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/reparacion-cuando-hay-dano-cover-v1.png"
+  },
+  {
+    "slug": "cerrar-el-trimestre-con-una-comunicacion-clara",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-12-21",
+    "updatedAt": "2026-12-21",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/cerrar-trimestre-comunicacion-clara-cover-v1.png"
+  },
+  {
+    "slug": "la-informacion-sensible-no-debe-viajar-por-cualquier-canal",
+    "publicationStatus": "draft",
+    "publishedAt": "2026-12-28",
+    "updatedAt": "2026-12-28",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/informacion-sensible-canal-adecuado-cover-v1.png"
+  },
+  {
+    "slug": "empezar-el-curso-con-normas-que-se-puedan-practicar",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-01-04",
+    "updatedAt": "2027-01-04",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/normas-que-se-puedan-practicar-cover-v1.png"
+  },
+  {
+    "slug": "participacion-del-alumnado-escuchar-no-es-delegar-la-responsabilidad",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-01-11",
+    "updatedAt": "2027-01-11",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/participacion-alumnado-sin-delegar-cover-v1.png"
+  },
+  {
+    "slug": "como-evitar-que-un-formulario-sustituya-la-valoracion-humana",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-01-18",
+    "updatedAt": "2027-01-18",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/formulario-no-sustituye-valoracion-cover-v1.png"
+  },
+  {
+    "slug": "cuidar-la-confidencialidad-en-conversaciones-de-equipo",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-01-25",
+    "updatedAt": "2027-01-25",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/confidencialidad-conversaciones-equipo-cover-v1.png"
+  },
+  {
+    "slug": "senales-contexto-y-limites-de-la-deteccion-temprana",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-02-01",
+    "updatedAt": "2027-02-01",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/senales-contexto-deteccion-temprana-cover-v1.png"
+  },
+  {
+    "slug": "un-lenguaje-inclusivo-para-hablar-de-convivencia",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-02-08",
+    "updatedAt": "2027-02-08",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/lenguaje-inclusivo-convivencia-cover-v1.png"
+  },
+  {
+    "slug": "que-aporta-una-trazabilidad-proporcionada",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-02-15",
+    "updatedAt": "2027-02-15",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/trazabilidad-proporcionada-cover-v1.png"
+  },
+  {
+    "slug": "ciberacoso-acompanar-documentar-y-derivar-sin-improvisar",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-02-22",
+    "updatedAt": "2027-02-22",
+    "readingMinutes": 5,
+    "coverSrc": "/assets/blog/ciberacoso-acompanar-documentar-derivar-cover-v1.png"
+  },
+  {
+    "slug": "la-coordinacion-no-consiste-en-compartirlo-todo",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-03-01",
+    "updatedAt": "2027-03-01",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/coordinacion-no-es-compartirlo-todo-cover-v1.png"
+  },
+  {
+    "slug": "cuando-la-respuesta-necesita-a-mas-de-una-persona",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-03-08",
+    "updatedAt": "2027-03-08",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/respuesta-mas-de-una-persona-cover-v1.png"
+  },
+  {
+    "slug": "evitar-etiquetas-que-danan-antes-de-comprender",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-03-15",
+    "updatedAt": "2027-03-15",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/evitar-etiquetas-comprender-cover-v1.png"
+  },
+  {
+    "slug": "el-valor-de-una-pregunta-abierta-y-concreta",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-03-22",
+    "updatedAt": "2027-03-22",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/pregunta-abierta-concreta-cover-v1.png"
+  },
+  {
+    "slug": "como-redactar-mensajes-que-no-culpabilicen",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-03-29",
+    "updatedAt": "2027-03-29",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/mensajes-no-culpabilicen-cover-v1.png"
+  },
+  {
+    "slug": "el-entorno-digital-tambien-forma-parte-del-centro",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-04-05",
+    "updatedAt": "2027-04-05",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/entorno-digital-parte-centro-cover-v1.png"
+  },
+  {
+    "slug": "proteccion-de-datos-quien-necesita-saber-que",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-04-12",
+    "updatedAt": "2027-04-12",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/proteccion-datos-quien-necesita-saber-cover-v1.png"
+  },
+  {
+    "slug": "preparar-una-reunion-con-cuidado-y-proposito",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-04-19",
+    "updatedAt": "2027-04-19",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/preparar-reunion-cuidado-proposito-cover-v1.png"
+  },
+  {
+    "slug": "la-convivencia-se-sostiene-tambien-fuera-del-aula",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-04-26",
+    "updatedAt": "2027-04-26",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/convivencia-fuera-aula-cover-v1.png"
+  },
+  {
+    "slug": "prevencion-observar-el-clima-antes-de-que-aparezca-una-crisis",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-05-03",
+    "updatedAt": "2027-05-03",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/prevencion-observar-clima-cover-v1.png"
+  },
+  {
+    "slug": "compartir-informacion-con-familias-sin-exponer-a-otras-personas",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-05-10",
+    "updatedAt": "2027-05-10",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/familias-sin-exponer-otras-personas-cover-v1.png"
+  },
+  {
+    "slug": "cuando-la-tecnologia-ayuda-a-ordenar-no-a-decidir",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-05-17",
+    "updatedAt": "2027-05-17",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/tecnologia-ordenar-no-decidir-cover-v1.png"
+  },
+  {
+    "slug": "disenar-procesos-que-admitan-dudas-y-rectificaciones",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-05-24",
+    "updatedAt": "2027-05-24",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/procesos-dudas-rectificaciones-cover-v1.png"
+  },
+  {
+    "slug": "la-vuelta-de-una-comunicacion-dar-continuidad-sin-prometer-plazos",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-05-31",
+    "updatedAt": "2027-05-31",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/continuidad-sin-prometer-plazos-cover-v1.png"
+  },
+  {
+    "slug": "fin-de-curso-conservar-lo-necesario-y-revisar-lo-aprendido",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-06-07",
+    "updatedAt": "2027-06-07",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/fin-curso-conservar-necesario-cover-v1.png"
+  },
+  {
+    "slug": "el-bienestar-del-equipo-tambien-afecta-a-la-respuesta",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-06-14",
+    "updatedAt": "2027-06-14",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/bienestar-equipo-respuesta-cover-v1.png"
+  },
+  {
+    "slug": "un-recurso-accesible-es-un-recurso-mas-util",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-06-21",
+    "updatedAt": "2027-06-21",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/recurso-accesible-mas-util-cover-v1.png"
+  },
+  {
+    "slug": "las-palabras-importan-cuando-hay-una-situacion-sensible",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-06-28",
+    "updatedAt": "2027-06-28",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/palabras-situacion-sensible-cover-v1.png"
+  },
+  {
+    "slug": "privacidad-desde-el-diseno-en-herramientas-educativas",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-07-05",
+    "updatedAt": "2027-07-05",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/privacidad-desde-diseno-cover-v1.png"
+  },
+  {
+    "slug": "preparar-el-proximo-curso-a-partir-de-lo-que-funciono",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-07-12",
+    "updatedAt": "2027-07-12",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/preparar-proximo-curso-cover-v1.png"
+  },
+  {
+    "slug": "convivencia-digital-durante-el-verano-pautas-sin-alarmismo",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-07-19",
+    "updatedAt": "2027-07-19",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/convivencia-digital-verano-cover-v1.png"
+  },
+  {
+    "slug": "volver-a-explicar-los-limites-antes-de-reiniciar-un-canal",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-07-26",
+    "updatedAt": "2027-07-26",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/limites-reiniciar-canal-cover-v1.png"
+  },
+  {
+    "slug": "una-guia-breve-para-leer-comunicaciones-con-responsabilidad",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-08-02",
+    "updatedAt": "2027-08-02",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/leer-comunicaciones-responsabilidad-cover-v1.png"
+  },
+  {"slug":"que-revisar-antes-de-abrir-un-nuevo-curso","publicationStatus":"draft","publishedAt":"2027-08-09","updatedAt":"2027-08-09","readingMinutes":4,"coverSrc":"/assets/blog/revisar-antes-nuevo-curso-cover-v1.png"}
+  ,{"slug":"un-ano-de-escucha-preguntas-para-mejorar-sin-simplificar","publicationStatus":"draft","publishedAt":"2027-08-16","updatedAt":"2027-08-16","readingMinutes":4,"coverSrc":"/assets/blog/ano-escucha-mejorar-cover-v1.png"}
+]

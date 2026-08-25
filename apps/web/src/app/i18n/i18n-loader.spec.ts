@@ -19,16 +19,17 @@ describe('HttpTranslocoLoader', () => {
     expect(translation).toEqual({ hello: 'hola' });
   });
 
-  it('fetches a scopeless locale request from the locale root', async () => {
+  it('keeps a scopeless locale request empty without requesting an absent asset', async () => {
     const get = vi.fn().mockReturnValue(of({}));
     TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: { get } }],
     });
 
     const loader = TestBed.inject(HttpTranslocoLoader);
-    await firstValueFrom(loader.getTranslation('es'));
+    const translation = await firstValueFrom(loader.getTranslation('es'));
 
-    expect(get).toHaveBeenCalledWith('/i18n/es.json');
+    expect(translation).toEqual({});
+    expect(get).not.toHaveBeenCalled();
   });
 
   it('refuses to request a locale that is not published, without making a network call', async () => {

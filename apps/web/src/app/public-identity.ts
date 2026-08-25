@@ -10,6 +10,9 @@ import { PUBLIC_WEBSITE_HOSTNAME } from './site-hosts';
  */
 export const PUBLIC_OPERATOR_NAME = 'Alberto Gálvez — Proyecto Convive';
 
+/** Public professional profile of Convive's publisher. */
+export const PUBLIC_OPERATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/alberto-galvez-aguado/';
+
 /** Route for privacy questions and for exercising rights. */
 export const PUBLIC_PRIVACY_EMAIL = `privacy@${PUBLIC_WEBSITE_HOSTNAME}`;
 

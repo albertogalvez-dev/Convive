@@ -16,6 +16,7 @@ import { EAGER_TRANSLOCO_SCOPES } from './i18n/i18n-eager-scopes';
 import { HttpTranslocoLoader } from './i18n/i18n-loader';
 import { READY_LOCALES } from './i18n/i18n-completeness';
 import { readStoredLocale } from './i18n/i18n-locale-preference';
+import { provideClientHydration } from '@angular/platform-browser';
 import { localeDirection, SOURCE_LOCALE } from './i18n/i18n-locales';
 
 // The visitor's or organisation's explicitly stored choice, read once at
@@ -72,5 +73,6 @@ export const appConfig: ApplicationConfig = {
           : EAGER_TRANSLOCO_SCOPES.map((scope) => transloco.load(`${scope}/${initialLocale}`)),
       );
     }),
+    provideClientHydration(),
   ],
 };

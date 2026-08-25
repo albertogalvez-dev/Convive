@@ -4,7 +4,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
-import { PUBLIC_GENERAL_EMAIL, PUBLIC_PRIVACY_EMAIL } from '../public-identity';
+import {
+  PUBLIC_GENERAL_EMAIL,
+  PUBLIC_OPERATOR_LINKEDIN_URL,
+  PUBLIC_PRIVACY_EMAIL,
+} from '../public-identity';
 import { PublicSeoService } from '../public-seo.service';
 import { PublicSiteFooter } from '../public-site-footer/public-site-footer';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
@@ -78,6 +82,46 @@ export class PublicInformation {
 
   readonly meta = this.route.snapshot.data['meta'] as PublicInformationPageMeta;
   readonly professionalAccessUrl = professionalAccessUrlFor(globalThis.location.hostname);
+  readonly operatorLinkedinUrl = PUBLIC_OPERATOR_LINKEDIN_URL;
+
+  splitOwnerLink(paragraph: string): { readonly before: string; readonly after: string } | null {
+    const ownerIndex = paragraph.indexOf(this.meta.owner);
+
+    if (ownerIndex === -1) {
+      return null;
+    }
+
+    return {
+      before: paragraph.slice(0, ownerIndex),
+      after: paragraph.slice(ownerIndex + this.meta.owner.length),
+    };
+  }
+
+  splitContactEmail(
+    item: string,
+  ): { readonly email: string; readonly before: string; readonly description: string } | null {
+    const email = [PUBLIC_GENERAL_EMAIL, PUBLIC_PRIVACY_EMAIL].find((candidate) =>
+      item.includes(candidate),
+    );
+
+    if (!email) {
+      return null;
+    }
+
+    const emailIndex = item.indexOf(email);
+
+    const description = item.slice(emailIndex + email.length).replace(/^\s*·\s*/, '');
+
+    return {
+      email,
+      before: item.slice(0, emailIndex),
+      description: this.sentenceCase(description),
+    };
+  }
+
+  private sentenceCase(value: string): string {
+    return value ? value[0].toLocaleUpperCase() + value.slice(1) : value;
+  }
 
   // Two separate steps, deliberately not combined into one
   // selectTranslateObject(key, params, scope) call:

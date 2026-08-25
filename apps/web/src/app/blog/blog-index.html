@@ -1,31 +1,38 @@
-<main>
-  <header>
-    <a routerLink="/" aria-label="Convive, inicio"
+<main class="blog-index">
+  <header class="public-header">
+    <a class="wordmark" routerLink="/" [attr.aria-label]="content().homeLinkLabel"
       ><img src="/convive-logo.svg" alt="" width="158" height="52"
     /></a>
-    <app-language-switcher />
-    <a href="/profesionales/acceso">Área profesional</a>
+    <a class="professional-access" href="/profesionales/acceso">{{
+      content().professionalAccess
+    }}</a>
+    <app-language-switcher [compact]="true" (languageChanged)="changeLocale($event)" />
   </header>
   <section class="intro" aria-labelledby="blog-title">
-    <p class="eyebrow">CONTENIDO REVISADO</p>
-    <h1 id="blog-title">Ideas para escuchar con más cuidado.</h1>
-    <p>
-      Información general sobre convivencia escolar y el enfoque de Convive. No es asesoramiento
-      jurídico, clínico ni de emergencia.
-    </p>
+    <p class="eyebrow">{{ content().index.eyebrow }}</p>
+    <h1 id="blog-title">{{ content().index.title }}</h1>
+    <p>{{ content().index.description }}</p>
   </section>
-  <section aria-label="Artículos publicados" class="articles">
-    @for (article of articles; track article.slug) {
+  <section [attr.aria-label]="content().index.publishedArticlesLabel" class="articles">
+    @for (article of articles(); track article.slug) {
       <article>
-        <p class="eyebrow">{{ article.category }}</p>
-        <h2>
-          <a [routerLink]="['/blog', article.slug]">{{ article.title }}</a>
-        </h2>
-        <p>{{ article.description }}</p>
-        <small
-          >{{ article.readingMinutes }} min de lectura · Actualizado el
-          {{ article.updatedLabel }}</small
-        >
+        <a class="article-cover" [routerLink]="articlePath(article)" tabindex="-1">
+          <img
+            [src]="article.coverSrc"
+            [alt]="article.coverAlt"
+            width="1600"
+            height="900"
+            fetchpriority="high"
+          />
+        </a>
+        <div class="article-summary">
+          <p class="eyebrow">{{ article.category }}</p>
+          <h2>
+            <a [routerLink]="articlePath(article)">{{ article.title }}</a>
+          </h2>
+          <p>{{ article.description }}</p>
+          <small>{{ readingMeta(article) }}</small>
+        </div>
       </article>
     }
   </section>

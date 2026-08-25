@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Translation, TranslocoLoader } from '@jsverse/transloco';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { isLocaleReady } from './i18n-completeness';
 
@@ -32,8 +32,13 @@ export class HttpTranslocoLoader implements TranslocoLoader {
       );
     }
 
-    const path = scope === undefined ? locale : `${scope}/${locale}`;
+    // All published UI copy lives in explicit scopes. Returning an empty
+    // root translation prevents a locale change during server prerendering
+    // from requesting a non-existent `/i18n/<locale>.json` asset.
+    if (scope === undefined) {
+      return of({});
+    }
 
-    return this.http.get<Translation>(`/i18n/${path}.json`);
+    return this.http.get<Translation>(`/i18n/${scope}/${locale}.json`);
   }
 }

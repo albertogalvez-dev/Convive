@@ -528,7 +528,7 @@ test('keeps reviewed blog content accessible, responsive and attributable', asyn
   await page.goto('/blog/');
 
   await expect(
-    page.getByRole('heading', { name: 'Ideas para escuchar con más cuidado.' }),
+    page.getByRole('heading', { name: 'Convivencia escolar, explicada con rigor.' }),
   ).toBeVisible();
   await expectNoAccessibilityViolations(page);
   expect(
