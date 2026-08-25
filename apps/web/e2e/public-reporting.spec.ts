@@ -104,6 +104,11 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await page.getByLabel('Online').check();
   await page.getByRole('button', { name: 'Continuar' }).click();
 
+  // The remaining context and evidence steps are deliberately optional, but
+  // this end-to-end journey must still traverse them before the review step.
+  await page.getByRole('button', { name: 'Continuar' }).click();
+  await page.getByRole('button', { name: 'Continuar' }).click();
+
   await expect(page.getByRole('heading', { name: 'Revisa antes de enviar' })).toBeVisible();
   await page.getByRole('button', { name: 'Enviar' }).click();
 
