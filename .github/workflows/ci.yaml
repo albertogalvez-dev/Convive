@@ -236,7 +236,8 @@ jobs:
           # the deliberately absent immutable-image .env file.
           "${production_compose[@]}" up --detach --wait api gateway
           gateway_id="$("${production_compose[@]}" ps --quiet gateway)"
-          docker exec "$gateway_id" wget --quiet --output-document=- \
+          docker exec "$gateway_id" curl --fail --silent --show-error \
+            --retry 10 --retry-delay 1 --retry-all-errors \
             http://127.0.0.1:8080/api/v1/health | grep --fixed-strings '{"status":"ok"}'
           grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
