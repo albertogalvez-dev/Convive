@@ -303,9 +303,9 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await skipWorkspaceIntroduction(leadPage);
     await leadPage.goto(absoluteUrl('/profesionales/casos'));
     await expect(leadPage.getByRole('heading', { name: 'Casos', exact: true })).toBeVisible();
-    await expect(leadPage.getByRole('button', { name: /Asignados/ })).toContainText('3');
+    await expect(leadPage.getByRole('button', { name: /Asignados/ })).toContainText('8');
     await expect(leadPage.getByRole('button', { name: /Fuera de plazo/ })).toContainText('1');
-    await expect(leadPage.locator('.cases-card li a')).toHaveCount(3);
+    await expect(leadPage.locator('.cases-card li a')).toHaveCount(8);
     await expect(leadPage.locator('.cases-card')).toContainText('00000101');
     await expect(leadPage.locator('.cases-card')).toContainText('00000083');
     await expect(leadPage.locator('.cases-card')).toContainText('00000108');
