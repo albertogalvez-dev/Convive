@@ -104,9 +104,18 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await page.getByLabel('Online').check();
   await page.getByRole('button', { name: 'Continuar' }).click();
 
-  // The remaining context and evidence steps are deliberately optional, but
-  // this end-to-end journey must still traverse them before the review step.
+  // The optional details step precedes document preparation. Evidence stays
+  // only in browser memory until the report has been created.
   await page.getByRole('button', { name: 'Continuar' }).click();
+
+  await page.locator('#evidence-files').setInputFiles({
+    name: `private-${runMarker}.pdf`,
+    mimeType: 'application/pdf',
+    buffer: Buffer.from('%PDF-1.7\nfictional evidence\n'),
+  });
+  await page.getByLabel('Descripción (opcional)').fill(evidenceDescription);
+
+  // Advance from document preparation to the final review.
   await page.getByRole('button', { name: 'Continuar' }).click();
 
   await expect(page.getByRole('heading', { name: 'Revisa antes de enviar' })).toBeVisible();
@@ -137,15 +146,6 @@ test('completes the fictional reporter-professional conversation loop', async ({
   await expectNoAccessibilityViolations(page);
   await page.emulateMedia({ media: 'screen' });
 
-  await page.getByRole('button', { name: 'Añadir pruebas' }).click();
-  await page.locator('#evidence-files').setInputFiles({
-    name: `private-${runMarker}.pdf`,
-    mimeType: 'application/pdf',
-    buffer: Buffer.from('%PDF-1.7\nfictional evidence\n'),
-  });
-  await page.getByLabel('Descripción (opcional)').fill(evidenceDescription);
-  await expect(page.getByText(`private-${runMarker}.pdf`, { exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Enviar pruebas' }).click();
   await expect(page.getByText(evidenceDescription, { exact: true })).toBeVisible();
   await expect(page.getByText('En comprobación', { exact: true })).toBeVisible();
   await expectNoAccessibilityViolations(page);
