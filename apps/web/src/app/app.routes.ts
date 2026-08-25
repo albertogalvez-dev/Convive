@@ -68,6 +68,14 @@ export const routes: Routes = [
     canMatch: [applicationHostGuard],
     children: [
       {
+        // The application hostname deliberately does not duplicate the public
+        // home. Still provide a useful, safe entry instead of leaving the
+        // router outlet empty when someone opens app.conviveaula.com directly.
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'profesionales/acceso',
+      },
+      {
         path: 'r/:publicReportingIdentifier',
         title: 'Comunicación',
         loadComponent: () => import('./reporting/report-form').then((module) => module.ReportForm),

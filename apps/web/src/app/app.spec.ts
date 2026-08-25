@@ -32,4 +32,15 @@ describe('App', () => {
     expect(document.documentElement.lang).toBe('es');
     expect(document.documentElement.dir).toBe('ltr');
   });
+
+  it('gives the application hostname root a safe professional entry', () => {
+    const applicationRoute = routes.find((route) => route.path === '' && route.children);
+    const applicationRoot = applicationRoute?.children?.find((route) => route.path === '');
+
+    expect(applicationRoot?.path).toBe('');
+    expect(applicationRoot).toMatchObject({
+      pathMatch: 'full',
+      redirectTo: 'profesionales/acceso',
+    });
+  });
 });
