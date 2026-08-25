@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { READY_LOCALES } from '../i18n/i18n-completeness';
@@ -38,6 +38,7 @@ export class LanguageSwitcher {
 
   readonly appearance = input<'default' | 'inverse'>('default');
   readonly compact = input(false);
+  readonly languageChanged = output<string>();
 
   protected readonly availableLocales = LOCALES.filter((locale) =>
     READY_LOCALES.includes(locale.code),
@@ -53,5 +54,6 @@ export class LanguageSwitcher {
 
     this.transloco.setActiveLang(code);
     storeLocale(code);
+    this.languageChanged.emit(code);
   }
 }

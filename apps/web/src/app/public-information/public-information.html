@@ -7,42 +7,248 @@
     >
       <img src="/convive-logo.svg" alt="" width="158" height="52" />
     </a>
-    <app-language-switcher />
-    <a [href]="professionalAccessUrl">{{ 'public-information.professionalAccess' | transloco }}</a>
+    <a class="professional-access" [href]="professionalAccessUrl">{{
+      'public-information.professionalAccess' | transloco
+    }}</a>
+    <app-language-switcher [compact]="true" />
   </header>
 
   @if (content().title) {
-    <article aria-labelledby="information-title">
-      <p class="eyebrow">{{ content().eyebrow }}</p>
-      <h1 id="information-title">{{ content().title }}</h1>
-      <p class="lead">{{ content().description }}</p>
-      <p class="notice">{{ content().notice }}</p>
+    <article
+      aria-labelledby="information-title"
+      [class.demonstration-notice]="meta.id === 'demonstrationNotice'"
+      [class.privacy-notice]="meta.id === 'privacyNotice'"
+      [class.cookie-notice]="meta.id === 'cookieNotice'"
+      [class.terms-notice]="meta.id === 'sandboxTerms'"
+      [class.accessibility-notice]="meta.id === 'accessibilityNotice'"
+      [class.contact-notice]="meta.id === 'contactNotice'"
+    >
+      <div
+        class="document-hero"
+        [class.with-demonstration-resources]="meta.id === 'demonstrationNotice'"
+      >
+        <div class="document-introduction">
+          <div class="introduction-copy">
+            <p class="eyebrow">{{ content().eyebrow }}</p>
+            <h1 id="information-title">{{ content().title }}</h1>
+            <p class="lead">{{ content().description }}</p>
+          </div>
+          <p class="notice">{{ content().notice }}</p>
+        </div>
 
-      @for (section of content().sections; track section.heading) {
-        <section [attr.aria-labelledby]="'section-' + $index">
-          <h2 [id]="'section-' + $index">{{ section.heading }}</h2>
-          @for (paragraph of section.paragraphs; track paragraph) {
-            <p>{{ paragraph }}</p>
-          }
-          @if (section.items) {
-            <ul>
-              @for (item of section.items; track item) {
-                <li>{{ item }}</li>
+        @if (meta.id === 'demonstrationNotice') {
+          <aside class="demonstration-resources">
+            @for (section of content().sections; track section.heading) {
+              @if ($index === 1) {
+                <h2>{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  @let ownerParts = splitOwnerLink(paragraph);
+                  <p>
+                    @if (ownerParts) {
+                      {{ ownerParts.before
+                      }}<a class="operator-link" [href]="operatorLinkedinUrl">{{ meta.owner }}</a
+                      >{{ ownerParts.after }}
+                    } @else {
+                      {{ paragraph }}
+                    }
+                  </p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
               }
-            </ul>
+            }
+          </aside>
+        }
+
+        @if (meta.id === 'privacyNotice') {
+          <aside class="privacy-principles">
+            @for (section of content().sections; track section.heading) {
+              @if ($index === 3) {
+                <h2>{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  @let ownerParts = splitOwnerLink(paragraph);
+                  <p>
+                    @if (ownerParts) {
+                      {{ ownerParts.before
+                      }}<a class="operator-link" [href]="operatorLinkedinUrl">{{ meta.owner }}</a
+                      >{{ ownerParts.after }}
+                    } @else {
+                      {{ paragraph }}
+                    }
+                  </p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
+              }
+            }
+          </aside>
+        }
+
+        @if (meta.id === 'cookieNotice') {
+          <aside class="cookie-guarantees">
+            @for (section of content().sections; track section.heading) {
+              @if ($index === 1) {
+                <h2>{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  @let ownerParts = splitOwnerLink(paragraph);
+                  <p>
+                    @if (ownerParts) {
+                      {{ ownerParts.before
+                      }}<a class="operator-link" [href]="operatorLinkedinUrl">{{ meta.owner }}</a
+                      >{{ ownerParts.after }}
+                    } @else {
+                      {{ paragraph }}
+                    }
+                  </p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
+              }
+            }
+          </aside>
+        }
+
+        @if (meta.id === 'sandboxTerms') {
+          <aside class="terms-safety">
+            @for (section of content().sections; track section.heading) {
+              @if ($index === 1) {
+                <h2>{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  @let ownerParts = splitOwnerLink(paragraph);
+                  <p>
+                    @if (ownerParts) {
+                      {{ ownerParts.before
+                      }}<a class="operator-link" [href]="operatorLinkedinUrl">{{ meta.owner }}</a
+                      >{{ ownerParts.after }}
+                    } @else {
+                      {{ paragraph }}
+                    }
+                  </p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
+              }
+            }
+          </aside>
+        }
+
+        @if (meta.id === 'accessibilityNotice') {
+          <aside class="accessibility-feedback">
+            @for (section of content().sections; track section.heading) {
+              @if ($index === 1) {
+                <h2>{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  @let ownerParts = splitOwnerLink(paragraph);
+                  <p>
+                    @if (ownerParts) {
+                      {{ ownerParts.before
+                      }}<a class="operator-link" [href]="operatorLinkedinUrl">{{ meta.owner }}</a
+                      >{{ ownerParts.after }}
+                    } @else {
+                      {{ paragraph }}
+                    }
+                  </p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
+              }
+            }
+          </aside>
+        }
+
+        @if (meta.id === 'contactNotice') {
+          <aside class="contact-methods">
+            @for (section of content().sections; track section.heading) {
+              @if ($index === 0) {
+                <h2>{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  <p>{{ paragraph }}</p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      @let contactParts = splitContactEmail(item);
+                      <li>
+                        @if (contactParts) {
+                          {{ contactParts.before
+                          }}<a class="contact-email" [href]="'mailto:' + contactParts.email">{{
+                            contactParts.email
+                          }}</a>
+                          <span>{{ contactParts.description }}</span>
+                        } @else {
+                          {{ item }}
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+              }
+            }
+          </aside>
+        }
+      </div>
+
+      @if (meta.id !== 'contactNotice') {
+        <div class="document-body">
+          @for (section of content().sections; track section.heading) {
+            @if (
+              (meta.id !== 'demonstrationNotice' || $index !== 1) &&
+              (meta.id !== 'privacyNotice' || $index !== 3) &&
+              (meta.id !== 'cookieNotice' || $index !== 1) &&
+              (meta.id !== 'sandboxTerms' || $index !== 1) &&
+              (meta.id !== 'accessibilityNotice' || $index !== 1)
+            ) {
+              <section [attr.aria-labelledby]="'section-' + $index">
+                <h2 [id]="'section-' + $index">{{ section.heading }}</h2>
+                @for (paragraph of section.paragraphs; track paragraph) {
+                  @let ownerParts = splitOwnerLink(paragraph);
+                  <p>
+                    @if (ownerParts) {
+                      {{ ownerParts.before
+                      }}<a class="operator-link" [href]="operatorLinkedinUrl">{{ meta.owner }}</a
+                      >{{ ownerParts.after }}
+                    } @else {
+                      {{ paragraph }}
+                    }
+                  </p>
+                }
+                @if (section.items) {
+                  <ul>
+                    @for (item of section.items; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
+              </section>
+            }
           }
-        </section>
+        </div>
       }
-
-      <p class="review">
-        {{
-          'public-information.reviewLine'
-            | transloco: { reviewedOn: meta.reviewedOn, owner: meta.owner }
-        }}
-        {{ content().reviewTrigger }}
-      </p>
-
-      <a class="back" routerLink="/">{{ 'public-information.backLink' | transloco }}</a>
     </article>
   }
 

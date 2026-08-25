@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -14,7 +15,8 @@
     "docs:check": "node scripts/check-documentation.mjs",
     "docs:check:test": "node scripts/check-documentation.test.mjs",
     "i18n:confirm": "node scripts/confirm-translations.mjs",
-    "poster": "node scripts/generate-reporting-poster.mjs"
+    "poster": "node scripts/generate-reporting-poster.mjs",
+    "serve:ssr:convive-web": "node dist/convive-web/server/server.mjs"
   },
   "private": true,
   "engines": {
@@ -22,22 +24,27 @@
   },
   "packageManager": "npm@11.12.1",
   "dependencies": {
-    "@angular/common": "^22.1.0",
-    "@angular/compiler": "^22.1.0",
-    "@angular/core": "^22.1.0",
-    "@angular/forms": "^22.1.0",
-    "@angular/platform-browser": "^22.1.0",
-    "@angular/router": "^22.1.0",
+    "@angular/common": "22.1.3",
+    "@angular/compiler": "22.1.3",
+    "@angular/core": "22.1.3",
+    "@angular/forms": "22.1.3",
+    "@angular/platform-browser": "22.1.3",
+    "@angular/platform-server": "22.1.3",
+    "@angular/router": "22.1.3",
+    "@angular/ssr": "^22.1.3",
     "@jsverse/transloco": "^8.4.0",
+    "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular/build": "^22.1.3",
     "@angular/cli": "^22.1.3",
-    "@angular/compiler-cli": "^22.1.0",
+    "@angular/compiler-cli": "22.1.3",
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.62.1",
+    "@types/express": "^5.0.1",
+    "@types/node": "^20.17.19",
     "jsdom": "^28.0.0",
     "jsqr": "^1.4.0",
     "mermaid": "11.17.0",

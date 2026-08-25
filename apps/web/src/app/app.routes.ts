@@ -5,6 +5,7 @@ import { PublicHome } from './public-home/public-home';
 import { PublicDemoRedirect } from './public-demo/public-demo-redirect';
 import { professionalAuthGuard } from './professional-access/professional-auth.guard';
 import { PUBLIC_INFORMATION_PAGES } from './public-information/public-information-content';
+import { blogLocaleRouteGuard } from './blog/blog-locale-route.guard';
 
 export const routes: Routes = [
   {
@@ -40,6 +41,19 @@ export const routes: Routes = [
     title: 'Blog',
     loadComponent: () => import('./blog/blog-article').then((module) => module.BlogArticle),
     canMatch: [publicWebsiteHostGuard],
+  },
+  {
+    path: ':locale/blog',
+    pathMatch: 'full',
+    title: 'Blog',
+    loadComponent: () => import('./blog/blog-index').then((module) => module.BlogIndex),
+    canMatch: [publicWebsiteHostGuard, blogLocaleRouteGuard],
+  },
+  {
+    path: ':locale/blog/:slug',
+    title: 'Blog',
+    loadComponent: () => import('./blog/blog-article').then((module) => module.BlogArticle),
+    canMatch: [publicWebsiteHostGuard, blogLocaleRouteGuard],
   },
   ...PUBLIC_INFORMATION_PAGES.map((meta) => ({
     path: meta.path.replace(/^\/|\/$/g, ''),

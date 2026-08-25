@@ -1,0 +1,725 @@
+{
+  "homeLinkLabel": "Convive, inicio",
+  "professionalAccess": "Área profesional",
+  "authorName": "Proyecto Convive",
+  "index": {
+    "eyebrow": "BLOG · CONVIVENCIA ESCOLAR",
+    "title": "Convivencia escolar, explicada con rigor.",
+    "description": "Guías y contexto para entender mejor la escucha, los límites y la responsabilidad en un centro educativo. No es asesoramiento jurídico, clínico ni de emergencia.",
+    "publishedArticlesLabel": "Artículos publicados",
+    "readingMeta": "{{minutes}} min de lectura · Actualizado el {{updated}} · {{author}}"
+  },
+  "article": {
+    "backToBlog": "Blog",
+    "readingMeta": "{{minutes}} min de lectura · Actualizado el {{updated}} · {{author}}",
+    "sourcesTitle": "Fuentes y límites",
+    "safetyNotice": "Información general revisada el {{updated}}. No es asesoramiento jurídico, clínico ni una guía de actuación ante emergencias.",
+    "unavailableTitle": "Artículo no disponible",
+    "unavailableDescription": "Puede que el enlace haya cambiado o que el contenido ya no esté publicado.",
+    "unavailableBack": "Volver al blog"
+  },
+  "articles": {
+    "escuchar-y-ordenar-comunicaciones": {
+      "category": "Producto y convivencia",
+      "title": "Escuchar y ordenar comunicaciones sin prometer más de lo posible",
+      "description": "Una explicación general sobre cómo un canal digital puede apoyar la escucha responsable en un centro educativo.",
+      "updatedLabel": "11 de agosto de 2026",
+      "coverAlt": "Pasillo escolar vacío y luminoso con un banco, una libreta y un lápiz sobre él.",
+      "introduction": "Un canal digital no sustituye la conversación, el protocolo ni la atención urgente. Puede ayudar a que una comunicación llegue al centro, se ordene y reciba una respuesta trazable.",
+      "sections": [
+        {
+          "heading": "Un canal no decide por el centro",
+          "paragraphs": [
+            "Cada situación necesita una valoración humana y contextual. Una herramienta puede reducir fricción al recibir información, pero no clasifica riesgos ni determina medidas por sí sola.",
+            "Por eso Convive separa la comunicación inicial del trabajo profesional posterior y evita convertir una categoría o un formulario en un diagnóstico."
+          ]
+        },
+        {
+          "heading": "Explicar los límites genera confianza",
+          "paragraphs": [
+            "La persona que comunica necesita saber qué puede esperar: que el centro recibirá su mensaje, que podrá volver a consultarlo con sus credenciales y que una urgencia requiere los canales de emergencia apropiados.",
+            "También necesita saber qué no se promete. Un canal sin cuenta no elimina todas las obligaciones del centro ni reemplaza la intervención presencial cuando esta es necesaria."
+          ]
+        },
+        {
+          "heading": "La tecnología debe dejar espacio a la revisión",
+          "paragraphs": [
+            "Una respuesta responsable exige profesionales autorizados, contexto y un registro proporcionado. Los equipos necesitan ver solo lo necesario para actuar y conservar evidencias de las decisiones significativas.",
+            "Este artículo es información general sobre el enfoque de producto. No es asesoramiento jurídico, clínico ni una guía para responder ante una emergencia."
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "label": "UNESCO: Behind the numbers: ending school violence and bullying",
+          "href": "https://unesdoc.unesco.org/ark:/48223/pf0000366483"
+        },
+        {
+          "label": "Ministerio de Educación: convivencia escolar",
+          "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html"
+        }
+      ]
+    },
+    "explicar-limites-antes-de-abrir-un-canal": {
+      "category": "Canales de escucha",
+      "title": "Antes de abrir un canal, explica sus límites",
+      "description": "Qué conviene dejar claro antes de invitar a una comunidad educativa a utilizar un canal digital de escucha.",
+      "updatedLabel": "Borrador editorial · previsto para el 31 de agosto de 2026",
+      "coverAlt": "Mostrador de recepción escolar vacío con una libreta y una hoja informativa sin texto legible.",
+      "introduction": "Abrir un canal no consiste solo en poner un enlace. Antes de pedir a alguien que cuente algo sensible, el centro debe explicar con palabras sencillas qué ocurre después, quién puede acceder a la información y para qué casos ese canal no sirve.",
+      "sections": [
+        {
+          "heading": "La invitación debe decir qué puede esperar la persona",
+          "paragraphs": [
+            "Una explicación útil nombra el propósito del canal: recibir una comunicación, facilitar que llegue al equipo responsable y permitir una respuesta cuando sea posible. Conviene evitar frases que prometan una solución, un plazo concreto o una intervención automática.",
+            "También ayuda anticipar el recorrido básico: la información será leída por personas autorizadas, se valorará con el contexto disponible y el centro decidirá el siguiente paso conforme a sus responsabilidades y procedimientos. No hace falta revelar el protocolo entero para ser claro."
+          ]
+        },
+        {
+          "heading": "Los límites no son letra pequeña",
+          "paragraphs": [
+            "Un canal digital no es una vía de emergencia, no sustituye una conversación urgente ni convierte por sí mismo un relato en un hecho comprobado. Si existe peligro inmediato, hay que acudir a los servicios de emergencia o a los recursos públicos adecuados.",
+            "Ser transparente sobre estos límites protege a quien comunica y al propio centro. Reduce malentendidos y evita que una herramienta se presente como algo que no puede ser: un sustituto de la valoración humana, la protección o la atención especializada."
+          ]
+        },
+        {
+          "heading": "La accesibilidad también forma parte de la explicación",
+          "paragraphs": [
+            "La información inicial debe poder entenderse en las lenguas de la comunidad, leerse con tecnologías de apoyo y consultarse desde móvil. Un texto breve, visible y bien estructurado es más útil que un aviso jurídico aislado al final de una pantalla.",
+            "Convive propone esta orientación como información general de producto. Cada centro debe adaptar sus mensajes a su organización, a la normativa aplicable y a los protocolos de su administración."
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "label": "UNESCO: Safe learning environments",
+          "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701"
+        },
+        {
+          "label": "Ministerio de Educación: protocolo marco frente al acoso escolar",
+          "href": "https://www.educacionfpydeportes.gob.es/ca/prensa/actualidad/2026/04/20260415-protocoloacoso.html"
+        }
+      ]
+    },
+    "confidencialidad-no-es-anonimato-absoluto": {
+      "category": "Privacidad y confianza",
+      "title": "Confidencialidad no es prometer anonimato absoluto",
+      "description": "Una guía general para explicar privacidad y límites de forma honesta cuando se recibe una comunicación sensible.",
+      "updatedLabel": "Borrador editorial · previsto para el 7 de septiembre de 2026",
+      "coverAlt": "Carpeta azul cerrada sobre una mesa clara, junto a unas llaves, en una oficina vacía.",
+      "introduction": "La privacidad es esencial para generar confianza, pero una promesa absoluta de anonimato puede ser engañosa. Al recibir información sobre una posible situación de convivencia, el centro puede tener deberes de protección, investigación o comunicación que dependen del caso y de la normativa aplicable.",
+      "sections": [
+        {
+          "heading": "Explicar el acceso limitado es más honesto que prometer imposibles",
+          "paragraphs": [
+            "Una buena explicación indica que solo accederán a la información las personas autorizadas que necesiten conocerla para atender la comunicación. Esto expresa un compromiso verificable: limitar el acceso, registrar el tratamiento necesario y no difundir datos por comodidad o curiosidad.",
+            "No debe confundirse ese acceso limitado con una garantía de secreto frente a toda circunstancia. Si aparecen obligaciones legales o de protección, el centro tendrá que actuar con proporcionalidad y pedir orientación profesional cuando corresponda."
+          ]
+        },
+        {
+          "heading": "Pedir lo imprescindible reduce el riesgo",
+          "paragraphs": [
+            "Un formulario o canal debe solicitar únicamente la información necesaria para entender el aviso inicial. Cuantos más datos se recogen sin una finalidad clara, mayor es el riesgo de exposición y más difícil resulta explicar el tratamiento de forma comprensible.",
+            "La información especialmente sensible merece una cautela adicional. El centro no debería invitar a enviar documentos, diagnósticos o detalles identificativos si todavía no son necesarios para decidir un primer paso responsable."
+          ]
+        },
+        {
+          "heading": "La confianza se mantiene con coherencia",
+          "paragraphs": [
+            "Los avisos de privacidad, la práctica diaria y la configuración técnica deben contar la misma historia. No sirve hablar de confidencialidad si después los mensajes circulan por canales informales o si se conservan sin una finalidad definida.",
+            "Este texto no sustituye el análisis jurídico o de protección de datos de cada centro. Es una orientación general para evitar una promesa que, en situaciones complejas, podría no poder cumplirse."
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "label": "AEPD: Guía para centros educativos",
+          "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf"
+        },
+        {
+          "label": "Ministerio de Educación: protocolos de atención",
+          "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html"
+        }
+      ]
+    },
+    "una-respuesta-inicial-que-abre-el-siguiente-paso": {
+      "category": "Atención responsable",
+      "title": "Una respuesta inicial que abre el siguiente paso",
+      "description": "La primera respuesta no resuelve un caso: confirma la recepción, cuida el tono y orienta el siguiente paso posible.",
+      "updatedLabel": "Borrador editorial · previsto para el 14 de septiembre de 2026",
+      "coverAlt": "Sala de reunión escolar vacía con dos sillas, una mesa redonda, un cuaderno abierto y un lápiz.",
+      "introduction": "Cuando alguien comparte una preocupación, la primera respuesta influye en si seguirá buscando ayuda. No necesita cerrar el caso ni adelantar conclusiones; necesita reconocer la comunicación, evitar falsas expectativas y facilitar una continuación segura.",
+      "sections": [
+        {
+          "heading": "Confirmar no es decidir",
+          "paragraphs": [
+            "Una respuesta inicial puede confirmar que el centro ha recibido el mensaje y que será valorado por el equipo competente. Eso ofrece una referencia clara sin afirmar que se ha comprobado el contenido ni anticipar una medida concreta.",
+            "El lenguaje importa: es preferible describir el proceso que dar garantías vagas. Por ejemplo, indicar que se revisará la información disponible es más responsable que prometer una solución inmediata."
+          ]
+        },
+        {
+          "heading": "Ofrecer un siguiente paso que sea posible",
+          "paragraphs": [
+            "La continuación puede ser una petición de información concreta, una conversación con la persona adecuada o una explicación de qué canal usar si hay una urgencia. Debe ajustarse al caso y no obligar a revelar más datos de los necesarios por una vía insegura.",
+            "Si existe riesgo inmediato, la respuesta debe priorizar los servicios de emergencia y los recursos públicos pertinentes. Un canal de convivencia no sustituye la protección urgente."
+          ]
+        },
+        {
+          "heading": "Registrar con cuidado y revisar con personas",
+          "paragraphs": [
+            "La trazabilidad ayuda a que el equipo no pierda contexto, siempre que el registro sea proporcional y accesible solo a quien interviene. Una herramienta puede ordenar las comunicaciones; la valoración y las decisiones siguen siendo humanas.",
+            "Esta es información general sobre una práctica de producto. Cada centro debe seguir sus protocolos, responsabilidades y vías de coordinación aplicables."
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "label": "Ministerio de Educación: protocolos de atención",
+          "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html"
+        },
+        {
+          "label": "UNESCO: Safe learning environments",
+          "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701"
+        }
+      ]
+    },
+    "acoso-conflicto-y-malestar-no-significan-lo-mismo": {
+      "category": "Comprender la convivencia",
+      "title": "Acoso, conflicto y malestar no significan lo mismo",
+      "description": "Poner nombre con cuidado ayuda a escuchar mejor, sin convertir un formulario en un diagnóstico ni restar importancia a lo que preocupa.",
+      "updatedLabel": "Borrador editorial · previsto para el 21 de septiembre de 2026",
+      "coverAlt": "Pasillo escolar vacío con tres paneles informativos sin texto legible y un banco.",
+      "introduction": "Una misma palabra puede ocultar experiencias muy distintas. Nombrar con precisión no sirve para rebajar una preocupación, sino para evitar conclusiones rápidas y elegir la respuesta que corresponde a la información disponible.",
+      "sections": [
+        {
+          "heading": "Un conflicto no describe necesariamente una relación de acoso",
+          "paragraphs": [
+            "Los desacuerdos, las discusiones o el malestar entre personas pueden requerir escucha y acompañamiento. Pero no permiten, por sí solos, afirmar qué está ocurriendo ni aplicar una etiqueta definitiva desde una primera comunicación.",
+            "Las situaciones de acoso escolar se valoran con atención a elementos como el daño, la repetición, el desequilibrio de poder y el contexto. Esa valoración corresponde a las personas responsables y a los procedimientos aplicables, no a una casilla o a una herramienta digital."
+          ]
+        },
+        {
+          "heading": "Tomar en serio no es anticipar un veredicto",
+          "paragraphs": [
+            "Escuchar con seriedad significa no minimizar lo que se cuenta, registrar lo necesario y evitar respuestas que culpabilicen. También significa no prometer medidas ni presentar una hipótesis como un hecho antes de revisarla.",
+            "El lenguaje de la primera respuesta puede mantener abierta la colaboración: reconocer la preocupación, explicar que se valorará con cuidado y ofrecer un siguiente paso posible aporta más que una etiqueta apresurada."
+          ]
+        },
+        {
+          "heading": "El protocolo aporta un marco, no una frase automática",
+          "paragraphs": [
+            "Los centros deben atender las normas y protocolos que les correspondan. Estos orientan la protección, la coordinación y la toma de decisiones, pero cada caso necesita contexto, personas autorizadas y una revisión proporcionada.",
+            "Este artículo ofrece información general. No determina si una situación concreta es acoso, no sustituye los recursos de emergencia y no reemplaza la valoración de los equipos competentes."
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "label": "UNESCO: Defining school bullying and its implications",
+          "href": "https://www.unesco.org/en/articles/defining-school-bullying-and-its-implications-education-teachers-and-learners"
+        },
+        {
+          "label": "Ministerio de Educación: acoso y ciberacoso",
+          "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar/recursos-nuevo/publicaciones/acoso-ciberacoso.html"
+        }
+      ]
+    },
+    "la-escucha-empieza-antes-del-formulario": {
+      "category": "Canales de escucha",
+      "title": "La escucha empieza antes del formulario",
+      "description": "Un canal responsable se explica, se hace accesible y deja claro qué puede esperar la persona antes de pedirle información.",
+      "updatedLabel": "Borrador editorial · previsto para el 28 de septiembre de 2026",
+      "coverAlt": "Recepción escolar vacía con una libreta abierta sin texto legible y una planta.",
+      "introduction": "Un formulario puede ordenar una comunicación, pero no crea por sí solo un espacio de escucha. La experiencia empieza antes: en cómo se presenta el canal, qué lenguaje usa y si la persona entiende para qué puede utilizarlo.",
+      "sections": [
+        { "heading": "Explicar el propósito reduce la incertidumbre", "paragraphs": ["Antes de pedir datos conviene explicar, con una frase visible, para qué existe el canal y qué hará el centro con una comunicación. Ese contexto permite decidir si es la vía adecuada y evita que el formulario parezca una promesa automática.", "También conviene señalar desde el inicio que no es una vía de emergencia. Si hay peligro inmediato, los servicios de emergencia y los recursos públicos adecuados son la opción prioritaria."] },
+        { "heading": "El lenguaje puede abrir o cerrar una conversación", "paragraphs": ["Las preguntas y los avisos deben evitar culpar, exigir una explicación perfecta o usar términos técnicos innecesarios. Una persona puede no conocer el nombre exacto de lo que le preocupa y aun así necesitar ser escuchada con respeto.", "Un diseño claro permite describir lo sucedido con las propias palabras y limita las categorías a lo que realmente ayuda a ordenar el trabajo posterior. La herramienta no debe convertir una respuesta inicial en un diagnóstico."] },
+        { "heading": "La accesibilidad forma parte de la disponibilidad", "paragraphs": ["Un canal solo está disponible de verdad si se puede usar desde móvil, con teclado y tecnologías de apoyo, y si sus instrucciones se comprenden en las lenguas de la comunidad. La accesibilidad no es un añadido después de publicar.", "Esta es información general sobre diseño de producto y convivencia. Cada centro debe aplicar sus procedimientos, responsabilidades y medidas de apoyo conforme a su contexto."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: Safe learning environments", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" },
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" }
+      ]
+    },
+    "que-significa-un-enfoque-de-centro-completo": {
+      "category": "Comunidad educativa",
+      "title": "Qué significa un enfoque de centro completo",
+      "description": "La convivencia no se resuelve en un único canal: requiere normas claras, escucha, prevención, coordinación y participación de toda la comunidad.",
+      "updatedLabel": "Borrador editorial · previsto para el 5 de octubre de 2026",
+      "coverAlt": "Patio escolar vacío y luminoso con una mesa redonda, sillas y vegetación.",
+      "introduction": "Hablar de un enfoque de centro completo no significa que todas las personas hagan lo mismo. Significa reconocer que la convivencia se construye con decisiones conectadas: cómo se previene, cómo se escucha, cómo se acompaña y cómo se revisa lo aprendido.",
+      "sections": [
+        { "heading": "La prevención se nota antes de que haya un aviso", "paragraphs": ["Un entorno seguro no depende solo de reaccionar cuando llega una comunicación. Las normas comprensibles, los espacios de participación, la formación y la revisión del clima escolar ayudan a detectar barreras y a reducir la normalización del daño.", "Estas acciones no eliminan por sí solas los problemas ni convierten al centro en un entorno perfecto. Sí crean referencias compartidas para que pedir ayuda y actuar con respeto sea más posible."] },
+        { "heading": "La coordinación necesita responsabilidades claras", "paragraphs": ["Diferentes personas pueden tener un papel en la convivencia: alumnado, familias, profesorado, personal de apoyo y equipos responsables. Coordinar no significa compartir toda la información; exige definir quién necesita intervenir, con qué propósito y cómo se protege la privacidad.", "Un canal digital puede apoyar la recepción y el seguimiento de comunicaciones, pero no sustituye las responsabilidades, los protocolos ni la cooperación entre quienes deben valorar cada situación."] },
+        { "heading": "La participación mejora los procesos cuando es real", "paragraphs": ["Escuchar a la comunidad no consiste en pedir opinión solo al final. Puede implicar revisar si las normas se entienden, si los canales son accesibles y si las respuestas generan confianza, sin trasladar a menores o familias la responsabilidad de resolver casos complejos.", "UNESCO describe las respuestas eficaces como una combinación de políticas, formación, clima seguro, mecanismos de comunicación, participación y evaluación. Este artículo presenta información general, no un protocolo para un caso concreto."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: What you need to know about school violence and bullying", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" },
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" }
+      ]
+    },
+    "disenar-un-aviso-de-privacidad-que-se-pueda-entender": {
+      "category": "Privacidad y confianza",
+      "title": "Diseñar un aviso de privacidad que se pueda entender",
+      "description": "La transparencia no consiste en acumular texto: explica con claridad qué datos se necesitan, para qué y quién puede acceder a ellos.",
+      "updatedLabel": "Borrador editorial · previsto para el 12 de octubre de 2026",
+      "coverAlt": "Oficina escolar vacía con una mesa, una tarjeta en blanco, una carpeta azul y un lápiz.",
+      "introduction": "Un aviso de privacidad útil acompaña a la persona antes de compartir información. No sustituye las obligaciones del centro, pero ayuda a entender qué se pide, qué ocurrirá con esos datos y dónde encontrar más información.",
+      "sections": [
+        { "heading": "Empieza por lo que la persona necesita saber ahora", "paragraphs": ["En un canal de comunicación, el aviso inicial debe explicar de forma visible la finalidad del canal, el tipo de información que conviene aportar y quién puede tratarla para atender el mensaje. Las explicaciones extensas pueden enlazarse, pero no deben ocultar lo esencial.", "No es necesario pedir todos los datos posibles para demostrar ser cuidadoso. Pedir solo lo necesario para el primer contacto reduce el riesgo y facilita que la persona comprenda la decisión de compartirlos."] },
+        { "heading": "La claridad debe coincidir con la práctica", "paragraphs": ["No sirve decir que el acceso es limitado si la información termina circulando por vías informales. El aviso, los permisos del sistema y las prácticas del equipo deben describir el mismo recorrido y permitir corregir lo que no sea coherente.", "Cuando el tratamiento pueda implicar obligaciones de protección o comunicación, conviene explicarlo con prudencia: sin prometer secreto absoluto ni adelantar qué ocurrirá en un caso concreto."] },
+        { "heading": "Un aviso comprensible se revisa", "paragraphs": ["Una persona que no entienda el texto no tendrá una decisión informada, aunque el documento sea largo. Probar el lenguaje, la jerarquía visual, la versión móvil y la accesibilidad permite detectar barreras antes de que afecten a una comunicación sensible.", "Esta pieza es información general de diseño y producto. Cada centro debe contar con el asesoramiento jurídico y de protección de datos que corresponda a su tratamiento concreto."] }
+      ],
+      "sources": [
+        { "label": "AEPD: Guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" },
+        { "label": "AEPD: transparencia e información", "href": "https://www.aepd.es/areas-de-actuacion/transparencia-e-informacion" }
+      ]
+    },
+    "ciberconvivencia-prevenir-no-es-vigilar-a-toda-la-comunidad": {
+      "category": "Ciberconvivencia",
+      "title": "Ciberconvivencia: prevenir no es vigilar a toda la comunidad",
+      "description": "Una convivencia digital más segura combina educación, acuerdos claros y apoyo, sin normalizar la vigilancia masiva ni prometer que una herramienta detectará todo.",
+      "updatedLabel": "Borrador editorial · previsto para el 19 de octubre de 2026",
+      "coverAlt": "Sala escolar de recursos vacía con un portátil cerrado, una mesa clara, una planta y estanterías.",
+      "introduction": "La vida digital forma parte de la convivencia escolar. Abordarla bien no exige observar cada conversación ni buscar señales automáticas: exige construir criterios, explicar límites y ofrecer vías de ayuda proporcionadas.",
+      "sections": [
+        { "heading": "Prevenir es crear capacidades, no acumular control", "paragraphs": ["La prevención puede incluir educación digital, normas comprensibles, conversación sobre el impacto de los mensajes y recursos claros para pedir ayuda. Estas medidas ayudan a que la comunidad identifique situaciones preocupantes sin convertir a todas las personas en objetos de vigilancia.", "Una herramienta no puede comprender por sí sola el contexto, la intención o el daño. Presentarla como detector de riesgos crea una expectativa falsa y puede desplazar la responsabilidad de la valoración humana."] },
+        { "heading": "Las reglas digitales deben poder explicarse", "paragraphs": ["Las expectativas sobre grupos, imágenes, contraseñas o comunicación deben explicarse con lenguaje directo y adaptarse a la edad y al contexto educativo. No basta con publicar una lista: las normas necesitan espacios para preguntarlas, comprenderlas y revisarlas.", "Cuando el centro utiliza una herramienta digital, debe ser claro sobre qué datos trata, con qué finalidad y quién puede acceder a ellos. La privacidad y la seguridad no son objetivos enfrentados."] },
+        { "heading": "Una vía de ayuda no sustituye el acompañamiento", "paragraphs": ["Un canal puede facilitar que una preocupación llegue al equipo adecuado. Después, la respuesta requiere personas autorizadas, escucha, un registro proporcionado y coordinación conforme a los protocolos aplicables.", "Este artículo ofrece orientación general de convivencia digital. No es una guía de emergencia ni una instrucción para investigar un caso concreto."
+        ] }
+      ],
+      "sources": [
+        { "label": "INCIBE: recomendaciones para trabajar la ciberconvivencia", "href": "https://www.incibe.es/menores/educadores/ciberconvivencia" },
+        { "label": "Ministerio de Educación: acoso y ciberacoso", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar/recursos-nuevo/publicaciones/acoso-ciberacoso.html" }
+      ]
+    },
+    "hablar-de-seguridad-sin-convertir-el-miedo-en-el-mensaje": {
+      "category": "Comunicación responsable",
+      "title": "Hablar de seguridad sin convertir el miedo en el mensaje",
+      "description": "Los mensajes claros y proporcionados ayudan a pedir apoyo; el alarmismo puede bloquear, estigmatizar o hacer más difícil compartir una preocupación.",
+      "updatedLabel": "Borrador editorial · previsto para el 26 de octubre de 2026",
+      "coverAlt": "Pasillo escolar tranquilo con un banco, una lámpara encendida, una libreta abierta sin texto legible y una planta.",
+      "introduction": "La seguridad importa, pero el tono con el que se comunica también. Un mensaje que exagera riesgos o presenta cualquier duda como una amenaza puede impedir que alguien pida ayuda o que la comunidad comprenda los límites de cada recurso.",
+      "sections": [
+        { "heading": "Nombrar el riesgo no exige dramatizar", "paragraphs": ["Un centro puede explicar que toma en serio la convivencia, que cuenta con procedimientos y que hay vías para pedir ayuda sin usar mensajes que asusten o asignen culpabilidad antes de conocer una situación.", "La información útil diferencia entre una preocupación que necesita valoración y una urgencia que requiere los recursos públicos o de emergencia adecuados. Esa distinción da orientación sin restar importancia a ninguna comunicación."] },
+        { "heading": "El lenguaje respetuoso conserva la posibilidad de hablar", "paragraphs": ["Las palabras pueden invitar a contar lo que ocurre o cerrar la conversación. Evitar etiquetas, amenazas generales y promesas imposibles ayuda a que la primera comunicación sea más honesta y manejable.", "También es importante que el centro no use el miedo como sustituto de una explicación. Decir qué puede hacer el canal, quién lo revisa y cuáles son sus límites ofrece una referencia más útil que una advertencia vaga."] },
+        { "heading": "Revisar el mensaje es parte de cuidar", "paragraphs": ["Los avisos, los correos y las pantallas merecen una revisión antes de publicarse: ¿se entienden desde móvil?, ¿respetan a quien los lee?, ¿explican qué hacer si el recurso no es adecuado? Esta revisión puede incluir a las personas que usarán el recurso.", "Este artículo es información general sobre comunicación y convivencia. No sustituye los protocolos del centro ni una respuesta profesional ante una situación concreta."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: Safe learning environments", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" },
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" }
+      ]
+    },
+    "cuando-un-canal-digital-no-es-la-via-adecuada": {
+      "category": "Canales de escucha",
+      "title": "Cuándo un canal digital no es la vía adecuada",
+      "description": "Explicar los límites de un canal no resta importancia a una preocupación: ayuda a llegar antes al recurso que puede responder mejor.",
+      "updatedLabel": "Borrador editorial · previsto para el 2 de noviembre de 2026",
+      "coverAlt": "Entrada escolar vacía con una puerta abierta, una zona de espera tranquila y plantas.",
+      "introduction": "Un canal digital puede facilitar una primera comunicación, pero no sirve para todo. Ser claro sobre ello no es una barrera: es una forma de orientar a la persona hacia la ayuda que necesita sin crear falsas expectativas.",
+      "sections": [
+        { "heading": "Una urgencia necesita una respuesta urgente", "paragraphs": ["Si existe peligro inmediato, el canal del centro no debe presentarse como la vía de respuesta. La información del canal debe señalar de forma visible que se debe recurrir a los servicios de emergencia o a los recursos públicos adecuados.", "Esta indicación no decide la gravedad de un caso ni pide a la persona que haga una valoración técnica. Solo evita que una herramienta concebida para recibir y ordenar comunicaciones se confunda con una atención inmediata."] },
+        { "heading": "Hay situaciones que piden otra conversación", "paragraphs": ["A veces la persona necesita hablar directamente con alguien de confianza, con el equipo competente o con un recurso especializado. Un formulario puede ser un punto de inicio, pero no debe forzar a relatar una situación compleja por una vía que resulte insuficiente o insegura.", "Explicar alternativas de forma sencilla permite elegir sin culpabilizar. La persona debe saber qué puede hacer el centro, qué no puede hacer el canal y cómo obtener una orientación más adecuada."] },
+        { "heading": "Los límites deben aparecer antes de enviar", "paragraphs": ["No basta con incluir un aviso al final de una pantalla. Los límites del canal han de ser visibles antes de pedir información, estar disponibles desde móvil y usar un lenguaje que pueda comprenderse sin conocer procedimientos internos.", "Este artículo ofrece información general de producto y convivencia. Cada centro debe definir sus vías de atención según su organización, normativa y protocolos aplicables."] }
+      ],
+      "sources": [
+        { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" },
+        { "label": "UNESCO: Safe learning environments", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }
+      ]
+    },
+    "la-primera-conversacion-despues-de-un-aviso": {
+      "category": "Atención responsable",
+      "title": "La primera conversación después de un aviso",
+      "description": "Preparar una conversación con calma, propósito y límites claros ayuda a seguir escuchando sin convertir el encuentro en un interrogatorio ni una decisión anticipada.",
+      "updatedLabel": "Borrador editorial · previsto para el 9 de noviembre de 2026",
+      "coverAlt": "Sala de reunión escolar vacía con dos sillones, una mesa redonda, un vaso de agua y una libreta sin texto legible.",
+      "introduction": "Después de una comunicación puede ser necesario hablar con la persona adecuada. Esa primera conversación no tiene que resolverlo todo: puede servir para escuchar, aclarar qué apoyo es posible y acordar un siguiente paso proporcionado.",
+      "sections": [
+        { "heading": "Preparar el espacio también es preparar la escucha", "paragraphs": ["Conviene que la conversación tenga un propósito comprensible, un lugar adecuado y una persona que conozca sus responsabilidades. Explicar por qué se propone hablar y qué límites tiene el encuentro reduce incertidumbre sin exigir que alguien lo cuente todo de una vez.", "No existe un guion único para todas las situaciones. El contexto, las necesidades de accesibilidad y los protocolos aplicables orientan cómo se prepara y quién debe participar."] },
+        { "heading": "Preguntar para comprender, no para cerrar una hipótesis", "paragraphs": ["Las preguntas abiertas y concretas pueden ayudar a entender qué información falta, siempre que no sugieran una respuesta ni presionen para dar detalles innecesarios. Escuchar incluye reconocer lo que no se sabe todavía.", "La conversación no sustituye una valoración posterior ni convierte una explicación inicial en una prueba. Evitar afirmaciones prematuras protege a todas las personas implicadas y deja espacio para revisar el contexto."] },
+        { "heading": "Cerrar con un siguiente paso posible", "paragraphs": ["Antes de terminar, resulta útil explicar qué se ha entendido, qué se revisará y cómo puede continuar el contacto. No se deben prometer resultados ni plazos que el centro no pueda cumplir.", "Este artículo es información general sobre la atención responsable. Cada centro debe actuar según sus protocolos y solicitar apoyo especializado cuando corresponda."] }
+      ],
+      "sources": [
+        { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" },
+        { "label": "UNESCO: Safe learning environments", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }
+      ]
+    },
+    "un-recurso-accesible-es-un-recurso-que-llega": {
+      "category": "Accesibilidad",
+      "title": "Un recurso accesible es un recurso que llega",
+      "description": "Si una persona no puede encontrar, entender o usar una vía de ayuda, esa vía no está realmente disponible para ella.",
+      "updatedLabel": "Borrador editorial · previsto para el 16 de noviembre de 2026",
+      "coverAlt": "Espacio escolar vacío con una mesa regulable, una libreta sin texto legible, un objeto táctil y una planta.",
+      "introduction": "La accesibilidad no es una capa final ni una declaración aislada. En un recurso de ayuda, significa que la información, los controles y los mensajes de respuesta pueden percibirse, entenderse y utilizarse en condiciones diversas.",
+      "sections": [
+        { "heading": "Llegar al recurso es el primer requisito", "paragraphs": ["Un enlace visible, una estructura clara, títulos comprensibles y un orden de navegación coherente permiten encontrar una vía de ayuda sin tener que adivinar dónde está. En páginas con mecanismos repetidos de ayuda, la consistencia también reduce esfuerzo.", "El acceso desde móvil no es una versión menor. Las pautas de accesibilidad web cubren contenidos y aplicaciones en distintos dispositivos, por lo que los controles, el foco y las instrucciones deben poder utilizarse sin depender de un único modo de interacción."] },
+        { "heading": "Entender antes de actuar", "paragraphs": ["Las etiquetas de los campos, las instrucciones y los mensajes de error deben explicar qué se espera sin exigir conocimiento técnico. Una persona puede usar lector de pantalla, teclado, ampliación, voz u otras tecnologías de apoyo; el recurso debe dejar espacio a esas formas de acceso.", "La claridad beneficia a toda la comunidad. Un formulario más comprensible reduce errores, evita que se pida información innecesaria y hace más fácil decidir si el canal es el adecuado."] },
+        { "heading": "La accesibilidad se comprueba durante el uso", "paragraphs": ["No basta con revisar una captura. Conviene probar recorridos reales: llegar al canal, navegar con teclado, leer las instrucciones en móvil, recibir ayuda y corregir un error. Las incidencias encontradas deben convertirse en mejoras priorizadas.", "Este artículo es información general de diseño y convivencia. El alcance jurídico de las obligaciones de accesibilidad depende de cada entidad y servicio; debe revisarse con asesoramiento competente."] }
+      ],
+      "sources": [
+        { "label": "W3C WAI: WCAG 2.2", "href": "https://www.w3.org/TR/WCAG22/" },
+        { "label": "BOE: Real Decreto 1112/2018", "href": "https://www.boe.es/eli/es/rd/2018/09/07/1112" }
+      ]
+    },
+    "datos-minimos-contexto-suficiente": {
+      "category": "Privacidad y confianza",
+      "title": "Datos mínimos, contexto suficiente",
+      "description": "Pedir menos no significa atender peor: la información necesaria debe responder a una finalidad clara y revisarse antes de solicitar más.",
+      "updatedLabel": "Borrador editorial · previsto para el 23 de noviembre de 2026",
+      "coverAlt": "Mesa de oficina escolar vacía con tres tarjetas en blanco, una carpeta cerrada y un lápiz.",
+      "introduction": "Cuando alguien comparte una preocupación, puede sentir que debe explicarlo todo. Un recurso responsable no aprovecha ese momento para recopilar más de lo necesario: empieza por lo imprescindible para entender el aviso y decidir un primer paso seguro.",
+      "sections": [
+        { "heading": "Cada dato necesita un propósito", "paragraphs": ["Antes de añadir una pregunta, conviene poder explicar por qué se necesita, quién la utilizará y en qué momento. Si esa respuesta no es clara, puede que el dato no deba pedirse todavía.", "La minimización no implica ignorar el contexto. Implica obtenerlo de forma gradual y proporcionada, evitando formularios que pidan documentos, diagnósticos o detalles identificativos por defecto."] },
+        { "heading": "El contexto se construye con personas", "paragraphs": ["Una categoría o una respuesta breve rara vez basta para comprender una situación. El contexto puede requerir una conversación, una revisión por parte del equipo competente o la consulta de los procedimientos aplicables.", "La herramienta puede organizar la información que se recibe, pero no decide qué detalles son ciertos, suficientes o relevantes. Esa responsabilidad sigue siendo humana y debe quedar delimitada."] },
+        { "heading": "Menos exposición también es mejor cuidado", "paragraphs": ["Solicitar solo lo necesario reduce el riesgo de compartir información sensible por una vía que todavía no es adecuada. También facilita proteger el acceso y explicar qué ocurrirá después con claridad.", "Este texto ofrece información general sobre producto y privacidad. Cada centro debe revisar sus tratamientos de datos con el asesoramiento jurídico y de protección de datos que corresponda."] }
+      ],
+      "sources": [
+        { "label": "AEPD: Guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" },
+        { "label": "AEPD: principios de protección de datos", "href": "https://www.aepd.es/areas-de-actuacion/principios" }
+      ]
+    },
+    "una-cultura-de-cuidado-no-cabe-en-un-boton": {
+      "category": "Comunidad educativa",
+      "title": "Una cultura de cuidado no cabe en un botón",
+      "description": "Un canal puede facilitar una comunicación, pero la convivencia se sostiene con relaciones, responsabilidades compartidas y decisiones que se revisan.",
+      "updatedLabel": "Borrador editorial · previsto para el 30 de noviembre de 2026",
+      "coverAlt": "Espacio escolar común vacío con una mesa redonda, taburetes, un panel sin texto y plantas.",
+      "introduction": "La tecnología puede reducir fricción, ordenar mensajes y hacer visible una vía de contacto. Eso es útil, pero no equivale a crear confianza ni a resolver una situación compleja. El cuidado se construye antes, durante y después de usar una herramienta.",
+      "sections": [
+        { "heading": "El recurso es una parte de un sistema", "paragraphs": ["Un canal funciona mejor cuando sus límites, responsables y recorridos están claros. Las personas necesitan saber para qué sirve, quién puede leer una comunicación y qué ocurrirá después, sin que la herramienta prometa decisiones que corresponden al centro.", "El mismo recurso puede generar frustración si aparece aislado: sin una explicación, sin respuesta posible o sin conexión con los procedimientos y apoyos del entorno educativo."] },
+        { "heading": "La confianza se demuestra con coherencia", "paragraphs": ["Los mensajes públicos, la forma de responder, el cuidado de la privacidad y el acceso a la ayuda deben contar la misma historia. Cuando no coinciden, un diseño cuidado no compensa una experiencia decepcionante.", "La coherencia también exige revisar cómo participan las personas. Escuchar no es trasladar a alumnado o familias la carga de resolver situaciones; es crear formas realistas de incorporar su experiencia."] },
+        { "heading": "Mejorar es una práctica continua", "paragraphs": ["Conviene revisar si el canal se encuentra, si se entiende, si llega a quien lo necesita y si las respuestas son proporcionadas. Las mejoras pueden nacer de incidencias, de pruebas de accesibilidad y de la escucha de la comunidad.", "Este artículo es información general sobre convivencia y producto. Cada centro debe adaptar sus decisiones a sus responsabilidades, recursos y protocolos aplicables."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: What you need to know about school violence and bullying", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" },
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" }
+      ]
+    },
+    "como-explicar-a-las-familias-el-recorrido-de-una-comunicacion": {
+      "category": "Comunidad educativa",
+      "title": "Cómo explicar a las familias el recorrido de una comunicación",
+      "description": "La transparencia de proceso ayuda a saber qué esperar sin revelar información de otras personas ni prometer una resolución concreta.",
+      "updatedLabel": "Borrador editorial · previsto para el 7 de diciembre de 2026",
+      "coverAlt": "Recepción escolar vacía con paneles sin texto, una mesa redonda y plantas.",
+      "introduction": "Cuando una familia comparte una preocupación, necesita saber que ha sido recibida y cómo puede continuar el contacto. Explicar el recorrido de forma sencilla da una referencia útil sin convertir la comunicación en un compromiso de resultado.",
+      "sections": [
+        { "heading": "Explicar el proceso, no adelantar la decisión", "paragraphs": ["Es posible explicar que una comunicación será leída por el equipo responsable, que se valorará con el contexto disponible y que se propondrá el siguiente paso que corresponda. Esa claridad es distinta de afirmar qué medida se tomará o cuándo concluirá.", "Los procesos pueden variar según la situación, las responsabilidades del centro y los protocolos aplicables. Decirlo con honestidad evita que un plazo estimado se confunda con una garantía."] },
+        { "heading": "Informar sin exponer a otras personas", "paragraphs": ["Dar seguimiento no significa compartir todos los datos o relatos que el centro pueda conocer. La privacidad de las personas implicadas marca límites a lo que se puede comunicar en cada momento.", "Una respuesta respetuosa puede confirmar la recepción, explicar qué se revisará y ofrecer un punto de contacto, sin comentar detalles de terceros ni construir expectativas que no se puedan cumplir."] },
+        { "heading": "Hacer que el contacto siga siendo posible", "paragraphs": ["La familia debe poder volver a consultar la información básica, saber qué vía utilizar para añadir un dato relevante y distinguir esa vía de los recursos de emergencia. Estas indicaciones han de ser visibles, accesibles y comprensibles.", "Este artículo es información general de convivencia y comunicación. Cada centro debe aplicar sus protocolos y obligaciones de privacidad al responder a situaciones reales."] }
+      ],
+      "sources": [
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" },
+        { "label": "AEPD: Guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }
+      ]
+    },
+    "el-papel-de-la-reparacion-cuando-hay-dano": {
+      "category": "Convivencia y cuidado",
+      "title": "El papel de la reparación cuando hay daño",
+      "description": "Reparar no es obligar a reconciliarse: exige seguridad, responsabilidad y decisiones ajustadas a cada situación y a los protocolos aplicables.",
+      "updatedLabel": "Borrador editorial · previsto para el 14 de diciembre de 2026",
+      "coverAlt": "Rincón de reunión escolar vacío con una mesa redonda, dos sillas, una libreta cerrada y un cuenco de piezas de madera.",
+      "introduction": "Cuando una situación ha causado daño, es comprensible buscar una salida que cuide a las personas y permita continuar. Hablar de reparación puede ser útil, siempre que no se confunda con forzar un encuentro, una disculpa o una reconciliación que nadie ha elegido o que no es segura.",
+      "sections": [
+        { "heading": "La seguridad es la primera condición", "paragraphs": ["No todas las situaciones permiten la misma conversación ni el mismo momento. Antes de proponer cualquier paso, el centro debe valorar qué apoyo, separación, protección o intervención exige el contexto y seguir sus procedimientos aplicables.", "Una medida reparadora no sustituye la atención ante una urgencia, la investigación que corresponda ni la obligación de proteger a las personas implicadas. Si no hay condiciones de seguridad, no debe presentarse como una opción inmediata."] },
+        { "heading": "Responsabilidad no significa imponer un guion", "paragraphs": ["Reconocer el impacto de una conducta puede formar parte de un proceso educativo, pero no debe convertirse en una fórmula automática. Las personas afectadas no tienen la obligación de explicar, perdonar o participar en un diálogo para que el centro actúe.", "Las respuestas han de evitar mensajes que simplifiquen el daño o repartan responsabilidades sin conocer los hechos. Escuchar, documentar de forma proporcionada y contar con profesionales competentes ayuda a decidir qué pasos tienen sentido."] },
+        { "heading": "Reparar también puede ser cambiar lo que permitió el daño", "paragraphs": ["A veces la reparación implica revisar una norma, mejorar la supervisión, aclarar una vía de ayuda o ofrecer un apoyo sostenido. El resultado no tiene por qué ser visible ni compartido públicamente para ser responsable.", "Este artículo ofrece información general sobre convivencia. Cada centro debe responder a situaciones reales con sus protocolos, sus responsables y, cuando corresponda, recursos especializados."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" },
+        { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }
+      ]
+    },
+    "cerrar-el-trimestre-con-una-comunicacion-clara": {
+      "category": "Comunidad educativa",
+      "title": "Cerrar el trimestre sin cerrar conversaciones importantes",
+      "description": "Un mensaje de cierre puede orientar y cuidar sin resumir situaciones personales ni prometer respuestas que el centro no puede dar en ese momento.",
+      "updatedLabel": "Borrador editorial · previsto para el 21 de diciembre de 2026",
+      "coverAlt": "Biblioteca escolar vacía con un banco de madera, una manta doblada, un calendario sin texto legible y una planta.",
+      "introduction": "El cierre de un trimestre suele concentrar mensajes, balances y dudas. Una comunicación clara puede ayudar a que la comunidad sepa qué permanece disponible, qué vías se retoman después y dónde encontrar información fiable, sin convertir un aviso general en la respuesta a una situación individual.",
+      "sections": [
+        { "heading": "Decir lo que cambia y lo que permanece", "paragraphs": ["Conviene explicar de forma concreta si cambian horarios, plazos de respuesta o personas de contacto. También debe quedar visible qué recursos públicos o de emergencia existen cuando el canal ordinario no es adecuado.", "La claridad no consiste en llenar el mensaje de detalles. Consiste en que una persona pueda identificar la vía útil sin tener que interpretar un calendario interno o buscar entre comunicaciones dispersas."] },
+        { "heading": "No usar un mensaje general para tratar casos", "paragraphs": ["Un correo o una publicación de cierre no es el lugar para describir situaciones, dar explicaciones sobre personas concretas o anticipar decisiones. La privacidad y el respeto exigen que esos asuntos se aborden por las vías que correspondan.", "Si hay una comunicación ya iniciada, el centro puede explicar por separado cómo continuará el contacto, siempre dentro de los límites que marque el proceso y la protección de las personas implicadas."] },
+        { "heading": "Dejar un punto de reanudación comprensible", "paragraphs": ["Antes de una pausa, es útil indicar cuándo y cómo se retomarán las vías ordinarias. La información debe poder encontrarse desde móvil, leerse con facilidad y mantenerse actualizada si cambian las condiciones previstas.", "Este artículo es información general sobre comunicación y convivencia. Cada centro debe ajustar sus mensajes a su organización, sus protocolos y sus obligaciones de privacidad."] }
+      ],
+      "sources": [
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" },
+        { "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }
+      ]
+    },
+    "la-informacion-sensible-no-debe-viajar-por-cualquier-canal": {
+      "category": "Privacidad y confianza",
+      "title": "La información sensible no debe viajar por cualquier canal",
+      "description": "Elegir una vía adecuada y pedir solo lo necesario reduce exposición y ayuda a explicar con honestidad qué puede hacer cada recurso.",
+      "updatedLabel": "Borrador editorial · previsto para el 28 de diciembre de 2026",
+      "coverAlt": "Espacio de administración escolar vacío con una carpeta cerrada, un sobre sin texto, una lámpara y un cajón con cerradura.",
+      "introduction": "Cuando una persona necesita compartir una preocupación, puede hacerlo desde el canal que tiene más a mano. Diseñar y explicar las vías de contacto con cuidado ayuda a no pedir detalles sensibles por un medio que no es apropiado ni necesario.",
+      "sections": [
+        { "heading": "No todas las vías sirven para lo mismo", "paragraphs": ["Un correo general, un formulario, una conversación presencial o un recurso de emergencia tienen finalidades y límites distintos. Antes de invitar a escribir, el centro debe explicar para qué sirve la vía, quién puede recibir la información y qué alternativa existe si no es adecuada.", "Esta orientación no exige que una persona clasifique técnicamente su situación. Busca que los límites sean visibles y que la comunidad pueda elegir sin entregar más información de la necesaria."] },
+        { "heading": "Menos información puede ser una mejor primera decisión", "paragraphs": ["Una primera comunicación puede centrarse en lo imprescindible para entender qué tipo de ayuda se busca y decidir el siguiente paso. Documentos, diagnósticos, datos de terceros o relatos extensos no deben solicitarse por defecto.", "La minimización no es desinterés. Permite que la información se comparta de forma gradual, con la persona o el equipo competente y por la vía que corresponda."] },
+        { "heading": "Explicar límites también protege la confianza", "paragraphs": ["Un aviso comprensible puede indicar qué información conviene no enviar, cómo añadir un dato relevante después y qué hacer si hay una urgencia. Es preferible a un mensaje genérico que parezca aceptar cualquier contenido sin condiciones.", "Este artículo es información general sobre privacidad y convivencia. Cada centro debe revisar sus canales y tratamientos de datos con el asesoramiento jurídico y de protección de datos que corresponda."] }
+      ],
+      "sources": [
+        { "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" },
+        { "label": "AEPD: principios de protección de datos", "href": "https://www.aepd.es/areas-de-actuacion/principios" }
+      ]
+    },
+    "empezar-el-curso-con-normas-que-se-puedan-practicar": {
+      "category": "Convivencia y cuidado",
+      "title": "Empezar el curso con normas que se puedan practicar",
+      "description": "Las normas sirven mejor cuando se entienden, se pueden poner en práctica y se revisan con la comunidad, no cuando solo se exponen en un documento.",
+      "updatedLabel": "Borrador editorial · previsto para el 4 de enero de 2027",
+      "coverAlt": "Aula escolar vacía con una mesa redonda, sillas, un panel de corcho sin texto y piezas de madera.",
+      "introduction": "Las normas de convivencia orientan mejor cuando describen acciones posibles en situaciones cotidianas. Al inicio de curso, el reto no es solo publicarlas: es hacer que las personas puedan comprenderlas, preguntar por ellas y reconocer cómo se aplican de forma coherente.",
+      "sections": [
+        { "heading": "Hablar de acciones, no solo de principios", "paragraphs": ["El respeto, el cuidado o la participación son principios importantes, pero necesitan ejemplos adecuados al contexto para guiar decisiones diarias. Una norma útil explica qué se espera, qué apoyo existe y qué vías se pueden utilizar cuando surge una dificultad.", "No se trata de convertir la convivencia en una lista interminable de prohibiciones. Se trata de ofrecer acuerdos claros que puedan recordarse, practicarse y revisarse sin exigir conocer un lenguaje administrativo."] },
+        { "heading": "La comprensión se comprueba en el uso", "paragraphs": ["Publicar un documento no demuestra que se haya entendido. Conviene crear oportunidades para hacer preguntas, usar formatos accesibles y comprobar si el lenguaje funciona para alumnado, familias y profesionales en sus condiciones reales.", "La participación puede enriquecer los acuerdos, pero no traslada a la comunidad la responsabilidad que corresponde al centro. Las personas responsables deben explicar cómo se toman decisiones y cómo se revisarán los efectos de las normas."] },
+        { "heading": "Revisar también es una forma de coherencia", "paragraphs": ["Una norma debe poder revisarse cuando genera dudas, no llega a quien la necesita o produce efectos no previstos. Escuchar esas señales permite ajustar la comunicación, los apoyos y los procedimientos sin presentar el cambio como un fracaso.", "Este artículo ofrece información general sobre convivencia escolar. Cada centro debe aplicar su normativa, sus responsabilidades y sus protocolos al definir y revisar sus acuerdos."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" },
+        { "label": "Ministerio de Educación: convivencia escolar", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar.html" }
+      ]
+    },
+    "participacion-del-alumnado-escuchar-no-es-delegar-la-responsabilidad": {
+      "category": "Comunidad educativa",
+      "title": "Participación del alumnado: escuchar no es delegar la responsabilidad",
+      "description": "Dar espacio a la experiencia del alumnado mejora la comprensión, pero las decisiones de protección, cuidado y respuesta siguen correspondiendo a las personas adultas responsables.",
+      "updatedLabel": "Borrador editorial · previsto para el 11 de enero de 2027",
+      "coverAlt": "Espacio escolar común vacío con una mesa redonda, taburetes, un panel de corcho sin texto y plantas.",
+      "introduction": "Participar no significa que el alumnado tenga que resolver los problemas que le afectan. Significa crear formas seguras y comprensibles de escuchar su experiencia, explicar qué ocurrirá con lo que comparta y mantener la responsabilidad de las decisiones en el centro.",
+      "sections": [
+        { "heading": "Escuchar requiere condiciones claras", "paragraphs": ["Una invitación a participar debe explicar para qué se pide una opinión, quién la leerá y qué aspectos puede ayudar a mejorar. También debe dejar claro que no se espera que una persona investigue, medie o gestione una situación que requiere apoyo adulto.", "Los formatos importan. Una conversación, una consulta accesible o un espacio de representación pueden servir para fines diferentes; ninguno debe presionar a compartir información personal o sensible delante de otras personas."] },
+        { "heading": "La experiencia no se usa como una prueba aislada", "paragraphs": ["Lo que cuenta una persona puede aportar contexto valioso, pero debe recibirse con cuidado y valorarse dentro de los procedimientos aplicables. Escuchar no equivale a decidir de inmediato ni a trasladar la carga de demostrar lo ocurrido.", "Las personas adultas responsables deben decidir qué apoyo, investigación o medida corresponde. Esa responsabilidad incluye explicar los límites de la participación sin ignorar lo que se ha compartido."] },
+        { "heading": "Participar también incluye saber qué pasó después", "paragraphs": ["Cuando sea posible y respetando la privacidad, conviene informar de cómo una aportación ha ayudado a revisar una norma, un recurso o una práctica. Esta devolución evita que participar parezca un gesto simbólico sin consecuencias.", "Este artículo es información general sobre participación y convivencia. Cada centro debe aplicar sus protocolos, sus responsabilidades y sus medidas de protección en situaciones reales."] }
+      ],
+      "sources": [
+        { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" },
+        { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }
+      ]
+    },
+    "como-evitar-que-un-formulario-sustituya-la-valoracion-humana": {
+      "category": "Atención responsable",
+      "title": "Cómo evitar que un formulario sustituya a la valoración humana",
+      "description": "Un formulario puede ordenar una primera comunicación, pero no interpreta por sí solo el contexto, la urgencia ni las necesidades de apoyo de una persona.",
+      "updatedLabel": "Borrador editorial · previsto para el 18 de enero de 2027",
+      "coverAlt": "Mesa de oficina escolar vacía con un portapapeles en blanco, una carpeta cerrada, un lápiz y dos sillas al fondo.",
+      "introduction": "Un formulario puede facilitar que una preocupación llegue a la persona o equipo adecuado. Eso no convierte sus respuestas en una valoración completa ni elimina la necesidad de escuchar, revisar el contexto y decidir el siguiente paso con responsabilidad.",
+      "sections": [
+        { "heading": "Preguntar no es decidir", "paragraphs": ["Las preguntas pueden ayudar a recibir una primera orientación, pero una respuesta breve no define por sí sola qué ha ocurrido ni qué medida corresponde. El diseño debe evitar etiquetas automáticas, conclusiones apresuradas o promesas que dependan de una revisión humana.", "También conviene pedir solo la información necesaria para ese primer paso. Un formulario extenso no garantiza comprender mejor y puede aumentar la exposición de datos sensibles."] },
+        { "heading": "El contexto requiere una respuesta responsable", "paragraphs": ["Después de recibir una comunicación, el centro puede necesitar aclarar información, contrastar procedimientos o hablar con las personas adecuadas. Esa tarea corresponde a personas autorizadas y no puede delegarse en una herramienta.", "La persona que escribe debe saber qué puede esperar del canal, qué no puede resolver y cómo recurrir a otra vía si necesita apoyo inmediato o especializado."] },
+        { "heading": "Diseñar para continuar, no para cerrar", "paragraphs": ["Una buena primera pantalla permite que el contacto siga siendo posible: confirma la recepción cuando corresponda, explica un siguiente paso y evita presentar el envío como el final de un proceso.", "Este artículo es información general sobre producto y convivencia. Cada centro debe responder a situaciones reales conforme a sus protocolos y responsabilidades."] }
+      ],
+      "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }]
+    },
+    "cuidar-la-confidencialidad-en-conversaciones-de-equipo": {
+      "category": "Privacidad y confianza",
+      "title": "Cuidar la confidencialidad en conversaciones de equipo",
+      "description": "Coordinar una respuesta puede requerir compartir información, pero esa necesidad no justifica difundir más datos de los necesarios ni hablar de casos fuera de los espacios adecuados.",
+      "updatedLabel": "Borrador editorial · previsto para el 25 de enero de 2027",
+      "coverAlt": "Sala de reunión escolar vacía con mesa redonda, tres sillas, una carpeta cerrada, una caja de madera y cristal translúcido.",
+      "introduction": "Los equipos necesitan coordinarse para responder con cuidado. La confidencialidad no significa que nadie pueda hablar de una situación; significa que la información se comparte con propósito, con las personas que la necesitan y dentro de los límites que corresponden.",
+      "sections": [
+        { "heading": "Compartir necesita una finalidad", "paragraphs": ["Antes de trasladar información, conviene poder explicar qué decisión o apoyo permite y quién necesita conocerla. Si no existe una finalidad clara, puede que el detalle no deba circular en esa conversación.", "La coordinación no exige repetir todos los datos disponibles. Un resumen proporcionado puede ser más útil y respetuoso que un relato amplio con información personal innecesaria."] },
+        { "heading": "Los espacios también forman parte del cuidado", "paragraphs": ["Una conversación sensible requiere un canal, un lugar y unas personas adecuadas. Evitar pasillos, grupos informales o herramientas no autorizadas reduce el riesgo de que la información llegue a quien no debe recibirla.", "El equipo debe conocer los límites de su papel y saber cuándo es necesario consultar a responsables, protección de datos u otros profesionales competentes."] },
+        { "heading": "Documentar no es acumular", "paragraphs": ["Registrar una decisión o un siguiente paso puede ser necesario para dar continuidad. Ese registro debe ser pertinente, protegido y accesible solo para quien tenga autorización.", "Este artículo es información general sobre privacidad y convivencia. Cada centro debe revisar sus prácticas conforme a sus protocolos y al asesoramiento jurídico y de protección de datos aplicable."] }
+      ],
+      "sources": [{ "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }, { "label": "AEPD: principios de protección de datos", "href": "https://www.aepd.es/areas-de-actuacion/principios" }]
+    },
+    "senales-contexto-y-limites-de-la-deteccion-temprana": {
+      "category": "Atención responsable",
+      "title": "Señales, contexto y límites de la detección temprana",
+      "description": "Observar cambios o preocupaciones puede abrir una conversación de apoyo, pero una señal aislada no es un diagnóstico ni autoriza conclusiones precipitadas.",
+      "updatedLabel": "Borrador editorial · previsto para el 1 de febrero de 2027",
+      "coverAlt": "Rincón escolar vacío con una mesa de madera, una libreta cerrada, una lupa, una silla y plantas.",
+      "introduction": "Detectar temprano no significa vigilar a las personas ni interpretar cada cambio como un problema. Significa contar con formas proporcionadas de escuchar una preocupación, buscar contexto y activar el apoyo o procedimiento que corresponda.",
+      "sections": [
+        { "heading": "Una señal no explica una situación", "paragraphs": ["Un cambio de conducta, una ausencia o una comunicación breve pueden tener muchos significados. Convertirlos en una conclusión sin contexto puede estigmatizar, aumentar la preocupación o llevar a una respuesta inadecuada.", "Es preferible reconocer lo que se sabe y lo que falta por conocer. Una conversación respetuosa o una consulta con el equipo competente pueden aportar información sin presionar a nadie a dar explicaciones inmediatas."] },
+        { "heading": "La escucha debe tener límites y propósito", "paragraphs": ["Recoger una preocupación exige explicar para qué se necesita la información, quién puede verla y qué ocurrirá después. No es necesario pedir todos los detalles para decidir un primer paso seguro y proporcionado.", "La herramienta puede ayudar a ordenar un aviso, pero no sustituye la valoración humana, los protocolos del centro ni el apoyo especializado cuando sea necesario."] },
+        { "heading": "Prevenir no equivale a prometer certeza", "paragraphs": ["Un centro puede mejorar sus vías de ayuda, su accesibilidad y su capacidad de respuesta sin afirmar que detectará o evitará toda situación. La prevención se sostiene con prácticas continuas, no con una única señal o una única herramienta.", "Este artículo es información general sobre convivencia. Cada centro debe actuar según sus responsabilidades, procedimientos y recursos competentes."] }
+      ],
+      "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }]
+    },
+    "un-lenguaje-inclusivo-para-hablar-de-convivencia": {
+      "category": "Comunicación responsable",
+      "title": "Un lenguaje inclusivo para hablar de convivencia",
+      "description": "Las palabras pueden abrir una conversación o cerrarla antes de empezar: comunicar con precisión y respeto ayuda a pedir apoyo sin reducir a nadie a una etiqueta.",
+      "updatedLabel": "Borrador editorial · previsto para el 8 de febrero de 2027",
+      "coverAlt": "Rincón escolar vacío con dos sillones, una mesa redonda, una libreta sin texto legible, estanterías y plantas.",
+      "introduction": "Hablar de convivencia exige nombrar situaciones sin convertir a las personas en un problema. Un lenguaje inclusivo no es una fórmula decorativa: ayuda a describir lo que se sabe, evitar prejuicios y dejar espacio para comprender el contexto.",
+      "sections": [
+        { "heading": "Describir antes de etiquetar", "paragraphs": ["Es preferible explicar una conducta, una necesidad o una preocupación concreta antes que usar una etiqueta que parezca definir a toda una persona. Esto mejora la claridad y evita que una primera impresión se convierta en una conclusión.", "La precisión también implica reconocer incertidumbre. Si no se conoce el contexto completo, conviene decirlo y orientar hacia la escucha o el procedimiento que corresponda."] },
+        { "heading": "El tono también comunica límites", "paragraphs": ["Los mensajes de ayuda deben ser claros sin dramatizar, culpabilizar o prometer resultados. Una persona necesita entender qué puede hacer un canal y qué ocurrirá después sin sentir que debe demostrar algo para ser escuchada.", "Revisar títulos, campos, correos y respuestas permite detectar expresiones que excluyen, presuponen o dificultan pedir apoyo."] },
+        { "heading": "La inclusión se comprueba con la comunidad", "paragraphs": ["Un mensaje pensado por el equipo puede no funcionar igual para quien lo recibe. Escuchar a alumnado, familias y profesionales ayuda a comprobar si se entiende y si ofrece una vía de participación segura.", "Este artículo es información general sobre comunicación y convivencia. Cada centro debe aplicar sus responsabilidades, protocolos y medidas de protección en situaciones reales."] }
+      ],
+      "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "que-aporta-una-trazabilidad-proporcionada": {
+      "category": "Privacidad y confianza",
+      "title": "Qué aporta una trazabilidad proporcionada",
+      "description": "Registrar lo necesario puede dar continuidad y explicar decisiones; acumular datos o registrar cada interacción no mejora por sí solo la respuesta.",
+      "updatedLabel": "Borrador editorial · previsto para el 15 de febrero de 2027",
+      "coverAlt": "Mesa de oficina escolar vacía con una carpeta cerrada, tres fichas sin texto, un lápiz, una caja archivadora de madera y una planta.",
+      "introduction": "Una trazabilidad proporcionada ayuda a saber que una comunicación se recibió, quién debe asumir el siguiente paso y qué decisión se tomó. No sustituye la valoración humana ni convierte cada conversación en un registro que deba conservarse indefinidamente.",
+      "sections": [
+        { "heading": "Registrar para dar continuidad", "paragraphs": ["Una nota puede ser útil cuando permite confirmar la recepción, identificar a la persona responsable o recordar el siguiente paso acordado. Para ello no hace falta reproducir cada palabra ni guardar todas las versiones de una conversación.", "Antes de registrar información, conviene poder explicar qué continuidad aporta. Esta pregunta ayuda a distinguir una anotación necesaria de un detalle que no servirá para orientar, proteger o revisar una actuación."] },
+        { "heading": "Proporción antes que acumulación", "paragraphs": ["La utilidad de un registro depende de su finalidad, de quién puede acceder a él y de cuánto tiempo debe conservarse. Añadir datos por si acaso no mejora la respuesta y puede aumentar la exposición de información sensible.", "La trazabilidad no debe convertirse en vigilancia. Una herramienta puede ordenar un proceso, pero no autoriza a observar, compartir o conservar más información de la necesaria para el propósito definido."] },
+        { "heading": "Explicar qué queda registrado", "paragraphs": ["Cuando una persona contacta con un centro, necesita entender qué información se recoge, para qué se utiliza y qué puede esperar después. Comunicar estos límites con claridad facilita una participación más informada y evita promesas que no pueden cumplirse.", "Este artículo ofrece información general sobre privacidad y convivencia. Cada centro debe aplicar sus protocolos, responsabilidades y asesoramiento jurídico y de protección de datos al definir sus registros."] }
+      ],
+      "sources": [
+        { "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" },
+        { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }
+      ]
+    },
+    "ciberacoso-acompanar-documentar-y-derivar-sin-improvisar": {
+      "category": "Atención responsable",
+      "title": "Ciberacoso: acompañar, documentar y derivar sin improvisar",
+      "description": "Ante una preocupación en línea, acompañar y preservar el contexto puede ayudar; responder exige activar las vías y responsabilidades que correspondan, no resolverlo a solas ni a toda prisa.",
+      "updatedLabel": "Borrador editorial · previsto para el 22 de febrero de 2027",
+      "coverAlt": "Sala de apoyo escolar vacía con una mesa de madera, una carpeta de cartón cerrada, tres tarjetas sin texto, un lápiz, una silla azul y plantas.",
+      "introduction": "Una situación que ocurre en línea puede afectar a la convivencia fuera de la pantalla y necesita una respuesta cuidadosa. Acompañar a quien comunica una preocupación, conservar solo el contexto necesario y activar el canal adecuado ayuda más que pedir una investigación improvisada o prometer un resultado inmediato.",
+      "sections": [
+        { "heading": "Empezar por la escucha y la seguridad", "paragraphs": ["Una primera conversación debe permitir explicar qué se sabe, qué apoyo necesita la persona y si existe una necesidad de ayuda inmediata. No conviene minimizar una preocupación por haber ocurrido en un entorno digital ni presionar para que se relaten detalles delante de otras personas.", "El centro debe explicar qué puede hacer su canal y cuáles son sus límites. Si una situación requiere atención urgente, protección especializada o intervención de otra autoridad, corresponde acudir a los recursos y procedimientos competentes."] },
+        { "heading": "Conservar contexto no es difundirlo", "paragraphs": ["Una captura, una fecha o una descripción breve pueden ayudar a entender qué se ha comunicado y a trasladarlo al equipo adecuado. Recoger todo el contenido disponible, reenviarlo por grupos informales o pedir a otras personas que investiguen puede aumentar la exposición y el daño.", "Antes de guardar o compartir algo, conviene preguntarse para qué es necesario, quién tiene autorización para recibirlo y cómo se protege. Las imágenes o mensajes de una situación no se convierten en material de circulación libre por formar parte de un aviso."] },
+        { "heading": "Derivar también es una respuesta", "paragraphs": ["Una herramienta puede ordenar la recepción de una preocupación, pero no sustituye los protocolos del centro, la valoración de las personas responsables ni los recursos especializados. Explicar el siguiente paso y quién lo asumirá evita dejar a quien comunica la situación sin orientación.", "Este artículo ofrece información general sobre ciberconvivencia. Cada centro debe aplicar sus protocolos, responsabilidades y vías de protección ante situaciones reales; no sustituye la atención urgente ni el asesoramiento especializado."] }
+      ],
+      "sources": [
+        { "label": "INCIBE: ciberconvivencia para educadores", "href": "https://www.incibe.es/menores/educadores/ciberconvivencia" },
+        { "label": "Ministerio de Educación: acoso y ciberacoso", "href": "https://www.educacionfpydeportes.gob.es/mc/sgctie/convivencia-escolar/recursos-nuevo/publicaciones/acoso-ciberacoso.html" }
+      ]
+    },
+    "la-coordinacion-no-consiste-en-compartirlo-todo": {
+      "category": "Privacidad y confianza",
+      "title": "La coordinación no consiste en compartirlo todo",
+      "description": "Coordinar una respuesta exige que la información llegue a quien la necesita, con una finalidad clara; no exige convertir cada detalle en conocimiento de todo el equipo.",
+      "updatedLabel": "Borrador editorial · previsto para el 1 de marzo de 2027",
+      "coverAlt": "Sala de reunión escolar vacía con una mesa redonda, dos carpetas azules cerradas, lápices, una pequeña planta y sillas azules.",
+      "introduction": "Coordinarse puede ser imprescindible para dar continuidad a una situación. El reto consiste en compartir lo pertinente con las personas que deben actuar, sin ampliar innecesariamente el círculo de acceso ni perder de vista el propósito de cada conversación.",
+      "sections": [
+        { "heading": "Una finalidad concreta orienta la conversación", "paragraphs": ["Antes de trasladar información, conviene poder responder qué decisión, apoyo o siguiente paso permite. Una finalidad concreta evita convertir una reunión en un relato amplio de datos que no ayudan a actuar.", "El equipo puede necesitar contextos distintos según su responsabilidad. Compartir de forma proporcionada no es ocultar información: es facilitar la que cada persona necesita para cumplir su papel."] },
+        { "heading": "El acceso también se revisa", "paragraphs": ["Una coordinación cuidadosa define quién participa, por qué canal y durante cuánto tiempo necesita la información. Los grupos informales, los pasillos o los reenvíos sin control pueden exponer datos fuera de los espacios adecuados.", "Documentar un acuerdo o una responsabilidad puede ser útil; conservar cada intercambio o copiar a todas las personas no lo es necesariamente. La protección se integra en el modo de trabajar, no se añade al final."] },
+        { "heading": "Coordinar incluye explicar los límites", "paragraphs": ["Cuando se recibe una comunicación, es importante explicar qué personas o equipos pueden necesitar conocerla y para qué. Esta claridad evita expectativas de secreto absoluto y favorece una participación más informada.", "Este artículo ofrece información general sobre privacidad y convivencia. Cada centro debe aplicar sus protocolos, responsabilidades y asesoramiento jurídico y de protección de datos en situaciones reales."] }
+      ],
+      "sources": [{ "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }, { "label": "AEPD: principios de protección de datos", "href": "https://www.aepd.es/areas-de-actuacion/principios" }]
+    },
+    "cuando-la-respuesta-necesita-a-mas-de-una-persona": {
+      "category": "Atención responsable",
+      "title": "Cuando la respuesta necesita a más de una persona",
+      "description": "Algunas situaciones necesitan responsabilidades complementarias. Coordinar funciones y límites ayuda a cuidar la respuesta sin diluir quién debe decidir o actuar.",
+      "updatedLabel": "Borrador editorial · previsto para el 8 de marzo de 2027",
+      "coverAlt": "Sala de reunión escolar vacía con una mesa ovalada, tres carpetas cerradas de colores suaves, lápices, dos sillas azules y una planta.",
+      "introduction": "No todas las comunicaciones pueden atenderse desde un único papel. Una respuesta puede requerir escucha, protección, coordinación y seguimiento; distribuir esas tareas con claridad evita que una persona cargue sola con una situación o que varias actúen sin un marco común.",
+      "sections": [
+        { "heading": "Distinguir funciones antes de actuar", "paragraphs": ["Conviene saber quién recibe una comunicación, quién valora el siguiente paso, quién puede ofrecer apoyo y quién debe tomar determinadas decisiones. Nombrar esas funciones no retrasa la ayuda: permite que cada responsabilidad tenga un lugar claro.", "La coordinación no convierte a todas las personas en responsables de todo. Cada integrante necesita conocer el alcance de su papel y cuándo debe consultar, escalar o derivar la situación."] },
+        { "heading": "Compartir lo necesario para el siguiente paso", "paragraphs": ["Trabajar entre varias personas puede exigir trasladar información pertinente, pero no cada detalle ni todos los registros disponibles. El propósito de la coordinación debe guiar qué se comparte, con quién y por qué canal.", "Un acuerdo breve sobre el siguiente paso, la persona responsable y la forma de revisar la continuidad puede ser más útil que una cadena de mensajes que no aclara quién hará qué."] },
+        { "heading": "La respuesta sigue siendo humana", "paragraphs": ["Una herramienta puede ordenar una comunicación o dejar constancia de una tarea, pero no reemplaza la valoración de las personas autorizadas ni los protocolos del centro. Si hacen falta recursos especializados o atención urgente, corresponde activar las vías competentes.", "Este artículo ofrece información general sobre convivencia escolar. Cada centro debe aplicar sus responsabilidades, procedimientos y medidas de protección ante situaciones reales."] }
+      ],
+      "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "evitar-etiquetas-que-danan-antes-de-comprender": {
+      "category": "Comunicación responsable",
+      "title": "Evitar etiquetas que dañan antes de comprender",
+      "description": "Una palabra puede describir una preocupación o convertirla en una identidad. Hablar de hechos y contexto ayuda a responder con más cuidado y menos prejuicios.",
+      "updatedLabel": "Borrador editorial · previsto para el 15 de marzo de 2027",
+      "coverAlt": "Rincón de lectura escolar vacío con una mesa redonda, una libreta cerrada sin texto, un lápiz, una lupa, una butaca azul y plantas.",
+      "introduction": "Las etiquetas rápidas pueden parecer una forma de ordenar una situación, pero a menudo simplifican demasiado a una persona o un momento. Describir lo que se ha observado, reconocer lo que aún no se sabe y escuchar el contexto permite abrir una respuesta más respetuosa.",
+      "sections": [
+        { "heading": "Describir no es definir a una persona", "paragraphs": ["Hablar de una conducta, una comunicación o una necesidad concreta ofrece más información que usar una palabra que parece resumir a alguien por completo. Esta diferencia ayuda a evitar que una primera impresión se convierta en una conclusión permanente.", "La precisión también incluye reconocer la incertidumbre. Si faltan elementos relevantes, conviene expresarlo y buscar el apoyo o el procedimiento que corresponda en lugar de completar los huecos con suposiciones."] },
+        { "heading": "El contexto cambia cómo se entiende una situación", "paragraphs": ["Una misma señal puede tener significados distintos según el momento, las relaciones y las condiciones de la persona. Preguntar y escuchar no garantiza una respuesta sencilla, pero evita tratar una hipótesis como si fuera un hecho probado.", "El lenguaje que utiliza un centro influye en si una persona se siente segura para pedir apoyo. Los títulos, formularios y mensajes deben evitar culpabilizar, diagnosticar o anticipar decisiones."] },
+        { "heading": "Revisar las palabras forma parte del cuidado", "paragraphs": ["Los equipos pueden revisar expresiones habituales y preguntarse si ayudan a comprender o si cierran la conversación. Cambiar una etiqueta por una descripción concreta no elimina la necesidad de actuar; permite hacerlo con mayor responsabilidad.", "Este artículo ofrece información general sobre comunicación y convivencia escolar. Cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección en situaciones reales."] }
+      ],
+      "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "el-valor-de-una-pregunta-abierta-y-concreta": {
+      "category": "Comunicación responsable", "title": "El valor de una pregunta abierta y concreta", "description": "Las preguntas pueden facilitar que una preocupación se explique con sus propias palabras. Ser abierto no significa pedirlo todo ni dejar sin orientación a quien necesita apoyo.", "updatedLabel": "Borrador editorial · previsto para el 22 de marzo de 2027", "coverAlt": "Sala de apoyo escolar vacía con una mesa de madera, una tarjeta blanca sin texto, una libreta cerrada, un lápiz, una silla azul y plantas.", "introduction": "Una buena pregunta no busca confirmar una suposición. Abre espacio para que una persona explique lo que considera importante y, a la vez, marca un propósito claro para que la conversación no se convierta en una recogida ilimitada de datos.",
+      "sections": [{ "heading": "Abrir la conversación sin dirigirla", "paragraphs": ["Preguntas como qué ha ocurrido, qué necesita la persona ahora o qué le preocupa pueden aportar contexto sin adelantar una conclusión. El tono y el momento importan: no todas las personas pueden explicar una situación de la misma manera ni al mismo ritmo.", "Una pregunta abierta no obliga a compartir detalles personales. También debe ser posible decir que no se sabe, que no se quiere responder o que se necesita otra vía de apoyo."] }, { "heading": "Concretar el propósito protege la escucha", "paragraphs": ["Explicar para qué se pregunta ayuda a entender qué información es necesaria para un primer paso y quién podrá utilizarla. Esta claridad reduce la sensación de interrogatorio y evita pedir datos que no servirán para orientar la respuesta.", "Si aparecen necesidades urgentes o cuestiones que exceden el canal, las personas responsables deben activar los recursos y procedimientos adecuados, no prolongar la conversación como si fuera suficiente por sí sola."] }, { "heading": "Escuchar también incluye no completar los huecos", "paragraphs": ["Una respuesta breve o imprecisa puede ser el inicio de una escucha, no una prueba de falta de importancia. Conviene registrar solo lo pertinente y reconocer qué necesita todavía valoración humana.", "Este artículo ofrece información general sobre comunicación y convivencia escolar. Cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección en situaciones reales."] }],
+      "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }]
+    },
+    "como-redactar-mensajes-que-no-culpabilicen": {
+      "category": "Comunicación responsable", "title": "Cómo redactar mensajes que no culpabilicen", "description": "Un mensaje claro puede explicar límites y próximos pasos sin atribuir culpa, exigir una versión perfecta ni convertir una preocupación en un juicio sobre quien la comparte.", "updatedLabel": "Borrador editorial · previsto para el 29 de marzo de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una tarjeta blanca sin texto, una carpeta cerrada, un lápiz, una silla azul y una planta en un jarrón.", "introduction": "La forma de escribir también puede invitar a pedir ayuda o hacer que una persona se retire de la conversación. Un mensaje responsable explica qué se sabe, qué no puede hacer un canal y cuál es el siguiente paso, sin culpar ni prometer certezas.",
+      "sections": [{ "heading": "Hablar de hechos y posibilidades", "paragraphs": ["Es preferible describir una información o una acción posible que atribuir intenciones a quien contacta. Expresiones como “podemos revisar” o “este canal permite comunicar una preocupación” son más claras que fórmulas que hacen responsable a la persona de demostrar todo.", "La claridad no exige un tono frío. Un lenguaje respetuoso puede reconocer una preocupación sin confirmar una interpretación ni anticipar el resultado de una valoración."] }, { "heading": "Explicar los límites no equivale a cerrar la puerta", "paragraphs": ["Un mensaje debe indicar qué puede atender el centro, qué información puede necesitar y cuándo hace falta otra vía. Esto evita promesas de confidencialidad absoluta, respuestas inmediatas o soluciones que dependen de procedimientos y personas responsables.", "Si existe una necesidad urgente o especializada, la orientación debe dirigir a los recursos competentes. El texto no sustituye una valoración ni una respuesta de protección."] }, { "heading": "Revisar antes de enviar", "paragraphs": ["Conviene comprobar si un título, una pregunta o un correo presupone culpa, usa una etiqueta o dificulta comprender qué ocurrirá después. Una revisión breve con personas distintas puede detectar barreras que quien redacta no ve.", "Este artículo ofrece información general sobre comunicación y convivencia escolar. Cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección en situaciones reales."] }], "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "el-entorno-digital-tambien-forma-parte-del-centro": {
+      "category": "Comunidad educativa", "title": "El entorno digital también forma parte del centro", "description": "La convivencia no termina al salir del aula. Hablar de lo digital permite prevenir, pedir apoyo y revisar prácticas sin convertir a la comunidad en un espacio vigilado.", "updatedLabel": "Borrador editorial · previsto para el 5 de abril de 2027", "coverAlt": "Espacio común escolar vacío con una mesa de madera, una carpeta cerrada, un lápiz, plantas, cristal translúcido y un panel geométrico azul sin texto.", "introduction": "Las relaciones, los mensajes y los conflictos pueden continuar en espacios digitales. Reconocerlo no implica controlar cada interacción: significa integrar la conversación sobre seguridad, respeto y vías de ayuda en la convivencia cotidiana del centro.",
+      "sections": [{ "heading": "Lo digital no está separado de las relaciones", "paragraphs": ["Una preocupación que se expresa en línea puede afectar al bienestar y a la participación en el centro. Escucharla con cuidado permite valorar el contexto sin reducir la situación a una pantalla ni asumir que todo debe resolverse desde una herramienta."] }, { "heading": "Prevenir no es vigilar", "paragraphs": ["La prevención puede incluir acuerdos comprensibles, educación crítica y canales de ayuda, sin observar conversaciones privadas ni recopilar datos por si acaso. Los límites y el respeto a la privacidad son parte de una convivencia digital responsable."] }, { "heading": "La ayuda necesita vías claras", "paragraphs": ["Alumnado, familias y profesionales deben saber qué canal pueden usar, qué apoyo puede ofrecer y cuándo hace falta recurrir a un recurso competente. Este artículo ofrece información general; cada centro debe aplicar sus protocolos y medidas de protección ante situaciones reales."] }], "sources": [{ "label": "INCIBE: ciberconvivencia para educadores", "href": "https://www.incibe.es/menores/educadores/ciberconvivencia" }, { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }]
+    },
+    "proteccion-de-datos-quien-necesita-saber-que": {
+      "category": "Privacidad y confianza", "title": "Protección de datos: quién necesita saber qué", "description": "Proteger datos no significa impedir toda coordinación. Significa compartir información con una finalidad concreta, con las personas autorizadas y en una cantidad proporcionada.", "updatedLabel": "Borrador editorial · previsto para el 12 de abril de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una carpeta cerrada, tres tarjetas sin texto separadas, un lápiz, una caja de archivo y una planta.", "introduction": "En una situación de convivencia puede ser necesario que varias personas conozcan información para ofrecer apoyo o tomar una decisión. La pregunta útil no es quién tiene curiosidad, sino quién necesita qué dato para cumplir una responsabilidad concreta.",
+      "sections": [{ "heading": "La finalidad orienta el acceso", "paragraphs": ["Antes de compartir información, conviene poder explicar qué apoyo, decisión o paso siguiente permite. Esta finalidad ayuda a limitar los datos, las personas y los canales implicados sin bloquear una coordinación necesaria."] }, { "heading": "Necesitar saber no es saberlo todo", "paragraphs": ["Una persona puede necesitar un dato pertinente sin acceder a todo el contexto disponible. Resumir lo necesario y evitar detalles irrelevantes reduce la exposición y permite que cada papel cumpla su función."] }, { "heading": "Los límites se comunican", "paragraphs": ["Quien contacta con el centro debe poder entender qué información puede compartirse para atender la situación y por qué. Este artículo ofrece información general, no asesoramiento jurídico; cada centro debe aplicar sus protocolos y criterios de protección de datos."] }], "sources": [{ "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }, { "label": "AEPD: principios de protección de datos", "href": "https://www.aepd.es/areas-de-actuacion/principios" }]
+    },
+    "preparar-una-reunion-con-cuidado-y-proposito": {
+      "category": "Atención responsable", "title": "Preparar una reunión con cuidado y propósito", "description": "Una reunión puede ordenar una respuesta si tiene una finalidad clara, las personas adecuadas y límites sobre la información que se compartirá.", "updatedLabel": "Borrador editorial · previsto para el 19 de abril de 2027", "coverAlt": "Sala de reunión escolar vacía con una mesa redonda, dos carpetas cerradas, lápices, sillas azules, cristal translúcido y una planta.", "introduction": "Reunirse no garantiza una buena coordinación. Preparar el propósito, las personas participantes y los límites de la conversación ayuda a que el tiempo compartido sirva para decidir un siguiente paso y no para ampliar innecesariamente una situación sensible.",
+      "sections": [{ "heading": "Empezar por la finalidad", "paragraphs": ["Antes de convocar, conviene definir qué necesita la reunión: aclarar una responsabilidad, decidir un apoyo o revisar la continuidad. Una finalidad concreta permite invitar a las personas necesarias y evitar una circulación amplia de información."] }, { "heading": "Cuidar el espacio y los límites", "paragraphs": ["El canal, el lugar y el tiempo importan cuando se tratará información sensible. Es útil acordar qué se comparte, qué debe quedar registrado y qué no corresponde debatir en ese espacio."] }, { "heading": "Salir con un siguiente paso claro", "paragraphs": ["Una reunión responsable termina con una tarea, una persona responsable y una forma de revisar lo acordado. Este artículo ofrece información general; cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección en situaciones reales."] }], "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "la-convivencia-se-sostiene-tambien-fuera-del-aula": {
+      "category": "Comunidad educativa", "title": "La convivencia se sostiene también fuera del aula", "description": "Los pasillos, patios, entradas y espacios digitales forman parte de la experiencia escolar. Cuidarlos exige acuerdos y apoyos que no dependan de un único lugar.", "updatedLabel": "Borrador editorial · previsto para el 26 de abril de 2027", "coverAlt": "Pasillo escolar vacío que se abre a un patio tranquilo, con un banco de madera, una carpeta cerrada, un lápiz, plantas y una pared azul.", "introduction": "La convivencia se construye en muchos momentos cotidianos, no solo durante una clase. Mirar los distintos espacios del centro ayuda a detectar barreras, mejorar la accesibilidad de la ayuda y sostener acuerdos que puedan practicarse.",
+      "sections": [{ "heading": "Los espacios también comunican", "paragraphs": ["Un pasillo, un patio o una entrada pueden facilitar el encuentro o hacer difícil pedir apoyo. Observar cómo se usan permite revisar si hay lugares, tiempos y personas de referencia suficientemente claros."] }, { "heading": "Los acuerdos deben poder viajar", "paragraphs": ["Una norma o vía de ayuda que solo funciona en un aula puede perderse en el resto del día. Explicar los acuerdos en formatos comprensibles y aplicarlos de forma coherente ayuda a que la comunidad sepa qué esperar."] }, { "heading": "Cuidar no es vigilar", "paragraphs": ["Prestar atención a los espacios no autoriza a controlar cada interacción. Significa ofrecer presencia, accesibilidad y canales adecuados para pedir ayuda. Este artículo ofrece información general; cada centro debe aplicar sus protocolos y medidas de protección."] }], "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "prevencion-observar-el-clima-antes-de-que-aparezca-una-crisis": {
+      "category": "Prevención y cuidado", "title": "Prevención: observar el clima antes de que aparezca una crisis", "description": "Prevenir no consiste en adivinar lo que ocurrirá ni vigilar a cada persona. Consiste en escuchar el clima, revisar barreras y fortalecer apoyos antes de que una dificultad escale.", "updatedLabel": "Borrador editorial · previsto para el 3 de mayo de 2027", "coverAlt": "Patio escolar vacío al amanecer con un banco de madera, una libreta cerrada sin texto, un lápiz, plantas y arquitectura blanca y azul.", "introduction": "Un centro puede mejorar la convivencia sin esperar a que una situación se vuelva urgente. Observar cómo se sienten y participan las personas, qué dudas se repiten y qué apoyos no están llegando ayuda a revisar prácticas con cuidado.",
+      "sections": [{ "heading": "El clima se escucha, no se diagnostica", "paragraphs": ["Las preocupaciones recurrentes, los espacios poco accesibles o la dificultad para pedir ayuda pueden ser señales para abrir una conversación. No permiten por sí solos concluir qué le ocurre a una persona ni justificar etiquetas o decisiones automáticas."] }, { "heading": "Revisar condiciones antes que buscar culpables", "paragraphs": ["Preguntarse si los acuerdos se entienden, si los canales son accesibles y si existe una referencia clara permite mejorar el entorno. La prevención se construye con ajustes continuos, no con una única medición ni con promesas de certeza."] }, { "heading": "Actuar con proporción", "paragraphs": ["Recoger una preocupación debe tener finalidad, límites y una respuesta humana responsable. Este artículo ofrece información general; cada centro debe aplicar sus protocolos, recursos competentes y medidas de protección ante situaciones reales."] }], "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }]
+    },
+    "compartir-informacion-con-familias-sin-exponer-a-otras-personas": {
+      "category": "Privacidad y confianza", "title": "Compartir información con familias sin exponer a otras personas", "description": "Informar a una familia puede ser necesario, pero no autoriza a trasladar datos personales, relatos o decisiones que pertenecen a otras personas.", "updatedLabel": "Borrador editorial · previsto para el 10 de mayo de 2027", "coverAlt": "Recepción escolar vacía con una mesa de madera, dos carpetas cerradas separadas, dos tarjetas sin texto, un lápiz, cristal translúcido y una planta.", "introduction": "Las familias necesitan información comprensible sobre cómo puede atenderse una preocupación. Esa comunicación debe centrarse en lo que les afecta, en las vías disponibles y en los siguientes pasos, sin convertirla en un detalle de la situación de otras personas.",
+      "sections": [{ "heading": "Explicar el proceso sin relatar casos ajenos", "paragraphs": ["Se puede informar de qué canal existe, qué límites tiene y qué puede ocurrir después sin compartir identidades, versiones o medidas relativas a otras personas. Esta claridad protege la privacidad y evita expectativas que el centro no debe satisfacer."] }, { "heading": "Centrarse en el apoyo y la responsabilidad propia", "paragraphs": ["Una comunicación útil explica qué apoyo puede ofrecerse, qué información necesita el centro para valorar un caso y a quién corresponde cada siguiente paso. No es necesario comparar situaciones ni justificar una respuesta mediante datos de terceros."] }, { "heading": "Usar canales adecuados", "paragraphs": ["La información sensible requiere las personas, el momento y el canal apropiados. Este artículo ofrece información general sobre privacidad y convivencia; cada centro debe aplicar sus protocolos, responsabilidades y criterios de protección de datos."] }], "sources": [{ "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }, { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }]
+    },
+    "cuando-la-tecnologia-ayuda-a-ordenar-no-a-decidir": {
+      "category": "Atención responsable", "title": "Cuando la tecnología ayuda a ordenar, no a decidir", "description": "Una herramienta puede ordenar una comunicación, recordar un paso o facilitar el acceso a información. No valora por sí sola el contexto ni sustituye las decisiones de las personas responsables.", "updatedLabel": "Borrador editorial · previsto para el 17 de mayo de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una carpeta de papel cerrada, tres tarjetas blancas sin texto ordenadas, un lápiz, cristal translúcido y una planta.", "introduction": "La tecnología puede hacer más comprensible un proceso cuando ayuda a recibir, ordenar o explicar información. Su utilidad depende de que no se le atribuya una capacidad que no tiene: comprender una situación, decidir una medida o reemplazar una conversación necesaria.",
+      "sections": [{ "heading": "Ordenar no es interpretar", "paragraphs": ["Clasificar una entrada, mostrar un siguiente paso o mantener una referencia puede reducir tareas repetitivas. Eso no convierte un dato breve en una explicación completa ni permite concluir qué apoyo, protección o respuesta corresponde."] }, { "heading": "La decisión necesita responsables", "paragraphs": ["Las decisiones que afectan a personas requieren valoración de contexto, revisión de los protocolos y personas autorizadas. La herramienta debe dejar claros sus límites y permitir que el proceso siga siendo comprensible y revisable."] }, { "heading": "Diseñar límites también es cuidado", "paragraphs": ["Pedir solo los datos necesarios, evitar conclusiones automáticas y explicar qué ocurre después protege a quien contacta. Este artículo ofrece información general; cada centro debe aplicar sus procedimientos, responsabilidades y medidas de protección."] }], "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }]
+    },
+    "disenar-procesos-que-admitan-dudas-y-rectificaciones": {
+      "category": "Atención responsable", "title": "Diseñar procesos que admitan dudas y rectificaciones", "description": "Una vía responsable no exige que una comunicación llegue perfecta. Debe permitir aclarar información, reconocer límites y rectificar sin convertir cada ajuste en una prueba de mala fe.", "updatedLabel": "Borrador editorial · previsto para el 24 de mayo de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una carpeta cerrada, dos tarjetas blancas sin texto ligeramente separadas, un lápiz, cristal translúcido y una planta.", "introduction": "Las situaciones de convivencia rara vez se entienden por completo en un primer mensaje. Un proceso cuidado deja espacio para hacer preguntas, aportar contexto y corregir una información, sin dejar a las personas sin orientación sobre qué ocurrirá después.",
+      "sections": [{ "heading": "La primera versión puede ser incompleta", "paragraphs": ["Una comunicación breve puede ser todo lo que una persona puede explicar en ese momento. Recibirla con respeto no obliga a decidir de inmediato, pero sí requiere evitar tratar la falta de detalle como falta de importancia."] }, { "heading": "Aclarar no es interrogar", "paragraphs": ["Las preguntas deben tener un propósito claro y pedir solo la información necesaria para un siguiente paso. Explicar por qué se pregunta y qué límites tiene el canal reduce la incertidumbre y favorece una participación más informada."] }, { "heading": "Rectificar también es parte de la continuidad", "paragraphs": ["Un dato corregido o un contexto añadido puede cambiar cómo se entiende una situación. El proceso debe permitir registrarlo de forma pertinente y revisarlo con responsables. Este artículo ofrece información general; cada centro debe aplicar sus protocolos y medidas de protección."] }], "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }]
+    },
+    "la-vuelta-de-una-comunicacion-dar-continuidad-sin-prometer-plazos": {
+      "category": "Atención responsable", "title": "La vuelta de una comunicación: dar continuidad sin prometer plazos", "description": "Dar continuidad no es prometer una fecha que no puede garantizarse. Es explicar qué paso sigue, quién puede revisarlo y qué vía existe si la persona necesita otra ayuda.", "updatedLabel": "Borrador editorial · previsto para el 31 de mayo de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una carpeta cerrada, una tarjeta sin texto, un lápiz, un reloj de mesa sin números visibles, cristal translúcido y una planta.", "introduction": "Después de comunicar una preocupación, una persona necesita saber que no ha desaparecido en un proceso opaco. Una respuesta responsable puede confirmar una recepción o explicar el siguiente paso, sin prometer plazos, resultados o confidencialidad que dependen de una valoración posterior.",
+      "sections": [{ "heading": "La continuidad se explica", "paragraphs": ["Un mensaje breve puede indicar que una comunicación ha llegado a la vía adecuada, quién o qué equipo puede revisar el siguiente paso y qué límites tiene ese canal. Esta orientación reduce incertidumbre sin crear garantías que no pueden cumplirse."] }, { "heading": "Los plazos no sustituyen la información", "paragraphs": ["Una fecha cerrada puede ser engañosa cuando depende del contexto, de apoyos necesarios o de procedimientos de protección. Es preferible explicar qué puede ocurrir después y cómo pedir orientación adicional si la situación cambia."] }, { "heading": "Mantener abierta una vía segura", "paragraphs": ["La persona debe poder saber qué recurso utilizar si necesita ayuda urgente o especializada. Este artículo ofrece información general sobre convivencia; cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección."] }], "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }]
+    },
+    "fin-de-curso-conservar-lo-necesario-y-revisar-lo-aprendido": {
+      "category": "Privacidad y confianza", "title": "Fin de curso: conservar lo necesario y revisar lo aprendido", "description": "Cerrar un curso no exige archivar todo. Revisar qué información necesita continuidad, qué debe protegerse y qué puede aprender el centro ayuda a cuidar mejor el siguiente periodo.", "updatedLabel": "Borrador editorial · previsto para el 7 de junio de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una caja de archivo de cartón cerrada, una carpeta cerrada, un lápiz, una silla gris y una planta con luz cálida de final de tarde.", "introduction": "El cierre de curso puede ser una oportunidad para revisar procesos de convivencia y privacidad. Esta revisión debe distinguir entre la información necesaria para responsabilidades concretas y la acumulación de datos que ya no aporta continuidad ni cuidado.",
+      "sections": [{ "heading": "Conservar requiere una finalidad", "paragraphs": ["Antes de archivar, conviene saber qué información debe mantenerse, quién la necesita y durante cuánto tiempo conforme a las responsabilidades y normas aplicables. Guardar por si acaso no es una respuesta suficiente a la necesidad de continuidad."] }, { "heading": "Revisar no es reutilizar datos sensibles", "paragraphs": ["El equipo puede aprender de patrones, barreras o dudas recurrentes sin convertir casos personales en material de circulación o análisis amplio. Los aprendizajes deben respetar los límites de acceso y la protección de las personas."] }, { "heading": "Preparar el siguiente periodo", "paragraphs": ["La revisión puede traducirse en mejoras de lenguaje, accesibilidad o coordinación. Este artículo ofrece información general, no asesoramiento jurídico; cada centro debe aplicar sus protocolos, responsabilidades y criterios de protección de datos."] }], "sources": [{ "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }, { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }]
+    },
+    "el-bienestar-del-equipo-tambien-afecta-a-la-respuesta": {
+      "category": "Comunidad educativa", "title": "El bienestar del equipo también afecta a la respuesta", "description": "Una respuesta cuidadosa necesita responsabilidades claras, posibilidad de consulta y condiciones para que nadie tenga que sostener a solas una situación compleja.", "updatedLabel": "Borrador editorial · previsto para el 14 de junio de 2027", "coverAlt": "Sala de equipo escolar vacía con una mesa redonda, dos butacas azules, una carpeta cerrada, dos lápices, una taza sin marca y plantas.", "introduction": "Quienes reciben o coordinan comunicaciones también necesitan un marco de apoyo. Hablar de bienestar del equipo no desplaza la responsabilidad hacia las personas profesionales: reconoce que una respuesta más clara y sostenible requiere tiempos, roles y espacios de consulta adecuados.",
+      "sections": [{ "heading": "No responder a solas", "paragraphs": ["Una situación compleja puede requerir que una persona consulte, coordine o derive. Contar con referencias claras y responsabilidades compartidas reduce el riesgo de improvisar o de asumir tareas que corresponden a otro papel."] }, { "heading": "Los límites también protegen al equipo", "paragraphs": ["Saber qué puede atender un canal, qué información debe registrarse y cuándo activar un recurso especializado ayuda a que el cuidado no dependa de disponibilidad ilimitada. Establecer límites no es abandonar una preocupación."] }, { "heading": "Revisar cómo se trabaja", "paragraphs": ["Los equipos pueden revisar si sus procesos facilitan pedir apoyo y repartir la carga de forma responsable. Este artículo ofrece información general sobre convivencia escolar; cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección."] }], "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "un-recurso-accesible-es-un-recurso-mas-util": {
+      "category": "Accesibilidad", "title": "Un recurso accesible es un recurso más útil", "description": "La accesibilidad no es una capa final. Hace que la información, los pasos y las vías de ayuda puedan comprenderse y utilizarse por más personas en condiciones diversas.", "updatedLabel": "Borrador editorial · previsto para el 21 de junio de 2027", "coverAlt": "Zona de información escolar accesible y vacía con una rampa, mesa baja de madera, una carpeta cerrada, una tarjeta sin texto, un lápiz, una silla azul y plantas.", "introduction": "Un recurso cumple mejor su propósito cuando no presupone una única forma de leer, navegar, comprender o pedir apoyo. La accesibilidad ayuda a que una persona encuentre una vía clara sin tener que superar barreras innecesarias.",
+      "sections": [{ "heading": "La información debe poder entenderse", "paragraphs": ["Un lenguaje claro, una estructura predecible y títulos que expliquen su función ayudan a orientarse. No basta con publicar contenido: conviene comprobar si puede comprenderse con distintos ritmos, apoyos y tecnologías de asistencia."] }, { "heading": "La interacción también cuenta", "paragraphs": ["Los formularios, enlaces y avisos deben permitir completar una acción sin depender solo del color, de un dispositivo o de una destreza concreta. Probar recorridos reales permite detectar barreras antes de que una persona se quede fuera."] }, { "heading": "Mejorar es un proceso continuo", "paragraphs": ["La accesibilidad se revisa cuando cambia un contenido, una necesidad o una herramienta. Este artículo ofrece información general; cada centro debe aplicar sus recursos, responsabilidades y criterios de accesibilidad en su contexto."] }], "sources": [{ "label": "W3C: WCAG 2.2", "href": "https://www.w3.org/TR/WCAG22/" }, { "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }]
+    },
+    "las-palabras-importan-cuando-hay-una-situacion-sensible": {
+      "category": "Comunicación responsable", "title": "Las palabras importan cuando hay una situación sensible", "description": "El lenguaje puede acompañar una preocupación o aumentar el malestar. Describir con cuidado, explicar límites y evitar conclusiones precipitadas ayuda a que la comunicación sea más segura.", "updatedLabel": "Borrador editorial · previsto para el 28 de junio de 2027", "coverAlt": "Espacio de orientación escolar vacío con una mesa redonda de madera, una libreta cerrada, una tarjeta blanca sin texto, un lápiz, una butaca azul, cristal translúcido y plantas.", "introduction": "Cuando una situación es sensible, cada frase puede influir en cómo una persona entiende el apoyo disponible. Hablar con precisión y respeto no resuelve por sí solo una dificultad, pero evita añadir etiquetas, culpa o promesas que puedan cerrar la conversación.",
+      "sections": [{ "heading": "Describir antes de concluir", "paragraphs": ["Es preferible explicar qué se ha comunicado o qué paso puede darse que atribuir motivos o definir a una persona con una etiqueta. La precisión permite reconocer la incertidumbre y deja espacio para conocer el contexto."] }, { "heading": "El tono puede abrir una vía", "paragraphs": ["Un mensaje claro puede explicar un límite sin sonar a rechazo. Evitar dramatizar, culpabilizar o exigir una versión perfecta ayuda a que la persona sepa qué puede hacer el canal y cómo pedir apoyo."] }, { "heading": "Revisar mensajes habituales", "paragraphs": ["Los equipos pueden revisar títulos, campos y respuestas para detectar expresiones que dificulten la participación. Este artículo ofrece información general; cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección."] }], "sources": [{ "label": "UNESCO: entornos de aprendizaje seguros", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "privacidad-desde-el-diseno-en-herramientas-educativas": {
+      "category": "Privacidad y confianza", "title": "Privacidad desde el diseño en herramientas educativas", "description": "La privacidad se protege mejor cuando las preguntas, los accesos y los tiempos de conservación se piensan antes de pedir datos, no después de acumularlos.", "updatedLabel": "Borrador editorial · previsto para el 5 de julio de 2027", "coverAlt": "Oficina escolar vacía con una mesa de madera, una carpeta de papel cerrada, tres tarjetas sin texto, un lápiz, una caja de madera, cristal translúcido y una planta.", "introduction": "Una herramienta educativa puede facilitar una primera comunicación sin convertirla en una recogida ilimitada de información. Diseñar con privacidad implica decidir qué es necesario para cada propósito, quién puede acceder y cómo se explican esos límites de forma comprensible.",
+      "sections": [{ "heading": "Empezar por el propósito", "paragraphs": ["Antes de añadir un campo, un registro o una función, conviene poder explicar qué necesidad atiende. Esta pregunta ayuda a evitar solicitar datos sensibles por costumbre o para usos futuros que no se han definido."] }, { "heading": "Limitar acceso y conservación", "paragraphs": ["No toda la información debe estar disponible para todas las personas ni guardarse sin límite. Definir accesos, responsabilidades y ciclos de revisión reduce la exposición y hace más claro el funcionamiento del recurso."] }, { "heading": "Explicar antes de pedir", "paragraphs": ["Quien utiliza una herramienta necesita saber qué se recoge, para qué y qué puede esperar después. Este artículo ofrece información general, no asesoramiento jurídico; cada centro debe aplicar sus protocolos y criterios de protección de datos."] }], "sources": [{ "label": "AEPD: guía para centros educativos", "href": "https://www.aepd.es/guias/guia-centros-educativos.pdf" }, { "label": "AEPD: principios de protección de datos", "href": "https://www.aepd.es/areas-de-actuacion/principios" }]
+    },
+    "preparar-el-proximo-curso-a-partir-de-lo-que-funciono": {
+      "category": "Comunidad educativa", "title": "Preparar el próximo curso a partir de lo que funcionó", "description": "Planificar el siguiente curso no exige empezar de cero. Revisar prácticas que facilitaron pedir ayuda, explicar límites o coordinar respuestas permite conservar lo útil y ajustar lo que no llegó.", "updatedLabel": "Borrador editorial · previsto para el 12 de julio de 2027", "coverAlt": "Sala de planificación escolar vacía con una mesa redonda de madera, una carpeta cerrada, tres tarjetas sin texto ordenadas, dos lápices, sillas azules y plantas.", "introduction": "La preparación de un nuevo curso puede apoyarse en preguntas sencillas: qué información se entendió, qué vía resultó accesible y qué coordinación pudo sostenerse. La respuesta no está en copiar cada práctica, sino en revisar con cuidado qué funcionó y para quién.",
+      "sections": [{ "heading": "Conservar los acuerdos que se pudieron practicar", "paragraphs": ["Una norma, un mensaje o una vía de ayuda aporta valor cuando la comunidad puede recordarla y usarla. Identificar esos elementos permite dar continuidad sin presentar el curso anterior como una fórmula cerrada."] }, { "heading": "Aprender sin exponer situaciones personales", "paragraphs": ["La revisión puede mirar barreras, dudas recurrentes y puntos de mejora sin convertir experiencias sensibles en relatos compartidos. El aprendizaje institucional debe respetar la privacidad y los límites de cada caso."] }, { "heading": "Preparar apoyos y responsabilidades", "paragraphs": ["Un comienzo de curso más claro define canales, personas de referencia y formas de revisar los acuerdos. Este artículo ofrece información general; cada centro debe aplicar sus protocolos, responsabilidades y medidas de protección."] }], "sources": [{ "label": "Ministerio de Educación: protocolos de atención", "href": "https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html" }, { "label": "UNESCO: enfoque de centro completo", "href": "https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying" }]
+    },
+    "convivencia-digital-durante-el-verano-pautas-sin-alarmismo": {
+      "category": "Bienestar digital",
+      "title": "Convivencia digital durante el verano: pautas sin alarmismo",
+      "description": "Las vacaciones cambian los ritmos, no la necesidad de cuidado. Unas pautas sencillas pueden ayudar a usar los canales digitales con más claridad, sin convertir cada conversación en una alerta.",
+      "updatedLabel": "Borrador editorial · previsto para el 19 de julio de 2027",
+      "coverAlt": "Rincón vacío de biblioteca escolar iluminado por el sol, con un cuaderno azul cerrado, una bandeja de madera, dos lápices, una planta y una ventana abierta al cielo de verano.",
+      "introduction": "La convivencia digital también necesita contexto durante el verano. Hablar de límites, pausas y maneras de pedir ayuda permite acompañar sin vigilar ni dramatizar las relaciones que continúan fuera del aula.",
+      "sections": [
+        { "heading": "Dar lugar a las pausas", "paragraphs": ["No toda respuesta tiene que ser inmediata. Acordar descansos, horarios razonables y momentos sin notificaciones puede reducir la presión de estar disponible y facilitar conversaciones más cuidadosas."] },
+        { "heading": "Explicar los límites con claridad", "paragraphs": ["Conviene recordar que no se debe difundir información personal, reenviar contenido sensible ni usar un canal común para resolver una situación que requiere atención individual. Un límite explicado a tiempo orienta mejor que un mensaje alarmista."] },
+        { "heading": "Saber dónde pedir apoyo", "paragraphs": ["Las pautas generales no sustituyen las vías de ayuda ni los protocolos de cada centro. Ante una situación urgente debe recurrirse a los servicios adecuados; este artículo ofrece información general y no atención de emergencias."] }
+      ],
+      "sources": [
+        { "label": "INCIBE: Ciberconvivencia para educadores", "href": "https://www.incibe.es/menores/educadores/ciberconvivencia" },
+        { "label": "UNESCO: Entornos seguros de aprendizaje", "href": "https://www.unesco.org/en/health-education/safe-learning-environments?hub=701" }
+      ]
+    },
+    "volver-a-explicar-los-limites-antes-de-reiniciar-un-canal": {
+      "category": "Comunicación responsable", "title": "Volver a explicar los límites antes de reiniciar un canal", "description": "Reabrir un canal compartido es una oportunidad para aclarar su propósito, sus límites y las vías alternativas. Una explicación breve evita que las reglas se den por supuestas.", "updatedLabel": "Borrador editorial · previsto para el 26 de julio de 2027", "coverAlt": "Sala de reunión escolar vacía con mesa redonda de madera, carpeta cerrada, tres tarjetas sin texto, dos lápices, sillas azules y una planta.", "introduction": "Los canales funcionan mejor cuando la comunidad sabe para qué sirven, qué no se debe compartir en ellos y a quién dirigirse cuando una situación necesita atención individual. Recordarlo antes de reiniciarlos cuida tanto la claridad como la privacidad.",
+      "sections": [{"heading":"Nombrar el propósito del canal","paragraphs":["Un canal puede informar, organizar o facilitar una primera orientación, pero no tiene por qué resolverlo todo. Explicar su función ayuda a elegir el medio adecuado y a no convertir una conversación común en un expediente."]},{"heading":"Hacer visibles los límites","paragraphs":["Es útil indicar que no se publiquen datos personales, mensajes sobre terceras personas ni contenidos sensibles. También conviene explicar qué alternativa existe cuando alguien necesita apoyo, revisión o una respuesta más reservada."]},{"heading":"Revisar el acuerdo con el tiempo","paragraphs":["Los acuerdos necesitan recordatorios y ajustes cuando cambian el grupo o las necesidades. Este artículo ofrece información general; cada centro debe aplicar sus protocolos de convivencia y protección."]}],
+      "sources":[{"label":"Ministerio de Educación: Protocolos de atención","href":"https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html"},{"label":"UNESCO: Qué hay que saber sobre violencia y acoso escolar","href":"https://www.unesco.org/en/articles/what-you-need-know-about-school-violence-and-bullying"}]
+    }, "una-guia-breve-para-leer-comunicaciones-con-responsabilidad":{"category":"Comunicación responsable","title":"Una guía breve para leer comunicaciones con responsabilidad","description":"Leer una comunicación sensible exige contexto, prudencia y respeto por sus límites.","updatedLabel":"Borrador editorial · previsto para el 2 de agosto de 2027","coverAlt":"Mesa escolar vacía con una carpeta de papel cerrada, una hoja sin texto, un lápiz azul y una planta.","introduction":"Una comunicación no es una prueba concluyente ni una invitación a difundir información. Su lectura responsable ayuda a proteger a las personas y a orientar el siguiente paso.","sections":[{"heading":"Distinguir información y valoración","paragraphs":["Conviene separar lo que se comunica de las interpretaciones que puedan surgir. Preguntar qué falta por conocer evita conclusiones precipitadas."]},{"heading":"Mantener la información en el ámbito necesario","paragraphs":["No debe reenviarse ni comentarse con personas que no necesitan conocerla. El canal adecuado y el acceso limitado forman parte del cuidado."]},{"heading":"Buscar la vía que corresponde","paragraphs":["Una situación sensible puede requerir escucha, revisión o activación de un protocolo. Este artículo ofrece información general; cada centro debe aplicar sus procedimientos."]}],"sources":[{"label":"Ministerio de Educación: Protocolos de atención","href":"https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html"},{"label":"AEPD: Guía para centros educativos","href":"https://www.aepd.es/guias/guia-centros-educativos.pdf"}]},"que-revisar-antes-de-abrir-un-nuevo-curso":{"category":"Organización y cuidado","title":"Qué revisar antes de abrir un nuevo curso","description":"Antes de abrir canales y recursos, conviene comprobar que siguen siendo claros, necesarios y seguros.","updatedLabel":"Borrador editorial · previsto para el 9 de agosto de 2027","coverAlt":"Despacho escolar vacío con escritorio de madera, carpeta cerrada, lápices, silla azul y una planta.","introduction":"Un inicio de curso más tranquilo depende de revisar canales, responsables y datos necesarios.","sections":[{"heading":"Canales y responsables","paragraphs":["Cada vía debe explicar su propósito, referencia y alternativa."]},{"heading":"Datos y accesos","paragraphs":["Solo deben solicitarse datos necesarios y acceder quien tiene una función definida."]},{"heading":"Información comprensible","paragraphs":["Los avisos deben entenderse antes de pedir una acción; cada centro aplica sus protocolos."]}],"sources":[{"label":"AEPD: Guía para centros educativos","href":"https://www.aepd.es/guias/guia-centros-educativos.pdf"},{"label":"Ministerio de Educación: Protocolos de atención","href":"https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html"}]}
+    ,"un-ano-de-escucha-preguntas-para-mejorar-sin-simplificar":{"category":"Aprendizaje compartido","title":"Un año de escucha: preguntas para mejorar sin simplificar","description":"Revisar un año permite aprender de los procesos sin convertir situaciones complejas en una sola explicación.","updatedLabel":"Borrador editorial · previsto para el 16 de agosto de 2027","coverAlt":"Sala escolar vacía con mesa redonda de madera, carpeta cerrada, tres tarjetas sin texto, lápiz y planta.","introduction":"Escuchar de forma continuada ayuda a detectar qué hizo más fácil comprender, pedir apoyo y coordinar respuestas. La revisión debe cuidar la privacidad y el contexto.","sections":[{"heading":"Preguntar qué funcionó","paragraphs":["Conviene mirar qué acuerdos fueron practicables y qué información llegó de forma comprensible."]},{"heading":"No reducir experiencias","paragraphs":["Los patrones no sustituyen la escucha de cada situación ni autorizan a compartir datos personales."]},{"heading":"Convertir lo aprendido en ajustes","paragraphs":["Las mejoras pueden concretarse en canales, recursos y responsabilidades; cada centro aplica sus protocolos."]}],"sources":[{"label":"UNESCO: Entornos seguros de aprendizaje","href":"https://www.unesco.org/en/health-education/safe-learning-environments?hub=701"},{"label":"Ministerio de Educación: Protocolos de atención","href":"https://www.educacionfpydeportes.gob.es/mc/redie-eurydice/sistemas-educativos/apoyo-educativo/protocolos-atencion.html"}]}
+  }
+}

@@ -40,7 +40,15 @@
                 "output": "i18n"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["src/styles.scss"],
+            "server": "src/main.server.ts",
+            "outputMode": "static",
+            "security": {
+              "allowedHosts": []
+            },
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -52,7 +60,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumError": "8kB"
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"

@@ -1,3 +1,5 @@
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { CanMatchFn } from '@angular/router';
 
 import {
@@ -14,8 +16,14 @@ export function isPublicWebsiteHostname(hostname: string): boolean {
   return isLocalDevelopmentHost(hostname) || hostname === PUBLIC_WEBSITE_HOSTNAME;
 }
 
-export const applicationHostGuard: CanMatchFn = () =>
-  isApplicationHostname(globalThis.location.hostname);
+export const applicationHostGuard: CanMatchFn = () => {
+  const platformId = inject(PLATFORM_ID);
 
-export const publicWebsiteHostGuard: CanMatchFn = () =>
-  isPublicWebsiteHostname(globalThis.location.hostname);
+  return isPlatformBrowser(platformId) && isApplicationHostname(globalThis.location.hostname);
+};
+
+export const publicWebsiteHostGuard: CanMatchFn = () => {
+  const platformId = inject(PLATFORM_ID);
+
+  return !isPlatformBrowser(platformId) || isPublicWebsiteHostname(globalThis.location.hostname);
+};
