@@ -634,7 +634,8 @@ test('opens a prepared communication from the professional inbox', async ({ page
   test.setTimeout(240_000);
 
   await page.goto('/profesionales/acceso');
-  await page.getByRole('button', { name: /Profesional de bienestar/ }).click();
+  await page.getByLabel('Perspectiva de demostración').selectOption('triage');
+  await page.getByRole('button', { name: 'Entrar con esta perspectiva' }).click();
   await expect(page).toHaveURL(/\/profesionales$/);
   await skipWorkspaceIntroduction(page);
 
