@@ -37,6 +37,7 @@ describe('App', () => {
     const applicationRoute = routes.find((route) => route.path === '' && route.children);
     const applicationRoot = applicationRoute?.children?.find((route) => route.path === '');
 
+    expect(applicationRoot?.path).toBe('');
     expect(applicationRoot).toMatchObject({
       pathMatch: 'full',
       redirectTo: 'profesionales/acceso',
