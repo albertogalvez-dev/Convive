@@ -94,42 +94,40 @@
       </article>
 
       <aside class="actions-column">
-        @if (!isDemonstration()) {
-          <section class="response-card" aria-labelledby="response-title">
-            <h2 id="response-title">Responder</h2>
-            <form [formGroup]="responseForm" (ngSubmit)="respond()" novalidate>
-              <label for="professional-response">Mensaje para la persona informante</label>
-              <textarea
-                #responseField
-                id="professional-response"
-                formControlName="content"
-                rows="5"
-                maxlength="2000"
-                [attr.aria-describedby]="
-                  responseForm.controls.content.touched && responseForm.controls.content.invalid
-                    ? 'response-error'
-                    : 'response-visibility'
-                "
-              ></textarea>
-              <div class="visibility-row">
-                <span id="response-visibility">Visible en su seguimiento</span>
-                <span>{{ responseForm.controls.content.value.length }} / 2000</span>
-              </div>
-              @if (responseForm.controls.content.touched && responseForm.controls.content.invalid) {
-                <p id="response-error" class="submit-error" role="alert">Escribe una respuesta.</p>
-              }
-              @if (responseError(); as message) {
-                <p class="submit-error" role="alert">{{ message }}</p>
-              }
-              @if (responseConfirmation(); as message) {
-                <p class="submit-confirmation" role="status">{{ message }}</p>
-              }
-              <button type="submit" [disabled]="responseSubmitting()">
-                {{ responseSubmitting() ? 'Enviando\u2026' : 'Enviar respuesta' }}
-              </button>
-            </form>
-          </section>
-        }
+        <section class="response-card" aria-labelledby="response-title">
+          <h2 id="response-title">Responder</h2>
+          <form [formGroup]="responseForm" (ngSubmit)="respond()" novalidate>
+            <label for="professional-response">Mensaje para la persona informante</label>
+            <textarea
+              #responseField
+              id="professional-response"
+              formControlName="content"
+              rows="5"
+              maxlength="2000"
+              [attr.aria-describedby]="
+                responseForm.controls.content.touched && responseForm.controls.content.invalid
+                  ? 'response-error'
+                  : 'response-visibility'
+              "
+            ></textarea>
+            <div class="visibility-row">
+              <span id="response-visibility">Visible en su seguimiento</span>
+              <span>{{ responseForm.controls.content.value.length }} / 2000</span>
+            </div>
+            @if (responseForm.controls.content.touched && responseForm.controls.content.invalid) {
+              <p id="response-error" class="submit-error" role="alert">Escribe una respuesta.</p>
+            }
+            @if (responseError(); as message) {
+              <p class="submit-error" role="alert">{{ message }}</p>
+            }
+            @if (responseConfirmation(); as message) {
+              <p class="submit-confirmation" role="status">{{ message }}</p>
+            }
+            <button type="submit" [disabled]="responseSubmitting()">
+              {{ responseSubmitting() ? 'Enviando\u2026' : 'Enviar respuesta' }}
+            </button>
+          </form>
+        </section>
 
         <section class="review-card">
           @if (currentReport.review; as review) {
@@ -142,12 +140,6 @@
             <time [attr.datetime]="review.reviewedAt">{{
               review.reviewedAt | date: 'd MMMM y, HH:mm' : undefined : 'es'
             }}</time>
-          } @else if (isDemonstration()) {
-            <h2>Revisión inicial</h2>
-            <div class="review-state">
-              <strong>Pendiente de valoración</strong>
-              <p>La comunicación se muestra sin modificarla.</p>
-            </div>
           } @else {
             <h2>Revisi&oacute;n inicial</h2>
             <form [formGroup]="reviewForm" (ngSubmit)="review()" novalidate>

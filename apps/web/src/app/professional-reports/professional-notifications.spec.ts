@@ -5,6 +5,7 @@ import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
 
 import { ProfessionalNotifications } from './professional-notifications';
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 
 describe('ProfessionalNotifications', () => {
   let fixture: ComponentFixture<ProfessionalNotifications>;
@@ -96,6 +97,38 @@ describe('ProfessionalNotifications', () => {
     expect(request.request.method).toBe('PATCH');
     expect(request.request.body).toEqual({ enabled: false });
     request.flush({ type: 'case_lifecycle_changed', enabled: false, required: false });
+  });
+
+  it('keeps prepared demonstration notices and preference changes in the browser only', () => {
+    flushInitialLoad();
+    TestBed.inject(ProfessionalSessionService).demonstrationRole.set('triage');
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    const demoFixture = TestBed.createComponent(ProfessionalNotifications);
+    demoFixture.detectChanges();
+    const demoPage = demoFixture.nativeElement as HTMLElement;
+
+    http.expectNone('/api/v1/professional/notifications');
+    http.expectNone('/api/v1/professional/notification-preferences');
+    expect(demoPage.textContent).toContain('Se te ha asignado un caso.');
+    expect(demoPage.textContent).toContain(
+      'Los cambios de esta demostración se reinician al salir.',
+    );
+
+    demoPage.querySelector<HTMLButtonElement>('ul button')?.click();
+    http.expectNone('/api/v1/professional/notifications/demo-case-assigned/read');
+    expect(navigate).toHaveBeenCalledWith(
+      '/profesionales/casos/019fe900-0000-7000-8000-000000000083',
+    );
+
+    const optional = demoPage.querySelectorAll<HTMLInputElement>(
+      '.preferences input[type=checkbox]',
+    )[1];
+    optional.checked = false;
+    optional.dispatchEvent(new Event('change'));
+    demoFixture.detectChanges();
+
+    http.expectNone('/api/v1/professional/notification-preferences/case_lifecycle_changed');
+    expect(optional.checked).toBe(false);
   });
 
   it('reports a load failure without leaving the list in a loading state', () => {

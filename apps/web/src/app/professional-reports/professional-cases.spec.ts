@@ -6,6 +6,8 @@ import { vi } from 'vitest';
 
 import { ProfessionalCases } from './professional-cases';
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
+import professionalCaseEs from '../../i18n/professional-case/es.json';
+import { i18nTestingModule } from '../i18n/testing/provide-i18n-testing';
 
 describe('ProfessionalCases', () => {
   interface CaseSummaryFixture {
@@ -26,7 +28,7 @@ describe('ProfessionalCases', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfessionalCases],
+      imports: [ProfessionalCases, i18nTestingModule({ 'professional-case': professionalCaseEs })],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(ProfessionalCases);
@@ -43,6 +45,10 @@ describe('ProfessionalCases', () => {
 
     expect(page.textContent).toContain('Caso ABCD1234');
     expect(page.textContent).toContain('Caso ficticio de demostración');
+    expect(page.textContent).toContain('Mixto');
+    expect(page.textContent).toContain('Responsable');
+    expect(page.textContent).toContain('En valoración');
+    expect(page.textContent).not.toContain('professional-case.');
     expect(page.textContent).toContain('1 tarea pendiente');
     expect(page.querySelector<HTMLAnchorElement>('li a')?.getAttribute('href')).toContain(
       '/profesionales/casos/case-ABCD1234',

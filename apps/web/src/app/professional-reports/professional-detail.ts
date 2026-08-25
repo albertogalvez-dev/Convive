@@ -72,6 +72,38 @@ export class ProfessionalDetail implements OnInit {
   protected review(): void {
     this.reviewForm.markAllAsTouched();
     if (this.reviewForm.invalid || this.submitting() || !this.report()) return;
+
+    if (this.isDemonstration()) {
+      this.report.update((report) =>
+        report
+          ? {
+              ...report,
+              status: 'reviewed',
+              review: {
+                reason: this.reviewForm.controls.reason.value.trim(),
+                reviewedAt: '2026-08-25T09:15:00.000+00:00',
+                professionalTaxonomy: {
+                  version: 'demo',
+                  concernCategory:
+                    this.reviewForm.controls.professionalConcernCategory.value === 'unknown'
+                      ? null
+                      : this.reviewForm.controls.professionalConcernCategory.value,
+                  recurrence:
+                    this.reviewForm.controls.professionalRecurrence.value === 'unknown'
+                      ? null
+                      : this.reviewForm.controls.professionalRecurrence.value,
+                  attentionCue:
+                    this.reviewForm.controls.professionalAttentionCue.value === 'unknown'
+                      ? null
+                      : this.reviewForm.controls.professionalAttentionCue.value,
+                },
+              },
+            }
+          : null,
+      );
+      return;
+    }
+
     this.submitting.set(true);
     this.reviewError.set(null);
     this.reports
@@ -108,6 +140,30 @@ export class ProfessionalDetail implements OnInit {
     const content = this.responseForm.controls.content.value.trim();
     if (!content || this.responseForm.invalid || this.responseSubmitting() || !this.report())
       return;
+
+    if (this.isDemonstration()) {
+      this.report.update((report) =>
+        report
+          ? {
+              ...report,
+              followUpEntries: [
+                ...report.followUpEntries,
+                {
+                  authorType: 'professional',
+                  content,
+                  createdAt: '2026-08-25T09:20:00.000+00:00',
+                },
+              ],
+            }
+          : null,
+      );
+      this.responseForm.reset();
+      this.responseConfirmation.set(
+        'Respuesta preparada. Se reinicia al salir de la demostración.',
+      );
+      queueMicrotask(() => this.responseField()?.nativeElement.focus());
+      return;
+    }
 
     this.responseSubmitting.set(true);
     this.responseError.set(null);

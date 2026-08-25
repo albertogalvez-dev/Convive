@@ -4,6 +4,7 @@ import localeEs from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 
@@ -21,7 +22,8 @@ registerLocaleData(localeEs);
 @Component({
   selector: 'app-professional-cases',
   standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink, TranslocoPipe],
+  providers: [provideTranslocoScope('professional-case')],
   templateUrl: './professional-cases.html',
   styleUrl: './professional-cases.scss',
 })
