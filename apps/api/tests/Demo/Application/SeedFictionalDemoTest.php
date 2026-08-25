@@ -8,10 +8,13 @@ use App\Demo\Application\SeedFictionalDemo;
 use App\Demo\Domain\FictionalDemoDataset;
 use App\Demo\Presentation\Console\SeedFictionalDemoCommand;
 use App\Organisations\Domain\PublicReportingIdentifier;
+use App\Reporting\Application\AttachmentStorage;
+use App\Reporting\Infrastructure\LocalPrivateAttachmentStorage;
 use App\Tests\Shared\Infrastructure\Persistence\PostgreSqlTestCase;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class SeedFictionalDemoTest extends PostgreSqlTestCase
 {
@@ -20,6 +23,7 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
 
     private Connection $connection;
     private SeedFictionalDemo $seeder;
+    private LocalPrivateAttachmentStorage $attachmentStorage;
 
     protected function setUp(): void
     {
@@ -29,6 +33,20 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
         $seeder = self::getContainer()->get(SeedFictionalDemo::class);
         self::assertInstanceOf(SeedFictionalDemo::class, $seeder);
         $this->seeder = $seeder;
+
+        $attachmentStorage = self::getContainer()->get(AttachmentStorage::class);
+        self::assertInstanceOf(LocalPrivateAttachmentStorage::class, $attachmentStorage);
+        $this->attachmentStorage = $attachmentStorage;
+        (new Filesystem())->remove($this->attachmentStorage->privateDirectory());
+    }
+
+    protected function tearDown(): void
+    {
+        if (isset($this->attachmentStorage)) {
+            (new Filesystem())->remove($this->attachmentStorage->privateDirectory());
+        }
+
+        parent::tearDown();
     }
 
     public function testCommandRequiresTheSupportedExplicitDemoEnvironment(): void
@@ -244,6 +262,30 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             ],
         ));
         self::assertSame(4, $this->demoReportCount());
+        self::assertSame(2, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM report_attachments
+             WHERE id IN (:corridor, :courtyard)
+               AND status = :status',
+            [
+                'corridor' => FictionalDemoDataset::CORRIDOR_ATTACHMENT_ID,
+                'courtyard' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID,
+                'status' => 'quarantined',
+            ],
+        ));
+        self::assertSame(
+            FictionalDemoDataset::REPORT_IDS[0],
+            $this->connection->fetchOne(
+                'SELECT report_id FROM report_attachments WHERE id = :id',
+                ['id' => FictionalDemoDataset::CORRIDOR_ATTACHMENT_ID],
+            ),
+        );
+        self::assertSame(
+            FictionalDemoDataset::REPORT_IDS[2],
+            $this->connection->fetchOne(
+                'SELECT report_id FROM report_attachments WHERE id = :id',
+                ['id' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID],
+            ),
+        );
         self::assertSame(4, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM report_follow_up_entries WHERE report_id IN (
                 SELECT id FROM reports WHERE organisation_id = :organisation_id

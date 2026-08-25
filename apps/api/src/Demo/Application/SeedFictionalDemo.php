@@ -8,7 +8,12 @@ use App\Demo\Domain\FictionalDemoDataset;
 use App\Professionals\Domain\Professional;
 use App\Professionals\Domain\ProfessionalEmail;
 use App\Reporting\Application\AttachmentStorage;
+use App\Reporting\Domain\AttachmentDescription;
+use App\Reporting\Domain\AttachmentMediaType;
+use App\Reporting\Domain\Report;
 use App\Reporting\Domain\ReportAttachment;
+use App\Reporting\Domain\ReportAttachmentRepository;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +27,9 @@ final readonly class SeedFictionalDemo
         private UserPasswordHasherInterface $passwordHasher,
         private EntityManagerInterface $entityManager,
         private AttachmentStorage $attachmentStorage,
+        private ReportAttachmentRepository $attachments,
+        #[Autowire('%kernel.project_dir%')]
+        private string $projectDirectory,
     ) {
     }
 
@@ -41,8 +49,9 @@ final readonly class SeedFictionalDemo
             $this->upsertConversationEntries();
             $this->upsertManagedCase();
             $this->upsertAdditionalManagedCases();
+            $this->upsertFictionalEvidence();
 
-            return new FictionalDemoSeedResult(1, 5, 4, 4, 3, 5, 4, $reset);
+            return new FictionalDemoSeedResult(1, 5, 4, 4, 3, 5, 4, 2, $reset);
         });
     }
 
@@ -147,6 +156,20 @@ final readonly class SeedFictionalDemo
                 throw new FictionalDemoDatasetConflict('A reserved demo case identifier is already in use.');
             }
         }
+
+        $attachments = $this->connection->fetchAllAssociative(
+            'SELECT id, report_id FROM report_attachments WHERE id IN (:corridor, :courtyard)',
+            [
+                'corridor' => FictionalDemoDataset::CORRIDOR_ATTACHMENT_ID,
+                'courtyard' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID,
+            ],
+        );
+
+        foreach ($attachments as $attachment) {
+            if ((FictionalDemoDataset::EVIDENCE_REPORT_IDS[$attachment['id']] ?? null) !== $attachment['report_id']) {
+                throw new FictionalDemoDatasetConflict('A reserved demo attachment identifier is already in use.');
+            }
+        }
     }
 
     private function removeDemoOrganisationData(): void
@@ -239,6 +262,7 @@ final readonly class SeedFictionalDemo
             'DELETE FROM organisations WHERE id = :organisation_id',
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         );
+        $this->entityManager->clear();
     }
 
     private function upsertOrganisation(): void
@@ -754,6 +778,69 @@ final readonly class SeedFictionalDemo
                  note = EXCLUDED.note, created_by_professional_id = EXCLUDED.created_by_professional_id, created_at = EXCLUDED.created_at, supersedes_communication_id = NULL',
                 ['communication_id' => $case['communication_id'], 'id' => $case['id'], 'updated_at' => $case['updated_at'], 'communication_note' => $case['communication_note'], 'professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'recipient' => 'family', 'channel' => 'telephone', 'status' => 'recorded'],
             );
+        }
+    }
+
+    private function upsertFictionalEvidence(): void
+    {
+        $evidence = [
+            [
+                'id' => FictionalDemoDataset::CORRIDOR_ATTACHMENT_ID,
+                'report_id' => FictionalDemoDataset::REPORT_IDS[0],
+                'file' => 'fictional-empty-corridor.png',
+                'description' => 'Imagen ficticia de un pasillo vacío del centro para la demostración.',
+                'created_at' => '2026-08-10T08:40:00+02:00',
+            ],
+            [
+                'id' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID,
+                'report_id' => FictionalDemoDataset::REPORT_IDS[2],
+                'file' => 'fictional-empty-courtyard.png',
+                'description' => 'Imagen ficticia de un patio vacío del centro para la demostración.',
+                'created_at' => '2026-08-08T12:15:00+02:00',
+            ],
+        ];
+
+        foreach ($evidence as $item) {
+            if ((int) $this->connection->fetchOne(
+                'SELECT COUNT(*) FROM report_attachments WHERE id = :id',
+                ['id' => $item['id']],
+            ) === 1) {
+                continue;
+            }
+
+            $sourcePath = $this->projectDirectory.'/resources/fictional-demo-evidence/'.$item['file'];
+            if (!is_file($sourcePath) || !is_readable($sourcePath)) {
+                throw new \LogicException('A reviewed fictional demonstration evidence asset is unavailable.');
+            }
+
+            $report = $this->entityManager->find(Report::class, $item['report_id']);
+            if (!$report instanceof Report) {
+                throw new \LogicException('The fictional demonstration report is unavailable for its evidence.');
+            }
+
+            $attachmentId = Uuid::fromString($item['id']);
+            $stored = $this->attachmentStorage->storeQuarantine($attachmentId, $sourcePath);
+            $attachment = ReportAttachment::quarantine(
+                $attachmentId,
+                $report,
+                AttachmentMediaType::Png,
+                $stored->byteSize,
+                $stored->contentHash,
+                new DateTimeImmutable($item['created_at']),
+                AttachmentDescription::fromNullable($item['description']),
+            );
+
+            try {
+                $this->attachments->saveQuarantinedWithReportCapacity([$attachment]);
+            } catch (\Throwable $exception) {
+                try {
+                    $this->attachmentStorage->delete($attachment);
+                } catch (\Throwable) {
+                    // Preserve the persistence failure; lifecycle cleanup reconciles a later orphan.
+                }
+
+                throw $exception;
+            }
         }
     }
 

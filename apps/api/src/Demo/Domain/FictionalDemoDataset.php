@@ -41,6 +41,8 @@ final class FictionalDemoDataset
     public const CLOSED_CASE_PERSON_ID = '019fe900-0000-7000-8000-000000000111';
     public const CLOSED_CASE_TASK_ID = '019fe900-0000-7000-8000-000000000112';
     public const CLOSED_CASE_COMMUNICATION_ID = '019fe900-0000-7000-8000-000000000113';
+    public const CORRIDOR_ATTACHMENT_ID = '019fe900-0000-7000-8000-000000000114';
+    public const COURTYARD_ATTACHMENT_ID = '019fe900-0000-7000-8000-000000000115';
     public const ANDALUSIAN_PROTOCOL_SOURCE_ID = '019c4c1d-4fd4-7f6d-a0d1-000000000001';
     public const TERRITORIAL_SCOPE = 'ES-AN';
 
@@ -58,6 +60,12 @@ final class FictionalDemoDataset
         'D0000000000000000002',
         'D0000000000000000003',
         'D0000000000000000004',
+    ];
+
+    /** @var array<string, string> */
+    public const EVIDENCE_REPORT_IDS = [
+        self::CORRIDOR_ATTACHMENT_ID => self::REPORT_IDS[0],
+        self::COURTYARD_ATTACHMENT_ID => self::REPORT_IDS[2],
     ];
 
     private function __construct()
