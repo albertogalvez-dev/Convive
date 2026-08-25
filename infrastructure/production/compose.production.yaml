@@ -140,7 +140,18 @@ services:
   redis:
     # redis:8.2.1-alpine
     image: redis:8.2.1-alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
-    command: ["redis-server", "/run/secrets/redis_conf", "--appendonly", "yes"]
+    # The official image drops to its redis user before opening a configuration
+    # file. Compose file-backed secrets preserve the host file's root-only
+    # mode, so read the password once as the short-lived root entrypoint and
+    # immediately hand it to the upstream entrypoint, which drops privileges
+    # before exec'ing Redis. The secret is neither copied to a volume nor
+    # present in this rendered Compose contract.
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        password="$$(sed -n 's/^requirepass //p' /run/secrets/redis_conf)"
+        test -n "$$password"
+        exec /usr/local/bin/docker-entrypoint.sh redis-server --requirepass "$$password" --appendonly yes
     secrets: [redis_conf]
     volumes: [redis-data:/data]
     read_only: true
@@ -157,10 +168,13 @@ services:
         max-size: "10m"
         max-file: "3"
     healthcheck:
+      # Health checks execute as the unprivileged Redis user, so they recover
+      # the already-supplied process argument rather than rereading the
+      # root-only secret mount.
       test:
         [
           "CMD-SHELL",
-          "redis-cli --no-auth-warning -a \"$$(sed -n 's/^requirepass //p' /run/secrets/redis_conf)\" ping | grep -F PONG",
+          "redis-cli --no-auth-warning -a \"$$(tr '\\000' '\\n' </proc/1/cmdline | sed -n '/^--requirepass$$/{n;p;}')\" ping | grep -F PONG",
         ]
       interval: 10s
       timeout: 5s
