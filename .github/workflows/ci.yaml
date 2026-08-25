@@ -223,7 +223,7 @@ jobs:
           # runtime, so CI verifies that it is pinned and configured rather than
           # starting it.
           "${production_compose[@]}" config --images | grep --fixed-strings 'clamav/clamav'
-          bash infrastructure/production/test-clamav-signature-initialization.sh
+          bash infrastructure/production/test-service-capabilities.sh
           "${production_compose[@]}" up --detach --wait database redis
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
