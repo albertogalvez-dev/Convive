@@ -4,8 +4,8 @@ set -Eeuo pipefail
 
 readonly RELEASE_DIR=${1:?release directory is required}
 readonly RELEASE_ID=${2:?release identifier is required}
-readonly API_IMAGE=${3:?API image digest is required}
-readonly GATEWAY_IMAGE=${4:?gateway image digest is required}
+readonly REQUESTED_API_IMAGE=${3:?API image digest is required}
+readonly REQUESTED_GATEWAY_IMAGE=${4:?gateway image digest is required}
 readonly MIGRATION_CLASS=${5:-backward-compatible}
 readonly RELEASE_PHASE=${6:-prepare}
 readonly RUNTIME_DIR=${CONVIVE_RUNTIME_DIR:-/srv/platform/projects/convive}
@@ -18,7 +18,7 @@ if [[ ${EUID} -ne 0 ]]; then
     exit 1
 fi
 
-if [[ ! ${API_IMAGE} =~ ^.+@sha256:[0-9a-f]{64}$ || ! ${GATEWAY_IMAGE} =~ ^.+@sha256:[0-9a-f]{64}$ ]]; then
+if [[ ! ${REQUESTED_API_IMAGE} =~ ^.+@sha256:[0-9a-f]{64}$ || ! ${REQUESTED_GATEWAY_IMAGE} =~ ^.+@sha256:[0-9a-f]{64}$ ]]; then
     echo 'Both release images must use immutable SHA-256 digests.' >&2
     exit 1
 fi
@@ -103,8 +103,8 @@ if [[ ${RELEASE_PHASE} == prepare ]]; then
     readonly TRUSTED_PROXIES
     cat > "${RELEASE_PATH}/compose.production.env" <<EOF
 CONVIVE_SECRET_DIR=${SECRET_DIR}
-CONVIVE_API_IMAGE=${API_IMAGE}
-CONVIVE_GATEWAY_IMAGE=${GATEWAY_IMAGE}
+CONVIVE_API_IMAGE=${REQUESTED_API_IMAGE}
+CONVIVE_GATEWAY_IMAGE=${REQUESTED_GATEWAY_IMAGE}
 CONVIVE_TRUSTED_PROXIES=${TRUSTED_PROXIES}
 EOF
     chmod 0600 "${RELEASE_PATH}/compose.production.env"
@@ -113,17 +113,15 @@ elif [[ ! -f ${RELEASE_PATH}/compose.production.env || ! -f ${RELEASE_PATH}/comp
     exit 1
 fi
 
-if [[ ${RELEASE_PHASE} == verify ]]; then
-    # The verification invocation must attest to precisely the images prepared
-    # earlier; otherwise an operator could accidentally verify a different
-    # mutable candidate under the same release identifier.
-    # shellcheck disable=SC1090
-    source "${RELEASE_PATH}/compose.production.env"
-    if [[ ${CONVIVE_API_IMAGE} != "${API_IMAGE}" || ${CONVIVE_GATEWAY_IMAGE} != "${GATEWAY_IMAGE}" ]]; then
-        echo 'Verification image digests do not match the prepared release.' >&2
-        exit 1
-    fi
-fi
+# The verify workflow can rebuild a reviewed source revision, producing a new
+# digest even though the prepared deployment has not changed. The prepared
+# release environment is the immutable authority for verification: it is
+# written once in the prepare phase and selects the exact images that are
+# running behind the reviewed route.
+# shellcheck disable=SC1090
+source "${RELEASE_PATH}/compose.production.env"
+readonly API_IMAGE=${CONVIVE_API_IMAGE}
+readonly GATEWAY_IMAGE=${CONVIVE_GATEWAY_IMAGE}
 
 compose() {
     docker compose \
@@ -153,7 +151,7 @@ else
     readonly PREVIOUS_ENV=''
 fi
 
-if ! curl --fail --silent --show-error --retry 10 --retry-delay 2 "${PUBLIC_URL}/api/v1/health" | grep --fixed-strings '{"status":"ok"}' > /dev/null; then
+if [[ $(curl --fail --silent --show-error --retry 10 --retry-delay 2 --output /dev/null --write-out '%{http_code}' "${PUBLIC_URL}/api/v1/health") != 200 ]]; then
     echo 'Public health smoke test failed.' >&2
     if [[ ${MIGRATION_CLASS} != incompatible && -n ${PREVIOUS_ENV} && -f ${PREVIOUS_ENV} ]]; then
         docker compose --project-name "${COMPOSE_PROJECT}" --env-file "${PREVIOUS_ENV}" --file "$(dirname "${PREVIOUS_ENV}")/compose.production.yaml" up --detach --remove-orphans

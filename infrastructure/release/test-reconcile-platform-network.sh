@@ -47,6 +47,14 @@ exit 1
 EOF
 chmod 0755 "${MOCK_BIN_DIRECTORY}/docker"
 
+cat > "${MOCK_BIN_DIRECTORY}/curl" <<'EOF'
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+printf '200'
+EOF
+chmod 0755 "${MOCK_BIN_DIRECTORY}/curl"
+
 run_prepare() {
     local release_id=$1
     PATH="${MOCK_BIN_DIRECTORY}:${PATH}" \
@@ -63,6 +71,22 @@ run_prepare() {
         none prepare
 }
 
+run_verify() {
+    local release_id=$1
+    PATH="${MOCK_BIN_DIRECTORY}:${PATH}" \
+        CONVIVE_SECRET_DIR="${SECRET_DIRECTORY}" \
+        CONVIVE_EVIDENCE_DIR="${EVIDENCE_DIRECTORY}" \
+        CONVIVE_RUNTIME_DIR="${RUNTIME_DIRECTORY}" \
+        CONVIVE_PUBLIC_URL=https://app.conviveaula.test \
+        CONVIVE_COMPOSE_PROJECT=convive-platform-network-test \
+        MOCK_DOCKER_LOG="${DOCKER_LOG}" \
+        bash "${REPOSITORY_ROOT}/infrastructure/release/reconcile.sh" \
+        "${RELEASE_DIRECTORY}" "${release_id}" \
+        "example.test/api@sha256:$(printf 'c%.0s' {1..64})" \
+        "example.test/gateway@sha256:$(printf 'd%.0s' {1..64})" \
+        none verify
+}
+
 if [[ ${EUID} -ne 0 ]]; then
     echo 'This focused release test must run as root.' >&2
     exit 1
@@ -72,6 +96,11 @@ run_prepare prepared-network
 grep --fixed-strings 'CONVIVE_TRUSTED_PROXIES=172.26.16.0/28' \
     "${RUNTIME_DIRECTORY}/releases/prepared-network/compose.production.env" > /dev/null
 grep --fixed-strings 'APP_RUNTIME_OPTIONS={"disable_dotenv":true}' "${DOCKER_LOG}" > /dev/null
+run_verify prepared-network
+grep --fixed-strings "example.test/api@sha256:$(printf 'a%.0s' {1..64})" \
+    "${RUNTIME_DIRECTORY}/releases/prepared-network/release-record.json" > /dev/null
+grep --fixed-strings "example.test/gateway@sha256:$(printf 'b%.0s' {1..64})" \
+    "${RUNTIME_DIRECTORY}/releases/prepared-network/release-record.json" > /dev/null
 
 if MOCK_NETWORK_INTERNAL=false run_prepare rejected-network; then
     echo 'Expected a non-internal platform network to be rejected.' >&2
