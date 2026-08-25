@@ -44,6 +44,25 @@ readonly ENV_FILE=${RELEASE_DIR}/compose.production.env
 readonly EVIDENCE_DIR=${CONVIVE_EVIDENCE_DIR:-/var/lib/convive-backup/evidence}
 readonly RELEASES_DIR=${RUNTIME_DIR}/releases
 readonly CURRENT_ENV=${RELEASES_DIR}/current.env
+readonly PLATFORM_INTERNAL_NETWORK=${CONVIVE_INTERNAL_NETWORK:-px-convive-internal}
+
+platform_internal_cidr() {
+    local network_internal
+    network_internal=$(docker network inspect --format '{{.Internal}}' "${PLATFORM_INTERNAL_NETWORK}")
+    if [[ ${network_internal} != true ]]; then
+        echo "Platform network must be internal: ${PLATFORM_INTERNAL_NETWORK}" >&2
+        exit 1
+    fi
+
+    local network_cidr
+    network_cidr=$(docker network inspect --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}' "${PLATFORM_INTERNAL_NETWORK}")
+    if [[ ! ${network_cidr} =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[12][0-9]|3[0-2])$ ]]; then
+        echo "Platform network must expose one IPv4 CIDR: ${PLATFORM_INTERNAL_NETWORK}" >&2
+        exit 1
+    fi
+
+    printf '%s\n' "${network_cidr}"
+}
 
 for required_file in \
     "${COMPOSE_FILE}" \
@@ -80,10 +99,13 @@ if [[ ${RELEASE_PHASE} == prepare ]]; then
 
     install --directory --owner=root --group=root --mode=0700 "${RELEASE_PATH}"
     install --owner=root --group=root --mode=0600 "${COMPOSE_FILE}" "${RELEASE_PATH}/compose.production.yaml"
+    TRUSTED_PROXIES=$(platform_internal_cidr)
+    readonly TRUSTED_PROXIES
     cat > "${RELEASE_PATH}/compose.production.env" <<EOF
 CONVIVE_SECRET_DIR=${SECRET_DIR}
 CONVIVE_API_IMAGE=${API_IMAGE}
 CONVIVE_GATEWAY_IMAGE=${GATEWAY_IMAGE}
+CONVIVE_TRUSTED_PROXIES=${TRUSTED_PROXIES}
 EOF
     chmod 0600 "${RELEASE_PATH}/compose.production.env"
 elif [[ ! -f ${RELEASE_PATH}/compose.production.env || ! -f ${RELEASE_PATH}/compose.production.yaml ]]; then

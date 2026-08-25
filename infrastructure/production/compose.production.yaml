@@ -32,7 +32,10 @@ services:
       # contract rather than the root-only API secret file.
       APP_DEMO_MODE: "1"
       DEFAULT_URI: https://app.conviveaula.com
-      TRUSTED_PROXIES: 172.30.16.0/28
+      # Reconciliation derives this narrowly from the platform-created
+      # px-convive-internal network and writes it into the immutable release
+      # environment. Never widen this to a generic private range or wildcard.
+      TRUSTED_PROXIES: ${CONVIVE_TRUSTED_PROXIES:?CONVIVE_TRUSTED_PROXIES is required}
       # The only approved public production mode while Convive is a
       # fictional-data demonstration. The API rejects all reporter mutations
       # before controller payload handling; a real-data mode needs a separate
@@ -209,32 +212,22 @@ networks:
     external: true
   internal:
     name: px-convive-internal
-    internal: true
-    ipam:
-      config: [{subnet: 172.30.16.0/28}]
+    external: true
   data:
     name: px-convive-data
     internal: true
-    ipam:
-      config: [{subnet: 172.30.32.0/28}]
   cache:
     name: px-convive-cache
     internal: true
-    ipam:
-      config: [{subnet: 172.30.48.0/28}]
   # Carries only API-to-scanner traffic. Internal, so a compromised scanner
   # cannot reach the database, Redis or the attachment store through it.
   scan:
     name: px-convive-scan
     internal: true
-    ipam:
-      config: [{subnet: 172.30.64.0/28}]
   # The scanner's only route out, used exclusively by freshclam to refresh
   # signatures. No other service joins it.
   signature-refresh:
     name: px-convive-signature-refresh
-    ipam:
-      config: [{subnet: 172.30.80.0/28}]
 
 secrets:
   api_env:
