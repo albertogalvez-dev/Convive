@@ -199,6 +199,10 @@ services:
       CLAMAV_NO_FRESHCLAM: "false"
       FRESHCLAM_CHECKS: "1"
     volumes: [clamav-signatures:/var/lib/clamav]
+    # The upstream entrypoint assigns its private signature database to the
+    # unprivileged scanner account. It needs this single capability only for
+    # that ownership change; every other Linux capability remains removed.
+    cap_add: ["CHOWN"]
     cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
     restart: unless-stopped
