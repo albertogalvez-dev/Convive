@@ -170,6 +170,7 @@ jobs:
         run: |
           set -euo pipefail
           bash infrastructure/production/check-api-environment.sh
+          bash infrastructure/production/test-attachment-store-init.sh
           secret_dir="$(mktemp -d)"
           trap 'rm -rf "$secret_dir"' EXIT
           printf '%s\n' \
@@ -214,6 +215,10 @@ jobs:
             fi
           done
           "${production_compose[@]}" pull database redis attachment-store-init
+          # Execute the short-lived private volume initialiser. `config` alone
+          # cannot detect a scalar command being tokenised incorrectly before
+          # the explicit BusyBox shell entrypoint receives it.
+          "${production_compose[@]}" run --rm --no-deps attachment-store-init
           # The scanner image is large and its signature volume is populated at
           # runtime, so CI verifies that it is pinned and configured rather than
           # starting it.
