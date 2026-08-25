@@ -250,13 +250,21 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             )',
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         ));
+        self::assertSame(3, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM managed_cases WHERE organisation_id = :organisation_id',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
+        ));
         self::assertSame(1, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM managed_cases WHERE id = :id AND status = :status AND modality = :modality',
-            [
-                'id' => FictionalDemoDataset::MANAGED_CASE_ID,
-                'status' => 'assessment',
-                'modality' => 'mixed',
-            ],
+            ['id' => FictionalDemoDataset::MANAGED_CASE_ID, 'status' => 'assessment', 'modality' => 'mixed'],
+        ));
+        self::assertSame(1, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM managed_cases WHERE id = :id AND status = :status AND modality = :modality',
+            ['id' => FictionalDemoDataset::ACTIVE_CASE_ID, 'status' => 'active', 'modality' => 'in_person'],
+        ));
+        self::assertSame(1, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM managed_cases WHERE id = :id AND status = :status AND modality = :modality',
+            ['id' => FictionalDemoDataset::CLOSED_CASE_ID, 'status' => 'closed', 'modality' => 'digital'],
         ));
         self::assertSame(
             '2026-08-10 07:40:00',
@@ -276,6 +284,13 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'contributor' => 'contributor',
                 'observer' => 'observer',
             ],
+        ));
+        self::assertSame(5, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_assignments WHERE revoked_at IS NULL',
+        ));
+        self::assertSame(3, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_assignments WHERE professional_id = :professional_id AND revoked_at IS NULL',
+            ['professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
         ));
         self::assertSame(2, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM case_involved_people WHERE case_id = :id',
@@ -299,6 +314,14 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 ['id' => FictionalDemoDataset::CASE_TASK_ID],
             ),
         );
+        self::assertSame(1, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_tasks WHERE id = :id AND status = :status AND resolved_at IS NOT NULL',
+            ['id' => FictionalDemoDataset::CLOSED_CASE_TASK_ID, 'status' => 'completed'],
+        ));
+        self::assertSame(2, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_communications WHERE case_id IN (:active, :closed)',
+            ['active' => FictionalDemoDataset::ACTIVE_CASE_ID, 'closed' => FictionalDemoDataset::CLOSED_CASE_ID],
+        ));
     }
 
     private function demoReportCount(): int
