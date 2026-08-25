@@ -164,6 +164,16 @@ jobs:
           printf '%s\n' "$SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/convive-ssh/known_hosts"
           chmod 0600 "$RUNNER_TEMP/convive-ssh/id_ed25519" "$RUNNER_TEMP/convive-ssh/known_hosts"
 
+      - name: Enrol the reviewed Convive platform boundary
+        env:
+          VPS_HOST: ${{ secrets.CONVIVE_VPS_HOST }}
+          VPS_USER: ${{ secrets.CONVIVE_VPS_USER }}
+          SSH_DIR: ${{ runner.temp }}/convive-ssh
+        run: |
+          set -euo pipefail
+          ssh -i "$SSH_DIR/id_ed25519" -o UserKnownHostsFile="$SSH_DIR/known_hosts" "$VPS_USER@$VPS_HOST" \
+            "sudo -n projectx-enroll-project --project convive"
+
       - name: Upload reviewed release materials
         env:
           VPS_HOST: ${{ secrets.CONVIVE_VPS_HOST }}

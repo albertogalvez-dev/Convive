@@ -59,6 +59,11 @@ deployment also requires the Convive `PROJECTX-INFRA` registration, the platform
 enrollment command and one reviewed Caddy hostname route. Cloudflare may provide
 DNS or a reviewed proxy policy, but Convive does not run a Tunnel.
 
+The deployment workflow idempotently invokes the platform enrollment command
+before uploading a release. It fails before any Convive image or runtime change
+if the reviewed ProjectX registration is absent or the deployment account cannot
+perform that narrow enrollment action.
+
 The release record identifies the commit, image digests, previous generation,
 migration class, backup evidence, operator, timings and smoke outcome. It never
 records application, database, Redis or SSH secret values.
