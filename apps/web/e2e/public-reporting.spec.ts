@@ -301,9 +301,9 @@ test('keeps the fictional professional case workspace assignment-scoped', async 
     await expect(leadPage.getByRole('button', { name: /Asignados/ })).toContainText('3');
     await expect(leadPage.getByRole('button', { name: /Fuera de plazo/ })).toContainText('1');
     await expect(leadPage.locator('.cases-card li a')).toHaveCount(3);
-    await expect(leadPage.locator('.cases-card')).toContainText('En valoración');
-    await expect(leadPage.locator('.cases-card')).toContainText('Activo');
-    await expect(leadPage.locator('.cases-card')).toContainText('Cerrado');
+    await expect(leadPage.locator('.cases-card')).toContainText('00000101');
+    await expect(leadPage.locator('.cases-card')).toContainText('00000083');
+    await expect(leadPage.locator('.cases-card')).toContainText('00000108');
     await leadPage.getByRole('button', { name: /Fuera de plazo/ }).click();
     await expect(leadPage.locator('.cases-card li a')).toHaveCount(1);
     await leadPage.getByLabel('Ámbito').selectOption('digital');
