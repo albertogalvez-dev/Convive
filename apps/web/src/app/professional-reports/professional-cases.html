@@ -119,10 +119,11 @@
               <span class="case-copy">
                 <span class="case-title">Caso {{ item.id.slice(-8).toUpperCase() }}</span>
                 <span
-                  >{{ item.organisationName }} &middot; {{ caseModalityLabel(item.modality) }}</span
+                  >{{ item.organisationName }} &middot;
+                  {{ caseModalityLabel(item.modality) | transloco }}</span
                 >
               </span>
-              <span class="role">{{ assignmentRoleLabel(item.assignmentRole) }}</span>
+              <span class="role">{{ assignmentRoleLabel(item.assignmentRole) | transloco }}</span>
               <span class="tasks" [class.overdue]="item.overdueTasks > 0">
                 <strong>{{ item.pendingTasks }}</strong>
                 {{ item.pendingTasks === 1 ? 'tarea pendiente' : 'tareas pendientes' }}
@@ -131,7 +132,7 @@
                 }
               </span>
               <span class="status" [class]="'status ' + item.status">{{
-                caseStatusLabel(item.status)
+                caseStatusLabel(item.status) | transloco
               }}</span>
               @if (item.nextDueAt) {
                 <time [attr.datetime]="item.nextDueAt"

@@ -74,17 +74,32 @@ describe('ProfessionalDetail', () => {
     expect(page.querySelector('.review-card form')).toBeNull();
   });
 
-  it('shows a compact read-only review state for a demonstration session', () => {
+  it('keeps demonstration review and response interactions in the browser only', () => {
     TestBed.inject(ProfessionalSessionService).demonstrationRole.set('triage');
 
     http.expectOne(endpoint).flush(detail());
     http.expectOne(`${endpoint}/attachments`).flush({ items: [] });
     fixture.detectChanges();
 
+    const response = page.querySelector<HTMLTextAreaElement>('#professional-response')!;
+    response.value = 'Una respuesta preparada para la demostración.';
+    response.dispatchEvent(new Event('input'));
+    page.querySelector<HTMLFormElement>('.response-card form')?.dispatchEvent(new Event('submit'));
+    http.expectNone(`${endpoint}/responses`);
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Una respuesta preparada para la demostración.');
+    expect(page.textContent).toContain('Se reinicia al salir de la demostración.');
+
+    const reason = page.querySelector<HTMLTextAreaElement>('#review-reason')!;
+    reason.value = 'Revisión preparada para la demostración.';
+    reason.dispatchEvent(new Event('input'));
+    page.querySelector<HTMLFormElement>('.review-card form')?.dispatchEvent(new Event('submit'));
+    http.expectNone(`${endpoint}/reviews`);
+    fixture.detectChanges();
+
+    expect(page.textContent).toContain('Revisión registrada');
     expect(page.querySelector('.review-card form')).toBeNull();
-    expect(page.querySelector('.response-card')).toBeNull();
-    expect(page.textContent).toContain('Pendiente de valoración');
-    expect(page.textContent).not.toContain('Marcar como revisada');
   });
 
   it('keeps optional classification out of the way until it is needed', () => {
