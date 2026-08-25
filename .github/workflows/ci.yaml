@@ -214,6 +214,10 @@ jobs:
             fi
           done
           "${production_compose[@]}" pull database redis attachment-store-init
+          # Execute the short-lived private volume initialiser. `config` alone
+          # cannot detect a scalar command being tokenised incorrectly before
+          # the explicit BusyBox shell entrypoint receives it.
+          "${production_compose[@]}" run --rm --no-deps attachment-store-init
           # The scanner image is large and its signature volume is populated at
           # runtime, so CI verifies that it is pinned and configured rather than
           # starting it.

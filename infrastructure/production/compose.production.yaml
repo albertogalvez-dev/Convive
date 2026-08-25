@@ -99,10 +99,15 @@ services:
     restart: "no"
     volumes: [attachment-data:/attachments]
     entrypoint: ["/bin/sh", "-ec"]
-    command: |
-      mkdir -p /attachments
-      chown 33:33 /attachments
-      chmod 0700 /attachments
+    # Compose otherwise tokenises a scalar `command` before it reaches the
+    # explicit `sh -ec` entrypoint. Keep the complete setup script as its one
+    # command argument so BusyBox executes every line rather than `mkdir`
+    # without its directory argument.
+    command:
+      - |
+        mkdir -p /attachments
+        chown 33:33 /attachments
+        chmod 0700 /attachments
     logging:
       options:
         max-size: "10m"
