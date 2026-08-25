@@ -109,7 +109,7 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'created_at' => '2026-08-10T10:00:00+02:00',
             ],
         );
-        self::assertSame(5, $this->demoReportCount());
+        self::assertSame(11, $this->demoReportCount());
         $securityRevision = $this->connection->fetchOne(
             'SELECT security_revision FROM professionals WHERE id = :id',
             ['id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
@@ -130,7 +130,7 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             'SELECT security_revision FROM professionals WHERE id = :id',
             ['id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
         ));
-        self::assertSame(5, $this->demoReportCount());
+        self::assertSame(11, $this->demoReportCount());
 
         $attachmentId = '019fe900-0000-7000-8000-000000000100';
         $this->connection->executeStatement(
@@ -163,7 +163,7 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             '--reset' => true,
             '--confirm-reset' => 'wrong',
         ]));
-        self::assertSame(5, $this->demoReportCount());
+        self::assertSame(11, $this->demoReportCount());
 
         $confirmedReset = $this->command();
         self::assertSame(Command::SUCCESS, $confirmedReset->execute([
@@ -261,14 +261,15 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'case_observer' => FictionalDemoDataset::CASE_OBSERVER_PROFESSIONAL_ID,
             ],
         ));
-        self::assertSame(4, $this->demoReportCount());
-        self::assertSame(2, (int) $this->connection->fetchOne(
+        self::assertSame(10, $this->demoReportCount());
+        self::assertSame(5, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM report_attachments
-             WHERE id IN (:corridor, :courtyard)
+             WHERE report_id IN (
+                SELECT id FROM reports WHERE organisation_id = :organisation_id
+             )
                AND status = :status',
             [
-                'corridor' => FictionalDemoDataset::CORRIDOR_ATTACHMENT_ID,
-                'courtyard' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID,
+                'organisation_id' => FictionalDemoDataset::ORGANISATION_ID,
                 'status' => 'quarantined',
             ],
         ));
@@ -286,13 +287,13 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 ['id' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID],
             ),
         );
-        self::assertSame(4, (int) $this->connection->fetchOne(
+        self::assertSame(14, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM report_follow_up_entries WHERE report_id IN (
                 SELECT id FROM reports WHERE organisation_id = :organisation_id
             )',
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         ));
-        self::assertSame(3, (int) $this->connection->fetchOne(
+        self::assertSame(8, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM managed_cases WHERE organisation_id = :organisation_id',
             ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         ));
@@ -327,10 +328,10 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
                 'observer' => 'observer',
             ],
         ));
-        self::assertSame(5, (int) $this->connection->fetchOne(
+        self::assertSame(10, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM case_assignments WHERE revoked_at IS NULL',
         ));
-        self::assertSame(3, (int) $this->connection->fetchOne(
+        self::assertSame(8, (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM case_assignments WHERE professional_id = :professional_id AND revoked_at IS NULL',
             ['professional_id' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID],
         ));
@@ -360,9 +361,11 @@ final class SeedFictionalDemoTest extends PostgreSqlTestCase
             'SELECT COUNT(*) FROM case_tasks WHERE id = :id AND status = :status AND resolved_at IS NOT NULL',
             ['id' => FictionalDemoDataset::CLOSED_CASE_TASK_ID, 'status' => 'completed'],
         ));
-        self::assertSame(2, (int) $this->connection->fetchOne(
-            'SELECT COUNT(*) FROM case_communications WHERE case_id IN (:active, :closed)',
-            ['active' => FictionalDemoDataset::ACTIVE_CASE_ID, 'closed' => FictionalDemoDataset::CLOSED_CASE_ID],
+        self::assertSame(7, (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM case_communications WHERE case_id IN (
+                SELECT id FROM managed_cases WHERE organisation_id = :organisation_id
+            )',
+            ['organisation_id' => FictionalDemoDataset::ORGANISATION_ID],
         ));
     }
 
