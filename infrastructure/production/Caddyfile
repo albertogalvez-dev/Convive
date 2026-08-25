@@ -23,10 +23,12 @@
 		max_size 16MiB
 	}
 	handle @api {
+		# `php_fastcgi` resolves its front controller from Caddy's request root.
+		# Keep this root at the handler level so API requests do not inherit the
+		# static SPA root (`/srv/web`) and reach PHP-FPM with an empty script path.
+		root * /app/public
 		header Cache-Control "no-store"
-		php_fastcgi api:9000 {
-			root /app/public
-		}
+		php_fastcgi api:9000
 	}
 
 	handle {
