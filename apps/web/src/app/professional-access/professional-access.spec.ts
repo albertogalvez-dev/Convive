@@ -33,22 +33,30 @@ describe('ProfessionalAccess', () => {
 
   afterEach(() => httpTesting.verify());
 
-  it('renders an accessible selector for every real demonstration perspective', () => {
+  it('renders one accessible selector for every real demonstration perspective', () => {
     expect(page.querySelector('h1')?.textContent).toContain('Tu espacio profesional');
-    expect(page.querySelectorAll('.demo-role')).toHaveLength(5);
-    expect(page.textContent).toContain('Profesional de bienestar');
-    expect(page.textContent).toContain('Responsable de caso');
-    expect(page.textContent).toContain('Colaborador de caso');
-    expect(page.textContent).toContain('Observador de caso');
+    const selector = page.querySelector<HTMLSelectElement>('#demo-role');
+
+    expect(selector?.labels?.[0]?.textContent).toContain('Perspectiva de demostración');
+    expect(selector?.options).toHaveLength(2);
+    expect(selector?.value).toBe('triage');
+    expect(Array.from(selector?.options ?? [], (option) => option.text)).toEqual([
+      'Gestión de casos',
+      'Administración',
+    ]);
+    expect(page.querySelectorAll('.demo-role')).toHaveLength(0);
+    expect(page.querySelector<HTMLAnchorElement>('.wordmark')?.getAttribute('href')).toBe('/');
+    expect(page.querySelector('.wordmark')?.getAttribute('aria-label')).toBe('Convive, inicio');
     expect(page.querySelector('form')).toBeNull();
   });
 
   it('opens the real read-only workspace for the selected organisation role', () => {
-    const role = Array.from(page.querySelectorAll<HTMLButtonElement>('.demo-role')).find((button) =>
-      button.textContent?.includes('Administración'),
-    );
+    const selector = page.querySelector<HTMLSelectElement>('#demo-role');
+    selector!.value = 'administrator';
+    selector!.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
 
-    role?.click();
+    page.querySelector<HTMLButtonElement>('.demo-entry-button')?.click();
 
     const request = httpTesting.expectOne('/api/v1/demo/professional-session');
     expect(request.request.method).toBe('POST');

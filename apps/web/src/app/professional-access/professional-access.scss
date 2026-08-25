@@ -3,8 +3,8 @@
   min-height: 100dvh;
   color: #172b57;
   background:
-    radial-gradient(circle at 8% 92%, rgb(35 157 209 / 9%), transparent 24rem),
-    radial-gradient(circle at 94% 10%, rgb(23 43 87 / 7%), transparent 26rem), #f7f9fc;
+    radial-gradient(circle at 8% 92%, rgb(35 157 209 / 12%), transparent 24rem),
+    radial-gradient(circle at 94% 10%, rgb(23 43 87 / 8%), transparent 26rem), #f2f8fc;
 }
 
 .professional-page {
@@ -24,7 +24,17 @@ header {
   height: 5rem;
 }
 
-header img {
+.wordmark {
+  display: block;
+  border-radius: 0.35rem;
+}
+
+.wordmark:focus-visible {
+  outline: 3px solid #176f9c;
+  outline-offset: 0.35rem;
+}
+
+.wordmark img {
   display: block;
   width: 180px;
   height: auto;
@@ -44,8 +54,8 @@ header span {
   width: min(100%, 52rem);
   margin: clamp(1.25rem, 3vh, 2rem) auto 0;
   overflow: hidden;
-  background: #fff;
-  border: 1px solid #d8e2ed;
+  background: #f6faff;
+  border: 1px solid #cfdfeb;
   border-radius: 1.125rem;
   box-shadow: 0 1.25rem 3rem rgb(23 43 87 / 8%);
 }
@@ -105,6 +115,7 @@ h1 {
   display: grid;
   min-height: 31rem;
   padding: 2.75rem;
+  background: rgb(248 252 255 / 82%);
   align-content: start;
 }
 
@@ -121,49 +132,49 @@ h1 {
   letter-spacing: -0.02em;
 }
 
-.demo-roles {
-  display: grid;
-  gap: 0.7rem;
-  margin-top: 1.2rem;
+.role-selector {
+  margin-top: 1.4rem;
 }
 
-.demo-role {
-  display: grid;
-  width: 100%;
-  min-height: 0;
-  padding: 0.9rem 1rem;
-  text-align: start;
-  color: #172b57;
-  background: #f0f8fc;
-  border: 1px solid #c7deeb;
-  border-radius: 0.7rem;
-  grid-template-columns: 1fr auto;
-  gap: 0.2rem 0.75rem;
-}
-
-.demo-role:hover {
-  background: #e4f5fb;
-  border-color: #239dd1;
-}
-
-.demo-role span,
-.demo-role b {
-  font-size: 0.86rem;
+.role-selector label {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: #40516c;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
-.demo-role small {
-  grid-column: 1;
-  color: #53647d;
-  font-size: 0.76rem;
-  line-height: 1.4;
+.role-selector select {
+  width: 100%;
+  min-height: 3.15rem;
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+  color: #172b57;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #fff;
+  border: 1px solid #9bb5d2;
+  border-radius: 0.65rem;
 }
 
-.demo-role b {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
-  color: #176f9c;
+.role-selector select:focus-visible {
+  outline: 3px solid rgb(35 157 209 / 30%);
+  outline-offset: 2px;
+}
+
+.demo-entry-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1.25rem;
+  color: #fff;
+  background: #172b57;
+  border: 1px solid #172b57;
+}
+
+.demo-entry-button:hover:not(:disabled) {
+  background: #0d214b;
 }
 
 .credentials-divider {
@@ -239,6 +250,12 @@ button:focus-visible {
 }
 
 button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.role-selector select:disabled,
+.demo-entry-button:disabled {
   cursor: progress;
   opacity: 0.7;
 }
@@ -361,7 +378,7 @@ h2 {
     height: 4.25rem;
   }
 
-  header img {
+  .wordmark img {
     width: 150px;
   }
 

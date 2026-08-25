@@ -95,11 +95,6 @@
   </aside>
 
   <section class="portal-content">
-    @if (demonstrationRole(); as role) {
-      <p class="demonstration-banner" role="status">
-        Vista de demostración · {{ demonstrationRoleLabel(role) }} · solo consulta
-      </p>
-    }
     <div class="desktop-topbar">
       @if (showCentreNavigation()) {
         <a class="notification-button" routerLink="/profesionales/avisos" aria-label="Ver avisos">

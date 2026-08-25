@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { ProfessionalShell } from './professional-shell';
@@ -51,5 +51,18 @@ describe('ProfessionalShell', () => {
     expect(page.querySelector('.collapse-button')?.getAttribute('aria-label')).toBe(
       'Abrir menú lateral',
     );
+  });
+  it('ends the session before returning to professional access', () => {
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    http.expectOne('/api/v1/professional/notifications').flush({ items: [], unreadCount: 0 });
+    fixture.detectChanges();
+
+    page.querySelector<HTMLButtonElement>('.sidebar-profile button')?.click();
+
+    http.expectOne({ method: 'DELETE', url: '/api/v1/professional/session' }).flush(null);
+
+    expect(TestBed.inject(ProfessionalSessionService).professional()).toBeNull();
+    expect(navigate).toHaveBeenCalledWith(['/profesionales/acceso']);
   });
 });

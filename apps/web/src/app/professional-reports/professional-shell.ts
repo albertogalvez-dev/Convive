@@ -2,10 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
-import {
-  demonstrationRoleLabel,
-  isCaseDemonstrationRole,
-} from '../professional-access/demo-professional-role';
+import { isCaseDemonstrationRole } from '../professional-access/demo-professional-role';
 import { ProfessionalNotificationsService } from './professional-notifications.service';
 import { WorkspaceIntroduction } from './workspace-introduction/workspace-introduction';
 
@@ -23,7 +20,6 @@ export class ProfessionalShell implements OnInit {
 
   protected readonly professional = this.sessions.professional;
   protected readonly demonstrationRole = this.sessions.demonstrationRole;
-  protected readonly demonstrationRoleLabel = demonstrationRoleLabel;
   protected readonly loggingOut = signal(false);
   protected readonly sidebarCollapsed = signal(false);
   protected readonly newNotificationCount = signal<number | null>(null);

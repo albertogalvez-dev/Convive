@@ -589,36 +589,53 @@ test('offers the fictional demonstration through real, isolated example paths', 
   await page.getByRole('link', { name: 'Entrar al área profesional' }).click();
   await expect(page).toHaveURL(/\/profesionales\/acceso$/);
   await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Profesional de bienestar/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Administración/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Responsable de caso/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Colaborador de caso/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Observador de caso/ })).toBeVisible();
+  await expect(page.getByLabel('Perspectiva de demostración')).toBeVisible();
+  await expect(page.locator('#demo-role option')).toHaveCount(2);
+  await expect(page.getByRole('button', { name: 'Entrar con esta perspectiva' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Convive, inicio' })).toHaveAttribute('href', '/');
 
-  // The role buttons intentionally call the protected-workspace demo endpoint.
-  // Its complete browser journey runs against the seeded API stack, not an aborted API.
+  // The selected perspective intentionally calls the protected-workspace demo
+  // endpoint. Its complete browser journey runs against the seeded API stack,
+  // not an aborted API.
   await expectNoAccessibilityViolations(page);
 });
 
-test('opens the prepared professional workspace as a read-only selected perspective', async ({
+test('opens the prepared case-management workspace as a read-only selected perspective', async ({
   page,
 }) => {
   await page.goto('/profesionales/acceso');
 
   await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
-  await page.getByRole('button', { name: /Observador de caso/ }).click();
+  await page.getByLabel('Perspectiva de demostración').selectOption('triage');
+  await page.getByRole('button', { name: 'Entrar con esta perspectiva' }).click();
 
-  await expect(page).toHaveURL(/\/profesionales\/casos\/019fe900-0000-7000-8000-000000000083$/);
-  await expect(page.getByText('Vista de demostración', { exact: false })).toBeVisible();
-  await expect(page.getByText('solo consulta', { exact: false })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Seguimiento del caso' })).toBeVisible();
+  await expect(page).toHaveURL(/\/profesionales$/);
+  await expect(page.getByRole('heading', { name: /Hola,/ })).toBeVisible();
+  await expect(page.getByText('Vista de demostración', { exact: false })).toHaveCount(0);
+});
+
+test('ends the selected demonstration session and returns to professional access', async ({
+  page,
+}) => {
+  await page.goto('/profesionales/acceso');
+  await page.getByLabel('Perspectiva de demostración').selectOption('administrator');
+  await page.getByRole('button', { name: 'Entrar con esta perspectiva' }).click();
+  await expect(page).toHaveURL(/\/profesionales\/cuentas$/);
+
+  await skipWorkspaceIntroduction(page);
+
+  await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+
+  await expect(page).toHaveURL(/\/profesionales\/acceso$/);
+  await expect(page.getByRole('heading', { name: 'Elige un rol' })).toBeVisible();
 });
 
 test('opens a prepared communication from the professional inbox', async ({ page }) => {
   test.setTimeout(240_000);
 
   await page.goto('/profesionales/acceso');
-  await page.getByRole('button', { name: /Profesional de bienestar/ }).click();
+  await page.getByLabel('Perspectiva de demostración').selectOption('triage');
+  await page.getByRole('button', { name: 'Entrar con esta perspectiva' }).click();
   await expect(page).toHaveURL(/\/profesionales$/);
   await skipWorkspaceIntroduction(page);
 

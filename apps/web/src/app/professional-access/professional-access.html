@@ -1,7 +1,9 @@
 <main class="professional-page">
   <div class="professional-flow">
     <header>
-      <img src="/convive-logo.svg" alt="Convive" width="180" height="59" />
+      <a class="wordmark" href="/" aria-label="Convive, inicio">
+        <img src="/convive-logo.svg" alt="" width="180" height="59" />
+      </a>
       <span>&Aacute;rea profesional</span>
     </header>
 
@@ -23,20 +25,28 @@
           <p class="eyebrow">EXPLORA LA DEMOSTRACIÓN</p>
           <h2 id="demo-entry-title">Elige un rol</h2>
           <p>Todos los recorridos están preparados y son solo de consulta</p>
-          <div class="demo-roles">
-            @for (role of demoRoles; track role.id) {
-              <button
-                type="button"
-                class="demo-role"
-                [disabled]="openingDemo() !== null"
-                (click)="openDemonstration(role.id)"
-              >
-                <span>{{ role.label }}</span>
-                <small>{{ role.description }}</small>
-                <b aria-hidden="true">{{ openingDemo() === role.id ? 'Abriendo…' : 'Entrar →' }}</b>
-              </button>
-            }
+          <div class="role-selector">
+            <label for="demo-role">Perspectiva de demostración</label>
+            <select
+              id="demo-role"
+              [value]="selectedDemoRole()"
+              [disabled]="openingDemo() !== null"
+              (change)="selectDemonstration($event)"
+            >
+              @for (role of demoRoles; track role.id) {
+                <option [value]="role.id">{{ role.label }}</option>
+              }
+            </select>
           </div>
+          <button
+            type="button"
+            class="demo-entry-button"
+            [disabled]="openingDemo() !== null"
+            (click)="openDemonstration(selectedDemoRole())"
+          >
+            {{ openingDemo() === selectedDemoRole() ? 'Abriendo…' : 'Entrar con esta perspectiva' }}
+            <span aria-hidden="true">→</span>
+          </button>
           @if (demoErrorMessage(); as message) {
             <p class="error-banner" role="alert">{{ message }}</p>
           }
