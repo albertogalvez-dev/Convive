@@ -17,8 +17,9 @@
   "reporter": {
     "eyebrow": "PARA QUIEN QUIERE CONTARLO",
     "title": "Prueba como persona informante",
-    "description": "Abre el ejemplo en este dispositivo o usa el código QR sin comunicarte con ningún centro real",
-    "open": "Abrir el ejemplo",
+    "description": "Puedes recorrer el formulario vacío o consultar un ejemplo ficticio ya completado",
+    "open": "Empezar una comunicación",
+    "preview": "Ver un ejemplo completado",
     "openPoster": "Abrir cartel a tamaño completo",
     "posterAlt": "Cartel de Centro Demo Convive con un código QR para abrir el ejemplo ficticio"
   },
@@ -27,5 +28,24 @@
     "title": "Mira cómo lo recibe el centro",
     "description": "Recorre la vista profesional con información ficticia y descubre cómo se ordena la comunicación",
     "open": "Entrar al área profesional"
+  },
+  "example": {
+    "seoTitle": "Ejemplo ficticio",
+    "eyebrow": "EJEMPLO FICTICIO · SOLO LECTURA",
+    "title": "Así puede verse una comunicación",
+    "description": "Este ejemplo ya está completado y no permite editar, enviar ni guardar nada.",
+    "summaryLabel": "Comunicación ficticia preparada",
+    "situationLabel": "Qué ha ocurrido",
+    "situation": "Una alumna ficticia ha dejado de participar en el recreo y parece preocupada desde hace varios días.",
+    "contextLabel": "Dónde ocurrió",
+    "context": "En persona y online",
+    "recurrenceLabel": "Frecuencia",
+    "recurrence": "Ha ocurrido varias veces.",
+    "attentionLabel": "Atención",
+    "attention": "Se ha indicado una revisión pronta.",
+    "note": "Los datos son inventados y esta vista no crea ninguna comunicación.",
+    "form": "Ver el formulario vacío",
+    "professional": "Ver cómo lo recibe el centro",
+    "back": "Volver a demostración"
   }
 }

@@ -322,6 +322,15 @@ button:focus-visible {
   border-radius: 0.55rem;
 }
 
+.completed-example-notice {
+  margin: 0 0 1.5rem;
+  border-inline-start: 4px solid #8bd4f2;
+  padding: 0.75rem 1rem;
+  color: #25446f;
+  line-height: 1.55;
+  background: #eaf8fc;
+}
+
 .actions {
   display: flex;
   align-items: center;
@@ -505,8 +514,8 @@ button {
 }
 
 .optional-taxonomy {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.85rem;
   padding-top: 1.75rem;
   margin-top: 1.75rem;
@@ -517,7 +526,7 @@ button {
 .optional-taxonomy .field-purpose,
 .optional-taxonomy .people-label,
 .optional-taxonomy input[type='text'] {
-  flex: 0 0 100%;
+  grid-column: 1 / -1;
 }
 
 .optional-taxonomy legend {
@@ -528,11 +537,11 @@ button {
 }
 
 .optional-taxonomy label:not(.people-label) {
-  flex: 1 1 calc(50% - 0.425rem);
+  min-width: 0;
 }
 
 .optional-taxonomy .unknown-option {
-  flex-basis: 100%;
+  grid-column: 1 / -1;
 }
 
 .step-introduction {
@@ -553,17 +562,8 @@ button {
   line-height: 1.5;
 }
 
-.witness-notice {
-  color: #2f405c;
-  font-size: 0.92rem;
-}
-
-.witness-notice {
-  margin: 0 0 1rem;
-}
-
 @media (max-width: 48rem) {
   .optional-taxonomy label:not(.people-label) {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
   }
 }

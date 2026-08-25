@@ -17,8 +17,9 @@
   "reporter": {
     "eyebrow": "KONTATU NAHI DUENARENTZAT",
     "title": "Probatu berriemaile gisa",
-    "description": "Ireki adibidea gailu honetan edo erabili QR kodea benetako ikastetxe batekin komunikatu gabe",
-    "open": "Ireki adibidea",
+    "description": "Formulario hutsa ibil dezakezu edo dagoeneko osatutako fikziozko adibide bat ikusi",
+    "open": "Komunikazio bat hasi",
+    "preview": "Ikusi osatutako adibidea",
     "openPoster": "Ireki kartela tamaina osoan",
     "posterAlt": "Convive Demo Ikastetxearen kartela, fikziozko adibidea irekitzeko QR kodearekin"
   },
@@ -27,5 +28,24 @@
     "title": "Ikusi ikastetxeak nola jasotzen duen",
     "description": "Egin ibilbidea ikuspegi profesionalean fikziozko informazioarekin eta ikusi komunikazioa nola antolatzen den",
     "open": "Sartu arlo profesionalera"
+  },
+  "example": {
+    "seoTitle": "Fikziozko adibidea",
+    "eyebrow": "FIKZIOZKO ADIBIDEA · IRAKURKETA BAKARRIK",
+    "title": "Horrela ikus daiteke komunikazio bat",
+    "description": "Adibide hau dagoeneko osatuta dago eta ezin da editatu, bidali edo gorde.",
+    "summaryLabel": "Prestatutako fikziozko komunikazioa",
+    "situationLabel": "Zer gertatu da",
+    "situation": "Fikziozko ikasle batek jolasaldian parte hartzeari utzi dio eta kezkatuta dirudi azken egunetan.",
+    "contextLabel": "Non gertatu da",
+    "context": "Aurrez aurre eta online",
+    "recurrenceLabel": "Maiztasuna",
+    "recurrence": "Hainbat aldiz gertatu da.",
+    "attentionLabel": "Arreta",
+    "attention": "Laster berrikustea adierazi da.",
+    "note": "Datuak asmatuak dira eta ikuspegi honek ez du komunikaziorik sortzen.",
+    "form": "Ikusi formulario hutsa",
+    "professional": "Ikusi nola jasotzen duen ikastetxeak",
+    "back": "Itzuli demostraziora"
   }
 }
