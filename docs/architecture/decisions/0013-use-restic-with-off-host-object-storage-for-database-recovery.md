@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 10 August 2026
 - **Related issues:** [#66](https://github.com/albertogalvez-dev/Convive/issues/66), [#138](https://github.com/albertogalvez-dev/Convive/issues/138)
-- **Depends on:** [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md), [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md), [ADR-0012](0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md)
+- **Depends on:** [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md), [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md), [ADR-0029](0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md)
 
 ## Context
 

@@ -31,7 +31,7 @@ today.
 |---|---|---|
 | VPS host | Runs the application, database and private object volume | **Not approved.** See the shared-host question below |
 | Cloudflare — registrar and DNS | Holds `conviveaula.com` and its zone | **Not approved** |
-| Cloudflare Tunnel | Public ingress without exposing the origin, under [ADR-0012](../architecture/decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md) | **Not approved** |
+| Platform Caddy and Cloudflare DNS | Public ingress through the per-project edge, under [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) | **Not approved for real data** |
 | Cloudflare Email Routing | Forwards `privacy@` and `hola@` to the maintainer's mailbox | **Not approved for anything but public contact.** It carries no report content and must never be repurposed |
 | Cloudflare R2 | Off-host encrypted backup storage for restic generations, under [ADR-0013](../architecture/decisions/0013-use-restic-with-off-host-object-storage-for-database-recovery.md) | **Not approved.** This is the copy that holds everything |
 | Outbound email delivery | None. `MAILER_DSN` is `null://null` in production; development uses Mailpit | Blocked until #190 |
@@ -46,9 +46,9 @@ to the same maintainer, and its platform standard makes a single shared Caddy
 the only public HTTP entry point, with each project confined to its own `edge`
 and `internal` networks and its own secrets directory.
 
-ADR-0012 anticipated this and chose a Cloudflare Tunnel precisely so Convive
-coexists without joining those networks or altering that proxy. For a fictional
-demonstration that reasoning holds.
+ADR-0029 resolves the platform boundary: Convive joins only its dedicated edge
+with platform Caddy, while all service and state networks remain isolated. For
+a fictional demonstration that reasoning holds.
 
 **[DECISION REQUIRED]** Whether a host shared with unrelated projects is
 acceptable for real safeguarding data at all, and if so under what separation
@@ -57,12 +57,10 @@ sound. A shared host means shared kernel, shared root, shared operator and a
 shared blast radius for any compromise, and the controller has to accept that
 explicitly rather than inherit it from a demonstration.
 
-**[DECISION REQUIRED]** How the two ingress positions are reconciled for a real
-deployment: the platform standard says Caddy is the only shared HTTP entry, and
-ADR-0012 gives Convive its own tunnel. Both can be true at once only if the
-platform accepts a second ingress path. This must be settled explicitly in
-#159, by an ADR superseding 0012 or by placing the tunnel in front of Caddy —
-never by whichever is convenient on deployment day.
+The ingress decision is resolved for the fictional demonstration by ADR-0029.
+Any future real-data delivery still requires its own approved controller,
+privacy, operational and platform review; that work cannot reuse this demo
+decision as evidence.
 
 ## Decisions required
 

@@ -11,7 +11,7 @@ latency, capacity or availability.
 Measurements run through the same Compose-based stack that powers the Chromium
 E2E journey and exercise the Angular development proxy and Symfony API. They
 are useful as a regression signal but are not a substitute
-for representative VPS, tunnel and internet measurements before release.
+for representative VPS, platform Caddy and internet measurements before release.
 
 ## Baseline (10 August 2026)
 
@@ -104,6 +104,6 @@ measurement.
    a written reason, a bounded expiry and explicit remeasurement; it must not be
    implemented as a global test suppression or a silent budget increase.
 4. Before public release, repeat the relevant checks on the provisioned
-   single-VPS/tunnel route and record the environment, date and fictional input
+   single-VPS/platform-Caddy route and record the environment, date and fictional input
    separately. Those operational results refine planning; they do not turn the
    CI budget into a public performance guarantee.

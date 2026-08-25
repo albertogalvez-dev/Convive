@@ -172,7 +172,6 @@ jobs:
           bash infrastructure/production/check-api-environment.sh
           secret_dir="$(mktemp -d)"
           trap 'rm -rf "$secret_dir"' EXIT
-          printf '%s\n' tunnel-token > "$secret_dir/cloudflare_tunnel_token"
           printf '%s\n' \
             'APP_SECRET=ci-only' \
             'DATABASE_URL=postgresql://convive:database-password@database:5432/convive?serverVersion=18.4&charset=utf8' \
@@ -192,8 +191,8 @@ jobs:
           trap cleanup_production_boundary EXIT
           docker compose "${production_compose[@]}" config --quiet
           mapfile -t production_images < <(docker compose "${production_compose[@]}" config --images)
-          if [[ "${#production_images[@]}" -ne 7 ]]; then
-            echo "Expected seven production images, got ${#production_images[@]}." >&2
+          if [[ "${#production_images[@]}" -ne 6 ]]; then
+            echo "Expected six production images, got ${#production_images[@]}." >&2
             exit 1
           fi
           for image in "${production_images[@]}"; do
@@ -202,13 +201,12 @@ jobs:
               exit 1
             fi
           done
-          docker compose "${production_compose[@]}" pull cloudflared database redis attachment-store-init
+          docker compose "${production_compose[@]}" pull database redis attachment-store-init
           # The scanner image is large and its signature volume is populated at
           # runtime, so CI verifies that it is pinned and configured rather than
           # starting it.
           docker compose "${production_compose[@]}" config --images | grep --fixed-strings 'clamav/clamav'
           docker compose "${production_compose[@]}" up --detach --wait database redis
-          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint cloudflared cloudflared --version
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
           grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'

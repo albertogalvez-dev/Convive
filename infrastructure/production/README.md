@@ -1,7 +1,7 @@
 # Convive production artifacts
 
 These files define the reviewed production image and Compose boundary selected
-by ADR-0012. They are deliberately separate from the development Compose
+by ADR-0029. They are deliberately separate from the development Compose
 files: no source bind mounts or host ports are present in the production
 topology.
 
@@ -25,7 +25,6 @@ by the release workflow for the reviewed commit.
 
 | Service                       | Reviewed upstream version                       | Immutable reference                                                       |
 | ----------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------- |
-| Cloudflare Tunnel             | `cloudflare/cloudflared:2025.7.0`               | `sha256:803b17adb5326a38ce397b9c9f374289ad290ee5526d204b5879a1423b6f5c3e` |
 | PostgreSQL                    | `postgres:18.4-bookworm`                        | `sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382` |
 | Redis                         | `redis:8.2.1-alpine`                            | `sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232` |
 | Attachment volume initializer | `busybox:1.37.0`                                | `sha256:9db7b59979c38555a39def84a31fb98b5296952f9e3afd4f6f11f05b07adfab0` |
@@ -67,10 +66,11 @@ shown in `secrets/` outside Git with root-only permissions. The Compose project
 mounts them as Docker secrets and never stores their values in the image or the
 release manifest.
 
-The Cloudflare connector uses the remotely-managed tunnel `--token-file`
-parameter, which keeps the tunnel token in a mounted secret file. See the
-[Cloudflare run parameters](https://developers.cloudflare.com/tunnel/advanced/run-parameters/)
-for the supported flag.
+Platform Caddy is the only public listener. The gateway only exposes port
+`8080` to the external `px-convive-edge` network shared with Caddy; Convive
+publishes no host port and carries no Cloudflare Tunnel token or connector.
+The project must be registered in `PROJECTX-INFRA` and enrolled with the
+platform procedure before a release can create any Convive service.
 
 The API is the only long-running service with the private `attachment-data`
 named volume. A network-isolated one-shot initializer assigns that volume to

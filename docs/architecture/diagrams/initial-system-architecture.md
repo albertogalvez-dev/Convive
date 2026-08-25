@@ -83,7 +83,7 @@ same-origin contract. In production, `/api/v1/**` reaches Symfony before the SPA
 fallback, while other frontend routes may fall back to `index.html`.
 
 The production ingress and trust topology are now selected in
-[ADR-0012](../decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md)
+[ADR-0029](../decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md)
 and shown in the
 [single-VPS deployment diagram](single-vps-deployment.md). Backups, monitoring,
 email delivery and asynchronous infrastructure remain separate decisions.
@@ -98,7 +98,7 @@ email delivery and asynchronous infrastructure remain separate decisions.
 - [ADR-0007: Use PostgreSQL and Doctrine for persistence](../decisions/0007-use-postgresql-and-doctrine-for-persistence.md)
 - [ADR-0008: Use server-side sessions and capability-based anonymous access](../decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
 - [ADR-0009: Use public organisation reporting links](../decisions/0009-use-public-organisation-reporting-links.md)
-- [ADR-0012: Use Cloudflare Tunnel for the single-VPS deployment](../decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md)
+- [ADR-0029: Use the platform Caddy per-project edge for public ingress](../decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md)
 - [ADR-0017: Model report triage as append-only decisions](../decisions/0017-model-triage-as-append-only-decisions.md)
 - [ADR-0018: Require explicit assignments for case content](../decisions/0018-require-case-assignments-for-case-content.md)
 - [ADR-0026: Use Transloco for runtime internationalisation](../decisions/0026-use-transloco-for-runtime-internationalisation.md)
