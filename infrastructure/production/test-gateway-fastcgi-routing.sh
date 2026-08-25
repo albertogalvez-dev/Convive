@@ -7,6 +7,8 @@ readonly GATEWAY_IMAGE=convive-production-gateway-fastcgi-check:ci
 
 grep --fixed-strings 'php_fastcgi api:9000' \
     "${REPOSITORY_ROOT}/infrastructure/production/Caddyfile" > /dev/null
+grep --fixed-strings 'root * /app/public' \
+    "${REPOSITORY_ROOT}/infrastructure/production/Caddyfile" > /dev/null
 grep --fixed-strings 'COPY apps/api/public /app/public' \
     "${REPOSITORY_ROOT}/infrastructure/production/gateway.Dockerfile" > /dev/null
 
@@ -19,4 +21,4 @@ docker run --rm --entrypoint sh "${GATEWAY_IMAGE}" -ec '
     test -f /srv/web/index.csr.html
 '
 
-echo 'Production gateway contains the FastCGI front-controller bootstrap.'
+echo 'Production gateway FastCGI routing contract passed.'
