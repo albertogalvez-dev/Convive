@@ -46,5 +46,6 @@ assert_capabilities() {
 assert_capabilities gateway '["NET_BIND_SERVICE"]'
 
 # The upstream ClamAV entrypoint creates/chowns its private runtime and
-# signature directories, then transitions freshclam and clamd to `clamav`.
-assert_capabilities clamav '["CHOWN", "FOWNER", "SETGID", "SETUID"]'
+# signature directories. clamd opens its configured log before it transitions
+# to `clamav`, which requires the narrowly scoped DAC override capability.
+assert_capabilities clamav '["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]'
