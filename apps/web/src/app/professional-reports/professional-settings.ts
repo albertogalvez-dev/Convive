@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -23,6 +23,7 @@ export class ProfessionalSettings implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly professional = this.sessions.professional;
+  protected readonly isDemonstration = computed(() => this.sessions.demonstrationRole() !== null);
   protected readonly loggingOut = signal(false);
   protected readonly memberships = signal<ProfessionalMembership[]>([]);
   protected readonly name = signal('');
@@ -48,7 +49,9 @@ export class ProfessionalSettings implements OnInit {
       },
       error: () => this.errorMessage.set('No hemos podido cargar tus datos.'),
     });
-    this.loadAbsences();
+    if (!this.isDemonstration()) {
+      this.loadAbsences();
+    }
   }
 
   protected recordAbsence(): void {

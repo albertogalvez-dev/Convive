@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
+import { ProfessionalSessionService } from '../professional-access/professional-session.service';
+
 import { assignmentRoleLabel, caseModalityLabel, caseStatusLabel } from './case-labels';
 import {
   CaseModality,
@@ -26,6 +28,7 @@ registerLocaleData(localeEs);
 export class ProfessionalCases implements OnInit {
   private readonly cases = inject(ProfessionalCasesService);
   private readonly router = inject(Router);
+  private readonly sessions = inject(ProfessionalSessionService);
 
   protected readonly items = signal<ProfessionalCaseSummary[]>([]);
   protected readonly loading = signal(true);
@@ -50,6 +53,7 @@ export class ProfessionalCases implements OnInit {
   protected readonly caseStatusLabel = caseStatusLabel;
   protected readonly caseModalityLabel = caseModalityLabel;
   protected readonly assignmentRoleLabel = assignmentRoleLabel;
+  protected readonly isDemonstration = computed(() => this.sessions.demonstrationRole() !== null);
 
   ngOnInit(): void {
     this.load();
