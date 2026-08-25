@@ -196,13 +196,13 @@ jobs:
             -f infrastructure/production/compose.production.yaml
           )
           cleanup_production_boundary() {
-            docker compose "${production_compose[@]}" down --volumes --remove-orphans || true
+            "${production_compose[@]}" down --volumes --remove-orphans || true
             docker network rm px-convive-edge px-convive-internal || true
             rm -rf "$secret_dir"
           }
           trap cleanup_production_boundary EXIT
-          docker compose "${production_compose[@]}" config --quiet
-          mapfile -t production_images < <(docker compose "${production_compose[@]}" config --images)
+          "${production_compose[@]}" config --quiet
+          mapfile -t production_images < <("${production_compose[@]}" config --images)
           if [[ "${#production_images[@]}" -ne 6 ]]; then
             echo "Expected six production images, got ${#production_images[@]}." >&2
             exit 1
@@ -213,19 +213,19 @@ jobs:
               exit 1
             fi
           done
-          docker compose "${production_compose[@]}" pull database redis attachment-store-init
+          "${production_compose[@]}" pull database redis attachment-store-init
           # The scanner image is large and its signature volume is populated at
           # runtime, so CI verifies that it is pinned and configured rather than
           # starting it.
-          docker compose "${production_compose[@]}" config --images | grep --fixed-strings 'clamav/clamav'
-          docker compose "${production_compose[@]}" up --detach --wait database redis
+          "${production_compose[@]}" config --images | grep --fixed-strings 'clamav/clamav'
+          "${production_compose[@]}" up --detach --wait database redis
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
           grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
-          docker compose "${production_compose[@]}" run --rm --no-deps --entrypoint /bin/sh api -ec \
+          "${production_compose[@]}" run --rm --no-deps --entrypoint /bin/sh api -ec \
             'APP_ENV=prod APP_DEBUG=0 APP_RUNTIME_OPTIONS="{\"disable_dotenv\":true}" exec php bin/console cache:pool:clear cache.rate_limiter app.idempotency --no-interaction'
-          docker compose "${production_compose[@]}" down --volumes --remove-orphans
+          "${production_compose[@]}" down --volumes --remove-orphans
           bash -n infrastructure/release/*.sh
           sudo bash infrastructure/release/test-reconcile-platform-network.sh
           bash -n infrastructure/maintenance/*.sh
