@@ -137,7 +137,10 @@ if [[ ${RELEASE_PHASE} == prepare ]]; then
     compose config --quiet
     compose pull
     compose up --detach database redis
-    compose run --rm --no-deps --entrypoint php api bin/console doctrine:migrations:migrate --env=prod --no-debug --no-interaction --allow-no-migration
+    # Production images intentionally contain no .env file. Symfony Runtime
+    # must use the reviewed Compose environment already injected into the API
+    # container, including for this short-lived migration command.
+    compose run --rm --no-deps -e 'APP_RUNTIME_OPTIONS={"disable_dotenv":true}' --entrypoint php api bin/console doctrine:migrations:migrate --env=prod --no-debug --no-interaction --allow-no-migration
     compose up --detach --remove-orphans --wait api gateway clamav
     echo "Convive release ${RELEASE_ID} is healthy inside its project boundary."
     echo 'Install and validate the reviewed platform Caddy route, then run this command again with the verify phase.'

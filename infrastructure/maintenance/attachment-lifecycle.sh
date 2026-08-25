@@ -40,6 +40,8 @@ compose() {
 # Docker Compose reads the root-only api.env file on the host and injects it
 # into this unprivileged API container. Keep the secret out of the host shell,
 # command line and timer output; the application already has its own runtime
-# environment and must not source a second bind-mounted copy.
-compose exec -T api php bin/console app:attachments:process-pending --env=prod --no-debug --no-interaction --limit=50
-compose exec -T api php bin/console app:attachments:clean-expired --env=prod --no-debug --no-interaction --limit=50
+# environment and must not source a second bind-mounted copy. The production
+# image has no .env file, so Runtime is explicitly told to use that injected
+# environment for every maintenance command.
+compose exec -T -e 'APP_RUNTIME_OPTIONS={"disable_dotenv":true}' api php bin/console app:attachments:process-pending --env=prod --no-debug --no-interaction --limit=50
+compose exec -T -e 'APP_RUNTIME_OPTIONS={"disable_dotenv":true}' api php bin/console app:attachments:clean-expired --env=prod --no-debug --no-interaction --limit=50
