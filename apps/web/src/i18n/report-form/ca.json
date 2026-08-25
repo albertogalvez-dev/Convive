@@ -60,9 +60,23 @@
     "attentionUnknown": "Prefereixo no indicar-ho"
   },
   "step3": {
-    "title": "Revisa abans d'enviar",
+    "title": "Explica'ns una mica més, si vols",
+    "introduction": "Aquestes preguntes són opcionals. Les pots deixar en blanc i l'avís arribarà igualment.",
     "descriptionLabel": "Què ha passat",
     "contextLabel": "On va passar"
+  },
+  "step4": {
+    "title": "Afegeix documents, si en tens",
+    "introduction": "Pots preparar fins a tres imatges o PDF. Només es desaran quan enviïs la comunicació.",
+    "safetyNote": "No afegeixis documents si contenen informació que no vols compartir amb el centre."
+  },
+  "step5": {
+    "title": "Revisa abans d'enviar",
+    "descriptionLabel": "Què ha passat",
+    "contextLabel": "On va passar",
+    "evidenceLabel": "Documents",
+    "evidenceSelected": "Documents preparats: {{count}}",
+    "noEvidenceSelected": "No has afegit documents"
   },
   "submissionError": {
     "invalidLink": "Aquest enllaç de comunicació no és vàlid. Comprova'l i torna-ho a provar.",

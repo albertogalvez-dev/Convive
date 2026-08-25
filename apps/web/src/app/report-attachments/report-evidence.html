@@ -1,16 +1,18 @@
 <section class="evidence" aria-labelledby="evidence-title">
-  <div class="evidence-heading">
-    <div>
-      <h2 id="evidence-title">{{ 'report-evidence.heading' | transloco }}</h2>
-      <p class="limits">{{ 'report-evidence.limits' | transloco }}</p>
-    </div>
+  @if (!selectionOnly()) {
+    <div class="evidence-heading">
+      <div>
+        <h2 id="evidence-title">{{ 'report-evidence.heading' | transloco }}</h2>
+        <p class="limits">{{ 'report-evidence.limits' | transloco }}</p>
+      </div>
 
-    @if (!expanded()) {
-      <button type="button" class="secondary open-evidence" (click)="prepare()">
-        {{ 'report-evidence.addEvidence' | transloco }}
-      </button>
-    }
-  </div>
+      @if (!expanded()) {
+        <button type="button" class="secondary open-evidence" (click)="prepare()">
+          {{ 'report-evidence.addEvidence' | transloco }}
+        </button>
+      }
+    </div>
+  }
 
   @if (expanded()) {
     @switch (accessState()) {
@@ -26,11 +28,13 @@
         </div>
       }
       @case ('ready') {
-        <p class="privacy-note">
-          {{ 'report-evidence.privacyNote' | transloco }}
-        </p>
+        @if (!selectionOnly()) {
+          <p class="privacy-note">
+            {{ 'report-evidence.privacyNote' | transloco }}
+          </p>
+        }
 
-        @if (remoteAttachments().length > 0) {
+        @if (!selectionOnly() && remoteAttachments().length > 0) {
           <ul class="remote-list" [attr.aria-label]="'report-evidence.sentListLabel' | transloco">
             @for (attachment of remoteAttachments(); track attachment.id) {
               <li [class]="'remote-' + attachment.status">
@@ -43,9 +47,18 @@
                 <div class="remote-actions">
                   <span class="state-label">{{ remoteStatusLabel(attachment) }}</span>
                   @if (attachment.status === 'available') {
-                    <a [href]="downloadUrl(attachment.id)">{{
-                      'report-evidence.download' | transloco
-                    }}</a>
+                    <span class="attachment-actions">
+                      @if (previewableAttachment(attachment); as preview) {
+                        <app-private-attachment-preview
+                          [attachment]="preview"
+                          [load]="previewAttachment"
+                          (accessRejected)="accessRejected.emit()"
+                        />
+                      }
+                      <a [href]="downloadUrl(attachment.id)">{{
+                        'report-evidence.download' | transloco
+                      }}</a>
+                    </span>
                   }
                 </div>
               </li>
@@ -159,33 +172,40 @@
           </ul>
         }
 
-        <div class="evidence-actions">
-          @if (remoteAttachments().length > 0) {
-            <button
-              type="button"
-              class="quiet"
-              [disabled]="refreshing() || uploading()"
-              (click)="refreshStatuses()"
-            >
-              {{
-                refreshing()
-                  ? ('report-evidence.updatingStatuses' | transloco)
-                  : ('report-evidence.updateStatuses' | transloco)
-              }}
-            </button>
-          }
-          @if (hasQueuedDrafts()) {
-            <button type="button" class="primary" [disabled]="uploading()" (click)="startUploads()">
-              {{
-                uploading()
-                  ? ('report-evidence.sendingEvidence' | transloco)
-                  : ('report-evidence.sendEvidence' | transloco)
-              }}
-            </button>
-          }
-        </div>
+        @if (!selectionOnly()) {
+          <div class="evidence-actions">
+            @if (remoteAttachments().length > 0) {
+              <button
+                type="button"
+                class="quiet"
+                [disabled]="refreshing() || uploading()"
+                (click)="refreshStatuses()"
+              >
+                {{
+                  refreshing()
+                    ? ('report-evidence.updatingStatuses' | transloco)
+                    : ('report-evidence.updateStatuses' | transloco)
+                }}
+              </button>
+            }
+            @if (hasQueuedDrafts()) {
+              <button
+                type="button"
+                class="primary"
+                [disabled]="uploading()"
+                (click)="startUploads()"
+              >
+                {{
+                  uploading()
+                    ? ('report-evidence.sendingEvidence' | transloco)
+                    : ('report-evidence.sendEvidence' | transloco)
+                }}
+              </button>
+            }
+          </div>
 
-        <p class="status-message" aria-live="polite">{{ statusMessage() }}</p>
+          <p class="status-message" aria-live="polite">{{ statusMessage() }}</p>
+        }
       }
     }
   }

@@ -192,6 +192,8 @@ describe('ReportForm witness entry', () => {
     clickPrimary();
     selectContext('En persona');
     clickPrimary();
+    clickPrimary();
+    clickPrimary();
     clickSubmit();
 
     return httpTesting.expectOne(`${organisationEndpoint}/reports`);

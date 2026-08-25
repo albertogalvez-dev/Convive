@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import reportEvidenceEs from '../../i18n/report-evidence/es.json';
 import reportHeaderEs from '../../i18n/report-header/es.json';
@@ -27,7 +28,7 @@ describe('FollowUp', () => {
         FollowUp,
         i18nTestingModule({ 'report-evidence': reportEvidenceEs, 'report-header': reportHeaderEs }),
       ],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     httpTesting = TestBed.inject(HttpTestingController);

@@ -1,6 +1,7 @@
 import { checkTranslationSync, digest, flatten } from './translation-sync';
 import { READY_LOCALES } from './i18n-completeness';
 
+import attachmentPreviewEs from '../../i18n/attachment-preview/es.json';
 import professionalCaseEs from '../../i18n/professional-case/es.json';
 import publicHomeEs from '../../i18n/public-home/es.json';
 import publicDemoEs from '../../i18n/public-demo/es.json';
@@ -28,6 +29,7 @@ import confirmedGl from '../../i18n/translation-sync/gl.json';
  * four other languages with every check green.
  */
 const SOURCE: Readonly<Record<string, unknown>> = {
+  'attachment-preview': attachmentPreviewEs,
   'professional-case': professionalCaseEs,
   'public-home': publicHomeEs,
   'public-demo': publicDemoEs,

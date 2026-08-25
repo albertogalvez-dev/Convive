@@ -1,0 +1,9 @@
+{
+  "title": "Vista previa del archivo",
+  "open": "Ver archivo",
+  "close": "Cerrar",
+  "loading": "Cargando el archivo…",
+  "error": "No hemos podido abrir este archivo.",
+  "pdfTitle": "Documento PDF adjunto",
+  "imageAlt": "Imagen adjunta"
+}

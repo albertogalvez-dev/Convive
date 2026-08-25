@@ -2,6 +2,7 @@ import { Component, HostListener, inject, input, signal } from '@angular/core';
 import { provideTranslocoScope, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ReportEvidence } from '../report-attachments/report-evidence';
+import { EvidenceDraft } from '../report-attachments/report-evidence';
 import { ReportSubmissionResponse } from './reporting.service';
 
 interface PasswordCredentialData {
@@ -37,6 +38,7 @@ export class ReportResult {
   private readonly transloco = inject(TranslocoService);
 
   readonly submitted = input.required<ReportSubmissionResponse>();
+  readonly initialEvidence = input<readonly EvidenceDraft[]>([]);
   protected readonly statusMessage = signal<string | null>(null);
   protected readonly canSaveInBrowser = signal(passwordCredentialConstructor() !== null);
   private readonly accessSecretKept = signal(false);

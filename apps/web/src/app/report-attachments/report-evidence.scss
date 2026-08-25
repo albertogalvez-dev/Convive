@@ -172,6 +172,14 @@ button:disabled,
   justify-items: end;
 }
 
+.attachment-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: end;
+}
+
 .state-label {
   color: #53647d;
   font-size: 0.74rem;

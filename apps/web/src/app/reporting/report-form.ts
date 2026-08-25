@@ -8,6 +8,7 @@ import { ReportHeader } from './report-header';
 import { ReportHelp } from './report-help';
 import { ReportResult } from './report-result';
 import { ReportSending } from './report-sending';
+import { EvidenceDraft, ReportEvidence } from '../report-attachments/report-evidence';
 import {
   PublicReportingProfile,
   ReporterAttentionCue,
@@ -26,6 +27,8 @@ type ReportingProfileState =
   | { status: 'invalid' }
   | { status: 'unavailable' };
 
+type ReporterStep = 1 | 2 | 3 | 4 | 5;
+
 @Component({
   selector: 'app-report-form',
   standalone: true,
@@ -33,6 +36,7 @@ type ReportingProfileState =
     ReactiveFormsModule,
     ReportHeader,
     ReportHelp,
+    ReportEvidence,
     ReportResult,
     ReportSending,
     RouterLink,
@@ -60,7 +64,7 @@ export class ReportForm {
    */
   protected readonly isWitness = this.route.snapshot.data?.['reporterPerspective'] === 'witnessed';
 
-  /** Link back and forth between the two entries for the same organisation. */
+  /** Lets someone choose the correct entry without interrupting the main action. */
   protected readonly otherEntryLink = this.isWitness
     ? ['/r', this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '']
     : ['/r', this.route.snapshot.paramMap.get('publicReportingIdentifier') ?? '', 'testigo'];
@@ -86,14 +90,17 @@ export class ReportForm {
       [Validators.required, Validators.pattern(/\S/), Validators.maxLength(5000)],
     ],
     situationContext: ['', [Validators.required]],
-    reporterRecurrence: ['unknown' as ReporterRecurrence],
-    reporterAttentionCue: ['unknown' as ReporterAttentionCue],
-    reporterTiming: ['unknown' as ReporterTiming],
+    reporterRecurrence: ['' as ReporterRecurrence | ''],
+    reporterAttentionCue: ['' as ReporterAttentionCue | ''],
+    reporterTiming: ['' as ReporterTiming | ''],
     reportedPeople: ['', [Validators.maxLength(200)]],
   });
 
   protected readonly submitting = signal(false);
-  protected readonly currentStep = signal<1 | 2 | 3>(1);
+  protected readonly currentStep = signal<ReporterStep>(1);
+  protected readonly selectedEvidence = signal<readonly EvidenceDraft[]>([]);
+  /** Frozen at submission so a destroyed selection view cannot affect it. */
+  protected readonly submittedEvidence = signal<readonly EvidenceDraft[]>([]);
   protected readonly showHelp = signal(false);
   protected readonly result = signal<ReportSubmissionResponse | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
@@ -121,13 +128,13 @@ export class ReportForm {
 
   protected goBack(): void {
     this.errorMessage.set(null);
-    this.currentStep.update((step) => (step === 3 ? 2 : 1));
+    this.currentStep.update((step) => Math.max(1, step - 1) as ReporterStep);
   }
 
   protected navigateToStep(step: number): void {
-    if (step < this.currentStep() && (step === 1 || step === 2)) {
+    if (step < this.currentStep() && step >= 1 && step <= 5) {
       this.errorMessage.set(null);
-      this.currentStep.set(step);
+      this.currentStep.set(step as ReporterStep);
     }
   }
 
@@ -141,6 +148,14 @@ export class ReportForm {
     }
 
     this.currentStep.set(3);
+  }
+
+  protected continueFromDetails(): void {
+    this.currentStep.set(4);
+  }
+
+  protected continueFromEvidence(): void {
+    this.currentStep.set(5);
   }
 
   protected toggleContext(context: 'in_person' | 'digital' | 'unknown'): void {
@@ -197,6 +212,7 @@ export class ReportForm {
 
     this.submitting.set(true);
     this.errorMessage.set(null);
+    this.submittedEvidence.set(this.selectedEvidence().map((draft) => ({ ...draft })));
 
     const value = this.form.getRawValue();
 
@@ -204,9 +220,12 @@ export class ReportForm {
       .submitReport(this.publicReportingIdentifier, {
         situationDescription: value.situationDescription,
         situationContext: value.situationContext as SituationContext,
-        reporterRecurrence: value.reporterRecurrence,
-        reporterAttentionCue: value.reporterAttentionCue,
-        reporterTiming: value.reporterTiming,
+        // These fields stay absent in the interface until the reporter chooses
+        // one. The current API contract represents an omitted answer as
+        // `unknown`, so preserve that contract only at submission time.
+        reporterRecurrence: value.reporterRecurrence || 'unknown',
+        reporterAttentionCue: value.reporterAttentionCue || 'unknown',
+        reporterTiming: value.reporterTiming || 'unknown',
         // Blank means the reporter named nobody, so the field is left out of
         // the request rather than sent as an empty string.
         ...(value.reportedPeople?.trim() ? { reportedPeople: value.reportedPeople.trim() } : {}),
@@ -286,5 +305,48 @@ export class ReportForm {
     }
 
     return this.transloco.translate('report-form.submissionError.generic');
+  }
+
+  protected recurrenceSummary(): string | null {
+    switch (this.form.controls.reporterRecurrence.value) {
+      case 'single':
+        return this.transloco.translate('report-form.step2.recurrenceSingle');
+      case 'repeated':
+        return this.transloco.translate('report-form.step2.recurrenceRepeated');
+      case 'ongoing':
+        return this.transloco.translate('report-form.step2.recurrenceOngoing');
+      case 'unknown':
+        return this.transloco.translate('report-form.step2.unknownOption');
+      default:
+        return null;
+    }
+  }
+
+  protected timingSummary(): string | null {
+    switch (this.form.controls.reporterTiming.value) {
+      case 'within_days':
+        return this.transloco.translate('report-form.step2.timingWithinDays');
+      case 'within_weeks':
+        return this.transloco.translate('report-form.step2.timingWithinWeeks');
+      case 'longer_ago':
+        return this.transloco.translate('report-form.step2.timingLongerAgo');
+      case 'unknown':
+        return this.transloco.translate('report-form.step2.unknownOption');
+      default:
+        return null;
+    }
+  }
+
+  protected attentionSummary(): string | null {
+    switch (this.form.controls.reporterAttentionCue.value) {
+      case 'needs_prompt_attention':
+        return this.transloco.translate('report-form.step2.attentionYes');
+      case 'no_prompt_attention_indicated':
+        return this.transloco.translate('report-form.step2.attentionNo');
+      case 'unknown':
+        return this.transloco.translate('report-form.step2.attentionUnknown');
+      default:
+        return null;
+    }
   }
 }

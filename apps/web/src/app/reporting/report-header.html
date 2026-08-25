@@ -1,5 +1,7 @@
 <header>
-  <img src="/convive-logo.svg" alt="Convive" width="180" height="59" />
+  <a class="home-link" routerLink="/" [attr.aria-label]="'report-header.homeLinkLabel' | transloco">
+    <img src="/convive-logo.svg" alt="" width="180" height="59" />
+  </a>
   @if (showProgress()) {
     <div class="header-actions">
       <button class="help" type="button" (click)="helpRequested.emit()">

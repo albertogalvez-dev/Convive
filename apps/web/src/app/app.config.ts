@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import {
   ApplicationConfig,
@@ -15,7 +16,7 @@ import { EAGER_TRANSLOCO_SCOPES } from './i18n/i18n-eager-scopes';
 import { HttpTranslocoLoader } from './i18n/i18n-loader';
 import { READY_LOCALES } from './i18n/i18n-completeness';
 import { readStoredLocale } from './i18n/i18n-locale-preference';
-import { SOURCE_LOCALE } from './i18n/i18n-locales';
+import { localeDirection, SOURCE_LOCALE } from './i18n/i18n-locales';
 
 // The visitor's or organisation's explicitly stored choice, read once at
 // bootstrap -- never inferred from geolocation or any other automatic
@@ -56,7 +57,14 @@ export const appConfig: ApplicationConfig = {
     // locale, so a returning visitor who chose Catalan does not see a flash
     // of Spanish before the switch takes effect.
     provideAppInitializer(() => {
+      const document = inject(DOCUMENT);
       const transloco = inject(TranslocoService);
+
+      // Angular creates the root component after application initializers.
+      // Apply the persisted locale to the root document here as well as in
+      // I18nDocumentSync, so an Arabic reload is RTL from its first render.
+      document.documentElement.lang = initialLocale;
+      document.documentElement.dir = localeDirection(initialLocale);
 
       return forkJoin(
         EAGER_TRANSLOCO_SCOPES.length === 0

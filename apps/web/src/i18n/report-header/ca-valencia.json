@@ -1,4 +1,5 @@
 {
+  "homeLinkLabel": "Convive, inici",
   "helpButton": "Com funciona",
   "stepIndicator": "Pas {{current}} de {{total}}",
   "closing": "Tancant…",

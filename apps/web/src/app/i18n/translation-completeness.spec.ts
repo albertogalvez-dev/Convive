@@ -1,5 +1,11 @@
 import { checkLocaleCompleteness, TranslationTree } from './i18n-completeness';
 
+import attachmentPreviewEs from '../../i18n/attachment-preview/es.json';
+import attachmentPreviewCa from '../../i18n/attachment-preview/ca.json';
+import attachmentPreviewCaValencia from '../../i18n/attachment-preview/ca-valencia.json';
+import attachmentPreviewAr from '../../i18n/attachment-preview/ar.json';
+import attachmentPreviewGl from '../../i18n/attachment-preview/gl.json';
+import attachmentPreviewEu from '../../i18n/attachment-preview/eu.json';
 import footerEs from '../../i18n/public-site-footer/es.json';
 import footerCa from '../../i18n/public-site-footer/ca.json';
 import footerCaValencia from '../../i18n/public-site-footer/ca-valencia.json';
@@ -91,6 +97,15 @@ const scopes: ReadonlyArray<{
   readonly gl: TranslationTree;
   readonly eu: TranslationTree;
 }> = [
+  {
+    name: 'attachment-preview',
+    es: asTranslationTree(attachmentPreviewEs),
+    ca: asTranslationTree(attachmentPreviewCa),
+    caValencia: asTranslationTree(attachmentPreviewCaValencia),
+    ar: asTranslationTree(attachmentPreviewAr),
+    gl: asTranslationTree(attachmentPreviewGl),
+    eu: asTranslationTree(attachmentPreviewEu),
+  },
   {
     name: 'public-site-footer',
     es: asTranslationTree(footerEs),

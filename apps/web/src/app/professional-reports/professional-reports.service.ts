@@ -44,6 +44,14 @@ export interface ProfessionalReportConversationEntry {
   createdAt: string;
 }
 
+export interface ProfessionalReportAttachment {
+  id: string;
+  mediaType: 'application/pdf' | 'image/jpeg' | 'image/png';
+  byteSize: number;
+  createdAt: string;
+  description: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProfessionalReportsService {
   private readonly http = inject(HttpClient);
@@ -83,6 +91,19 @@ export class ProfessionalReportsService {
     return this.http.post<ProfessionalReportConversationEntry>(
       `${this.endpoint}/${encodeURIComponent(id)}/responses`,
       { content },
+    );
+  }
+
+  attachments(id: string): Observable<{ items: ProfessionalReportAttachment[] }> {
+    return this.http.get<{ items: ProfessionalReportAttachment[] }>(
+      `${this.endpoint}/${encodeURIComponent(id)}/attachments`,
+    );
+  }
+
+  previewAttachment(id: string, attachmentId: string): Observable<Blob> {
+    return this.http.get(
+      `${this.endpoint}/${encodeURIComponent(id)}/attachments/${encodeURIComponent(attachmentId)}/download`,
+      { responseType: 'blob' },
     );
   }
 }

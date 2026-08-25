@@ -8,16 +8,18 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProfessionalSessionService } from '../professional-access/professional-session.service';
 import { reportContextLabel } from './report-context';
 import {
+  ProfessionalReportAttachment,
   ProfessionalReportDetail,
   ProfessionalReportsService,
 } from './professional-reports.service';
+import { PrivateAttachmentPreview } from '../report-attachments/private-attachment-preview';
 
 registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-professional-detail',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule, RouterLink],
+  imports: [DatePipe, PrivateAttachmentPreview, ReactiveFormsModule, RouterLink],
   templateUrl: './professional-detail.html',
   styleUrl: './professional-detail.scss',
 })
@@ -31,6 +33,7 @@ export class ProfessionalDetail implements OnInit {
 
   protected readonly report = signal<ProfessionalReportDetail | null>(null);
   protected readonly isDemonstration = computed(() => this.sessions.demonstrationRole() !== null);
+  protected readonly attachments = signal<ProfessionalReportAttachment[]>([]);
   protected readonly loading = signal(true);
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -59,6 +62,8 @@ export class ProfessionalDetail implements OnInit {
   protected readonly responseForm = this.formBuilder.nonNullable.group({
     content: ['', [Validators.required, Validators.maxLength(2000)]],
   });
+  protected previewAttachment = (attachmentId: string) =>
+    this.reports.previewAttachment(this.id, attachmentId);
 
   ngOnInit(): void {
     this.load();
@@ -143,6 +148,7 @@ export class ProfessionalDetail implements OnInit {
       next: (report) => {
         this.report.set(report);
         this.loading.set(false);
+        this.loadAttachments();
       },
       error: (error: unknown) => {
         this.loading.set(false);
@@ -155,6 +161,21 @@ export class ProfessionalDetail implements OnInit {
             ? 'Esta comunicaci\u00f3n no est\u00e1 disponible.'
             : 'No hemos podido cargar la comunicaci\u00f3n.',
         );
+      },
+    });
+  }
+
+  protected attachmentAccessRejected(): void {
+    void this.router.navigate(['/profesionales/acceso']);
+  }
+
+  private loadAttachments(): void {
+    this.reports.attachments(this.id).subscribe({
+      next: ({ items }) => this.attachments.set(items),
+      error: (error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          void this.router.navigate(['/profesionales/acceso']);
+        }
       },
     });
   }

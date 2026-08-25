@@ -2,7 +2,7 @@
   <section class="report-flow">
     <app-report-header
       [currentStep]="currentStep()"
-      [totalSteps]="3"
+      [totalSteps]="5"
       [showProgress]="profileState().status === 'ready' && !result()"
       (helpRequested)="showHelp.set(true)"
       (stepRequested)="navigateToStep($event)"
@@ -148,7 +148,7 @@
           }
 
           @if (result(); as submitted) {
-            <app-report-result [submitted]="submitted" />
+            <app-report-result [submitted]="submitted" [initialEvidence]="submittedEvidence()" />
           } @else {
             <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
               @if (currentStep() === 1) {
@@ -200,15 +200,6 @@
                       <span class="continue-arrow" aria-hidden="true">→</span>
                     </button>
                   </div>
-
-                  <!--
-                    After the primary action on purpose. Placing this link
-                    between the description and "Continuar" put a secondary
-                    escape hatch in the middle of the main path and moved the
-                    keyboard focus order, which the public-reporting E2E test
-                    caught: tabbing out of the description must still reach
-                    "Continuar".
-                  -->
                   <a class="other-entry" [routerLink]="otherEntryLink">{{
                     otherEntryLabelKey | transloco
                   }}</a>
@@ -266,50 +257,89 @@
                     </p>
                   }
 
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="goBack()">
+                      {{ 'report-form.back' | transloco }}
+                    </button>
+                    <button type="button" class="primary" (click)="continueFromContext()">
+                      {{ 'report-form.continue' | transloco }}
+                      <span class="continue-arrow" aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              } @else if (currentStep() === 3) {
+                <div class="step">
+                  <h1 id="step-title">{{ 'report-form.step3.title' | transloco }}</h1>
+                  <p class="step-introduction">
+                    {{ 'report-form.step3.introduction' | transloco }}
+                  </p>
+
                   <fieldset class="context-options optional-taxonomy">
                     <legend>{{ 'report-form.step2.recurrenceTitle' | transloco }}</legend>
                     <p class="field-purpose">
                       {{ 'report-form.step2.recurrencePurpose' | transloco }}
                     </p>
-                    <label>
-                      <input type="radio" formControlName="reporterRecurrence" value="single" />
-                      <span>{{ 'report-form.step2.recurrenceSingle' | transloco }}</span>
-                    </label>
-                    <label>
-                      <input type="radio" formControlName="reporterRecurrence" value="repeated" />
-                      <span>{{ 'report-form.step2.recurrenceRepeated' | transloco }}</span>
-                    </label>
-                    <label>
-                      <input type="radio" formControlName="reporterRecurrence" value="ongoing" />
-                      <span>{{ 'report-form.step2.recurrenceOngoing' | transloco }}</span>
-                    </label>
-                    <label class="unknown-option">
-                      <input type="radio" formControlName="reporterRecurrence" value="unknown" />
-                      <span>{{ 'report-form.step2.unknownOption' | transloco }}</span>
-                    </label>
+                    <label
+                      ><input
+                        type="radio"
+                        formControlName="reporterRecurrence"
+                        value="single"
+                      /><span>{{ 'report-form.step2.recurrenceSingle' | transloco }}</span></label
+                    >
+                    <label
+                      ><input
+                        type="radio"
+                        formControlName="reporterRecurrence"
+                        value="repeated"
+                      /><span>{{ 'report-form.step2.recurrenceRepeated' | transloco }}</span></label
+                    >
+                    <label
+                      ><input
+                        type="radio"
+                        formControlName="reporterRecurrence"
+                        value="ongoing"
+                      /><span>{{ 'report-form.step2.recurrenceOngoing' | transloco }}</span></label
+                    >
+                    <label class="unknown-option"
+                      ><input
+                        type="radio"
+                        formControlName="reporterRecurrence"
+                        value="unknown"
+                      /><span>{{ 'report-form.step2.unknownOption' | transloco }}</span></label
+                    >
                   </fieldset>
 
                   <fieldset class="context-options optional-taxonomy">
                     <legend>{{ 'report-form.step2.timingTitle' | transloco }}</legend>
-                    <p class="field-purpose">
-                      {{ 'report-form.step2.timingPurpose' | transloco }}
-                    </p>
-                    <label>
-                      <input type="radio" formControlName="reporterTiming" value="within_days" />
-                      <span>{{ 'report-form.step2.timingWithinDays' | transloco }}</span>
-                    </label>
-                    <label>
-                      <input type="radio" formControlName="reporterTiming" value="within_weeks" />
-                      <span>{{ 'report-form.step2.timingWithinWeeks' | transloco }}</span>
-                    </label>
-                    <label>
-                      <input type="radio" formControlName="reporterTiming" value="longer_ago" />
-                      <span>{{ 'report-form.step2.timingLongerAgo' | transloco }}</span>
-                    </label>
-                    <label class="unknown-option">
-                      <input type="radio" formControlName="reporterTiming" value="unknown" />
-                      <span>{{ 'report-form.step2.unknownOption' | transloco }}</span>
-                    </label>
+                    <p class="field-purpose">{{ 'report-form.step2.timingPurpose' | transloco }}</p>
+                    <label
+                      ><input
+                        type="radio"
+                        formControlName="reporterTiming"
+                        value="within_days"
+                      /><span>{{ 'report-form.step2.timingWithinDays' | transloco }}</span></label
+                    >
+                    <label
+                      ><input
+                        type="radio"
+                        formControlName="reporterTiming"
+                        value="within_weeks"
+                      /><span>{{ 'report-form.step2.timingWithinWeeks' | transloco }}</span></label
+                    >
+                    <label
+                      ><input
+                        type="radio"
+                        formControlName="reporterTiming"
+                        value="longer_ago"
+                      /><span>{{ 'report-form.step2.timingLongerAgo' | transloco }}</span></label
+                    >
+                    <label class="unknown-option"
+                      ><input
+                        type="radio"
+                        formControlName="reporterTiming"
+                        value="unknown"
+                      /><span>{{ 'report-form.step2.unknownOption' | transloco }}</span></label
+                    >
                   </fieldset>
 
                   <div class="context-options optional-taxonomy">
@@ -334,35 +364,60 @@
                     <p class="field-purpose">
                       {{ 'report-form.step2.attentionPurpose' | transloco }}
                     </p>
-                    <label>
-                      <input
+                    <label
+                      ><input
                         type="radio"
                         formControlName="reporterAttentionCue"
                         value="needs_prompt_attention"
-                      />
-                      <span>{{ 'report-form.step2.attentionYes' | transloco }}</span>
-                    </label>
-                    <label>
-                      <input
+                      /><span>{{ 'report-form.step2.attentionYes' | transloco }}</span></label
+                    >
+                    <label
+                      ><input
                         type="radio"
                         formControlName="reporterAttentionCue"
                         value="no_prompt_attention_indicated"
-                      />
-                      <span>{{ 'report-form.step2.attentionNo' | transloco }}</span>
-                    </label>
-                    <label class="unknown-option">
-                      <input type="radio" formControlName="reporterAttentionCue" value="unknown" />
-                      <span>{{ 'report-form.step2.attentionUnknown' | transloco }}</span>
-                    </label>
+                      /><span>{{ 'report-form.step2.attentionNo' | transloco }}</span></label
+                    >
+                    <label class="unknown-option"
+                      ><input
+                        type="radio"
+                        formControlName="reporterAttentionCue"
+                        value="unknown"
+                      /><span>{{ 'report-form.step2.attentionUnknown' | transloco }}</span></label
+                    >
                   </fieldset>
 
                   <div class="actions">
                     <button type="button" class="secondary" (click)="goBack()">
                       {{ 'report-form.back' | transloco }}
                     </button>
-                    <button type="button" class="primary" (click)="continueFromContext()">
-                      {{ 'report-form.continue' | transloco }}
-                      <span class="continue-arrow" aria-hidden="true">→</span>
+                    <button type="button" class="primary" (click)="continueFromDetails()">
+                      {{ 'report-form.continue' | transloco
+                      }}<span class="continue-arrow" aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              } @else if (currentStep() === 4) {
+                <div class="step evidence-step">
+                  <h1 id="step-title">{{ 'report-form.step4.title' | transloco }}</h1>
+                  <p class="step-introduction">
+                    {{ 'report-form.step4.introduction' | transloco }}
+                  </p>
+                  <app-report-evidence
+                    [selectionOnly]="true"
+                    [initialDrafts]="selectedEvidence()"
+                    (draftsChanged)="selectedEvidence.set($event)"
+                  />
+                  <p class="evidence-safety-note">
+                    {{ 'report-form.step4.safetyNote' | transloco }}
+                  </p>
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="goBack()">
+                      {{ 'report-form.back' | transloco }}
+                    </button>
+                    <button type="button" class="primary" (click)="continueFromEvidence()">
+                      {{ 'report-form.continue' | transloco
+                      }}<span class="continue-arrow" aria-hidden="true">→</span>
                     </button>
                   </div>
                 </div>
@@ -371,7 +426,7 @@
                   @if (submitting()) {
                     <app-report-sending />
                   } @else {
-                    <h1 id="step-title">{{ 'report-form.step3.title' | transloco }}</h1>
+                    <h1 id="step-title">{{ 'report-form.step5.title' | transloco }}</h1>
 
                     <dl class="review-details">
                       <div>
@@ -381,6 +436,41 @@
                       <div>
                         <dt>{{ 'report-form.step3.contextLabel' | transloco }}</dt>
                         <dd>{{ contextSummary() }}</dd>
+                      </div>
+                      @if (recurrenceSummary(); as recurrence) {
+                        <div>
+                          <dt>{{ 'report-form.step2.recurrenceTitle' | transloco }}</dt>
+                          <dd>{{ recurrence }}</dd>
+                        </div>
+                      }
+                      @if (timingSummary(); as timing) {
+                        <div>
+                          <dt>{{ 'report-form.step2.timingTitle' | transloco }}</dt>
+                          <dd>{{ timing }}</dd>
+                        </div>
+                      }
+                      @if (form.controls.reportedPeople.value.trim(); as people) {
+                        <div>
+                          <dt>{{ 'report-form.step2.peopleLabel' | transloco }}</dt>
+                          <dd>{{ people }}</dd>
+                        </div>
+                      }
+                      @if (attentionSummary(); as attention) {
+                        <div>
+                          <dt>{{ 'report-form.step2.attentionTitle' | transloco }}</dt>
+                          <dd>{{ attention }}</dd>
+                        </div>
+                      }
+                      <div>
+                        <dt>{{ 'report-form.step5.evidenceLabel' | transloco }}</dt>
+                        <dd>
+                          {{
+                            selectedEvidence().length
+                              ? ('report-form.step5.evidenceSelected'
+                                | transloco: { count: selectedEvidence().length })
+                              : ('report-form.step5.noEvidenceSelected' | transloco)
+                          }}
+                        </dd>
                       </div>
                     </dl>
 

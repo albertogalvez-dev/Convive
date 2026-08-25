@@ -79,5 +79,10 @@
 </section>
 
 <div class="initial-evidence">
-  <app-report-evidence [accessSecret]="submitted().accessSecret" [autoLoad]="false" />
+  <app-report-evidence
+    [accessSecret]="submitted().accessSecret"
+    [autoLoad]="true"
+    [initialDrafts]="initialEvidence()"
+    [autoUploadQueued]="initialEvidence().length > 0"
+  />
 </div>
