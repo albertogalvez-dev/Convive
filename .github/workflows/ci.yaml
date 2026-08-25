@@ -229,6 +229,16 @@ jobs:
           docker build --file infrastructure/production/api.Dockerfile --tag convive-production-cache-check:ci .
           bash infrastructure/production/test-gateway-fastcgi-routing.sh
           export CONVIVE_API_IMAGE=convive-production-cache-check:ci
+          export CONVIVE_GATEWAY_IMAGE=convive-production-gateway-fastcgi-check:ci
+          # Exercise the real Caddy -> PHP-FPM path. A syntactically valid FPM
+          # configuration is insufficient: its workers must retain Compose's
+          # reviewed production environment or Symfony Runtime will search for
+          # the deliberately absent immutable-image .env file.
+          "${production_compose[@]}" up --detach --wait api gateway
+          gateway_id="$("${production_compose[@]}" ps --quiet gateway)"
+          docker exec "$gateway_id" curl --fail --silent --show-error \
+            --retry 10 --retry-delay 1 --retry-all-errors \
+            http://127.0.0.1:8080/api/v1/health | grep --fixed-strings '{"status":"ok"}'
           grep --after-context=1 --fixed-strings 'cache.rate_limiter:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           grep --after-context=1 --fixed-strings 'app.idempotency:' apps/api/config/packages/cache.yaml | grep --fixed-strings 'adapter: cache.adapter.redis'
           "${production_compose[@]}" run --rm --no-deps --entrypoint /bin/sh api -ec \

@@ -46,6 +46,7 @@ WORKDIR /app
 COPY --from=dependencies-runtime /app/vendor ./vendor
 COPY apps/api .
 COPY apps/api/docker/php/conf.d/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+COPY apps/api/docker/php/fpm.d/zz-production-environment.conf /usr/local/etc/php-fpm.d/zz-production-environment.conf
 
 RUN rm --force .env .env.dev .env.test \
     && rm --recursive --force tests \
