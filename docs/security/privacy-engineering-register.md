@@ -89,3 +89,6 @@ backup, environment or real-data status, and after incidents or restore tests.
 - [Attachment lifecycle](../architecture/diagrams/attachment-lifecycle.md) and
   [observability and incident response](../architecture/diagrams/observability-and-incident-response.md)
   record the implemented fail-closed and redacted operational boundaries.
+- The [security data-flow and trust-boundary diagram](../architecture/diagrams/security-data-flow.md)
+  connects these controls to the reviewed public edge, credential contexts,
+  private evidence lifecycle and encrypted fictional recovery path.

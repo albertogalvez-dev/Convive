@@ -28,6 +28,10 @@ download. It is based on defence in depth: an allowlist, byte limits, server
 format detection, generated storage names, isolation, malware scanning and
 authorisation must all hold. No individual control is sufficient.
 
+The [security data-flow and trust-boundary diagram](../architecture/diagrams/security-data-flow.md)
+places this private lifecycle beside the separate reporter, professional and
+operational credential boundaries; it does not change the fictional-only scope.
+
 ## Decisions
 
 ### Initial evidence format and capacity policy

@@ -3,6 +3,9 @@
 This runbook defines the repeatable release contract for the single-VPS
 fictional-data demonstration selected in
 [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md).
+The [controlled release and rollback sequence](../architecture/diagrams/release-rollback-sequence.md)
+is the companion visual decision path; this runbook remains the executable
+operator procedure.
 The production Compose files and automation will implement these steps in issue
 #64. Backup and restore commands are defined in the
 [encrypted backup and recovery runbook](backup-and-recovery.md) and are completed
