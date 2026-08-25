@@ -406,7 +406,7 @@ jobs:
           -e APP_DEMO_MODE=1
            -e APP_SECRET=fictional-e2e-only
            -e DEMO_PROFESSIONAL_PASSWORD
-           -e REDIS_DSN=redis://redis:6379
+           -e REDIS_DSN=redis://:convive-development-only@redis:6379
            api php bin/console app:demo:seed --env=prod --no-debug
 
       - name: Wait for the reporting journey

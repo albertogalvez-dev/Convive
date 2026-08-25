@@ -42,11 +42,18 @@ services:
   # host port.
   redis:
     image: redis:8.2.1-alpine
-    command: ["redis-server", "--appendonly", "no"]
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "no",
+        "--requirepass",
+        "convive-development-only",
+      ]
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "convive-development-only", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
