@@ -2,7 +2,7 @@
 
 This runbook defines the repeatable release contract for the single-VPS
 fictional-data demonstration selected in
-[ADR-0012](../architecture/decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md).
+[ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md).
 The production Compose files and automation will implement these steps in issue
 #64. Backup and restore commands are defined in the
 [encrypted backup and recovery runbook](backup-and-recovery.md) and are completed
@@ -42,8 +42,10 @@ Stop the release if any check fails:
    files and contains no published Convive host ports or source bind mounts.
 4. Required secret files exist under the root-owned Convive secret directory,
    have restrictive permissions and are granted only to their intended service.
-5. The named tunnel and public DNS route are healthy; the connector token is
-   tunnel-scoped; outbound TCP/UDP 7844 is available.
+5. The Convive project is registered in `PROJECTX-INFRA`, enrolled on the VPS,
+   and its sole public route is the reviewed platform Caddy hostname route.
+   Cloudflare DNS/proxy settings match that reviewed route; no application
+   tunnel or host port exists.
 6. VPS disk, memory and load have headroom for the rollout and remain inside the
    Convive resource budget. Existing ProjectX containers are healthy before the
    change.
@@ -61,7 +63,9 @@ Stop the release if any check fails:
 
 ## Release
 
-1. Place the reviewed non-secret release manifest in `/srv/convive/releases/`
+1. Enrol the reviewed project once with `sudo projectx-enroll-project --project
+   convive`, then place the reviewed non-secret release manifest in
+   `/srv/platform/projects/convive/releases/`
    and atomically select it as the candidate release.
 2. Pull the exact `gateway` and `api` digests. Inspect the resolved digests before
    continuing; do not deploy a mutable tag by itself.
@@ -73,17 +77,20 @@ Stop the release if any check fails:
    the [reviewed procedure](fictional-demo-data.md). It must refuse execution
    when demo mode is disabled. A destructive restore additionally requires its
    exact reset confirmation token.
-6. Reconcile the production Compose project with health waiting enabled. Replace
-   only Convive-owned services and never use a host-wide prune or an unrelated
-   Compose project command.
-7. Keep the previous release manifest and images until the rollback window has
+6. Run the guarded **prepare** phase. It starts only Convive-owned services and
+   waits for their health; it does not make them public.
+7. Validate the exact new Caddy route, then add it only after the prepare phase
+   is healthy. Reload only platform Caddy after validation; never restart or
+   edit another project.
+8. Run the guarded **verify** phase through the public hostname. Keep the
+   previous release manifest and images until the rollback window has
    closed.
 
 ## Smoke test
 
 Run the same scripted checks from the VPS and through the public hostname:
 
-1. Compose reports `cloudflared`, `gateway`, `api`, `database` and `redis` as
+1. Compose reports `gateway`, `api`, `database`, `redis` and `clamav` as
    healthy, with no restart loop or resource-limit event.
 2. The internal gateway health path succeeds without using the public Internet.
 3. Public HTTPS uses the intended hostname and returns the expected security and
@@ -128,12 +135,12 @@ If the backup cannot be restored or the previous generation cannot pass smoke
 tests, keep the service unavailable and escalate. Serving an uncertain state is
 not a valid rollback.
 
-### Tunnel or DNS failure
+### Caddy route or DNS failure
 
-Restore the last reviewed tunnel route/configuration and verify the named
-tunnel. Do not expose a container port or modify ProjectX Caddy as an emergency
-workaround. A switch to another ingress path requires its own reviewed and
-tested change.
+Remove or restore only the reviewed Convive Caddy route and verify its hostname
+and DNS policy. Do not expose a container port or modify unrelated ProjectX
+Caddy routes as an emergency workaround. A switch to another ingress path
+requires its own reviewed and tested change.
 
 ## Completion and evidence
 

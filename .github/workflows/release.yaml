@@ -22,6 +22,14 @@ on:
           - none
           - backward-compatible
           - incompatible
+      release_phase:
+        description: Prepare services before the Caddy route, or verify after its reviewed activation
+        required: true
+        default: prepare
+        type: choice
+        options:
+          - prepare
+          - verify
 
 permissions:
   contents: read
@@ -180,9 +188,10 @@ jobs:
           API_IMAGE: ${{ needs.build.outputs.api_image }}
           GATEWAY_IMAGE: ${{ needs.build.outputs.gateway_image }}
           MIGRATION_CLASS: ${{ inputs.migration_class }}
+          RELEASE_PHASE: ${{ inputs.release_phase }}
           SSH_DIR: ${{ runner.temp }}/convive-ssh
         run: |
           set -euo pipefail
           staging="/tmp/convive-release-${RELEASE_ID}"
           ssh -i "$SSH_DIR/id_ed25519" -o UserKnownHostsFile="$SSH_DIR/known_hosts" "$VPS_USER@$VPS_HOST" \
-            "sudo -n env CONVIVE_PUBLIC_URL='$PUBLIC_URL' CONVIVE_RUNTIME_DIR=/srv/convive CONVIVE_SECRET_DIR=/etc/convive/secrets bash '$staging/reconcile.sh' '$staging' '$RELEASE_ID' '$API_IMAGE' '$GATEWAY_IMAGE' '$MIGRATION_CLASS'"
+            "sudo -n env CONVIVE_PUBLIC_URL='$PUBLIC_URL' CONVIVE_RUNTIME_DIR=/srv/platform/projects/convive CONVIVE_SECRET_DIR=/srv/platform/secrets/convive CONVIVE_COMPOSE_PROJECT=px-convive bash '$staging/reconcile.sh' '$staging' '$RELEASE_ID' '$API_IMAGE' '$GATEWAY_IMAGE' '$MIGRATION_CLASS' '$RELEASE_PHASE'"

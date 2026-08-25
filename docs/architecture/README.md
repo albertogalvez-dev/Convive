@@ -19,8 +19,8 @@ Symfony and PostgreSQL. Its accompanying text records the development routing
 and initial Docker Compose and single-VPS deployment context.
 
 The [single-VPS deployment diagram](diagrams/single-vps-deployment.md) records
-the production trust boundaries between Cloudflare Tunnel, the private gateway,
-Symfony, PostgreSQL and Redis. The accompanying
+the production trust boundaries between the platform Caddy, Convive's dedicated
+edge gateway, Symfony, PostgreSQL and Redis. The accompanying
 [deployment runbook](../operations/deployment-release-and-rollback.md) defines
 preflight, smoke-test and rollback decisions for the fictional demonstration.
 
@@ -53,9 +53,9 @@ authoritative sources remain the Doctrine mappings and the committed migrations.
 - **Environment:** Docker Compose provides the reproducible development and
   testing environment and is the selected foundation for the future single-VPS
   deployment environment.
-- **Public ingress:** a named Cloudflare Tunnel reaches a Convive-owned private
-  gateway without publishing a VPS port or sharing ProjectX infrastructure, as
-  selected in [ADR-0012](decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md).
+- **Public ingress:** the platform Caddy reaches a Convive-owned gateway through
+  a dedicated per-project edge network, without publishing a Convive host port,
+  as selected in [ADR-0029](decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md).
 - **Shared security state:** production Redis provides restart-resistant,
   shared idempotency and rate-limit state and is reachable only by Symfony.
   Professional sessions remain in PostgreSQL as selected in ADR-0008.

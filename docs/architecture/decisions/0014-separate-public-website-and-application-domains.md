@@ -85,7 +85,7 @@ trademark clearance, nor proof that Convive is ready to process real data.
 This preserves a short, mobile-first reporter journey while allowing a public
 site to gain content and SEO without indexing the application. It also makes
 cookie, analytics and referrer boundaries explicit. Deployment later needs two
-hostnames, tunnel routing, canonical redirects and security headers.
+hostnames, platform Caddy routing, canonical redirects and security headers.
 
 ## Deferred work
 
@@ -93,7 +93,7 @@ hostnames, tunnel routing, canonical redirects and security headers.
 - #53 and #54 own interactive fictional demonstrations; #55 owns contact and
   demonstration-request behaviour.
 - #56 decides whether privacy-preserving public-site analytics are justified.
-- DNS, tunnel hostnames, edge headers and live smoke tests remain authorised
+- DNS, Caddy hostnames, edge headers and live smoke tests remain authorised
   release/operator work.
 
 ## Review triggers
@@ -109,4 +109,4 @@ provisioning.
 - [ADR-0009](0009-use-public-organisation-reporting-links.md)
 - [ADR-0010](0010-use-a-single-secret-for-anonymous-report-access.md)
 - [ADR-0011](0011-allow-the-reporter-browser-password-manager-to-store-the-access-secret.md)
-- [ADR-0012](0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md)
+- [ADR-0029](0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md)

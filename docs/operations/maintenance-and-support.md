@@ -16,7 +16,7 @@ until the receiving owner accepts the inventory and rotates the credentials.
 | GitHub repository, branch protection and CI | Repository maintainer | Review repository access monthly | Git history, Actions runs and repository settings |
 | Release and rollback | Repository maintainer | Release record names the operator | `docs/operations/controlled-release-workflow.md`, release records on the host |
 | Convive VPS and provider billing | Repository maintainer | Verify provider renewal and payment alerts | Provider console and `/var/lib/convive-observability` (no credentials in Git) |
-| Public hostname, Cloudflare Tunnel and edge TLS | Repository maintainer | Verify hostname, tunnel token and certificate path | Cloudflare console, deployment environment and release smoke test |
+| Public hostname, platform Caddy and edge TLS | Repository maintainer | Verify hostname, Caddy route and certificate path | Cloudflare console, platform configuration and release smoke test |
 | R2 backup repository | Repository maintainer | Verify bucket access, usage and billing alerts | `docs/operations/backup-and-recovery.md` and root-only evidence |
 | Dependency and image updates | Repository maintainer | Dependabot PR review and emergency advisories | `.github/dependabot.yml`, lockfiles and CI |
 | Monitoring and incident response | Repository maintainer | Review alerts and preserve redacted evidence | `docs/operations/incident-response.md` and systemd journal |
@@ -40,7 +40,7 @@ that private register and fill only verified renewal dates and owners.
 | GitHub repository and Actions | Available; CI is green on `main` | Repository maintainer | 2026-09-01, then monthly | Confirm repository access and Actions minutes are adequate |
 | Convive VPS | Host inspected and Convive-only paths prepared; public deployment not active | Repository maintainer | 2026-09-01, then monthly | Confirm provider plan, billing method and renewal through 2027-08-31 |
 | Public hostname and DNS | Not provisioned in this checkpoint | Repository maintainer | Before deployment | Register/verify a hostname and record its renewal date |
-| Cloudflare Tunnel and edge TLS | Production tunnel not provisioned; TLS will terminate at the edge once a hostname exists | Repository maintainer | Before deployment and monthly thereafter | Store tunnel token outside Git and pass the public smoke test |
+| Platform Caddy route and edge TLS | Route not provisioned; platform Caddy will terminate public TLS once the hostname exists | Repository maintainer | Before deployment and monthly thereafter | Validate the exact Convive route and pass the public smoke test |
 | Cloudflare R2 `convive-demo-backups-eu` | Private EU bucket and bucket-scoped token provisioned; current billable usage checked at USD 0 | Repository maintainer | Monthly; billing alert before any charge | Run off-host backup and isolated restore, then monitor usage |
 | Backup/restore timers | Versioned; host enablement depends on the production deployment gate | Repository maintainer | After deployment, then daily signal/monthly exercise | Fresh restore evidence must be present before every release |
 | Attachment lifecycle timer | Versioned; host enablement depends on the production deployment gate | Repository maintainer | After deployment, then daily signal | Bounded scan/cleanup commands run and fail closed; no real-data scanner is selected |
@@ -91,8 +91,8 @@ to redacted evidence.
       sessions or capability grants are revived.
 - [ ] Confirm the latest backup and restore evidence is root-only and contains
       no report content, secrets or complete URLs.
-- [ ] Verify VPS billing, hostname/DNS renewal dates, Cloudflare Tunnel
-      connectivity, edge TLS validity and the public health smoke test.
+- [ ] Verify VPS billing, hostname/DNS renewal dates, platform Caddy route,
+      edge TLS validity and the public health smoke test.
 - [ ] Review GitHub collaborators, Cloudflare/R2 tokens, VPS SSH keys and
       operator access; revoke unused access and rotate exposed credentials.
 - [ ] Review the support register and move any unverified service to an
@@ -126,14 +126,14 @@ resources: Convive cleanup must never affect ProjectX.
 ### Planned retirement
 
 1. Announce an end date in the private operator record and stop accepting new
-   public traffic (disable the tunnel/hostname or show a static unavailable
+   public traffic (remove the Convive Caddy route/hostname or show a static unavailable
    page).
 2. If authorised, create one final encrypted backup and a final restore-test
    record. Keep only the retention required for the fictional demonstration;
    do not carry real personal data into this process.
 3. Stop and remove only Convive's production Compose project, volumes and
    release directories. Never run host-wide Docker prune or alter ProjectX.
-4. Revoke the Cloudflare Tunnel token, R2 bucket token, VPS deploy key and CI
+4. Revoke the R2 bucket token, VPS deploy key and CI
    environment secrets. Remove the DNS record and cancel provider services
    only after the retention decision is recorded.
 5. Delete fictional data and operational evidence when the documented period
@@ -145,7 +145,7 @@ resources: Convive cleanup must never affect ProjectX.
 
 1. Share this repository revision, the private service/renewal register, the
    release and recovery runbooks, and the latest redacted evidence.
-2. The receiving owner verifies billing, DNS, tunnel, TLS, R2 restore and
+2. The receiving owner verifies billing, DNS, the Caddy route, TLS, R2 restore and
    rollback access on an isolated exercise.
 3. Rotate all credentials during handover; do not send one-time secrets in
    chat or commit them to Git.

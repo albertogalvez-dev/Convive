@@ -1,6 +1,6 @@
 # ADR-0012: Use Cloudflare Tunnel for the single-VPS deployment
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-0029](0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md)
 - **Date:** 9 August 2026
 - **Related issue:** [#63](https://github.com/albertogalvez-dev/Convive/issues/63)
 - **Depends on:** [ADR-0005](0005-use-docker-compose-for-reproducible-environments.md), [ADR-0007](0007-use-postgresql-and-doctrine-for-persistence.md), [ADR-0008](0008-use-server-side-sessions-and-capability-based-anonymous-access.md)
