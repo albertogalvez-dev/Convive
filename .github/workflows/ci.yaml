@@ -370,6 +370,23 @@ jobs:
           exec -T api php bin/console doctrine:migrations:migrate
           --no-interaction
 
+      - name: Verify the notification worker starts after migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          compose=(docker compose -p convive-e2e -f infrastructure/compose/compose.yaml -f infrastructure/compose/compose.development.yaml)
+          for attempt in {1..15}; do
+            if "${compose[@]}" ps --status running --services | grep --fixed-strings --quiet 'notification-worker'; then
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          "${compose[@]}" logs --no-color notification-worker
+          echo 'The notification worker did not start after migrations.' >&2
+          exit 1
+
       - name: Create an ephemeral fictional professional credential
         shell: bash
         run: |
