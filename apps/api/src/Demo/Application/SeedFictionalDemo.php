@@ -51,7 +51,7 @@ final readonly class SeedFictionalDemo
             $this->upsertAdditionalManagedCases();
             $this->upsertFictionalEvidence();
 
-            return new FictionalDemoSeedResult(1, 5, 4, 4, 3, 5, 4, 2, $reset);
+            return new FictionalDemoSeedResult(1, 5, 10, 14, 8, 10, 9, 5, $reset);
         });
     }
 
@@ -122,11 +122,20 @@ final readonly class SeedFictionalDemo
             throw new FictionalDemoDatasetConflict('A reserved demo professional belongs to another organisation.');
         }
 
+        $reportParameters = $this->reportIdentifierParameters();
+        $reportIdPlaceholders = [];
+        $reportReferencePlaceholders = [];
+        foreach (array_keys(FictionalDemoDataset::REPORT_IDS) as $index) {
+            $reportIdPlaceholders[] = ':id_'.($index + 1);
+            $reportReferencePlaceholders[] = ':reference_'.($index + 1);
+        }
         $reports = $this->connection->fetchAllAssociative(
-            'SELECT id, public_reference, organisation_id FROM reports
-             WHERE id IN (:id_1, :id_2, :id_3, :id_4)
-                OR public_reference IN (:reference_1, :reference_2, :reference_3, :reference_4)',
-            $this->reportIdentifierParameters(),
+            sprintf(
+                'SELECT id, public_reference, organisation_id FROM reports WHERE id IN (%s) OR public_reference IN (%s)',
+                implode(', ', $reportIdPlaceholders),
+                implode(', ', $reportReferencePlaceholders),
+            ),
+            $reportParameters,
         );
         $expectedReports = array_combine(
             FictionalDemoDataset::REPORT_IDS,
@@ -142,13 +151,16 @@ final readonly class SeedFictionalDemo
             }
         }
 
+        $caseParameters = [];
+        $casePlaceholders = [];
+        foreach (FictionalDemoDataset::MANAGED_CASE_IDS as $index => $id) {
+            $parameter = 'case_'.($index + 1);
+            $caseParameters[$parameter] = $id;
+            $casePlaceholders[] = ':'.$parameter;
+        }
         $managedCases = $this->connection->fetchAllAssociative(
-            'SELECT id, organisation_id FROM managed_cases WHERE id IN (:assessment, :active, :closed)',
-            [
-                'assessment' => FictionalDemoDataset::MANAGED_CASE_ID,
-                'active' => FictionalDemoDataset::ACTIVE_CASE_ID,
-                'closed' => FictionalDemoDataset::CLOSED_CASE_ID,
-            ],
+            sprintf('SELECT id, organisation_id FROM managed_cases WHERE id IN (%s)', implode(', ', $casePlaceholders)),
+            $caseParameters,
         );
 
         foreach ($managedCases as $managedCase) {
@@ -157,12 +169,16 @@ final readonly class SeedFictionalDemo
             }
         }
 
+        $attachmentParameters = [];
+        $attachmentPlaceholders = [];
+        foreach (array_keys(FictionalDemoDataset::EVIDENCE_REPORT_IDS) as $index => $id) {
+            $parameter = 'attachment_'.($index + 1);
+            $attachmentParameters[$parameter] = $id;
+            $attachmentPlaceholders[] = ':'.$parameter;
+        }
         $attachments = $this->connection->fetchAllAssociative(
-            'SELECT id, report_id FROM report_attachments WHERE id IN (:corridor, :courtyard)',
-            [
-                'corridor' => FictionalDemoDataset::CORRIDOR_ATTACHMENT_ID,
-                'courtyard' => FictionalDemoDataset::COURTYARD_ATTACHMENT_ID,
-            ],
+            sprintf('SELECT id, report_id FROM report_attachments WHERE id IN (%s)', implode(', ', $attachmentPlaceholders)),
+            $attachmentParameters,
         );
 
         foreach ($attachments as $attachment) {
@@ -404,6 +420,12 @@ final readonly class SeedFictionalDemo
             ['context' => 'digital', 'status' => 'received', 'created_at' => '2026-08-09T17:20:00+02:00', 'description' => 'En un grupo ficticio de mensajería se han compartido comentarios excluyentes sobre un compañero ficticio.'],
             ['context' => 'mixed', 'status' => 'reviewed', 'created_at' => '2026-08-08T12:10:00+02:00', 'description' => 'Una discusión ficticia iniciada en clase ha continuado después a través de mensajes digitales.'],
             ['context' => 'unknown', 'status' => 'reviewed', 'created_at' => '2026-08-07T09:40:00+02:00', 'description' => 'Una persona informante ficticia solicita orientación sobre un cambio de comportamiento observado.'],
+            ['context' => 'in_person', 'status' => 'reviewed', 'created_at' => '2026-08-06T10:15:00+02:00', 'description' => 'Un cambio ficticio en la dinámica de un grupo durante varias semanas requiere una primera valoración cuidadosa.'],
+            ['context' => 'digital', 'status' => 'received', 'created_at' => '2026-08-05T18:05:00+02:00', 'description' => 'Una persona informante ficticia comparte que han circulado mensajes que podrían estar aislando a un compañero.'],
+            ['context' => 'mixed', 'status' => 'reviewed', 'created_at' => '2026-08-04T11:20:00+02:00', 'description' => 'Una situación ficticia observada en el patio se ha comentado también en un canal digital del alumnado.'],
+            ['context' => 'in_person', 'status' => 'reviewed', 'created_at' => '2026-08-03T09:05:00+02:00', 'description' => 'Un familiar ficticio pide apoyo para entender un cambio sostenido en la asistencia y el ánimo.'],
+            ['context' => 'unknown', 'status' => 'reviewed', 'created_at' => '2026-08-02T12:45:00+02:00', 'description' => 'Una comunicación ficticia sin detalles suficientes queda preparada para una revisión inicial del centro.'],
+            ['context' => 'digital', 'status' => 'received', 'created_at' => '2026-08-01T16:40:00+02:00', 'description' => 'Se recibe una consulta ficticia sobre la convivencia en un espacio digital vinculado al grupo.'],
         ];
 
         foreach ($reports as $index => $report) {
@@ -467,6 +489,16 @@ final readonly class SeedFictionalDemo
             ['id' => '019fe900-0000-7000-8000-000000000080', 'report' => 0, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-10T09:10:00+02:00', 'content' => 'Gracias por la información ficticia. El centro ha iniciado una primera revisión.'],
             ['id' => '019fe900-0000-7000-8000-000000000081', 'report' => 2, 'author' => 'reporter', 'professional' => null, 'created_at' => '2026-08-09T10:00:00+02:00', 'content' => 'Añado un detalle ficticio para contextualizar cuándo continuaron los mensajes.'],
             ['id' => '019fe900-0000-7000-8000-000000000082', 'report' => 2, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-10T09:15:00+02:00', 'content' => 'La revisión ficticia se ha registrado y seguiremos informando por este canal.'],
+            ['id' => '019fe900-0000-7000-8000-000000000180', 'report' => 1, 'author' => 'reporter', 'professional' => null, 'created_at' => '2026-08-09T18:05:00+02:00', 'content' => 'La información ficticia se refiere a varios mensajes observados durante la última semana.'],
+            ['id' => '019fe900-0000-7000-8000-000000000181', 'report' => 1, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-10T09:20:00+02:00', 'content' => 'Gracias. El centro revisará este contexto ficticio con el cuidado correspondiente.'],
+            ['id' => '019fe900-0000-7000-8000-000000000182', 'report' => 4, 'author' => 'reporter', 'professional' => null, 'created_at' => '2026-08-06T10:35:00+02:00', 'content' => 'La situación ficticia se aprecia sobre todo en los momentos de cambio entre clases.'],
+            ['id' => '019fe900-0000-7000-8000-000000000183', 'report' => 4, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-06T12:10:00+02:00', 'content' => 'Se ha abierto un seguimiento ficticio y se anotará cualquier avance relevante.'],
+            ['id' => '019fe900-0000-7000-8000-000000000184', 'report' => 5, 'author' => 'reporter', 'professional' => null, 'created_at' => '2026-08-05T18:20:00+02:00', 'content' => 'No deseo identificar a nadie; comparto solo el contexto ficticio que he percibido.'],
+            ['id' => '019fe900-0000-7000-8000-000000000185', 'report' => 6, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-04T13:00:00+02:00', 'content' => 'El caso ficticio ya dispone de un equipo asignado y de próximos pasos definidos.'],
+            ['id' => '019fe900-0000-7000-8000-000000000186', 'report' => 7, 'author' => 'reporter', 'professional' => null, 'created_at' => '2026-08-03T09:30:00+02:00', 'content' => 'Agradezco que el centro pueda valorar esta situación ficticia de manera proporcionada.'],
+            ['id' => '019fe900-0000-7000-8000-000000000187', 'report' => 7, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-03T11:00:00+02:00', 'content' => 'Se ha documentado la orientación ficticia y el seguimiento queda registrado.'],
+            ['id' => '019fe900-0000-7000-8000-000000000188', 'report' => 8, 'author' => 'reporter', 'professional' => null, 'created_at' => '2026-08-02T13:05:00+02:00', 'content' => 'Por ahora no dispongo de más detalles ficticios, pero puedo ampliar la información si hace falta.'],
+            ['id' => '019fe900-0000-7000-8000-000000000189', 'report' => 9, 'author' => 'professional', 'professional' => FictionalDemoDataset::TRIAGE_PROFESSIONAL_ID, 'created_at' => '2026-08-01T17:10:00+02:00', 'content' => 'La comunicación ficticia se conserva para que el centro pueda revisarla cuando corresponda.'],
         ];
 
         foreach ($entries as $entry) {
@@ -711,6 +743,101 @@ final readonly class SeedFictionalDemo
                 'task_resolved_at' => '2026-08-09T11:00:00+02:00',
                 'communication_note' => 'Se conserva un registro ficticio de la conversación final de seguimiento.',
             ],
+            [
+                'id' => FictionalDemoDataset::FIRST_RICH_CASE_ID,
+                'assignment_id' => '019fe900-0000-7000-8000-000000000121',
+                'decision_id' => '019fe900-0000-7000-8000-000000000122',
+                'person_id' => '019fe900-0000-7000-8000-000000000123',
+                'task_id' => '019fe900-0000-7000-8000-000000000124',
+                'communication_id' => '019fe900-0000-7000-8000-000000000125',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[4],
+                'created_at' => '2026-08-06T11:00:00+02:00',
+                'updated_at' => '2026-08-12T09:15:00+02:00',
+                'status' => 'assessment',
+                'modality' => 'in_person',
+                'person_name' => 'Persona ficticia E',
+                'task_title' => 'Completar la valoración inicial ficticia con el equipo de bienestar',
+                'task_status' => 'pending',
+                'due_at' => '2026-08-27T09:30:00+02:00',
+                'task_resolved_at' => null,
+                'communication_note' => 'Se anota una coordinación ficticia para completar la primera valoración del caso.',
+            ],
+            [
+                'id' => FictionalDemoDataset::SECOND_RICH_CASE_ID,
+                'assignment_id' => '019fe900-0000-7000-8000-000000000131',
+                'decision_id' => '019fe900-0000-7000-8000-000000000132',
+                'person_id' => '019fe900-0000-7000-8000-000000000133',
+                'task_id' => '019fe900-0000-7000-8000-000000000134',
+                'communication_id' => '019fe900-0000-7000-8000-000000000135',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[5],
+                'created_at' => '2026-08-05T18:30:00+02:00',
+                'updated_at' => '2026-08-13T10:20:00+02:00',
+                'status' => 'active',
+                'modality' => 'digital',
+                'person_name' => 'Persona ficticia F',
+                'task_title' => 'Revisar la información adicional ficticia compartida por el equipo',
+                'task_status' => 'pending',
+                'due_at' => '2026-08-26T12:00:00+02:00',
+                'task_resolved_at' => null,
+                'communication_note' => 'Se registra una actualización ficticia del seguimiento compartida a través del canal seguro.',
+            ],
+            [
+                'id' => FictionalDemoDataset::THIRD_RICH_CASE_ID,
+                'assignment_id' => '019fe900-0000-7000-8000-000000000141',
+                'decision_id' => '019fe900-0000-7000-8000-000000000142',
+                'person_id' => '019fe900-0000-7000-8000-000000000143',
+                'task_id' => '019fe900-0000-7000-8000-000000000144',
+                'communication_id' => '019fe900-0000-7000-8000-000000000145',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[6],
+                'created_at' => '2026-08-04T11:45:00+02:00',
+                'updated_at' => '2026-08-14T13:00:00+02:00',
+                'status' => 'active',
+                'modality' => 'mixed',
+                'person_name' => 'Persona ficticia G',
+                'task_title' => 'Registrar la medida educativa ficticia ya acordada',
+                'task_status' => 'completed',
+                'due_at' => '2026-08-14T12:00:00+02:00',
+                'task_resolved_at' => '2026-08-14T12:45:00+02:00',
+                'communication_note' => 'Se conserva un registro ficticio de la coordinación entre profesionales y familia.',
+            ],
+            [
+                'id' => FictionalDemoDataset::FOURTH_RICH_CASE_ID,
+                'assignment_id' => '019fe900-0000-7000-8000-000000000151',
+                'decision_id' => '019fe900-0000-7000-8000-000000000152',
+                'person_id' => '019fe900-0000-7000-8000-000000000153',
+                'task_id' => '019fe900-0000-7000-8000-000000000154',
+                'communication_id' => '019fe900-0000-7000-8000-000000000155',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[7],
+                'created_at' => '2026-08-03T09:30:00+02:00',
+                'updated_at' => '2026-08-15T11:30:00+02:00',
+                'status' => 'closed',
+                'modality' => 'in_person',
+                'person_name' => 'Persona ficticia H',
+                'task_title' => 'Documentar el cierre del seguimiento ficticio con la familia',
+                'task_status' => 'completed',
+                'due_at' => '2026-08-15T10:30:00+02:00',
+                'task_resolved_at' => '2026-08-15T11:15:00+02:00',
+                'communication_note' => 'El cierre ficticio deja constancia de las medidas de acompañamiento acordadas.',
+            ],
+            [
+                'id' => FictionalDemoDataset::FIFTH_RICH_CASE_ID,
+                'assignment_id' => '019fe900-0000-7000-8000-000000000161',
+                'decision_id' => '019fe900-0000-7000-8000-000000000162',
+                'person_id' => '019fe900-0000-7000-8000-000000000163',
+                'task_id' => '019fe900-0000-7000-8000-000000000164',
+                'communication_id' => '019fe900-0000-7000-8000-000000000165',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[8],
+                'created_at' => '2026-08-02T13:20:00+02:00',
+                'updated_at' => '2026-08-16T09:40:00+02:00',
+                'status' => 'assessment',
+                'modality' => 'mixed',
+                'person_name' => 'Persona ficticia I',
+                'task_title' => 'Preparar la siguiente conversación ficticia de seguimiento',
+                'task_status' => 'pending',
+                'due_at' => '2026-08-28T10:00:00+02:00',
+                'task_resolved_at' => null,
+                'communication_note' => 'Se ha programado una conversación ficticia para seguir aclarando el contexto.',
+            ],
         ];
 
         foreach ($cases as $case) {
@@ -797,6 +924,27 @@ final readonly class SeedFictionalDemo
                 'file' => 'fictional-empty-courtyard.png',
                 'description' => 'Imagen ficticia de un patio vacío del centro para la demostración.',
                 'created_at' => '2026-08-08T12:15:00+02:00',
+            ],
+            [
+                'id' => '019fe900-0000-7000-8000-000000000170',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[4],
+                'file' => 'fictional-empty-library.png',
+                'description' => 'Imagen ficticia de una biblioteca vacía del centro para la demostración.',
+                'created_at' => '2026-08-06T10:20:00+02:00',
+            ],
+            [
+                'id' => '019fe900-0000-7000-8000-000000000171',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[6],
+                'file' => 'fictional-empty-guidance-room.png',
+                'description' => 'Imagen ficticia de un espacio de orientación vacío para la demostración.',
+                'created_at' => '2026-08-04T11:35:00+02:00',
+            ],
+            [
+                'id' => '019fe900-0000-7000-8000-000000000172',
+                'report_id' => FictionalDemoDataset::REPORT_IDS[8],
+                'file' => 'fictional-empty-corridor.png',
+                'description' => 'Imagen ficticia de un pasillo vacío vinculada a un segundo contexto de demostración.',
+                'created_at' => '2026-08-02T12:55:00+02:00',
             ],
         ];
 

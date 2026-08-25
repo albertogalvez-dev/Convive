@@ -43,6 +43,11 @@ final class FictionalDemoDataset
     public const CLOSED_CASE_COMMUNICATION_ID = '019fe900-0000-7000-8000-000000000113';
     public const CORRIDOR_ATTACHMENT_ID = '019fe900-0000-7000-8000-000000000114';
     public const COURTYARD_ATTACHMENT_ID = '019fe900-0000-7000-8000-000000000115';
+    public const FIRST_RICH_CASE_ID = '019fe900-0000-7000-8000-000000000120';
+    public const SECOND_RICH_CASE_ID = '019fe900-0000-7000-8000-000000000130';
+    public const THIRD_RICH_CASE_ID = '019fe900-0000-7000-8000-000000000140';
+    public const FOURTH_RICH_CASE_ID = '019fe900-0000-7000-8000-000000000150';
+    public const FIFTH_RICH_CASE_ID = '019fe900-0000-7000-8000-000000000160';
     public const ANDALUSIAN_PROTOCOL_SOURCE_ID = '019c4c1d-4fd4-7f6d-a0d1-000000000001';
     public const TERRITORIAL_SCOPE = 'ES-AN';
 
@@ -52,6 +57,12 @@ final class FictionalDemoDataset
         '019fe900-0000-7000-8000-000000000074',
         '019fe900-0000-7000-8000-000000000075',
         '019fe900-0000-7000-8000-000000000076',
+        '019fe900-0000-7000-8000-000000000116',
+        '019fe900-0000-7000-8000-000000000117',
+        '019fe900-0000-7000-8000-000000000118',
+        '019fe900-0000-7000-8000-000000000119',
+        '019fe900-0000-7000-8000-000000000126',
+        '019fe900-0000-7000-8000-000000000127',
     ];
 
     /** @var list<string> */
@@ -60,12 +71,33 @@ final class FictionalDemoDataset
         'D0000000000000000002',
         'D0000000000000000003',
         'D0000000000000000004',
+        'D0000000000000000005',
+        'D0000000000000000006',
+        'D0000000000000000007',
+        'D0000000000000000008',
+        'D0000000000000000009',
+        'D0000000000000000010',
+    ];
+
+    /** @var list<string> */
+    public const MANAGED_CASE_IDS = [
+        self::MANAGED_CASE_ID,
+        self::ACTIVE_CASE_ID,
+        self::CLOSED_CASE_ID,
+        self::FIRST_RICH_CASE_ID,
+        self::SECOND_RICH_CASE_ID,
+        self::THIRD_RICH_CASE_ID,
+        self::FOURTH_RICH_CASE_ID,
+        self::FIFTH_RICH_CASE_ID,
     ];
 
     /** @var array<string, string> */
     public const EVIDENCE_REPORT_IDS = [
         self::CORRIDOR_ATTACHMENT_ID => self::REPORT_IDS[0],
         self::COURTYARD_ATTACHMENT_ID => self::REPORT_IDS[2],
+        '019fe900-0000-7000-8000-000000000170' => self::REPORT_IDS[4],
+        '019fe900-0000-7000-8000-000000000171' => self::REPORT_IDS[6],
+        '019fe900-0000-7000-8000-000000000172' => self::REPORT_IDS[8],
     ];
 
     private function __construct()
