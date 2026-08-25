@@ -34,7 +34,9 @@ foreach ([
     }
 }
 
-$_SERVER['APP_RUNTIME_OPTIONS'] ??= $_ENV['APP_RUNTIME_OPTIONS'] ?? '{"disable_dotenv":true}';
+if ('prod' === ($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? getenv('APP_ENV'))) {
+    $_SERVER['APP_RUNTIME_OPTIONS'] ??= $_ENV['APP_RUNTIME_OPTIONS'] ?? '{"disable_dotenv":true}';
+}
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
