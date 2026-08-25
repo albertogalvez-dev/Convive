@@ -5,7 +5,7 @@
 **Status:** maintained fictional-demo security view  
 **Last reviewed:** 25 August 2026
 
-The flows below are derived from [ADR-0008](../decisions/0008-use-stable-anonymous-reporter-capabilities.md), [ADR-0012](../decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md) (historical ingress decision, superseded), [ADR-0013](../decisions/0013-use-encrypted-off-host-backups.md), the [attachment threat model](../../security/attachment-threat-model.md) and [ADR-0029](../decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md). They describe fictional demonstration controls, not real-data approval.
+The flows below are derived from [ADR-0008](../decisions/0008-use-server-side-sessions-and-capability-based-anonymous-access.md), [ADR-0012](../decisions/0012-use-cloudflare-tunnel-for-the-single-vps-deployment.md) (historical ingress decision, superseded), [ADR-0013](../decisions/0013-use-restic-with-off-host-object-storage-for-database-recovery.md), the [attachment threat model](../../security/attachment-threat-model.md) and [ADR-0029](../decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md). They describe fictional demonstration controls, not real-data approval.
 
 ```mermaid
 flowchart LR
