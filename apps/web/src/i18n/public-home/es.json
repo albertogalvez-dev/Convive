@@ -8,6 +8,12 @@
     "close": "Cerrar navegación principal"
   },
   "professionalAccess": "Área profesional",
+  "cookies": {
+    "title": "No hay cookies opcionales.",
+    "description": "No hay anuncios ni rastreo.",
+    "moreInfo": "Ver política de cookies",
+    "dismiss": "Entendido"
+  },
   "hero": {
     "eyebrow": "CONVIVENCIA ESCOLAR",
     "title": "Un canal seguro para escuchar antes.",

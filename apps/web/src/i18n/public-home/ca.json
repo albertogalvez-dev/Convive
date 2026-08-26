@@ -8,6 +8,12 @@
     "close": "Tancar la navegació principal"
   },
   "professionalAccess": "Àrea professional",
+  "cookies": {
+    "title": "Aquest lloc no utilitza cookies no essencials.",
+    "description": "No hi ha analítica, publicitat ni etiquetes de tercers.",
+    "moreInfo": "Veure la política de cookies",
+    "dismiss": "Entesos"
+  },
   "hero": {
     "eyebrow": "CONVIVÈNCIA ESCOLAR",
     "title": "Un canal segur per escoltar abans.",

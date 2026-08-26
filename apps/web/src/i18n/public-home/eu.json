@@ -8,6 +8,12 @@
     "close": "Itxi nabigazio nagusia"
   },
   "professionalAccess": "Lanbide arloa",
+  "cookies": {
+    "title": "Webgune honek ez du funtsezkoa ez den cookierik erabiltzen.",
+    "description": "Ez dago analitikarik, publizitaterik edo hirugarrenen etiketarik.",
+    "moreInfo": "Ikusi cookie politika",
+    "dismiss": "Ulertuta"
+  },
   "hero": {
     "eyebrow": "ESKOLA ELKARBIZITZA",
     "title": "Aurretik entzuteko kanal segurua.",
