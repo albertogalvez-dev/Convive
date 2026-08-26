@@ -417,7 +417,9 @@
               @for (communication of item.communications; track communication.id) {
                 <li>
                   <span
-                    ><strong>{{ communication.recipient }} · {{ communication.channel }}</strong
+                    ><strong
+                      >{{ communicationRecipientLabel(communication.recipient) | transloco }} ·
+                      {{ communicationChannelLabel(communication.channel) | transloco }}</strong
                     ><small>{{ communication.note }}</small>
                     @if (communication.supersedesId !== null) {
                       <small>{{ 'professional-case.comms.correction' | transloco }}</small>

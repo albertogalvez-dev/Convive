@@ -1,5 +1,7 @@
 import {
   CaseAssignmentRole,
+  CaseCommunicationChannel,
+  CaseCommunicationRecipient,
   CaseModality,
   CaseStatus,
   CaseTaskStatus,
@@ -30,6 +32,27 @@ export const taskStatusLabel = (status: CaseTaskStatus): string => `${SCOPE}.tas
 
 export const sourceAuthorityLabel = (authority: WorkflowSourceAuthority): string =>
   `${SCOPE}.sourceAuthority.${authority}`;
+
+const COMMUNICATION_RECIPIENTS: Record<CaseCommunicationRecipient, string> = {
+  family: 'family',
+  external_service: 'external_service',
+  education_inspectorate: 'inspection',
+  other: 'other',
+};
+
+const COMMUNICATION_CHANNELS: Record<CaseCommunicationChannel, string> = {
+  in_person: 'in_person',
+  telephone: 'phone',
+  secure_portal: 'secure_channel',
+  written_record: 'written_record',
+  other: 'other',
+};
+
+export const communicationRecipientLabel = (recipient: CaseCommunicationRecipient): string =>
+  `${SCOPE}.comms.recipientOption.${COMMUNICATION_RECIPIENTS[recipient]}`;
+
+export const communicationChannelLabel = (channel: CaseCommunicationChannel): string =>
+  `${SCOPE}.comms.channelOption.${COMMUNICATION_CHANNELS[channel]}`;
 
 const PERSON_ROLES = ['affected', 'alleged_actor', 'witness', 'guardian', 'other'];
 
