@@ -39,13 +39,14 @@ export class ReportResult {
 
   readonly submitted = input.required<ReportSubmissionResponse>();
   readonly initialEvidence = input<readonly EvidenceDraft[]>([]);
+  readonly fictionalDemo = input(false);
   protected readonly statusMessage = signal<string | null>(null);
   protected readonly canSaveInBrowser = signal(passwordCredentialConstructor() !== null);
   private readonly accessSecretKept = signal(false);
 
   @HostListener('window:beforeunload', ['$event'])
   protected warnBeforeLeaving(event: BeforeUnloadEvent): void {
-    if (this.accessSecretKept()) {
+    if (this.fictionalDemo() || this.accessSecretKept()) {
       return;
     }
 

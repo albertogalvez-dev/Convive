@@ -104,22 +104,6 @@
             </p>
           </div>
         }
-        @case ('fictional-demo') {
-          <div
-            class="profile-status profile-status-card unavailable-status step"
-            role="status"
-            aria-labelledby="fictional-demo-title"
-          >
-            <p class="profile-status-label">{{ 'report-form.fictionalDemo.label' | transloco }}</p>
-            <h1 id="fictional-demo-title">{{ 'report-form.fictionalDemo.title' | transloco }}</h1>
-            <p class="profile-status-message">
-              {{ 'report-form.fictionalDemo.message' | transloco }}
-            </p>
-            <p class="profile-status-help">
-              {{ 'report-form.fictionalDemo.help' | transloco }}
-            </p>
-          </div>
-        }
         @case ('disabled') {
           <div
             class="profile-status profile-status-card unavailable-status step"
@@ -134,6 +118,21 @@
           </div>
         }
         @case ('ready') {
+          @if (isFictionalDemo()) {
+            <aside
+              class="profile-status profile-status-card unavailable-status fictional-demo-banner"
+              role="status"
+            >
+              <p class="profile-status-label">
+                {{ 'report-form.fictionalDemo.label' | transloco }}
+              </p>
+              <h2>{{ 'report-form.fictionalDemo.title' | transloco }}</h2>
+              <p class="profile-status-message">
+                {{ 'report-form.fictionalDemo.message' | transloco }}
+              </p>
+              <p class="profile-status-help">{{ 'report-form.fictionalDemo.help' | transloco }}</p>
+            </aside>
+          }
           @if (!result()) {
             <div class="organisation-context">
               <span class="organisation-label">{{
@@ -148,7 +147,11 @@
           }
 
           @if (result(); as submitted) {
-            <app-report-result [submitted]="submitted" [initialEvidence]="submittedEvidence()" />
+            <app-report-result
+              [submitted]="submitted"
+              [initialEvidence]="submittedEvidence()"
+              [fictionalDemo]="isFictionalDemo()"
+            />
           } @else {
             <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
               @if (currentStep() === 1) {

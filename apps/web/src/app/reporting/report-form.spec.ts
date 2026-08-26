@@ -95,15 +95,34 @@ describe('ReportForm', () => {
     expect(homeLink?.querySelector('img')?.getAttribute('alt')).toBe('');
   });
 
-  it('should show a non-persistent message instead of the form in fictional demo mode', () => {
+  it('should render the fictional form while keeping report creation non-persistent', () => {
     createForm();
     resolveOrganisation('IES Horizonte Ficticio', 'fictional_demo');
 
     expect(page.textContent).toContain('Demostración ficticia');
     expect(page.textContent).toContain('Aquí no se guardan comunicaciones');
     expect(page.textContent).toContain('No escribas información personal');
-    expect(page.querySelector('form')).toBeNull();
+    expect(page.querySelector('form')).not.toBeNull();
+    expect(page.querySelector('#situationDescription')).not.toBeNull();
     httpTesting.expectNone(`${organisationEndpoint}/reports`);
+  });
+
+  it('should complete the fictional journey without posting reports or evidence', () => {
+    createForm();
+    resolveOrganisation('IES Horizonte Ficticio', 'fictional_demo');
+
+    writeDescription('Una situación ficticia ocurrida durante el recreo.');
+    continueToNextStep();
+    selectContext('En persona');
+    continueToReview();
+    submitReport();
+
+    expect(page.textContent).toContain('Comunicación enviada');
+    expect(page.textContent).toContain('Recorrido completado');
+    expect(page.textContent).toContain('No se ha enviado ni guardado ningún mensaje.');
+    httpTesting.expectNone(`${organisationEndpoint}/reports`);
+    httpTesting.expectNone('/api/v1/public/report-access-grants');
+    httpTesting.expectNone('/api/v1/reporter/report/attachments');
   });
 
   it('renders the completed fictional example as a static review without any API request', () => {

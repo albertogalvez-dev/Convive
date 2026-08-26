@@ -22,7 +22,6 @@ import { describeSituationContext, SituationContext } from './situation-context'
 type ReportingProfileState =
   | { status: 'loading' }
   | { status: 'ready'; profile: PublicReportingProfile }
-  | { status: 'fictional-demo'; profile: PublicReportingProfile }
   | { status: 'disabled'; profile: PublicReportingProfile }
   | { status: 'invalid' }
   | { status: 'unavailable' };
@@ -82,6 +81,12 @@ export class ReportForm {
   protected readonly profileState = signal<ReportingProfileState>({
     status: 'loading',
   });
+
+  protected isFictionalDemo(): boolean {
+    const state = this.profileState();
+
+    return state.status === 'ready' && state.profile.reportingMode === 'fictional_demo';
+  }
 
   constructor() {
     this.destroyRef.onDestroy(() => this.clearProfileLoadingTimer());
@@ -208,6 +213,21 @@ export class ReportForm {
       return;
     }
 
+    if (this.isFictionalDemo()) {
+      // The public demo deliberately renders the entire journey without
+      // sending a report, granting attachment access, or retaining visitor
+      // input. The result component receives no evidence drafts for the same
+      // reason: it must never trigger its upload path in fictional mode.
+      this.submittedEvidence.set([]);
+      this.result.set({
+        publicReference: 'DEMO-2026-0001',
+        accessSecret: 'DEMO-ONLY',
+        status: 'demonstration',
+        createdAt: '2026-08-26T00:00:00.000+00:00',
+      });
+      return;
+    }
+
     this.submitting.set(true);
     this.errorMessage.set(null);
     this.submittedEvidence.set(this.selectedEvidence().map((draft) => ({ ...draft })));
@@ -247,12 +267,7 @@ export class ReportForm {
     this.reporting.getPublicReportingProfile(this.publicReportingIdentifier).subscribe({
       next: (profile) => {
         this.hideProfileLoading();
-        const status =
-          profile.reportingMode === 'fictional_demo'
-            ? 'fictional-demo'
-            : profile.reportingMode === 'disabled'
-              ? 'disabled'
-              : 'ready';
+        const status = profile.reportingMode === 'disabled' ? 'disabled' : 'ready';
         this.profileState.set({
           status,
           profile,

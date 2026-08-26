@@ -1,5 +1,9 @@
 {
   "title": "Comunicación enviada",
+  "demo": {
+    "title": "Recorrido completado",
+    "message": "Este recorrido es ficticio. No se ha enviado ni guardado ningún mensaje."
+  },
   "accessTitle": "Datos de acceso",
   "warningStrong": "Cualquiera que tenga este secreto puede entrar.",
   "warningBody": "No puede recuperarse: guárdalo antes de cerrar y no lo compartas.",

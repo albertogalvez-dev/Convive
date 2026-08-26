@@ -6,83 +6,92 @@
 
   <div class="perforation" aria-hidden="true"></div>
 
-  <section class="access" aria-labelledby="access-title">
-    <h2 id="access-title">{{ 'report-result.accessTitle' | transloco }}</h2>
+  @if (fictionalDemo()) {
+    <section class="access" aria-labelledby="access-title">
+      <h2 id="access-title">{{ 'report-result.demo.title' | transloco }}</h2>
+      <p class="follow-up-hint">{{ 'report-result.demo.message' | transloco }}</p>
+    </section>
+  } @else {
+    <section class="access" aria-labelledby="access-title">
+      <h2 id="access-title">{{ 'report-result.accessTitle' | transloco }}</h2>
 
-    <div class="warning" role="note">
-      <span aria-hidden="true">!</span>
-      <p>
-        <strong>{{ 'report-result.warningStrong' | transloco }}</strong>
-        {{ 'report-result.warningBody' | transloco }}
+      <div class="warning" role="note">
+        <span aria-hidden="true">!</span>
+        <p>
+          <strong>{{ 'report-result.warningStrong' | transloco }}</strong>
+          {{ 'report-result.warningBody' | transloco }}
+        </p>
+      </div>
+
+      <span class="credential-label">{{ 'report-result.referenceLabel' | transloco }}</span>
+      <p class="credential-value reference">
+        <code dir="ltr">{{ submitted().publicReference }}</code>
       </p>
-    </div>
 
-    <span class="credential-label">{{ 'report-result.referenceLabel' | transloco }}</span>
-    <p class="credential-value reference">
-      <code dir="ltr">{{ submitted().publicReference }}</code>
+      <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
+      <p class="credential-value secret">
+        <code dir="ltr">{{ submitted().accessSecret }}</code>
+      </p>
+
+      <div class="actions">
+        @if (canSaveInBrowser()) {
+          <button type="button" class="save-button primary" (click)="saveInBrowser()">
+            {{ 'report-result.saveInBrowser' | transloco }}
+          </button>
+          <button type="button" class="copy-button secondary" (click)="copyAccessSecret()">
+            {{ 'report-result.copySecret' | transloco }}
+          </button>
+        } @else {
+          <button type="button" class="copy-button primary" (click)="copyAccessSecret()">
+            {{ 'report-result.copySecret' | transloco }}
+          </button>
+        }
+        <button type="button" class="print-button secondary" (click)="printAccessReceipt()">
+          {{ 'report-result.print' | transloco }}
+        </button>
+      </div>
+
+      <p class="credential-status" aria-live="polite">{{ statusMessage() }}</p>
+
+      @if (canSaveInBrowser()) {
+        <p class="actions-help">
+          {{ 'report-result.browserSaveHelp' | transloco }}
+        </p>
+      }
+
+      <p class="follow-up-hint">
+        {{ 'report-result.followUpHintPrefix' | transloco }}
+        <a href="/seguimiento" target="_blank" rel="noopener">{{
+          'report-result.followUpLinkText' | transloco
+        }}</a
+        >.
+      </p>
+    </section>
+  }
+</div>
+
+@if (!fictionalDemo()) {
+  <section class="print-receipt" aria-labelledby="print-receipt-title">
+    <h2 id="print-receipt-title">{{ 'report-result.printReceiptTitle' | transloco }}</h2>
+    <p>
+      {{ 'report-result.printAccessPrefix' | transloco }}
+      <strong dir="ltr">app.conviveaula.com/seguimiento</strong>
     </p>
-
     <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
-    <p class="credential-value secret">
+    <p class="print-secret">
       <code dir="ltr">{{ submitted().accessSecret }}</code>
     </p>
-
-    <div class="actions">
-      @if (canSaveInBrowser()) {
-        <button type="button" class="save-button primary" (click)="saveInBrowser()">
-          {{ 'report-result.saveInBrowser' | transloco }}
-        </button>
-        <button type="button" class="copy-button secondary" (click)="copyAccessSecret()">
-          {{ 'report-result.copySecret' | transloco }}
-        </button>
-      } @else {
-        <button type="button" class="copy-button primary" (click)="copyAccessSecret()">
-          {{ 'report-result.copySecret' | transloco }}
-        </button>
-      }
-      <button type="button" class="print-button secondary" (click)="printAccessReceipt()">
-        {{ 'report-result.print' | transloco }}
-      </button>
-    </div>
-
-    <p class="credential-status" aria-live="polite">{{ statusMessage() }}</p>
-
-    @if (canSaveInBrowser()) {
-      <p class="actions-help">
-        {{ 'report-result.browserSaveHelp' | transloco }}
-      </p>
-    }
-
-    <p class="follow-up-hint">
-      {{ 'report-result.followUpHintPrefix' | transloco }}
-      <a href="/seguimiento" target="_blank" rel="noopener">{{
-        'report-result.followUpLinkText' | transloco
-      }}</a
-      >.
+    <p class="print-warning">
+      {{ 'report-result.printWarning' | transloco }}
     </p>
   </section>
-</div>
 
-<section class="print-receipt" aria-labelledby="print-receipt-title">
-  <h2 id="print-receipt-title">{{ 'report-result.printReceiptTitle' | transloco }}</h2>
-  <p>
-    {{ 'report-result.printAccessPrefix' | transloco }}
-    <strong dir="ltr">app.conviveaula.com/seguimiento</strong>
-  </p>
-  <span class="credential-label">{{ 'report-result.secretLabel' | transloco }}</span>
-  <p class="print-secret">
-    <code dir="ltr">{{ submitted().accessSecret }}</code>
-  </p>
-  <p class="print-warning">
-    {{ 'report-result.printWarning' | transloco }}
-  </p>
-</section>
-
-<div class="initial-evidence">
-  <app-report-evidence
-    [accessSecret]="submitted().accessSecret"
-    [autoLoad]="true"
-    [initialDrafts]="initialEvidence()"
-    [autoUploadQueued]="initialEvidence().length > 0"
-  />
-</div>
+  <div class="initial-evidence">
+    <app-report-evidence
+      [accessSecret]="submitted().accessSecret"
+      [autoLoad]="true"
+      [initialDrafts]="initialEvidence()"
+      [autoUploadQueued]="initialEvidence().length > 0"
+    />
+  </div>
+}
