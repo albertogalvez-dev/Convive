@@ -10,16 +10,64 @@ its version.
 
 ## The three ways in
 
-| | Who it serves | Where |
-|---|---|---|
-| **Public website** | Anyone reading about Convive | `conviveaula.com` |
-| **Reporting entry** | A student, with no account, reached per school | `app.conviveaula.com/r/<school>` |
-| **Professional area** | School staff, signed in | `app.conviveaula.com/profesionales` |
+|                       | Who it serves                                  | Where                               |
+| --------------------- | ---------------------------------------------- | ----------------------------------- |
+| **Public website**    | Anyone reading about Convive                   | `conviveaula.com`                   |
+| **Reporting entry**   | A student, with no account, reached per school | `app.conviveaula.com/r/<school>`    |
+| **Professional area** | School staff, signed in                        | `app.conviveaula.com/profesionales` |
 
 Administration is a **role inside the professional area**, not a fourth system.
 [docs/access-map.md](docs/access-map.md) maps all of it, including what
 deliberately does not exist and why there are no demo credentials in this
 repository.
+
+## Fictional product evidence
+
+Every capture below uses the reviewed fictional demonstration. It contains no
+credential, real person or real school data. The public reporting route shown
+in the captures is a safe demonstration: it explains the real interface but
+does not persist a communication.
+
+1. **Public home.** The public entry point separates product information from
+   reporting and introduces the fictional demonstration.
+
+   ![Convive public home with the school-community visual, navigation and fictional-demo cookie notice](docs/product/screenshots/01-public-home.png)
+
+2. **Reporting entry.** A person reaches the reporting journey from a
+   school-specific link without creating an account.
+
+   ![First step of the fictional reporting journey for IES Horizonte Ficticio](docs/product/screenshots/02-reporting-entry.png)
+
+3. **Reporting entry on mobile.** The same no-account journey at the size of a
+   phone reached from the poster.
+
+   ![Mobile first step of the fictional reporting journey](docs/product/screenshots/03-reporting-entry-mobile.png)
+
+4. **Completed fictional example.** The public demonstration also shows a
+   prepared, read-only example instead of storing a visitor's communication.
+
+   ![Read-only completed fictional communication example, clearly marked as not saved](docs/product/screenshots/04-completed-fictional-example.png)
+
+5. **Professional case list.** The fictional professional area presents the
+   assigned workload and its operational filters.
+
+   ![Professional case list with the assigned fictional case and status filters](docs/product/screenshots/05-professional-cases.png)
+
+6. **Protocol-aware case detail.** A task cites the applicable Andalusian
+   protocol, including its authority and version, rather than inventing a
+   generic workflow.
+
+   ![Fictional case detail with a cited Andalusian school bullying protocol task](docs/product/screenshots/06-professional-case-detail.png)
+
+7. **Published locales.** The public header exposes the locale selector used
+   for the six currently published public languages.
+
+   ![Convive public header with the language selector focused](docs/product/screenshots/07-language-switcher.png)
+
+8. **School poster.** The generated A4 fictional poster connects the QR code
+   and the printed reporting route to the same demo channel.
+
+   ![Generated fictional IES Horizonte reporting poster with QR code](docs/product/screenshots/08-reporting-poster.png)
 
 ## What makes it different from a form
 
@@ -30,8 +78,8 @@ secondary reporting. Each task template names the document it came from, its
 authority (`binding`, `recommended` or `internal`) and its version.
 
 Convive **states what a protocol says and calculates nothing**. Where a source
-sets a deadline, the deadline is quoted with its own units — Madrid's *días
-lectivos* and *días naturales* stay distinct because the source distinguishes
+sets a deadline, the deadline is quoted with its own units — Madrid's _días
+lectivos_ and _días naturales_ stay distinct because the source distinguishes
 them. Where a source sets none, as Galicia and Navarra do, none is invented,
 and a test forbids one appearing later.
 
@@ -54,7 +102,8 @@ The initial product is designed for development and demonstration with fictional
 
 ## Project status
 
-Convive is under active development.
+Convive is a publicly deployed, fictional-data-only demonstration. It is not
+authorised to process real student, family, professional or school information.
 
 The current implementation provides:
 
@@ -81,9 +130,9 @@ The current implementation provides:
 - automated backend, frontend and infrastructure checks through GitHub Actions.
 
 In development, `localhost` makes both host responsibilities available for
-verification. In the planned public boundary, `https://conviveaula.com` serves
-product information while `https://app.conviveaula.com` serves the direct
-reporter and professional routes. The public route
+verification. In the deployed public boundary, `https://conviveaula.com`
+serves product information while `https://app.conviveaula.com` serves the
+direct reporter and professional routes. The public route
 `/r/{publicReportingIdentifier}` remains on the application host and submits
 reports through the same-origin API proxy. See
 [ADR-0014](docs/architecture/decisions/0014-separate-public-website-and-application-domains.md)
@@ -100,7 +149,8 @@ one-time presentation of access credentials and capability-based follow-up.
 Private fictional attachments and optional verified generic email notices are
 implemented for development with isolated Mailpit delivery. Production email
 remains disabled until a provider, sender identity and real-data controls are
-approved; professional case-management workflows remain under development.
+approved; the professional workflows shown publicly remain fictional-demo
+workflows only.
 
 Development and demonstrations must use fictional data only.
 
