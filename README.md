@@ -551,23 +551,18 @@ The public demonstration and all development environments must use fictional dat
 
 ## Documentation
 
-- [How to reach each part of Convive](docs/access-map.md)
-- [Documentation index](docs/README.md)
-- [Problem statement](docs/discovery/problem-statement.md)
-- [Product scope](docs/discovery/product-scope.md)
-- [Regulatory context](docs/discovery/regulatory-context.md)
-- [Architecture overview](docs/architecture/README.md)
-- [Architecture diagram catalogue](docs/architecture/diagrams/README.md)
-- [Initial system architecture](docs/architecture/diagrams/initial-system-architecture.md)
-- [Implemented reporting sequence](docs/architecture/diagrams/reporting-sequence.md)
-- [Encrypted recovery flow](docs/architecture/diagrams/recovery-flow.md)
-- [Initial data model](docs/architecture/diagrams/data-model.md)
-- [DBML data-model source](docs/architecture/data-model.dbml)
-- [OpenAPI contract](docs/api/openapi.yaml)
-- [Architecture decision records](docs/architecture/decisions/README.md)
-- [Operations runbooks](docs/operations/README.md)
-- [Development log](docs/development-log.md)
-- [Brand assets and usage](docs/brand/README.md)
+| If you need to understand…                                             | Start here                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| The product boundary and its public, reporting and professional routes | [Access map](docs/access-map.md), [product scope](docs/discovery/product-scope.md) and [regulatory context](docs/discovery/regulatory-context.md)                                                            |
+| The executable system and its decisions                                | [Architecture overview](docs/architecture/README.md), [diagram catalogue](docs/architecture/diagrams/README.md), [OpenAPI contract](docs/api/openapi.yaml) and [ADRs](docs/architecture/decisions/README.md) |
+| Security, privacy and the fictional-data gate                          | [Threat model and privacy engineering register](docs/security/README.md) and [security reporting policy](SECURITY.md)                                                                                        |
+| Operating, releasing and recovering the demonstration                  | [Operations runbooks](docs/operations/README.md), [controlled release workflow](docs/operations/controlled-release-workflow.md) and [backup and recovery](docs/operations/backup-and-recovery.md)            |
+| Verifying quality and the released journeys                            | [Testing strategy](docs/testing/strategy.md), [Playwright guide](docs/testing/playwright.md) and [accessibility guidance](docs/testing/accessibility.md)                                                     |
+| The reviewed project report                                            | [Spanish technical report](docs/project/technical-report-es.md) and [English technical report](docs/project/technical-report-en.md)                                                                          |
+
+The [documentation index](docs/README.md) contains the full maintained map.
+The [development log](docs/development-log.md) records historical increments,
+and [brand assets and usage](docs/brand/README.md) explains the visual system.
 
 The Doctrine mappings and committed migrations are authoritative for the executable database schema. Diagrams and DBML provide reviewed documentation of that model.
 
