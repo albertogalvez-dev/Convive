@@ -37,6 +37,9 @@ runtime evidence and meeting-specific material stay outside Git.
   branch, pull request, verification and evidence-backed closure rules.
 - [Public editorial workflow](content/editorial-workflow.md): review, sources,
   limitations and crawler controls for the public blog.
+- [Fictional LinkedIn project story](content/linkedin-fictional-demo-story.md):
+  Spanish post draft, storyboard and privacy/accessibility review for a future
+  demonstration recording.
 - [Public information](content/public-information.md): the approved public
   document set, who publishes it, emergency signposting and what the notices
   must never claim.
