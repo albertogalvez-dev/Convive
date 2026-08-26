@@ -258,7 +258,7 @@ test('keeps the public reporting form keyboard-operable and responsive', async (
   );
 });
 
-test('renders a fictional-demo reporting profile without exposing a submission form', async ({
+test('renders a fictional-demo reporting profile without exposing a persistence path', async ({
   page,
 }) => {
   const reporterMutationUrls: string[] = [];
@@ -287,7 +287,8 @@ test('renders a fictional-demo reporting profile without exposing a submission f
   await expect(
     page.getByRole('heading', { name: 'Aquí no se guardan comunicaciones' }),
   ).toBeVisible();
-  await expect(page.locator('form')).toHaveCount(0);
+  await expect(page.locator('form')).toHaveCount(1);
+  await expect(page.locator('#situationDescription')).toBeVisible();
   await expectNoAccessibilityViolations(page);
   expect(reporterMutationUrls).toEqual([]);
 });

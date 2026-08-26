@@ -1,5 +1,9 @@
 {
   "title": "Bidalitako komunikazioa",
+  "demo": {
+    "title": "Ibilbidea osatuta",
+    "message": "Ibilbide hau fikziozkoa da. Ez da mezurik bidali edo gorde."
+  },
   "accessTitle": "Sarbide datuak",
   "warningStrong": "Sekretu hori duen edonor sar daiteke.",
   "warningBody": "Ezin da berreskuratu: gorde itxi aurretik eta ez partekatu.",

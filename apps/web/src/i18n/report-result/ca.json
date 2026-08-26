@@ -1,5 +1,9 @@
 {
   "title": "Comunicació enviada",
+  "demo": {
+    "title": "Recorregut completat",
+    "message": "Aquest recorregut és fictici. No s'ha enviat ni desat cap missatge."
+  },
   "accessTitle": "Dades d'accés",
   "warningStrong": "Qualsevol persona que tingui aquest secret hi pot entrar.",
   "warningBody": "No es pot recuperar: guarda'l abans de tancar i no el comparteixis.",
