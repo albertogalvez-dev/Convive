@@ -15,6 +15,9 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Technical project reports](project/technical-report-es.md): verified Spanish
   and English summaries of the fictional-demo product, architecture, security
   boundary, verification and controlled-release state.
+- [Engineering-quality audit (26 August 2026)](project/engineering-quality-audit-2026-08.md):
+  evidence-based assessment of the current fictional-demo engineering baseline
+  and the deliberately limited remaining work.
 - [Operations index](operations/README.md): local-to-release, deployment,
   recovery, monitoring and support procedures.
 - [Security index](security/README.md): threat, privacy, dependency and
