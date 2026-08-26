@@ -34,7 +34,11 @@ describe('PrivateAttachmentPreview', () => {
     page.querySelector<HTMLButtonElement>('.preview-trigger')?.click();
     fixture.detectChanges();
     expect(createObjectUrl).toHaveBeenCalled();
-    expect(page.querySelector('img')?.getAttribute('src')).toBe('blob:private-image');
+    const dialog = page.querySelector<HTMLDialogElement>('dialog');
+    const image = page.querySelector<HTMLImageElement>('img');
+    expect(dialog?.open).toBe(true);
+    expect(image?.getAttribute('alt')).toBe('Imagen adjunta');
+    expect(image?.getAttribute('src')).toBe('blob:private-image');
 
     page.querySelector<HTMLButtonElement>('.close')?.click();
     expect(revokeObjectUrl).toHaveBeenCalledWith('blob:private-image');
