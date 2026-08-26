@@ -45,8 +45,12 @@ describe('ProfessionalAccess', () => {
       'Administración',
     ]);
     expect(page.querySelectorAll('.demo-role')).toHaveLength(0);
-    expect(page.querySelector<HTMLAnchorElement>('.wordmark')?.getAttribute('href')).toBe('/');
-    expect(page.querySelector('.wordmark')?.getAttribute('aria-label')).toBe('Convive, inicio');
+    expect(page.querySelector<HTMLAnchorElement>('.wordmark')?.getAttribute('href')).toBe(
+      'https://conviveaula.com/',
+    );
+    expect(page.querySelector('.wordmark')?.getAttribute('aria-label')).toBe(
+      'Convive, inicio público',
+    );
     expect(page.querySelector('form')).toBeNull();
   });
 

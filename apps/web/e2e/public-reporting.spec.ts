@@ -597,7 +597,10 @@ test('offers the fictional demonstration through real, isolated example paths', 
   await expect(page.getByLabel('Perspectiva de demostración')).toBeVisible();
   await expect(page.locator('#demo-role option')).toHaveCount(2);
   await expect(page.getByRole('button', { name: 'Entrar con esta perspectiva' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Convive, inicio' })).toHaveAttribute('href', '/');
+  await expect(page.getByRole('link', { name: 'Convive, inicio público' })).toHaveAttribute(
+    'href',
+    'https://conviveaula.com/',
+  );
 
   // The selected perspective intentionally calls the protected-workspace demo
   // endpoint. Its complete browser journey runs against the seeded API stack,
