@@ -27,6 +27,9 @@ runtime evidence and meeting-specific material stay outside Git.
 - [Playwright guide](testing/playwright.md): isolated browser verification.
 - [Accessibility baseline](testing/accessibility.md): automated checks, manual
   matrix, responsive reflow and defect priority.
+- [Visual and interaction audit (26 August 2026)](testing/visual-interaction-audit-2026-08-26.md):
+  published-route review, its focused findings and the explicitly deferred
+  assistive-technology pass.
 - [Performance baseline](testing/performance.md): bounded bundle, API and
   critical-route regression budgets for the fictional demo.
 - [Operational acceptance pack](testing/operational-acceptance.md): role-based
