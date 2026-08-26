@@ -103,4 +103,19 @@
     </section>
   </div>
   <app-public-site-footer />
+
+  @if (!cookieNoticeDismissed()) {
+    <aside class="cookie-notice" aria-labelledby="cookie-notice-title">
+      <div>
+        <p id="cookie-notice-title">{{ 'public-home.cookies.title' | transloco }}</p>
+        <p>{{ 'public-home.cookies.description' | transloco }}</p>
+      </div>
+      <div class="cookie-notice-actions">
+        <a href="/cookies/">{{ 'public-home.cookies.moreInfo' | transloco }}</a>
+        <button type="button" (click)="dismissCookieNotice()">
+          {{ 'public-home.cookies.dismiss' | transloco }}
+        </button>
+      </div>
+    </aside>
+  }
 </main>

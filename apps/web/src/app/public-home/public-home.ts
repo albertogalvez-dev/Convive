@@ -5,9 +5,11 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   signal,
   ViewChild,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { provideTranslocoScope, TranslocoPipe } from '@jsverse/transloco';
 
 import { PublicSeoService } from '../public-seo.service';
@@ -28,11 +30,13 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('heroVideo') private heroVideo?: ElementRef<HTMLVideoElement>;
 
   private readonly seo = inject(PublicSeoService);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly reducedMotionQuery = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
   readonly professionalAccessUrl = professionalAccessUrlFor(globalThis.location.hostname);
   protected readonly mobileNavigationOpen = signal(false);
   protected readonly reducedMotion = signal(this.reducedMotionQuery?.matches ?? false);
   protected readonly heroVideoUnavailable = signal(false);
+  protected readonly cookieNoticeDismissed = signal(true);
 
   private readonly onReducedMotionChange = (event: MediaQueryListEvent): void => {
     this.reducedMotion.set(event.matches);
@@ -52,6 +56,12 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
   };
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.cookieNoticeDismissed.set(
+        globalThis.localStorage.getItem('convive-cookie-notice-seen') === 'true',
+      );
+    }
+
     this.seo.update({
       title: 'Convive',
       description:
@@ -99,6 +109,14 @@ export class PublicHome implements AfterViewInit, OnDestroy, OnInit {
 
   protected resumeHeroVideo(): void {
     this.startHeroVideo();
+  }
+
+  protected dismissCookieNotice(): void {
+    this.cookieNoticeDismissed.set(true);
+
+    if (isPlatformBrowser(this.platformId)) {
+      globalThis.localStorage.setItem('convive-cookie-notice-seen', 'true');
+    }
   }
 
   private startHeroVideo(): void {

@@ -9,6 +9,7 @@ import { PublicHome } from './public-home';
 
 describe('PublicHome', () => {
   beforeEach(() => {
+    localStorage.clear();
     vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
   });
 
@@ -103,5 +104,32 @@ describe('PublicHome', () => {
 
     expect(toggle?.getAttribute('aria-expanded')).toBe('false');
     expect(navigation?.classList.contains('is-open')).toBe(false);
+  });
+
+  it('shows an informational cookie notice without inventing a consent choice', async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        PublicHome,
+        i18nTestingModule({
+          'public-home': publicHomeEs,
+          'public-site-footer': publicSiteFooterEs,
+        }),
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(PublicHome);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+    expect(page.querySelector('.cookie-notice')?.textContent).toContain(
+      'No hay cookies opcionales.',
+    );
+    expect(page.querySelector('.cookie-notice a')?.getAttribute('href')).toBe('/cookies/');
+
+    page.querySelector<HTMLButtonElement>('.cookie-notice button')?.click();
+    fixture.detectChanges();
+
+    expect(page.querySelector('.cookie-notice')).toBeNull();
+    expect(localStorage.getItem('convive-cookie-notice-seen')).toBe('true');
   });
 });
