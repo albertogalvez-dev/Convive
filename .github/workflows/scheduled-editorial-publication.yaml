@@ -85,7 +85,7 @@ jobs:
             pending=0
             failed=0
             for check in Backend Frontend Infrastructure 'Encrypted recovery' 'End-to-end'; do
-              conclusion="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${REVISION}/check-runs" --paginate --jq ".check_runs[] | select(.name == \"${check}\") | .conclusion" | tail -n 1)"
+              conclusion="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${REVISION}/check-runs" --paginate --jq ".check_runs[] | select(.name == \"${check}\" and .conclusion == \"success\") | .conclusion" | head -n 1)"
               case "$conclusion" in
                 success) ;;
                 failure|cancelled|timed_out|action_required) failed=1 ;;

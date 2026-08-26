@@ -70,7 +70,7 @@ jobs:
           fi
 
           for check in Backend Frontend Infrastructure "Encrypted recovery" "End-to-end"; do
-            conclusion="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${sha}/check-runs" --paginate --jq ".check_runs[] | select(.name == \"${check}\") | .conclusion" | tail -n 1)"
+            conclusion="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${sha}/check-runs" --paginate --jq ".check_runs[] | select(.name == \"${check}\" and .conclusion == \"success\") | .conclusion" | head -n 1)"
             if [[ "$conclusion" != success ]]; then
               echo "Required check '$check' is not successful (got '$conclusion')." >&2
               exit 1
