@@ -10,6 +10,8 @@ import {
   assignmentRoleLabel,
   caseModalityLabel,
   caseStatusLabel,
+  communicationChannelLabel,
+  communicationRecipientLabel,
   personRoleLabel,
   sourceAuthorityLabel,
   stageLabel,
@@ -150,6 +152,8 @@ export class ProfessionalCaseDetailPage implements OnInit {
   protected readonly assignmentRoleLabel = assignmentRoleLabel;
   protected readonly personRoleLabel = personRoleLabel;
   protected readonly sourceAuthorityLabel = sourceAuthorityLabel;
+  protected readonly communicationRecipientLabel = communicationRecipientLabel;
+  protected readonly communicationChannelLabel = communicationChannelLabel;
   protected readonly stageLabel = stageLabel;
   protected readonly taskStatusLabel = taskStatusLabel;
   protected readonly isDemonstration = this.sessions.demonstrationRole;
