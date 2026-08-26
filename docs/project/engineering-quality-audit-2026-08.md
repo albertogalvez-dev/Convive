@@ -161,3 +161,10 @@ work that materially remains is the route-by-route visual and screen-reader
 review already owned by #351, followed by its truthful README captures (#334/
 #354). The project should prioritise those review outcomes and real product
 feedback over additional engineering tooling.
+
+## Evidence boundary
+
+This is a source-and-release review, not a claim of independent certification.
+It deliberately records the remaining human visual and assistive-technology
+review as unfinished work so that the evidence remains useful to contributors
+and reviewers.
