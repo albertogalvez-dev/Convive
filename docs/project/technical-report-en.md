@@ -1,7 +1,8 @@
 # Convive technical project report
 
-**Status:** verified public fictional-demonstration project report
+**Status:** textual source companion to the final 14-page technical report
 **Last reviewed:** 1 September 2026
+**Audited revision:** `8dc1b12e0afacc2859931fab5d97eaffce8b4f9b`
 
 ## Executive summary
 
@@ -53,12 +54,14 @@ Changes are checked through Symfony and Angular tests, types/format, OpenAPI, Co
 
 Release first prepares a healthy generation with immutable digest-pinned images, reviewed migrations and recovery evidence. Only then is the exact Caddy route activated and HTTPS, hostname, API, headers, demo label and unintended ports are checked. Failure keeps the candidate non-public or restores only Convive's route and generation.
 
-The [release and rollback runbook](../operations/deployment-release-and-rollback.md), [sequence](../architecture/diagrams/release-rollback-sequence.md) and [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) are the operational source. The public demonstration is live at `https://conviveaula.com` and the application at `https://app.conviveaula.com`; both remain limited to fictional data. This does not imply a real school or authorisation to process personal data.
+The [release and rollback runbook](../operations/deployment-release-and-rollback.md), [backup and recovery runbook](../operations/backup-and-recovery.md), [sequence](../architecture/diagrams/release-rollback-sequence.md) and [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) are the operational sources. The public demonstration is live at `https://conviveaula.com` and the application at `https://app.conviveaula.com`; both remain limited to fictional data. This does not imply a real school or authorisation to process personal data.
 
-## Planned evolution during 2026
+## Evolution 2026/2027
 
-Evolution will be prioritised after validation rather than treated as a product promise. Planned directions are improving cognitive accessibility and completing the screen-reader review; providing clearer reporter updates through the secure access journey; maintaining territorial sources and protocols; and considering language expansion only after a scoped decision and qualified review.
+The documented horizon spans 2026/2027 and remains candidate work rather than a product promise. Planned directions are improving cognitive accessibility and completing the screen-reader review; providing clearer reporter updates through the secure access journey; maintaining territorial sources and protocols; and considering language expansion only after a scoped decision and qualified review.
 
 A real-data pilot, any automation of educational decisions, non-essential analytics and offline application behaviour are outside this report. Each would require additional controller, privacy, security, operational and product decisions.
 
-See the [README](../../README.md), [operations index](../operations/README.md), [Spanish PDF](pdf/convive-memoria-tecnica-es.pdf), [English PDF](pdf/convive-technical-report-en.pdf) and [Spanish report](technical-report-es.md).
+Live prioritisation and its focused issues are maintained in [roadmap #71](https://github.com/albertogalvez-dev/Convive/issues/71).
+
+See the [README](../../README.md), [operations index](../operations/README.md), [Spanish PDF](pdf/convive-memoria-tecnica-es.pdf), [English PDF](pdf/convive-technical-report-en.pdf), [verification manifest](pdf/manifest.json) and [Spanish report](technical-report-es.md).
