@@ -9,7 +9,7 @@
   },
   {
     "slug": "explicar-limites-antes-de-abrir-un-canal",
-    "publicationStatus": "draft",
+    "publicationStatus": "published",
     "publishedAt": "2026-08-31",
     "updatedAt": "2026-08-31",
     "readingMinutes": 5,
@@ -399,6 +399,20 @@
     "readingMinutes": 4,
     "coverSrc": "/assets/blog/leer-comunicaciones-responsabilidad-cover-v1.png"
   },
-  {"slug":"que-revisar-antes-de-abrir-un-nuevo-curso","publicationStatus":"draft","publishedAt":"2027-08-09","updatedAt":"2027-08-09","readingMinutes":4,"coverSrc":"/assets/blog/revisar-antes-nuevo-curso-cover-v1.png"}
-  ,{"slug":"un-ano-de-escucha-preguntas-para-mejorar-sin-simplificar","publicationStatus":"draft","publishedAt":"2027-08-16","updatedAt":"2027-08-16","readingMinutes":4,"coverSrc":"/assets/blog/ano-escucha-mejorar-cover-v1.png"}
+  {
+    "slug": "que-revisar-antes-de-abrir-un-nuevo-curso",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-08-09",
+    "updatedAt": "2027-08-09",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/revisar-antes-nuevo-curso-cover-v1.png"
+  },
+  {
+    "slug": "un-ano-de-escucha-preguntas-para-mejorar-sin-simplificar",
+    "publicationStatus": "draft",
+    "publishedAt": "2027-08-16",
+    "updatedAt": "2027-08-16",
+    "readingMinutes": 4,
+    "coverSrc": "/assets/blog/ano-escucha-mejorar-cover-v1.png"
+  }
 ]
