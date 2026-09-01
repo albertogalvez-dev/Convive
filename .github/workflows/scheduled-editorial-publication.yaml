@@ -5,23 +5,25 @@ on:
     # 07:15 Europe/Madrid while CEST is active. GitHub cron uses UTC; a one-hour
     # shift during CET is acceptable because publication dates, not the clock,
     # determine eligibility.
-    - cron: '15 05 * * *'
+    - cron: "15 05 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
-  actions: write
-  checks: read
+  pull-requests: write
 
 concurrency:
   group: convive-editorial-publication
   cancel-in-progress: false
 
 jobs:
-  publish-and-release:
-    name: Publish due articles and release the reviewed site
+  prepare-publication:
+    name: Prepare due editorial publication review
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 15
+
+    env:
+      EDITORIAL_BRANCH: editorial/scheduled-publication
 
     steps:
       - name: Check out main
@@ -36,15 +38,41 @@ jobs:
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
 
-      - name: Publish due articles and regenerate the sitemap
+      - name: Reuse an open editorial publication review
+        id: open-editorial-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          open_pr_number="$(
+            gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$EDITORIAL_BRANCH" \
+              --state open \
+              --json number \
+              --jq '.[0].number // empty'
+          )"
+
+          if [[ -n "$open_pr_number" ]]; then
+            echo "open=true" >> "$GITHUB_OUTPUT"
+            echo "number=$open_pr_number" >> "$GITHUB_OUTPUT"
+            echo "An editorial publication review is already open: #$open_pr_number"
+          else
+            echo "open=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare due articles and regenerate the sitemap
+        if: steps.open-editorial-pr.outputs.open != 'true'
         working-directory: apps/web
         run: |
           set -euo pipefail
           node scripts/publish-due-blog-articles.mjs
           node scripts/generate-sitemap.mjs
 
-      - name: Commit the scheduled publication when required
+      - name: Create an editorial publication pull request when required
         id: publication
+        if: steps.open-editorial-pr.outputs.open != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -58,105 +86,35 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add apps/web/src/app/blog/blog-catalog.json apps/web/src/sitemap.xml
           git commit -m 'chore(editorial): publish due blog articles'
-          git push origin HEAD:main
+          git push --force-with-lease origin "HEAD:$EDITORIAL_BRANCH"
+
+          pr_body="$(mktemp)"
+          cat > "$pr_body" <<'EOF'
+          ## Automated editorial publication
+
+          This pull request was created by the date-gated editorial workflow. It contains
+          only the catalogue and sitemap updates for articles due on its execution date.
+
+          ## Verification evidence
+
+          - `node scripts/publish-due-blog-articles.mjs`
+          - `node scripts/generate-sitemap.mjs`
+          - The normal pull-request checks run before merge.
+
+          ## Out of scope
+
+          - Future-dated articles, application behaviour, production data and external
+            publication outside the reviewed release workflow.
+          EOF
+
+          pr_url="$(
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$EDITORIAL_BRANCH" \
+              --title 'chore(editorial): publish due blog articles' \
+              --body-file "$pr_body" \
+              --label documentation
+          )"
           echo 'changed=true' >> "$GITHUB_OUTPUT"
-          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Start the mandatory main checks
-        if: steps.publication.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REVISION: ${{ steps.publication.outputs.revision }}
-        run: |
-          set -euo pipefail
-          # A push authenticated with GITHUB_TOKEN intentionally does not
-          # trigger other push workflows. Dispatch CI explicitly so the exact
-          # editorial revision receives the normal mandatory checks.
-          gh workflow run ci.yaml --ref "$REVISION"
-
-      - name: Wait for the mandatory main checks
-        if: steps.publication.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REVISION: ${{ steps.publication.outputs.revision }}
-        run: |
-          set -euo pipefail
-          for attempt in {1..90}; do
-            pending=0
-            failed=0
-            for check in Backend Frontend Infrastructure 'Encrypted recovery' 'End-to-end'; do
-              conclusion="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${REVISION}/check-runs" --paginate --jq ".check_runs[] | select(.name == \"${check}\" and .conclusion == \"success\") | .conclusion" | head -n 1)"
-              case "$conclusion" in
-                success) ;;
-                failure|cancelled|timed_out|action_required) failed=1 ;;
-                *) pending=1 ;;
-              esac
-            done
-
-            if [[ "$failed" == 1 ]]; then
-              echo 'The scheduled editorial revision did not pass all mandatory checks.' >&2
-              exit 1
-            fi
-            if [[ "$pending" == 0 ]]; then
-              exit 0
-            fi
-            sleep 30
-          done
-
-          echo 'Timed out waiting for the mandatory checks.' >&2
-          exit 1
-
-      - name: Start the controlled deployment preparation
-        if: steps.publication.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REVISION: ${{ steps.publication.outputs.revision }}
-        run: |
-          set -euo pipefail
-          gh workflow run release.yaml \
-            --ref main \
-            -f release_ref="$REVISION" \
-            -f deploy=true \
-            -f migration_class=none \
-            -f release_phase=prepare
-
-      - name: Wait for preparation and verify the public release
-        if: steps.publication.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REVISION: ${{ steps.publication.outputs.revision }}
-        run: |
-          set -euo pipefail
-          for attempt in {1..20}; do
-            run_id="$(gh run list --workflow release.yaml --commit "$REVISION" --limit 1 --json databaseId --jq '.[0].databaseId')"
-            if [[ -n "$run_id" && "$run_id" != null ]]; then
-              gh run watch "$run_id" --exit-status
-              prepare_run_id="$run_id"
-              break
-            fi
-            sleep 15
-          done
-
-          if [[ -z "${run_id:-}" || "$run_id" == null ]]; then
-            echo 'The controlled preparation workflow was not created.' >&2
-            exit 1
-          fi
-
-          gh workflow run release.yaml \
-            --ref main \
-            -f release_ref="$REVISION" \
-            -f deploy=true \
-            -f migration_class=none \
-            -f release_phase=verify
-
-          for attempt in {1..20}; do
-            run_id="$(gh run list --workflow release.yaml --commit "$REVISION" --limit 5 --json databaseId --jq ".[] | select(.databaseId != ${prepare_run_id}) | .databaseId" | head -n 1)"
-            if [[ -n "$run_id" && "$run_id" != null ]]; then
-              gh run watch "$run_id" --exit-status
-              exit 0
-            fi
-            sleep 15
-          done
-
-          echo 'The controlled verification workflow was not created.' >&2
-          exit 1
+          echo "pull-request=$pr_url" >> "$GITHUB_OUTPUT"

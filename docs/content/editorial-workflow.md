@@ -28,6 +28,19 @@ request as the route and structured metadata.
    checks have passed. Corrections are made in a new commit and retain the
    article's visible update date.
 
+## Scheduled publication
+
+The daily `Publish scheduled editorial articles` workflow applies the date
+gate and regenerates the sitemap. When one or more articles are due, it creates
+one `editorial/scheduled-publication` pull request rather than pushing to the
+protected `main` branch. A second scheduled run leaves that review unchanged
+while it is open, preventing duplicate publication candidates.
+
+The pull request follows the same mandatory checks and protected-branch review
+as every other change. Merging it and using the controlled release workflow is
+the only way a due article becomes public. A scheduled run with no due article
+does not create a branch, pull request or release.
+
 ## Review cadence and withdrawal
 
 Review each article at least every twelve months and earlier when a cited
