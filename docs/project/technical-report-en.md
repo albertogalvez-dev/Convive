@@ -1,7 +1,7 @@
 # Convive technical project report
 
-**Status:** verified fictional-demo project report
-**Last reviewed:** 25 August 2026
+**Status:** verified public fictional-demonstration project report
+**Last reviewed:** 1 September 2026
 
 ## Executive summary
 
@@ -53,6 +53,12 @@ Changes are checked through Symfony and Angular tests, types/format, OpenAPI, Co
 
 Release first prepares a healthy generation with immutable digest-pinned images, reviewed migrations and recovery evidence. Only then is the exact Caddy route activated and HTTPS, hostname, API, headers, demo label and unintended ports are checked. Failure keeps the candidate non-public or restores only Convive's route and generation.
 
-The [release and rollback runbook](../operations/deployment-release-and-rollback.md), [sequence](../architecture/diagrams/release-rollback-sequence.md) and [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) are the operational source. This report does not claim an active public hostname, configured DNS, a real school or authorisation to process personal data. Those assertions belong to the controlled release and public-boundary review.
+The [release and rollback runbook](../operations/deployment-release-and-rollback.md), [sequence](../architecture/diagrams/release-rollback-sequence.md) and [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) are the operational source. The public demonstration is live at `https://conviveaula.com` and the application at `https://app.conviveaula.com`; both remain limited to fictional data. This does not imply a real school or authorisation to process personal data.
 
-See the [README](../../README.md), [operations index](../operations/README.md) and [Spanish report](technical-report-es.md).
+## Planned evolution during 2026
+
+Evolution will be prioritised after validation rather than treated as a product promise. Planned directions are improving cognitive accessibility and completing the screen-reader review; providing clearer reporter updates through the secure access journey; maintaining territorial sources and protocols; and considering language expansion only after a scoped decision and qualified review.
+
+A real-data pilot, any automation of educational decisions, non-essential analytics and offline application behaviour are outside this report. Each would require additional controller, privacy, security, operational and product decisions.
+
+See the [README](../../README.md), [operations index](../operations/README.md), [Spanish PDF](pdf/convive-memoria-tecnica-es.pdf), [English PDF](pdf/convive-technical-report-en.pdf) and [Spanish report](technical-report-es.md).
