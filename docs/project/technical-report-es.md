@@ -1,7 +1,7 @@
 # Memoria técnica de Convive
 
-**Estado:** memoria verificable de la demostración con datos ficticios
-**Última revisión:** 25 de agosto de 2026
+**Estado:** memoria verificable de la demostración pública con datos ficticios
+**Última revisión:** 1 de septiembre de 2026
 
 ## Resumen
 
@@ -53,6 +53,12 @@ Cada cambio se comprueba con pruebas Symfony, Angular, tipo/formato, OpenAPI, Co
 
 La release prepara primero una generación saludable con imágenes inmutables por digest, migraciones revisadas y evidencia de recuperación. Solo después se activa la ruta Caddy exacta y se verifica HTTPS, host, API, cabeceras, etiqueta de demo y ausencia de puertos inesperados. Un fallo conserva la candidata no pública o restaura únicamente la ruta y generación de Convive.
 
-El [runbook de release y rollback](../operations/deployment-release-and-rollback.md), su [secuencia](../architecture/diagrams/release-rollback-sequence.md) y [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) son la fuente operativa. Esta memoria no declara hostname público activo, DNS configurado, centro real ni autorización para datos personales. Esas verificaciones pertenecen al release controlado y a la auditoría posterior.
+El [runbook de release y rollback](../operations/deployment-release-and-rollback.md), su [secuencia](../architecture/diagrams/release-rollback-sequence.md) y [ADR-0029](../architecture/decisions/0029-use-the-platform-caddy-per-project-edge-for-public-ingress.md) son la fuente operativa. La demostración pública está operativa en `https://conviveaula.com` y la aplicación en `https://app.conviveaula.com`; ambas permanecen limitadas a datos ficticios. Esto no supone un centro real ni autorización para datos personales.
 
-Consulte el [README](../../README.md), el [índice de operaciones](../operations/README.md) y la [versión inglesa](technical-report-en.md).
+## Evolución prevista durante 2026
+
+La evolución se priorizará después de validación y no como una promesa de producto. Las líneas previstas son mejorar la accesibilidad cognitiva y completar la revisión con lector de pantalla; ofrecer actualizaciones más claras a la persona informante mediante su acceso seguro; mantener fuentes territoriales y protocolos; y estudiar ampliaciones lingüísticas solo con una decisión de alcance y revisión cualificada.
+
+Un piloto con datos reales, cualquier automatización de decisiones educativas, analítica no esencial y una aplicación sin conexión quedan fuera de esta memoria. Requerirían decisiones adicionales de responsable, privacidad, seguridad, operación y producto.
+
+Consulte el [README](../../README.md), el [índice de operaciones](../operations/README.md), el [PDF en español](pdf/convive-memoria-tecnica-es.pdf) y la [versión inglesa](technical-report-en.md).
