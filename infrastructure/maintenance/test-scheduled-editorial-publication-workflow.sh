@@ -25,6 +25,7 @@ forbid_fragment() {
 require_fragment 'EDITORIAL_BRANCH: editorial/scheduled-publication'
 require_fragment 'Reuse an open editorial publication review'
 require_fragment 'gh pr list'
+require_fragment 'git fetch --no-tags origin "$EDITORIAL_BRANCH" || true'
 require_fragment 'git push --force-with-lease origin "HEAD:$EDITORIAL_BRANCH"'
 require_fragment 'gh pr create'
 require_fragment '--head "$EDITORIAL_BRANCH"'
