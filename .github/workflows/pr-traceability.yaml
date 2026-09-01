@@ -15,7 +15,10 @@ jobs:
     # an issue -- they are reviewed and merged on their own real merits
     # (build, tests, CodeQL, dependency review) rather than against a
     # fabricated "Closes #N".
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    if: >-
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      !(github.event.pull_request.user.login == 'github-actions[bot]' &&
+      startsWith(github.event.pull_request.head.ref, 'editorial/scheduled-'))
     env:
       PR_BODY: ${{ github.event.pull_request.body }}
 

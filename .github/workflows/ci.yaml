@@ -250,6 +250,7 @@ jobs:
           bash -n infrastructure/maintenance/*.sh
           bash infrastructure/maintenance/test-attachment-lifecycle.sh
           bash infrastructure/maintenance/test-architecture-document-check.sh
+          bash infrastructure/maintenance/test-scheduled-editorial-publication-workflow.sh
           bash -n infrastructure/observability/*.sh
           bash infrastructure/observability/exercise-failure.sh
 
