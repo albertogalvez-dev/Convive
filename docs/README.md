@@ -13,6 +13,10 @@ runtime evidence and meeting-specific material stay outside Git.
   status of every maintained diagram.
 - [Architecture decisions](architecture/decisions/README.md): accepted ADRs.
 - [Technical project reports](project/technical-report-es.md): verified Spanish
+  and English sources, with final 14-page
+  [Spanish PDF](project/pdf/convive-memoria-tecnica-es.pdf),
+  [English PDF](project/pdf/convive-technical-report-en.pdf) and
+  [verification manifest](project/pdf/manifest.json)
   and English summaries of the fictional-demo product, architecture, security
   boundary, verification and controlled-release state.
 - [Engineering-quality audit (26 August 2026)](project/engineering-quality-audit-2026-08.md):
