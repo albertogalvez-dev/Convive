@@ -76,12 +76,12 @@ describe('blog content', () => {
     }
   });
 
-  it('keeps editorial drafts out of publication until an explicit approval', () => {
-    const drafts = publishedArticleMetadata(new Date('2026-09-30')).map(({ slug }) => slug);
+  it('publishes only editorial entries explicitly approved by the catalogue', () => {
+    const published = publishedArticleMetadata(new Date('2026-09-30')).map(({ slug }) => slug);
 
-    expect(drafts).not.toContain('explicar-limites-antes-de-abrir-un-canal');
-    expect(drafts).not.toContain('confidencialidad-no-es-anonimato-absoluto');
-    expect(drafts).not.toContain('una-respuesta-inicial-que-abre-el-siguiente-paso');
+    expect(published).toContain('explicar-limites-antes-de-abrir-un-canal');
+    expect(published).not.toContain('confidencialidad-no-es-anonimato-absoluto');
+    expect(published).not.toContain('una-respuesta-inicial-que-abre-el-siguiente-paso');
   });
 
   it('requires complete editorial copy in every public locale before publication', () => {
