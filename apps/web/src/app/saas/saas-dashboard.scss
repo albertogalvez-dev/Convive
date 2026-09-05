@@ -1,12 +1,18 @@
 .dashboard {
-  max-width: 68rem;
+  max-width: 62rem;
   margin: 0 auto;
 }
+
+/* ---- heading ---- */
 .dashboard-heading {
-  margin-bottom: 1.6rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 .eyebrow {
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.4rem;
   color: #176f9c;
   font-size: 0.75rem;
   font-weight: 800;
@@ -16,101 +22,145 @@
 h1 {
   margin: 0;
   color: #102b60;
-  font-size: clamp(2rem, 4vw, 2.7rem);
+  font-size: clamp(1.9rem, 4vw, 2.4rem);
   letter-spacing: -0.04em;
 }
+.today-date {
+  margin: 0;
+  text-transform: none;
+  color: #7086a5;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
 
-.summary-grid {
+/* ---- triage ---- */
+.triage {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.15rem;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
 }
-.summary-card {
+.triage-card {
   position: relative;
-  min-height: 10rem;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-content: space-between;
-  gap: 0.4rem 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
   overflow: hidden;
   border: 1px solid #d5e0ed;
-  border-radius: 1rem;
-  padding: 1.35rem 1.45rem;
-  color: #172b57;
+  border-radius: 0.85rem;
+  padding: 0.95rem 1.1rem;
   background: #fff;
-  box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
-  text-decoration: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease;
 }
-.summary-card::before {
+.triage-card::before {
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 0.3rem;
-  background: #1aa2da;
+  width: 0.28rem;
 }
-.summary-card.reviewed::before {
-  background: #51a68e;
-}
-.summary-card.attention::before {
+.triage-card.overdue::before {
   background: #d52949;
 }
-.summary-card > span:first-child {
-  grid-column: 1 / -1;
-  font-size: 0.9rem;
-  font-weight: 800;
+.triage-card.today::before {
+  background: #e0a325;
 }
-.summary-card strong {
-  align-self: end;
+.triage-card.week::before {
+  background: #1aa2da;
+}
+.triage-card strong {
   color: #102b60;
-  font-size: 2.7rem;
+  font-size: 1.85rem;
+  font-weight: 800;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
-.summary-card small {
-  grid-column: 1;
-  color: #5d6f8e;
-  font-size: 0.82rem;
+.triage-card span {
+  text-transform: none;
+  color: #4d6287;
+  font-size: 0.86rem;
+  font-weight: 750;
 }
-.card-arrow {
-  grid-column: 2;
-  grid-row: 2 / 4;
-  align-self: end;
-  color: #176f9c;
-  font-size: 1.25rem;
+.triage-card:hover {
+  border-color: #9fc4dc;
+  background: #fbfdff;
 }
-.summary-card:hover {
-  border-color: #b8cbe0;
+.triage-card.selected {
+  border-color: #75c5e3;
+  background: #edf8fc;
+}
+.triage-card.selected span {
+  color: #102b60;
 }
 
-.activity-card {
-  margin-top: 1.15rem;
+/* ---- queue ---- */
+.queue-card {
+  overflow: hidden;
   border: 1px solid #d4dfed;
   border-radius: 1rem;
   background: #fff;
   box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
-  overflow: hidden;
 }
 .card-heading {
   display: flex;
-  align-items: end;
+  align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.4rem 1.5rem 1.1rem;
+  padding: 1.25rem 1.4rem 1.1rem;
   border-bottom: 1px solid #e1e7f0;
-}
-.card-heading .eyebrow {
-  margin-bottom: 0.3rem;
 }
 .card-heading h2 {
   margin: 0;
   color: #102b60;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
 }
-.card-heading > a {
+.card-heading a,
+.card-heading .clear {
+  border: 0;
+  padding: 0;
+  background: none;
   color: #176f9c;
-  font-size: 0.85rem;
+  font: inherit;
+  font-size: 0.83rem;
   font-weight: 800;
   text-decoration: none;
+  cursor: pointer;
+}
+
+.group-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.6rem 1.4rem;
+  border-bottom: 1px solid #eef2f8;
+  background: #f8fafd;
+  color: #55688a;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.group-label::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #1aa2da;
+}
+.group-label.overdue::before {
+  background: #d52949;
+}
+.group-label.today::before {
+  background: #e0a325;
+}
+.group-label.overdue {
+  color: #a3243c;
 }
 
 ul {
@@ -118,77 +168,196 @@ ul {
   padding: 0;
   list-style: none;
 }
-li + li {
+.queue-card li + li a {
   border-top: 1px solid #eef2f8;
 }
-li a {
+.queue-card li a {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
+  gap: 0.95rem;
+  padding: 0.95rem 1.4rem;
   text-decoration: none;
 }
-li a:hover {
+.queue-card li a:hover {
   background: #f7fbfd;
 }
-.item-copy {
+.kind {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex: none;
+  border-radius: 0.6rem;
+  color: #40587d;
+  background: #eef3f9;
+}
+.kind svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+}
+.kind.assessment {
+  color: #0b78a7;
+  background: #e6f4fb;
+}
+.kind.followup {
+  color: #4d6287;
+  background: #eef1f7;
+}
+.copy {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.22rem;
 }
-.item-copy strong {
+.copy strong {
   color: #102b60;
-  font-size: 0.98rem;
-  font-weight: 800;
+  font-size: 0.96rem;
+  font-weight: 750;
 }
-.item-copy > span {
-  color: #60718f;
+.copy > span {
+  color: #66789a;
   font-size: 0.8rem;
+}
+.reference {
+  color: #8496b0;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 .due {
   border-radius: 999px;
-  padding: 0.32rem 0.62rem;
-  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.73rem;
   font-weight: 800;
   white-space: nowrap;
-  color: #8b5b0b;
-  background: #fff5dd;
-}
-.due.overdue {
-  color: #b4233d;
-  background: #fdecef;
-}
-.due.ontrack {
+  font-variant-numeric: tabular-nums;
   color: #16775f;
   background: #eaf7f2;
 }
-time {
-  color: #637493;
-  font-size: 0.78rem;
-  white-space: nowrap;
+.due.overdue {
+  color: #a3243c;
+  background: #fdecef;
 }
-.arrow {
-  color: #176f9c;
-  font-size: 1.05rem;
+.due.today {
+  color: #8b5b0b;
+  background: #fff5dd;
 }
 
-@media (max-width: 62rem) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
+.queue-empty {
+  padding: 2.6rem 1.4rem;
+  text-align: center;
 }
-@media (max-width: 48rem) {
-  li a {
-    grid-template-columns: minmax(0, 1fr) auto;
+.queue-empty p {
+  margin: 0;
+  color: #66789a;
+  font-size: 0.88rem;
+}
+.queue-empty strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #102b60;
+  font-size: 1rem;
+}
+
+/* ---- activity (deliberately quieter) ---- */
+.activity {
+  margin-top: 2.2rem;
+}
+.activity-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.activity-heading h2 {
+  margin: 0;
+  color: #55688a;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.activity-heading a {
+  color: #176f9c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.activity li + li a {
+  border-top: 1px solid #e6ecf5;
+}
+.activity li a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  text-decoration: none;
+}
+.activity .copy {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+.activity .copy strong {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.activity .copy > span {
+  color: #8496b0;
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.activity time {
+  color: #8496b0;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 52rem) {
+  .dashboard-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .triage {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+  .triage-card {
+    padding: 0.8rem 1rem;
+  }
+  .triage-card strong {
+    font-size: 1.5rem;
+  }
+  .queue-card li a {
+    grid-template-columns: auto minmax(0, 1fr);
     row-gap: 0.55rem;
     padding: 0.9rem 1.1rem;
   }
-  .arrow {
-    display: none;
+  .reference,
+  .due {
+    grid-column: 2;
+    justify-self: start;
   }
+  .due {
+    grid-row: 3;
+  }
+  .group-label,
   .card-heading {
-    padding: 1.1rem 1.1rem 0.9rem;
+    padding-inline: 1.1rem;
+  }
+  .activity .copy {
+    flex-direction: column;
+    gap: 0.15rem;
   }
 }

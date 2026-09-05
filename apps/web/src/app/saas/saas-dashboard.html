@@ -1,67 +1,115 @@
 <app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
   <section class="dashboard">
-    <div class="dashboard-heading">
-      <p class="eyebrow">Resumen del centro</p>
-      <h1>Hola, Iker</h1>
-    </div>
-
-    <div class="summary-grid">
-      <a href="#" class="summary-card attention">
-        <span>Fuera de plazo</span><strong>2</strong><small>Necesitan una actuación hoy</small>
-        <span class="card-arrow" aria-hidden="true">&rarr;</span>
-      </a>
-      <a href="#" class="summary-card new">
-        <span>Sin valorar</span><strong>3</strong><small>Comunicaciones nuevas</small>
-        <span class="card-arrow" aria-hidden="true">&rarr;</span>
-      </a>
-      <a href="#" class="summary-card reviewed">
-        <span>Casos activos</span><strong>11</strong><small>Con seguimiento abierto</small>
-        <span class="card-arrow" aria-hidden="true">&rarr;</span>
-      </a>
-    </div>
-
-    <section class="activity-card" aria-labelledby="queue-title">
-      <div class="card-heading">
-        <div>
-          <p class="eyebrow">Pendiente</p>
-          <h2 id="queue-title">Lo que necesita tu acción</h2>
-        </div>
-        <a href="#">Ver todo</a>
+    <header class="dashboard-heading">
+      <div>
+        <p class="eyebrow">Resumen del centro</p>
+        <h1>Hola, Iker</h1>
       </div>
-      <ul>
-        @for (item of queue; track item.title + item.reference) {
-          <li>
-            <a href="#">
-              <span class="item-copy">
-                <strong>{{ item.title }}</strong>
-                <span>{{ item.reference }} &middot; {{ item.context }}</span>
-              </span>
-              <span class="due" [class]="'due ' + item.urgency">{{ item.due }}</span>
-              <span class="arrow" aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
+      <p class="today-date">{{ today }}</p>
+    </header>
+
+    <div class="triage" role="group" aria-label="Filtrar por plazo">
+      <button
+        type="button"
+        class="triage-card overdue"
+        [class.selected]="filter() === 'overdue'"
+        [attr.aria-pressed]="filter() === 'overdue'"
+        (click)="setFilter('overdue')"
+      >
+        <strong>{{ counts.overdue }}</strong>
+        <span>Fuera de plazo</span>
+      </button>
+      <button
+        type="button"
+        class="triage-card today"
+        [class.selected]="filter() === 'today'"
+        [attr.aria-pressed]="filter() === 'today'"
+        (click)="setFilter('today')"
+      >
+        <strong>{{ counts.today }}</strong>
+        <span>Vence hoy</span>
+      </button>
+      <button
+        type="button"
+        class="triage-card week"
+        [class.selected]="filter() === 'week'"
+        [attr.aria-pressed]="filter() === 'week'"
+        (click)="setFilter('week')"
+      >
+        <strong>{{ counts.week }}</strong>
+        <span>Esta semana</span>
+      </button>
+    </div>
+
+    <section class="queue-card" aria-labelledby="queue-title">
+      <div class="card-heading">
+        <h2 id="queue-title">Necesita tu acción</h2>
+        @if (filter() !== 'all') {
+          <button type="button" class="clear" (click)="setFilter('all')">Quitar filtro</button>
+        } @else {
+          <a href="#">Ver todo</a>
         }
-      </ul>
+      </div>
+
+      @for (group of groups(); track group.bucket) {
+        <p class="group-label" [class]="'group-label ' + group.bucket">{{ group.label }}</p>
+        <ul>
+          @for (item of group.items; track item.reference + item.title) {
+            <li>
+              <a href="#">
+                <span class="kind" [class]="'kind ' + item.kind" aria-hidden="true">
+                  @switch (item.kind) {
+                    @case ('assessment') {
+                      <svg viewBox="0 0 24 24">
+                        <path d="M4 6h16v11H9l-5 3V6Z" />
+                        <path d="M8 10h8M8 13h5" />
+                      </svg>
+                    }
+                    @case ('followup') {
+                      <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="8" />
+                        <path d="M12 8v4.5l3 1.8" />
+                      </svg>
+                    }
+                    @default {
+                      <svg viewBox="0 0 24 24">
+                        <path d="M5 12.5 9.5 17 19 7.5" />
+                      </svg>
+                    }
+                  }
+                </span>
+                <span class="copy">
+                  <strong>{{ item.title }}</strong>
+                  <span>{{ item.context }}</span>
+                </span>
+                <span class="reference">{{ item.reference }}</span>
+                <span class="due" [class]="'due ' + item.bucket">{{ item.due }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @empty {
+        <div class="queue-empty">
+          <p><strong>Todo al día</strong></p>
+          <p>No queda nada pendiente en este plazo.</p>
+        </div>
+      }
     </section>
 
-    <section class="activity-card" aria-labelledby="activity-title">
-      <div class="card-heading">
-        <div>
-          <p class="eyebrow">Actividad</p>
-          <h2 id="activity-title">Movimientos recientes</h2>
-        </div>
+    <section class="activity" aria-labelledby="activity-title">
+      <div class="activity-heading">
+        <h2 id="activity-title">Actividad reciente</h2>
         <a href="#">Ver todo</a>
       </div>
       <ul>
         @for (item of activity; track item.title) {
           <li>
             <a href="#">
-              <span class="item-copy">
+              <span class="copy">
                 <strong>{{ item.title }}</strong>
                 <span>{{ item.meta }}</span>
               </span>
               <time>{{ item.time }}</time>
-              <span class="arrow" aria-hidden="true">&rarr;</span>
             </a>
           </li>
         }
