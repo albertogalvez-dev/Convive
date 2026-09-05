@@ -2113,7 +2113,7 @@ expected, and any DR-1 artifact required before implementation.
 | #503 | *this charter* | — | reviewed product document + this index | — |
 | #504 | C-10, C-11 | INV-11 | documented go/no-go gate with evidence-required decisions; no compliance claim | — |
 | #505 | §9.1 | INV-15, INV-16 | published model decision; EU residency + Art. 28 assessment; free-tier constraint honoured; no provider selected | — |
-| #506 | T-15, C-14 | INV-1, INV-16 | tenant/membership/partitioning/cross-tenant-denial invariants; migration/rollback boundaries; no silent demo→tenant conversion | — |
+| #506 | T-15, C-14 | INV-1, INV-16 | tenant/membership/partitioning/cross-tenant-denial invariants; migration/rollback boundaries; no silent demo→tenant conversion — decided in **ADR-0031** | — |
 | #507 | §6.0, §7 (format); DR-1 generalisation | INV-18 (enforcement) | the reusable delivery template; alignment with issue→PR workflow; visual/a11y/contract/operational evidence types | — |
 | #508 | P-1, P-2, P-5; C-4 | INV-2, INV-4 | reviewed role-aware IA with genuinely distinct per-role dashboard defaults (not one screen re-skinned); default layout urgency-first + calm tone (§13); least privilege preserved; no fake analytics; validated responsive/accessible direction | dashboard, actionable queue, case-workspace IA, role set |
 | #509 | T-17, C-9 (context) | INV-16 | environment purposes (local/test/sandbox/demo-prod/pilot); release/flag/config/rollback; no fictional↔customer co-mingling | — |
