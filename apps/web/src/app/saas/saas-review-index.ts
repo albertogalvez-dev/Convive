@@ -26,6 +26,11 @@ const GROUPS: readonly ScreenGroup[] = [
         summary: 'Tareas del protocolo y la historia completa del caso.',
       },
       {
+        route: 'avisos',
+        title: 'Avisos',
+        summary: 'Lo que ha pasado y cómo quieres que te avisemos.',
+      },
+      {
         route: 'miembros',
         title: 'Miembros',
         summary: 'Quién trabaja en el centro, con qué rol y en qué estado.',

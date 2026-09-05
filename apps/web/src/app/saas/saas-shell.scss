@@ -75,9 +75,6 @@
 .sidebar-collapsed .brand span,
 .sidebar-collapsed .desktop-nav a span,
 .sidebar-collapsed .profile-copy,
-.sidebar-collapsed .demo-switch {
-  display: none;
-}
 .sidebar-collapsed .full-logo {
   display: none;
 }
@@ -132,31 +129,6 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.8;
-}
-
-.demo-switch {
-  margin-top: 1.2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #dce5f0;
-}
-.demo-switch label {
-  display: block;
-  margin-bottom: 0.4rem;
-  color: #8b97ad;
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.demo-switch select {
-  width: 100%;
-  padding: 0.5rem 0.6rem;
-  border: 1px solid #d3dced;
-  border-radius: 0.55rem;
-  color: #31405f;
-  background: #f6f9fc;
-  font: inherit;
-  font-size: 0.8rem;
 }
 
 .sidebar-profile {

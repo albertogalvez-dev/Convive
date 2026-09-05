@@ -27,6 +27,11 @@ export const SAAS_REVIEW_ROUTES: Routes = [
     loadComponent: () => import('./saas-case').then((m) => m.SaasCase),
   },
   {
+    path: 'avisos',
+    title: 'Avisos',
+    loadComponent: () => import('./saas-notifications').then((m) => m.SaasNotifications),
+  },
+  {
     path: 'miembros',
     title: 'Miembros',
     loadComponent: () => import('./saas-members').then((m) => m.SaasMembers),

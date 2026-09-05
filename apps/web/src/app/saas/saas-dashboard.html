@@ -1,72 +1,71 @@
-@let current = panel();
-
-<app-saas-shell
-  [personName]="current.fullName"
-  [centreName]="current.centre"
-  [unread]="current.unreadNotifications"
-  [roles]="roleOptions"
-  [activeRole]="activeKey()"
-  (roleChange)="selectRole($event)"
->
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
   <section class="dashboard">
     <div class="dashboard-heading">
       <p class="eyebrow">Resumen del centro</p>
-      <h1>Hola, {{ current.firstName }}</h1>
-      <p class="scope-note">{{ current.scopeNote }}</p>
+      <h1>Hola, Iker</h1>
     </div>
 
-    <section class="operational-summary" aria-label="Resumen del trabajo asignado">
-      @for (metric of current.panorama; track metric.label) {
-        <div class="metric" [class.attention]="metric.attention">
-          <span>{{ metric.label }}</span>
-          <strong>{{ metric.value }}</strong>
+    <div class="summary-grid">
+      <a href="#" class="summary-card attention">
+        <span>Fuera de plazo</span><strong>2</strong><small>Necesitan una actuación hoy</small>
+        <span class="card-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+      <a href="#" class="summary-card new">
+        <span>Sin valorar</span><strong>3</strong><small>Comunicaciones nuevas</small>
+        <span class="card-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+      <a href="#" class="summary-card reviewed">
+        <span>Casos activos</span><strong>11</strong><small>Con seguimiento abierto</small>
+        <span class="card-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <section class="activity-card" aria-labelledby="queue-title">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">Pendiente</p>
+          <h2 id="queue-title">Lo que necesita tu acción</h2>
         </div>
-      }
+        <a href="#">Ver todo</a>
+      </div>
+      <ul>
+        @for (item of queue; track item.title + item.reference) {
+          <li>
+            <a href="#">
+              <span class="item-copy">
+                <strong>{{ item.title }}</strong>
+                <span>{{ item.reference }} &middot; {{ item.context }}</span>
+              </span>
+              <span class="due" [class]="'due ' + item.urgency">{{ item.due }}</span>
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        }
+      </ul>
     </section>
 
-    <div class="card-heading">
-      <div>
-        <p class="eyebrow">Necesitas actuar</p>
-        <h2>
-          @if (current.queue.length) {
-            {{ current.queue.length }} {{ current.queue.length === 1 ? 'acción' : 'acciones' }}
-            pendientes
-          } @else {
-            Sin acciones pendientes
-          }
-        </h2>
-      </div>
-      @if (current.queue.length) {
-        <a href="#">Ver todas</a>
-      }
-    </div>
-
-    <div class="queue-card">
-      @if (current.queue.length) {
-        <ul>
-          @for (item of current.queue; track item.reference) {
-            <li>
-              <a href="#">
-                <span class="item-copy">
-                  <span class="item-title">{{ item.title }}</span>
-                  <span>{{ item.reference }} &middot; {{ item.context }}</span>
-                </span>
-                <span class="due" [class]="'due ' + item.urgency">{{ item.due }}</span>
-                <span class="arrow" aria-hidden="true">&rarr;</span>
-              </a>
-            </li>
-          }
-        </ul>
-      } @else {
-        <div class="state empty">
-          <span aria-hidden="true">&#10003;</span>
-          <h3>Todo al día</h3>
-          <p>
-            No tienes ninguna acción pendiente ahora mismo. Si se te asigna un caso o una tarea,
-            aparecerá aquí.
-          </p>
+    <section class="activity-card" aria-labelledby="activity-title">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">Actividad</p>
+          <h2 id="activity-title">Movimientos recientes</h2>
         </div>
-      }
-    </div>
+        <a href="#">Ver todo</a>
+      </div>
+      <ul>
+        @for (item of activity; track item.title) {
+          <li>
+            <a href="#">
+              <span class="item-copy">
+                <strong>{{ item.title }}</strong>
+                <span>{{ item.meta }}</span>
+              </span>
+              <time>{{ item.time }}</time>
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
   </section>
 </app-saas-shell>

@@ -1,86 +1,94 @@
 <app-saas-shell personName="Concha Feito" centreName="IES Aula Abierta">
-  <p class="eyebrow">Bandeja del centro</p>
-  <div class="page-head">
+  <section class="members">
+    <p class="eyebrow">Administración sin contenido de casos</p>
     <h1>Miembros</h1>
-    <button type="button" class="primary">Invitar por correo</button>
-  </div>
+    <p class="intro">
+      Gestiona quién entra al centro y con qué función. Estar aquí no da acceso a las comunicaciones
+      ni a los casos: cada caso necesita una asignación explícita.
+    </p>
 
-  <div class="invite-panel">
-    <h2>Invitar a un nuevo miembro</h2>
-    <div class="invite-row">
-      <label>
-        <span>Correo</span>
-        <input type="email" placeholder="nombre@centro.edu" />
-      </label>
-      <label>
-        <span>Rol</span>
-        <select>
-          <option>Tutoría</option>
-          <option>Coordinación de bienestar y protección</option>
-          <option>Orientación educativa</option>
-          <option>Profesorado</option>
-          <option>Administración y servicios</option>
-        </select>
-      </label>
-      <button type="button" class="primary">Enviar invitación</button>
-    </div>
-  </div>
+    <section class="card" aria-labelledby="invite-title">
+      <h2 id="invite-title">Invitar a alguien del centro</h2>
+      <form (ngSubmit)="$event.preventDefault()">
+        <label>
+          Correo
+          <input type="email" placeholder="nombre@iesaulaabierta.edu" maxlength="255" />
+        </label>
+        <label>
+          Función
+          <select>
+            <option>Tutoría</option>
+            <option>Coordinación de bienestar y protección</option>
+            <option>Orientación educativa</option>
+            <option>Dirección</option>
+            <option>Profesorado</option>
+            <option>Administración y servicios</option>
+          </select>
+        </label>
+        <button type="submit">Enviar invitación</button>
+      </form>
+      <p class="hint">
+        La invitación no concede nada hasta que la persona la acepta, caduca sola y puedes retirarla
+        cuando quieras.
+      </p>
+    </section>
 
-  <div class="list-head">
-    <span>{{ members.length }} personas</span>
-    <a href="#">Ver historial completo &rarr;</a>
-  </div>
+    <section class="card" aria-labelledby="list-title">
+      <div class="card-heading">
+        <h2 id="list-title">Personas del centro</h2>
+        <a href="#">Ver historial</a>
+      </div>
 
-  <ul class="members">
-    @for (member of members; track member.detail) {
-      <li class="member">
-        <span class="avatar" aria-hidden="true">{{ member.initials }}</span>
-        <span class="who">
-          <span class="name">{{ member.name }}</span>
-          <span class="detail">{{ member.detail }}</span>
-        </span>
-        <span class="role-chip">{{ member.role }}</span>
-        <span class="status" [attr.data-status]="member.status">{{
-          statusLabel(member.status)
-        }}</span>
-        <span class="actions">
-          @if (member.status === 'pending') {
-            <button type="button" class="link">Reenviar</button>
-            <button type="button" class="link danger">Revocar invitación</button>
-          } @else if (member.status === 'suspended') {
-            <button type="button" class="link">Reactivar</button>
-            <button type="button" class="link danger">Revocar</button>
-          } @else if (member.soleAdministrator) {
-            <button
-              type="button"
-              class="link"
-              disabled
-              title="Designa otra administradora antes de cambiar esto"
-            >
-              Cambiar rol
-            </button>
-            <button
-              type="button"
-              class="link danger"
-              disabled
-              title="Bloqueado: el centro se quedaría sin administrador"
-            >
-              Revocar
-            </button>
-          } @else {
-            <button type="button" class="link">Cambiar rol</button>
-            <button type="button" class="link">Suspender</button>
-            <button type="button" class="link danger">Revocar</button>
-          }
-        </span>
-      </li>
-    }
-  </ul>
+      <ul class="member-list">
+        @for (member of members; track member.detail) {
+          <li>
+            <div class="who">
+              <span class="avatar" aria-hidden="true">{{ member.initials }}</span>
+              <div class="who-copy">
+                <strong>{{ member.name }}</strong>
+                <span>{{ member.detail }}</span>
+              </div>
+            </div>
 
-  <p class="footnote">
-    Las acciones habituales están en la propia fila, sin abrir una página de detalle. Para la única
-    administradora aparecen desactivadas con explicación al pasar el cursor, en vez de fallar
-    después de pulsarlas (C-7). El historial de invitaciones, cambios de rol, suspensiones y
-    revocaciones (C-8) vive en su propia vista.
-  </p>
+            <div class="meta">
+              <span class="role">{{ member.role }}</span>
+              <span class="status" [class]="'status ' + member.status">{{
+                statusLabel(member.status)
+              }}</span>
+            </div>
+
+            <div class="actions">
+              @if (member.status === 'pending') {
+                <button type="button">Reenviar</button>
+                <button type="button" class="danger">Retirar invitación</button>
+              } @else if (member.status === 'suspended') {
+                <button type="button">Reactivar</button>
+                <button type="button" class="danger">Dar de baja</button>
+              } @else if (member.soleAdministrator) {
+                <button
+                  type="button"
+                  disabled
+                  title="Designa a otra persona como administradora antes de cambiar esto"
+                >
+                  Cambiar función
+                </button>
+                <button
+                  type="button"
+                  class="danger"
+                  disabled
+                  title="El centro se quedaría sin administración"
+                >
+                  Dar de baja
+                </button>
+              } @else {
+                <button type="button">Cambiar función</button>
+                <button type="button">Suspender</button>
+                <button type="button" class="danger">Dar de baja</button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  </section>
 </app-saas-shell>

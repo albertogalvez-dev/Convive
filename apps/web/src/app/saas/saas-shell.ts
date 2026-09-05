@@ -1,11 +1,5 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-export interface DemoRoleOption {
-  key: string;
-  label: string;
-  person: string;
-}
 
 /**
  * Shared professional-area shell for the SaaS 2.0 screens (#508, #513, #526,
@@ -23,18 +17,10 @@ export class SaasShell {
   readonly personName = input.required<string>();
   readonly centreName = input.required<string>();
   readonly unread = input<number>(0);
-  readonly roles = input<readonly DemoRoleOption[]>([]);
-  readonly activeRole = input<string>('');
-
-  readonly roleChange = output<string>();
 
   protected readonly collapsed = signal(false);
 
   protected toggle(): void {
     this.collapsed.update((value) => !value);
-  }
-
-  protected onRolePick(event: Event): void {
-    this.roleChange.emit((event.target as HTMLSelectElement).value);
   }
 }
