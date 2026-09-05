@@ -18,8 +18,12 @@ school safeguarding protocols, educational authorities or legal advice.
 
 ## Initial territorial scope
 
-The initial product is designed for secondary schools in Andalusia, using
-Granada as its first operational context.
+The initial product was designed for secondary schools in Andalusia, using
+Granada as its first operational context. Territorial coverage has since been
+extended to all 17 autonomous communities plus Ceuta and Melilla, each verified
+against its own official gazette (issue #253); see "Territorial extensibility"
+below and `docs/product/saas-2.0-charter.md` §3.5 for how Convive SaaS 2.0
+carries this forward.
 
 This territorial scope affects:
 
@@ -349,8 +353,12 @@ Convive follows these rules:
 
 ## Territorial extensibility
 
-The long-term architecture should permit the addition of other autonomous
-communities through configurable territorial profiles.
+The long-term architecture permits the addition of other autonomous communities
+through configurable territorial profiles. **This has been realised**: issue
+#253 closed with all 19 jurisdictions modelled and merged, each sourced from a
+document read in full (27 to 88 pages) rather than a secondary aggregator, with
+8 of the 19 correcting an earlier research pass that had cited superseded or
+misread sources.
 
 A territorial profile may define:
 

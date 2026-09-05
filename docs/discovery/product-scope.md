@@ -514,7 +514,13 @@ The public deployment is a product demonstration and must:
 - not present itself as an official service of the Junta de Andalucía;
 - not claim a real integration with institutional systems;
 - include a visible route for exploring the product safely;
-- remain maintainable for the required scholarship availability period.
+- remain maintainable and continuously publicly available, in some fictional
+  form, through at least **August 2027** — the scholarship's required
+  availability period (see `NOTICE.md`). Convive SaaS 2.0's product charter
+  (`docs/product/saas-2.0-charter.md` §2.4, §4.3) treats this as a hard
+  constraint: the current demo is retired only once a replacement fictional
+  demonstration is verified live, and never in a way that would leave no
+  fictional demonstration publicly reachable before that date.
 
 ## Explicitly out of scope for the initial release
 
@@ -527,7 +533,6 @@ The following capabilities are not included initially:
 - automatic communications to families or authorities;
 - replacement of emergency, police or child protection services;
 - legal advice;
-- support for every Spanish autonomous community;
 - import of complete student databases;
 - unrestricted access to evidence or case information;
 - processing of real student data in the public demonstration;
@@ -538,10 +543,17 @@ regulatory, privacy and technical analysis.
 
 ## Future extensions
 
+All 17 autonomous communities plus Ceuta and Melilla now have a verified
+territorial profile (tracked and closed under issue #253); this is no longer a
+future extension. Each source was read in full from the official gazette before
+being modelled, and 8 of the 19 corrected a prior research pass that had cited
+superseded documents or misread deadlines. Convive SaaS 2.0 migrates this
+already-verified content into its own registry with a currency review rather
+than repeating the research (`docs/product/saas-2.0-charter.md` §3.5).
+
 Possible future developments include:
 
 - additional safeguarding protocols;
-- territorial profiles for other autonomous communities;
 - authorised institutional integrations;
 - advanced anonymised analytics;
 - configurable document templates;
