@@ -51,7 +51,8 @@ issue uses; the §10 row for that issue (its expectations, invariants and expect
 evidence); each cited `R/T/C/P-*` entry in §6 and each cited `INV-*` in §5; and,
 if the issue owns an `[owner decision]` surface, DR-1 and the required artifact.
 The issue does not start coding until every input DR-1 names is on the issue.
-#507 turns this into a reusable per-issue template.
+`docs/product/saas-2.0-delivery-template.md` (#507) is the reusable,
+fill-in-the-blanks form of this same process.
 
 ---
 
@@ -366,8 +367,9 @@ fill space, and layouts justified by "the framework generates it" are non-goals
 - **Expectation** — an observable outcome in the §6 catalogue, written as positive
   and negative Given/When/Then. Verifiable by inspection or test, without
   production analytics or user tracking. Each expectation is tagged `[rule]`,
-  `[owner decision]`, or both. #507 generalises the format into a reusable
-  delivery template.
+  `[owner decision]`, or both. Section A of
+  `docs/product/saas-2.0-delivery-template.md` (#507) generalises this format
+  into a reusable per-issue template.
 - **Invariant** (`INV-*`) — a property the system must always uphold, stated in §5
   and cited by the expectations that depend on it.
 - **`[owner decision]` surface set** — the bounded set DR-1 governs. As of this
@@ -662,7 +664,8 @@ on a non-critical surface is tracked and remediated separately. *(#522, #528)*
 Spanish first, but it is not labelled or announced as fully published in any
 locale until every supported locale is translated and reviewed together as one
 release gate. A partial or machine-draft translation is never presented as
-complete. Enforced through the delivery template in #507. *(language rule, #507)*
+complete. Enforced through section C of
+`docs/product/saas-2.0-delivery-template.md` (#507). *(language rule, #507)*
 
 ---
 
@@ -671,8 +674,9 @@ complete. Enforced through the delivery template in #507. *(language rule, #507)
 `[rule]`
 
 **Origin.** The professional dashboard was previously produced autonomously and
-did not match the owner's intent. DR-1 exists so that cannot recur. #507 will fold
-this into the reusable delivery template; until then this text is operative. It is
+did not match the owner's intent. DR-1 exists so that cannot recur. This section
+is the authoritative rule; section B of `docs/product/saas-2.0-delivery-template.md`
+(#507) is its fill-in-the-blanks checklist form for use on an issue. It is
 placed here, immediately after the invariants, because it governs how every
 `[owner decision]` surface reaches implementation.
 
@@ -736,7 +740,8 @@ rides the existing issue → branch → PR → checks workflow.
   production analytics or user tracking.
 - An `[owner decision]` entry does not ship until DR-1 is satisfied (owner intent
   statement + approved artifact).
-- #507 turns this format into the reusable delivery template.
+- `docs/product/saas-2.0-delivery-template.md` (#507) turns this format into
+  the reusable per-issue template.
 - Fiction-framing appears once per journey (`R-12`, `T-17`, `C-13`, `P-18`), each
   citing INV-11 and INV-16; the accessibility-and-language sweep appears once per
   journey (`R-13`, `T-18`, `C-17`, `P-19`), each citing INV-17 and INV-18.
@@ -1964,8 +1969,8 @@ a named issue. Nothing ambiguous is left for an implementer to resolve by defaul
 - **The replacement fictional demo** — its build, deployment, verification,
   refresh model and the current-demo retirement runbook → **new SaaS 5 issue**
   (§4.3); execution is a separate owner go decision.
-- **Language completeness gate mechanics** — INV-18 is enforced through the
-  delivery template in **#507**.
+- **Language completeness gate mechanics** — INV-18 is enforced through
+  `docs/product/saas-2.0-delivery-template.md` (**#507**).
 
 ---
 
@@ -2114,7 +2119,7 @@ expected, and any DR-1 artifact required before implementation.
 | #504 | C-10, C-11 | INV-11 | documented go/no-go gate with evidence-required decisions; no compliance claim | — |
 | #505 | §9.1 | INV-15, INV-16 | published model decision; EU residency + Art. 28 assessment; free-tier constraint honoured; no provider selected | — |
 | #506 | T-15, C-14 | INV-1, INV-16 | tenant/membership/partitioning/cross-tenant-denial invariants; migration/rollback boundaries; no silent demo→tenant conversion — decided in **ADR-0031** | — |
-| #507 | §6.0, §7 (format); DR-1 generalisation | INV-18 (enforcement) | the reusable delivery template; alignment with issue→PR workflow; visual/a11y/contract/operational evidence types | — |
+| #507 | §6.0, §7 (format); DR-1 generalisation | INV-18 (enforcement) | the reusable delivery template; alignment with issue→PR workflow; visual/a11y/contract/operational evidence types — delivered as **`docs/product/saas-2.0-delivery-template.md`** | — |
 | #508 | P-1, P-2, P-5; C-4 | INV-2, INV-4 | reviewed role-aware IA with genuinely distinct per-role dashboard defaults (not one screen re-skinned); default layout urgency-first + calm tone (§13); least privilege preserved; no fake analytics; validated responsive/accessible direction | dashboard, actionable queue, case-workspace IA, role set |
 | #509 | T-17, C-9 (context) | INV-16 | environment purposes (local/test/sandbox/demo-prod/pilot); release/flag/config/rollback; no fictional↔customer co-mingling | — |
 
@@ -2216,6 +2221,7 @@ expected, and any DR-1 artifact required before implementation.
 | 0.20 | 2026-09-03 | **P-5 owner intent** (11/12): case workspace = fixed header + fixed próximos-pasos strip + one filterable chronological story (never tabs), reached after iterating tabs vs. single-feed vs. hybrid designs against P-6's append-only history and P-1's urgency pattern. |
 | 0.21 | 2026-09-03 | **P-12 owner intent** (12/12) — **Bloque 3 complete.** Applicable guidance placed as a compact, always-present, footnote-styled citation line, never a fixed panel, expanding to full source on click; also corrected its lingering "Andalucía initially" wording to the 19-jurisdiction scope (§3.5). **The full owner decision walkthrough is now complete**: all of Bloque 1 (7 charter-level decisions), Bloque 2 (5 text-specifiable surfaces) and Bloque 3 (12 layout-heavy surfaces), plus the seven vision items from the initial owner brain-dump, are resolved and recorded in §13. |
 | 1.0 | 2026-09-03 | Final consistency pass: verified INV-1..18 contiguous, the `[owner decision]` set at 18 with no stale counts, no leftover pending/TBD markers anywhere in rule text, all 8 charter actions (CA-1..CA-8) done, all 24 walkthrough items closed. Promoted from draft (0.x) to **1.0**: the charter is a complete, fully-decided source of record ready for implementation to begin from. |
+| 1.1 | 2026-09-05 | Post-1.0 implementation amendments (engineering territory, no owner decision reopened). **#506** decided as **ADR-0031**: tenant = the existing `Organisation` entity, a mandatory Doctrine query filter as a second isolation enforcement layer alongside existing per-service checks, migration/rollback/recovery boundaries for a growing multi-tenant table set. **#507** delivered as `docs/product/saas-2.0-delivery-template.md`: generalises §6.0's expectation format, DR-1's checklist, and INV-17/INV-18's evidence types into one reusable per-issue template; every forward-reference to "#507 will..." across §1, §3.7, §5, DR-1, §6.0 and §10 now points at the delivered file. |
 
 ---
 
