@@ -1,0 +1,124 @@
+<div class="review-bar">
+  <span class="ribbon-tag">Propuesta · DR-1</span>
+  <span>#511 — registro, cuenta sin centro y ajustes (T-1 / T-12 / T-9). Datos ficticios.</span>
+  <span class="view-switch">
+    @for (option of views; track option.key) {
+      <button type="button" [class.active]="view() === option.key" (click)="setView(option.key)">
+        {{ option.label }}
+      </button>
+    }
+  </span>
+</div>
+
+<div class="frame">
+  @switch (view()) {
+    @case ('signup') {
+      <div class="card auth-card">
+        <img class="logo" src="/convive-logo.svg" alt="Convive" width="150" height="49" />
+        <h1>Crea tu cuenta</h1>
+        <p class="sub">Un paso. Nada más de lo necesario.</p>
+
+        <label class="field">
+          <span>Nombre y apellidos</span>
+          <input type="text" placeholder="Marina Ortiz Salas" />
+        </label>
+        <label class="field">
+          <span>Correo de trabajo</span>
+          <input type="email" placeholder="marina.ortiz@iesaulaabierta.edu" />
+        </label>
+        <label class="field">
+          <span>Contraseña</span>
+          <input type="password" value="entradaficticia" />
+          <span class="strength"> <i></i><i></i><i></i><i></i> </span>
+          <span class="strength-label">Segura — no aparece en filtraciones conocidas</span>
+        </label>
+
+        <label class="notice">
+          <input type="checkbox" />
+          <span>
+            He leído y acepto el <a href="#">aviso de privacidad de la cuenta</a>: qué datos se
+            tratan, quién los trata, cuánto se conservan y mis derechos.
+          </span>
+        </label>
+
+        <button type="button" class="primary">Crear cuenta</button>
+        <p class="foot">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></p>
+        <p class="excluded">
+          No se pide teléfono, centro ni función profesional aquí: eso llega después, al crear o
+          unirte a un centro.
+        </p>
+      </div>
+    }
+
+    @case ('empty') {
+      <div class="card empty-card">
+        <img class="logo" src="/convive-logo.svg" alt="Convive" width="150" height="49" />
+        <h1>Hola, Marina</h1>
+        <p class="sub">Tu cuenta está verificada. Aún no perteneces a ningún centro.</p>
+        <div class="paths">
+          <div class="path primary-path">
+            <h2>Crear un centro</h2>
+            <p>
+              Serás su administrador inicial y trabajarás con datos ficticios desde el primer
+              minuto.
+            </p>
+            <button type="button" class="primary">Crear centro</button>
+          </div>
+          <div class="path">
+            <h2>Aceptar una invitación</h2>
+            <p>¿Un centro ya te ha invitado? Revisa tu correo o pega el enlace aquí.</p>
+            <button type="button" class="ghost">Tengo una invitación</button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @case ('settings') {
+      <div class="card settings-card">
+        <img class="logo" src="/convive-logo.svg" alt="Convive" width="150" height="49" />
+        <h1>Ajustes de cuenta</h1>
+
+        <section class="settings-section">
+          <h2>Perfil</h2>
+          <div class="avatar-row">
+            <span class="avatar" aria-hidden="true">MO</span>
+            <div>
+              <button type="button" class="link">Añadir foto de perfil</button>
+              <p class="hint">
+                Opcional. Se usa en tus comentarios y menciones dentro de los casos.
+              </p>
+            </div>
+          </div>
+          <label class="field">
+            <span>Nombre y apellidos</span>
+            <input type="text" value="Marina Ortiz Salas" />
+          </label>
+          <label class="field">
+            <span class="label-row">Título profesional <em>opcional · solo texto</em></span>
+            <input type="text" value="Orientadora Educativa" />
+            <span class="hint">
+              Lo escribes tú. Aparece junto a tu nombre, pero no concede ningún permiso: lo que
+              puedes hacer lo decide tu rol en cada centro, no este texto.
+            </span>
+          </label>
+        </section>
+
+        <section class="settings-section">
+          <h2>Mis centros</h2>
+          <ul class="centre-list">
+            <li><span>IES Aula Abierta</span><span class="role-chip">Tutoría</span></li>
+            <li>
+              <span>CEIP Ficticio del Sur</span
+              ><span class="role-chip">Administradora inicial</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="settings-section danger-zone">
+          <h2>Sesión</h2>
+          <button type="button" class="danger">Cerrar sesión</button>
+        </section>
+      </div>
+    }
+  }
+</div>

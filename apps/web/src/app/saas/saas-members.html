@@ -1,0 +1,90 @@
+<app-saas-shell
+  ribbon="#513 — gestión de miembros. Lista simple con rol, estado y acciones en la propia fila (C-5). Datos ficticios."
+  personName="Concha Feito"
+  centreName="IES Aula Abierta"
+>
+  <p class="eyebrow">Bandeja del centro</p>
+  <div class="page-head">
+    <h1>Miembros</h1>
+    <button type="button" class="primary">Invitar por correo</button>
+  </div>
+
+  <div class="invite-panel">
+    <h2>Invitar a un nuevo miembro</h2>
+    <div class="invite-row">
+      <label>
+        <span>Correo</span>
+        <input type="email" placeholder="nombre@centro.edu" />
+      </label>
+      <label>
+        <span>Rol</span>
+        <select>
+          <option>Tutoría</option>
+          <option>Coordinación de bienestar y protección</option>
+          <option>Orientación educativa</option>
+          <option>Profesorado</option>
+          <option>Administración y servicios</option>
+        </select>
+      </label>
+      <button type="button" class="primary">Enviar invitación</button>
+    </div>
+  </div>
+
+  <div class="list-head">
+    <span>{{ members.length }} personas</span>
+    <a href="#">Ver historial completo &rarr;</a>
+  </div>
+
+  <ul class="members">
+    @for (member of members; track member.detail) {
+      <li class="member">
+        <span class="avatar" aria-hidden="true">{{ member.initials }}</span>
+        <span class="who">
+          <span class="name">{{ member.name }}</span>
+          <span class="detail">{{ member.detail }}</span>
+        </span>
+        <span class="role-chip">{{ member.role }}</span>
+        <span class="status" [attr.data-status]="member.status">{{
+          statusLabel(member.status)
+        }}</span>
+        <span class="actions">
+          @if (member.status === 'pending') {
+            <button type="button" class="link">Reenviar</button>
+            <button type="button" class="link danger">Revocar invitación</button>
+          } @else if (member.status === 'suspended') {
+            <button type="button" class="link">Reactivar</button>
+            <button type="button" class="link danger">Revocar</button>
+          } @else if (member.soleAdministrator) {
+            <button
+              type="button"
+              class="link"
+              disabled
+              title="Designa otra administradora antes de cambiar esto"
+            >
+              Cambiar rol
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              disabled
+              title="Bloqueado: el centro se quedaría sin administrador"
+            >
+              Revocar
+            </button>
+          } @else {
+            <button type="button" class="link">Cambiar rol</button>
+            <button type="button" class="link">Suspender</button>
+            <button type="button" class="link danger">Revocar</button>
+          }
+        </span>
+      </li>
+    }
+  </ul>
+
+  <p class="footnote">
+    Las acciones habituales están en la propia fila, sin abrir una página de detalle. Para la única
+    administradora aparecen desactivadas con explicación al pasar el cursor, en vez de fallar
+    después de pulsarlas (C-7). El historial de invitaciones, cambios de rol, suspensiones y
+    revocaciones (C-8) vive en su propia vista.
+  </p>
+</app-saas-shell>

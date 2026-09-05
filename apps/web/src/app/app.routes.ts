@@ -9,6 +9,14 @@ import { blogLocaleRouteGuard } from './blog/blog-locale-route.guard';
 
 export const routes: Routes = [
   {
+    // SaaS 2.0 owner-review prototypes (issues #508, #511-#513, #516-#518, #526,
+    // #527, #543). Real components on the real stack for DR-1 review; not wired
+    // into the demo navigation or host guards. Removed before the SaaS 2.0
+    // surfaces ship for real.
+    path: 'saas',
+    loadChildren: () => import('./saas/saas.routes').then((module) => module.SAAS_REVIEW_ROUTES),
+  },
+  {
     path: '',
     pathMatch: 'full',
     component: PublicHome,

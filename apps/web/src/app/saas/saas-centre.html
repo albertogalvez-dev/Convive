@@ -1,0 +1,123 @@
+<div class="review-bar">
+  <span class="ribbon-tag">Propuesta · DR-1</span>
+  <span>#512 — crear centro e identidad del centro (C-1 / C-3). Datos ficticios.</span>
+  <span class="view-switch">
+    @for (option of views; track option.key) {
+      <button type="button" [class.active]="view() === option.key" (click)="setView(option.key)">
+        {{ option.label }}
+      </button>
+    }
+  </span>
+</div>
+
+<div class="frame">
+  <div class="card">
+    @switch (view()) {
+      @case ('create') {
+        <h1>Crea tu centro</h1>
+        <p class="sub">Un único formulario, sin pasos. La identidad del centro se afina después.</p>
+
+        <label class="field">
+          <span>Nombre del centro</span>
+          <input type="text" placeholder="IES Aula Abierta" />
+        </label>
+
+        <label class="field">
+          <span>Provincia / comunidad autónoma</span>
+          <select>
+            <option>Andalucía — Sevilla</option>
+            <option>Comunidad de Madrid — Madrid</option>
+            <option>Illes Balears — Palma</option>
+          </select>
+        </label>
+        <div class="territory-indicator">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+          <span
+            >Este centro tendrá acceso a la guía de <strong>Andalucía</strong> (revisada
+            12/08/2026).</span
+          >
+        </div>
+
+        <div class="two-col">
+          <label class="field">
+            <span class="label-row">Etapa educativa <em>opcional</em></span>
+            <select>
+              <option>Secundaria</option>
+              <option>Infantil</option>
+              <option>Primaria</option>
+              <option>FP</option>
+              <option>Otra</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="label-row">Municipio <em>opcional</em></span>
+            <input type="text" placeholder="Sevilla" />
+          </label>
+        </div>
+
+        <button type="button" class="primary">Crear centro</button>
+
+        <p class="not-here">
+          <strong>No se pide aquí:</strong> logotipo, datos de contacto, descripción pública, idioma
+          y zona horaria. Todo eso se configura después, en la identidad del centro.
+        </p>
+      }
+
+      @case ('identity') {
+        <h1>Identidad del centro</h1>
+        <p class="sub">IES Aula Abierta · configuración</p>
+
+        <label class="field">
+          <span>Nombre visible</span>
+          <input type="text" value="IES Aula Abierta" />
+        </label>
+
+        <div class="field">
+          <span class="label-row">Logotipo del centro <em>opcional</em></span>
+          <div class="logo-row">
+            <span class="logo-slot" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 20V9l8-5 8 5v11" />
+                <path d="M9 20v-6h6v6" />
+              </svg>
+            </span>
+            <div>
+              <button type="button" class="link">Subir imagen</button>
+              <p class="hint">
+                Un único archivo de imagen. Pasa el mismo escaneo antivírico (ClamAV) que cualquier
+                adjunto. Si no se sube, el espacio queda en blanco en todos los sitios siguientes.
+              </p>
+            </div>
+          </div>
+          <ul class="reuse-list">
+            <li>Entrada pública de reporte (C-12)</li>
+            <li>Todos los PDF exportados (P-15)</li>
+          </ul>
+        </div>
+
+        <div class="two-col">
+          <label class="field">
+            <span>Idioma</span>
+            <select>
+              <option>Español</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Zona horaria</span>
+            <select>
+              <option>Europe/Madrid</option>
+            </select>
+          </label>
+        </div>
+
+        <button type="button" class="primary">Guardar cambios</button>
+
+        <p class="not-here">
+          <strong>Este logotipo es del centro, no de Convive:</strong> no reabre la regla de "sin
+          logotipo" de P-15, que siempre se refirió a la marca de Convive. No puede usarse para
+          afirmar una afiliación institucional que el centro no tiene.
+        </p>
+      }
+    }
+  </div>
+</div>

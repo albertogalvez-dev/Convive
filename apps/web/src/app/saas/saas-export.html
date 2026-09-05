@@ -1,0 +1,81 @@
+<div class="review-bar">
+  <span class="ribbon-tag">Propuesta · DR-1</span>
+  <span
+    >#543 — exportación PDF (P-15). Sin marca de Convive. Elige la línea de trazabilidad. Datos
+    ficticios.</span
+  >
+</div>
+
+<div class="toolbar">
+  <span class="control">
+    Logotipo del centro:
+    <button type="button" [class.active]="withLogo()" (click)="setLogo(true)">Con logo</button>
+    <button type="button" [class.active]="!withLogo()" (click)="setLogo(false)">Sin logo</button>
+  </span>
+  <span class="control">
+    Trazabilidad:
+    <button type="button" [class.active]="trace() === 'footer'" (click)="setTrace('footer')">
+      A · Pie de página
+    </button>
+    <button type="button" [class.active]="trace() === 'corner'" (click)="setTrace('corner')">
+      B · Esquina superior
+    </button>
+  </span>
+</div>
+
+<div class="frame">
+  <article class="page" [class.no-logo]="!withLogo()">
+    @if (trace() === 'corner') {
+      <p class="trace-corner">IES Aula Abierta · Generado 05/09/2026</p>
+    }
+
+    <header class="doc-head">
+      <div>
+        <p class="doc-kicker">Ficha de caso · CASO-0130</p>
+        <h1>Convivencia entre iguales — posible acoso</h1>
+      </div>
+      @if (withLogo()) {
+        <span class="logo-slot" aria-hidden="true">Logo del centro</span>
+      }
+    </header>
+
+    <div class="grid">
+      <div class="pair"><span class="k">Centro</span><span class="v">IES Aula Abierta</span></div>
+      <div class="pair">
+        <span class="k">Estado</span><span class="v">Activo · en gestión</span>
+      </div>
+      <div class="pair"><span class="k">Responsable</span><span class="v">Iker Bilbao</span></div>
+      <div class="pair">
+        <span class="k">Abierto</span><span class="v">28 de agosto de 2026</span>
+      </div>
+    </div>
+
+    <hr />
+    <h2>Pasos procedimentales</h2>
+    <div class="line">
+      <span>Comunicar a inspección educativa</span><span>Vencido — 04/09/2026</span>
+    </div>
+    <div class="line"><span>Reunión con las familias</span><span>05/09/2026</span></div>
+    <div class="line"><span>Seguimiento a dos semanas</span><span>19/09/2026</span></div>
+
+    <hr />
+    <h2>Registro de comunicaciones</h2>
+    <div class="line">
+      <span>Contacto telefónico — familia del Alumno A</span><span>29/08/2026</span>
+    </div>
+
+    <p class="page-number">1 / 1</p>
+    @if (trace() === 'footer') {
+      <p class="trace-footer">
+        Generado desde Convive el 05/09/2026 · IES Aula Abierta · Documento de trabajo del centro,
+        sin persistencia en Convive.
+      </p>
+    }
+  </article>
+</div>
+
+<p class="explainer">
+  Opción A: línea completa en el pie. Opción B: referencia breve en la esquina superior. Ninguna
+  incluye marca ni color de Convive; el documento se lee como propio del centro. El logotipo del
+  centro (si se subió en C-3) aparece arriba a la derecha; si no, el espacio queda en blanco.
+</p>

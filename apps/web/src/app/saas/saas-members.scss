@@ -1,0 +1,244 @@
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: #0f7ba3;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+.page-head h1 {
+  margin: 0;
+  color: #102b60;
+  font-size: clamp(1.7rem, 3.5vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.primary {
+  border: 0;
+  border-radius: 0.7rem;
+  padding: 0.7rem 1.1rem;
+  color: #fff;
+  background: #102b60;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.invite-panel {
+  margin-bottom: 1.6rem;
+  padding: 1.2rem 1.3rem;
+  border: 1px solid #e1e7f0;
+  border-radius: 0.9rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(18, 36, 74, 0.05);
+}
+.invite-panel h2 {
+  margin: 0 0 0.9rem;
+  color: #102b60;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.invite-row {
+  display: grid;
+  grid-template-columns: 2fr 1.3fr auto;
+  gap: 0.8rem;
+  align-items: end;
+}
+.invite-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.invite-row label span {
+  color: #5d6f8e;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.invite-row input,
+.invite-row select {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid #d3dced;
+  border-radius: 0.55rem;
+  color: #31405f;
+  background: #f6f9fc;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.list-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+  color: #8b97ad;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.list-head a {
+  color: #0f7ba3;
+  text-decoration: none;
+}
+
+.members {
+  list-style: none;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  border: 1px solid #e1e7f0;
+  border-radius: 0.9rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(18, 36, 74, 0.05);
+  overflow: hidden;
+}
+.member {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1.6fr) 1.4fr auto auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid #eef2f8;
+}
+.member:last-child {
+  border-bottom: 0;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: 50%;
+  color: #0b78a7;
+  background: #e8f6fb;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.who {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #102b60;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #8b97ad;
+  font-size: 0.74rem;
+}
+.role-chip {
+  justify-self: start;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 1rem;
+  color: #31405f;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.status::before {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status[data-status='active'] {
+  color: #1c7a51;
+  background: #e5f4ec;
+}
+.status[data-status='pending'] {
+  color: #8a5c0e;
+  background: #faefd6;
+}
+.status[data-status='suspended'] {
+  color: #6b7892;
+  background: #eef1f6;
+}
+.actions {
+  display: flex;
+  gap: 0.9rem;
+  justify-content: flex-end;
+}
+.link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #0f7ba3;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.link.danger {
+  color: #b24229;
+}
+.link:disabled {
+  color: #a7b2c9;
+  cursor: default;
+}
+
+.footnote {
+  margin: 0;
+  color: #8b97ad;
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 52rem) {
+  .invite-row {
+    grid-template-columns: 1fr;
+  }
+  .member {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'avatar who'
+      'role role'
+      'status status'
+      'actions actions';
+    row-gap: 0.55rem;
+  }
+  .avatar {
+    grid-area: avatar;
+  }
+  .who {
+    grid-area: who;
+  }
+  .role-chip {
+    grid-area: role;
+  }
+  .status {
+    grid-area: status;
+    justify-self: start;
+  }
+  .actions {
+    grid-area: actions;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

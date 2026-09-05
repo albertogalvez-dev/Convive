@@ -1,0 +1,148 @@
+<div class="proposal-ribbon">
+  <span class="ribbon-tag">Propuesta · DR-1</span>
+  <span>{{ ribbon() }}</span>
+</div>
+
+<main class="portal" [class.sidebar-collapsed]="collapsed()">
+  <aside class="portal-sidebar">
+    <div class="brand-row">
+      <a class="brand" routerLink="/saas" aria-label="Índice de prototipos">
+        <img class="full-logo" src="/convive-logo.svg" alt="Convive" width="158" height="52" />
+        <img class="compact-logo" src="/favicon.svg" alt="Convive" width="40" height="40" />
+        <span>Área profesional</span>
+      </a>
+      <button
+        class="collapse-button"
+        type="button"
+        (click)="toggle()"
+        [attr.aria-expanded]="!collapsed()"
+        [attr.aria-label]="collapsed() ? 'Abrir menú lateral' : 'Plegar menú lateral'"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 7-5 5 5 5" /></svg>
+      </button>
+    </div>
+
+    <nav class="desktop-nav" aria-label="Navegación del centro">
+      <a
+        routerLink="/saas/panel"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4v-8.5Z" />
+        </svg>
+        <span>Inicio</span>
+      </a>
+      <a routerLink="/saas/pendientes" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6h16v11H9l-5 3V6Z" />
+          <path d="M8 10h8M8 13h5" />
+        </svg>
+        <span>Comunicaciones</span>
+      </a>
+      <a routerLink="/saas/caso" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 7h5l1.5 2H19v10H5V7Z" />
+          <path d="M8 13h8M8 16h5" />
+        </svg>
+        <span>Casos</span>
+      </a>
+      <a routerLink="/saas/miembros" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3 20a6 6 0 0 1 12 0" />
+          <path d="M17 9a2.4 2.4 0 1 0 0-4.8M16 20a5 5 0 0 0-1.7-3.7" />
+        </svg>
+        <span>Miembros</span>
+      </a>
+      <a routerLink="/saas/registro" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+          <path
+            d="M19 13.5v-3l-2-.7-.7-1.7.9-1.9-2.1-2.1-1.9.9-1.7-.7-.7-2h-3l-.7 2-1.7.7-1.9-.9-2.1 2.1.9 1.9-.7 1.7-2 .7v3l2 .7.7 1.7-.9 1.9 2.1 2.1 1.9-.9 1.7.7.7 2h3l.7-2 1.7-.7 1.9.9 2.1-2.1-.9-1.9.7-1.7 2-.7Z"
+          />
+        </svg>
+        <span>Ajustes</span>
+      </a>
+    </nav>
+
+    @if (roles().length) {
+      <div class="demo-switch">
+        <label for="saas-role-picker">Ver como · demostración</label>
+        <select id="saas-role-picker" [value]="activeRole()" (change)="onRolePick($event)">
+          @for (option of roles(); track option.key) {
+            <option [value]="option.key">{{ option.label }} — {{ option.person }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <div class="sidebar-profile">
+      <span class="avatar" aria-hidden="true">{{ personName().charAt(0) }}</span>
+      <span class="profile-copy">
+        <strong>{{ personName() }}</strong>
+        <small>{{ centreName() }}</small>
+      </span>
+      <button type="button" aria-label="Cerrar sesión">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" />
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <section class="portal-content">
+    <header class="mobile-header">
+      <div class="mobile-brand-row">
+        <img src="/convive-logo.svg" alt="Convive" width="142" height="47" />
+        <button type="button">Cerrar sesión</button>
+      </div>
+      <nav aria-label="Navegación del centro">
+        <a
+          routerLink="/saas/panel"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4v-8.5Z" />
+          </svg>
+          <span>Inicio</span>
+        </a>
+        <a routerLink="/saas/pendientes" routerLinkActive="active">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v11H9l-5 3V6Z" /></svg>
+          <span>Comunic.</span>
+        </a>
+        <a routerLink="/saas/caso" routerLinkActive="active">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h5l1.5 2H19v10H5V7Z" /></svg>
+          <span>Casos</span>
+        </a>
+        <a routerLink="/saas/miembros" routerLinkActive="active">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3 20a6 6 0 0 1 12 0" />
+          </svg>
+          <span>Miembros</span>
+        </a>
+        <a routerLink="/saas/registro" routerLinkActive="active">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+          </svg>
+          <span>Ajustes</span>
+        </a>
+      </nav>
+    </header>
+
+    <div class="content-inner">
+      <div class="topbar">
+        <button class="notification-button" type="button" aria-label="Ver avisos">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
+          </svg>
+          @if (unread() > 0) {
+            <span>{{ unread() }}</span>
+          }
+        </button>
+      </div>
+
+      <ng-content />
+    </div>
+  </section>
+</main>

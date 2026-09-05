@@ -1,0 +1,355 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 92% 4%, #edf6fb 0, transparent 32rem),
+    radial-gradient(circle at 6% 96%, #eaf8fc 0, transparent 30rem), #f5f8fc;
+}
+
+.review-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 1.4rem;
+  color: #cdd9ec;
+  background: #102b60;
+  font-size: 0.78rem;
+}
+.ribbon-tag {
+  padding: 0.12rem 0.5rem;
+  border-radius: 0.3rem;
+  color: #04222e;
+  background: #199ed5;
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.view-switch {
+  margin-left: auto;
+  display: flex;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.4rem;
+  padding: 0.15rem;
+}
+.view-switch button {
+  border: 0;
+  border-radius: 0.3rem;
+  padding: 0.25rem 0.7rem;
+  color: #cdd9ec;
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.view-switch button.active {
+  color: #102b60;
+  background: #fff;
+}
+
+.frame {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1.25rem 5rem;
+}
+.card {
+  width: 100%;
+  border: 1px solid #e1e7f0;
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.08);
+  padding: 2.4rem 2.2rem;
+}
+.auth-card {
+  max-width: 27rem;
+}
+.empty-card {
+  max-width: 40rem;
+}
+.settings-card {
+  max-width: 34rem;
+}
+.logo {
+  display: block;
+  margin: 0 auto 1.6rem;
+  height: auto;
+}
+h1 {
+  margin: 0 0 0.3rem;
+  color: #102b60;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.sub {
+  margin: 0 0 1.6rem;
+  color: #5d6f8e;
+  font-size: 0.86rem;
+  text-align: center;
+}
+
+.field {
+  display: block;
+  margin-bottom: 1rem;
+}
+.field > span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #31405f;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.label-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.label-row em {
+  color: #8b97ad;
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.field input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d3dced;
+  border-radius: 0.55rem;
+  color: #31405f;
+  background: #f6f9fc;
+  font: inherit;
+  font-size: 0.9rem;
+}
+.hint {
+  display: block;
+  margin-top: 0.4rem;
+  color: #8b97ad;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.strength {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+.strength i {
+  flex: 1;
+  height: 0.25rem;
+  border-radius: 0.2rem;
+  background: #1c7a51;
+}
+.strength-label {
+  display: block;
+  margin-top: 0.35rem;
+  color: #1c7a51;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.notice {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  margin: 1.2rem 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #d3dced;
+  border-radius: 0.6rem;
+  background: #f6f9fc;
+  color: #5d6f8e;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+.notice input {
+  margin-top: 0.15rem;
+  flex: none;
+}
+.notice a {
+  color: #0f7ba3;
+  font-weight: 700;
+}
+
+.primary {
+  width: 100%;
+  border: 0;
+  border-radius: 0.6rem;
+  padding: 0.8rem;
+  color: #fff;
+  background: #102b60;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.ghost {
+  width: 100%;
+  border: 1px solid #d3dced;
+  border-radius: 0.6rem;
+  padding: 0.8rem;
+  color: #31405f;
+  background: #fff;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.foot {
+  margin: 0.9rem 0 0;
+  text-align: center;
+  color: #5d6f8e;
+  font-size: 0.8rem;
+}
+.foot a {
+  color: #0f7ba3;
+  font-weight: 700;
+}
+.excluded {
+  margin: 1.4rem 0 0;
+  text-align: center;
+  color: #8b97ad;
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+/* empty state */
+.paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+.path {
+  border: 1px solid #e1e7f0;
+  border-radius: 0.9rem;
+  padding: 1.5rem 1.3rem;
+  text-align: center;
+}
+.path h2 {
+  margin: 0 0 0.4rem;
+  color: #102b60;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.path p {
+  margin: 0 0 1.1rem;
+  color: #5d6f8e;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.primary-path {
+  border-color: #102b60;
+  background: #102b60;
+}
+.primary-path h2 {
+  color: #fff;
+}
+.primary-path p {
+  color: #c7d6ea;
+}
+.primary-path .primary {
+  background: #199ed5;
+  color: #04222e;
+}
+
+/* settings */
+.settings-section {
+  margin-top: 1.6rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid #eef2f8;
+}
+.settings-section:first-of-type {
+  margin-top: 1rem;
+  padding-top: 0;
+  border-top: 0;
+}
+.settings-section h2 {
+  margin: 0 0 0.9rem;
+  color: #8b97ad;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  border-radius: 50%;
+  color: #0b78a7;
+  background: #e8f6fb;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #0f7ba3;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.centre-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #e1e7f0;
+  border-radius: 0.7rem;
+  overflow: hidden;
+}
+.centre-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid #eef2f8;
+  color: #31405f;
+  font-size: 0.85rem;
+}
+.centre-list li:last-child {
+  border-bottom: 0;
+}
+.role-chip {
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  background: #f1f5fa;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.danger {
+  border: 1px solid #ecccc6;
+  border-radius: 0.6rem;
+  padding: 0.7rem 1.1rem;
+  color: #b24229;
+  background: #fdf3f1;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 40rem) {
+  .paths {
+    grid-template-columns: 1fr;
+  }
+  .view-switch {
+    margin-left: 0;
+    width: 100%;
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,148 @@
+<div class="review-bar">
+  <span class="ribbon-tag">Propuesta · DR-1</span>
+  <span
+    >#516-#518 — recorrido de quien reporta. Móvil primero. El texto es el ya redactado en el
+    charter (§13).</span
+  >
+  <span class="view-switch">
+    @for (option of views; track option.key) {
+      <button type="button" [class.active]="view() === option.key" (click)="setView(option.key)">
+        {{ option.label }}
+      </button>
+    }
+  </span>
+</div>
+
+<div class="frame">
+  @switch (view()) {
+    @case ('entry') {
+      <div class="phone">
+        <div class="safety-notice">
+          <strong>Convive no es un canal de emergencia.</strong> Si hay peligro inmediato, llama al
+          <strong>112</strong>.
+        </div>
+        <p class="reassure">
+          Estás en un lugar seguro para contar lo que te preocupa. No hace falta que digas quién
+          eres.
+        </p>
+
+        <label class="q">
+          <span class="q-title">Cuéntanos qué está pasando</span>
+          <span class="q-hint">
+            Puedes escribirlo con tus palabras, no hace falta que sepas cómo se llama lo que ha
+            pasado.
+          </span>
+          <textarea rows="4" placeholder="Escribe aquí…"></textarea>
+        </label>
+
+        <div class="optional">
+          <span class="q-title">¿Tienes algo que enseñarnos? <em>opcional</em></span>
+          <p>Foto, audio o documento.</p>
+        </div>
+        <div class="optional">
+          <span class="q-title">¿Quieres contarnos algo más? <em>opcional</em></span>
+          <p>Tipo de situación, fecha, referencias a personas.</p>
+        </div>
+        <div class="optional">
+          <span class="q-title">¿Quieres que te avisemos si hay novedades? <em>opcional</em></span>
+          <p>Un correo electrónico. Nunca es obligatorio y nunca se usa para identificarte.</p>
+        </div>
+
+        <button type="button" class="primary">Enviar</button>
+      </div>
+    }
+
+    @case ('confirmation') {
+      <div class="phone">
+        <svg class="tick" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect
+            x="2"
+            y="2"
+            width="60"
+            height="60"
+            rx="16"
+            fill="#e6f4ec"
+            stroke="#1c7a51"
+            stroke-width="3"
+          />
+          <path
+            d="M18 33l9 9 19-20"
+            stroke="#1c7a51"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <p class="conf">
+          Tu mensaje ha llegado al centro y alguien lo va a leer. Este es tu código para volver a
+          consultar el estado o añadir más información más adelante:
+        </p>
+        <p class="code">7F3K-9QRT</p>
+        <p class="conf">
+          Puedes hacerle una foto a esta pantalla, guardarla o imprimirla: es la única forma de
+          volver a entrar, porque no hemos creado ninguna cuenta. Guárdalo en un sitio donde lo
+          vayas a encontrar: si lo pierdes, no podemos dártelo de nuevo por email ni por ningún otro
+          medio.
+        </p>
+        <div class="conf-actions">
+          <button type="button" class="ghost">Hacer foto</button>
+          <button type="button" class="ghost">Imprimir</button>
+        </div>
+      </div>
+    }
+
+    @case ('revoked') {
+      <div class="phone centered">
+        <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 15l6-6M8 12l-2 2a3 3 0 0 0 4 4l2-2M16 12l2-2a3 3 0 0 0-4-4l-2 2" />
+        </svg>
+        <h2>Este enlace ya no está activo</h2>
+        <p class="revoked-copy">
+          No podemos confirmarte a qué centro pertenecía este enlace, ni si alguna vez perteneció a
+          uno. Si conoces la dirección o el código QR actual del centro, pruébalo desde ahí.
+        </p>
+        <button type="button" class="ghost">Ir a convive.school</button>
+      </div>
+    }
+
+    @case ('poster') {
+      <div class="poster-wrap">
+        <div>
+          <p class="poster-caption">
+            Cartel por defecto — generado automáticamente al crear el centro
+          </p>
+          <div class="poster">
+            <img
+              class="poster-logo"
+              src="/convive-logo-reversed.svg"
+              alt="Convive"
+              width="130"
+              height="43"
+            />
+            <div class="qr" aria-hidden="true">QR</div>
+            <p class="poster-centre">IES Aula Abierta</p>
+            <p class="poster-url">convive.school/e/iesaulaabierta</p>
+            <p class="poster-emergency">
+              Este no es un canal de emergencia. Si hay peligro inmediato, llama al 112.
+            </p>
+          </div>
+        </div>
+        <div class="raw-panel">
+          <p class="poster-caption">Solo QR + enlace — para hacer tu propio cartel</p>
+          <div class="raw-card">
+            <div class="qr small" aria-hidden="true">QR</div>
+            <p class="raw-url">convive.school/e/iesaulaabierta</p>
+            <label class="ack">
+              <input type="checkbox" />
+              <span>
+                Confirmo que mi cartel incluirá el enlace visible y el aviso de "no es un canal de
+                emergencia". Convive no puede garantizarlo fuera de su propia plantilla.
+              </span>
+            </label>
+            <button type="button" class="ghost" disabled>Descargar QR + enlace</button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
