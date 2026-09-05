@@ -1,78 +1,41 @@
 <app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
   <section class="dashboard">
     <header class="page-heading">
-      <div>
-        <p class="eyebrow">Resumen del centro</p>
-        <h1>Hola, Iker</h1>
-      </div>
       <p class="today">{{ today }}</p>
+      <h1>Hola, Iker</h1>
+      <p class="summary">
+        @if (overdueCount) {
+          Tienes <strong class="overdue">{{ overdueCount }} fuera de plazo</strong> y
+          {{ todayCount - overdueCount }} más para hoy.
+        } @else {
+          {{ todayCount }} cosas para hoy. Nada fuera de plazo.
+        }
+      </p>
     </header>
 
-    <section class="queue" aria-labelledby="queue-title">
-      <div class="queue-head">
-        <h2 id="queue-title">Necesita tu acción</h2>
-        <a href="#">Ver todo</a>
-      </div>
-
-      <div class="scopes" role="tablist" aria-label="Filtrar por plazo">
-        @for (scope of scopes; track scope.key) {
-          <button
-            type="button"
-            role="tab"
-            class="scope"
-            [class]="'scope ' + scope.key"
-            [class.selected]="filter() === scope.key"
-            [attr.aria-selected]="filter() === scope.key"
-            (click)="setFilter(scope.key)"
-          >
-            <span class="scope-label">{{ scope.label }}</span>
-            <span class="scope-count">{{ scope.count }}</span>
-          </button>
-        }
-      </div>
-
+    <div class="queue">
       @for (group of groups(); track group.bucket) {
-        @if (filter() === 'all') {
-          <p class="group" [class]="'group ' + group.bucket">{{ group.label }}</p>
-        }
-        <ul>
-          @for (item of group.items; track item.reference + item.title) {
-            <li>
-              <a href="#" [class]="'row ' + item.bucket">
-                <span class="row-main">
-                  <span class="row-title">{{ item.title }}</span>
-                  <span class="row-meta">
-                    <span class="reference">{{ item.reference }}</span>
-                    <span class="separator" aria-hidden="true">·</span>
-                    <span>{{ item.context }}</span>
+        <div class="group">
+          <p class="group-label">
+            {{ group.label }} <span>{{ group.items.length }}</span>
+          </p>
+          <ul>
+            @for (item of group.items; track item.reference + item.title) {
+              <li>
+                <a href="#" class="row">
+                  <span class="row-body">
+                    <span class="row-title">{{ item.title }}</span>
+                    <span class="row-context">{{ item.reference }} · {{ item.context }}</span>
                   </span>
-                </span>
-                <span class="row-due">{{ item.due }}</span>
-              </a>
-            </li>
-          }
-        </ul>
-      } @empty {
-        <p class="empty">No queda nada pendiente en este plazo.</p>
+                  <span class="row-due" [class.overdue]="item.overdue">{{ item.due }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
       }
-    </section>
+    </div>
 
-    <section class="activity" aria-labelledby="activity-title">
-      <div class="activity-head">
-        <h2 id="activity-title">Actividad reciente</h2>
-        <a href="#">Ver todo</a>
-      </div>
-      <ul>
-        @for (item of activity; track item.title) {
-          <li>
-            <a href="#">
-              <span class="activity-title">{{ item.title }}</span>
-              <span class="reference">{{ item.reference }}</span>
-              <time>{{ item.time }}</time>
-            </a>
-          </li>
-        }
-      </ul>
-    </section>
+    <a class="activity-link" href="#">Ver la actividad reciente del centro &rarr;</a>
   </section>
 </app-saas-shell>

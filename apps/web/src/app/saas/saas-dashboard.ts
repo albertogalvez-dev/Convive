@@ -1,11 +1,10 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 
 import { SaasShell } from './saas-shell';
 
 /** Convive SaaS 2.0 — inicio profesional. Fictional sample data. */
 
-type Bucket = 'overdue' | 'today' | 'week';
-type Scope = Bucket | 'all';
+type Bucket = 'now' | 'week';
 
 interface QueueItem {
   reference: string;
@@ -13,6 +12,7 @@ interface QueueItem {
   context: string;
   bucket: Bucket;
   due: string;
+  overdue: boolean;
 }
 
 interface QueueGroup {
@@ -21,62 +21,59 @@ interface QueueGroup {
   items: QueueItem[];
 }
 
-interface ActivityItem {
-  title: string;
-  reference: string;
-  time: string;
-}
-
-const BUCKET_ORDER: readonly Bucket[] = ['overdue', 'today', 'week'];
-
 const BUCKET_LABELS: Record<Bucket, string> = {
-  overdue: 'Fuera de plazo',
-  today: 'Vence hoy',
+  now: 'Para hoy',
   week: 'Esta semana',
 };
 
 const ITEMS: readonly QueueItem[] = [
   {
     reference: 'COM-0089',
-    title: 'Comunicación nueva sin valorar',
-    context: 'Sin asignar, llegó hace 4 horas',
-    bucket: 'overdue',
-    due: '4 h de retraso',
+    title: 'Valorar una comunicación nueva',
+    context: 'Sin asignar · llegó hace 4 horas',
+    bucket: 'now',
+    due: 'Hace 4 h',
+    overdue: true,
   },
   {
     reference: 'CASO-0130',
     title: 'Comunicar a inspección educativa',
-    context: 'Protocolo de Andalucía, paso 3',
-    bucket: 'overdue',
-    due: '1 día de retraso',
+    context: 'Protocolo de Andalucía · paso 3',
+    bucket: 'now',
+    due: 'Ayer',
+    overdue: true,
   },
   {
     reference: 'CASO-0130',
     title: 'Reunión con las familias',
-    context: 'Protocolo de Andalucía, paso 2',
-    bucket: 'today',
+    context: 'Protocolo de Andalucía · paso 2',
+    bucket: 'now',
     due: 'Hoy, 12:30',
+    overdue: false,
   },
   {
     reference: 'COM-0091',
-    title: 'Comunicación nueva sin valorar',
-    context: 'Sin asignar, llegó hoy',
+    title: 'Valorar una comunicación nueva',
+    context: 'Sin asignar · llegó hoy',
     bucket: 'week',
-    due: 'Lunes 8',
+    due: 'Lun 8 sep',
+    overdue: false,
   },
   {
     reference: 'CASO-0119',
     title: 'Revisar el cierre propuesto',
     context: 'Eres responsable del caso',
     bucket: 'week',
-    due: 'Martes 9',
+    due: 'Mar 9 sep',
+    overdue: false,
   },
   {
     reference: 'CASO-0142',
     title: 'Seguimiento a dos semanas',
-    context: 'Fijado por ti',
+    context: 'Seguimiento que fijaste tú',
     bucket: 'week',
-    due: 'Jueves 11',
+    due: 'Jue 11 sep',
+    overdue: false,
   },
 ];
 
@@ -100,36 +97,17 @@ function formatToday(): string {
 })
 export class SaasDashboard {
   protected readonly today = formatToday();
-  protected readonly filter = signal<Scope>('all');
 
-  protected readonly scopes: readonly { key: Scope; label: string; count: number }[] = [
-    { key: 'all', label: 'Todo', count: ITEMS.length },
-    ...BUCKET_ORDER.map((bucket) => ({
-      key: bucket as Scope,
-      label: BUCKET_LABELS[bucket],
-      count: ITEMS.filter((item) => item.bucket === bucket).length,
-    })),
-  ];
+  protected readonly overdueCount = ITEMS.filter((item) => item.overdue).length;
+  protected readonly todayCount = ITEMS.filter((item) => item.bucket === 'now').length;
 
-  protected readonly groups = computed<QueueGroup[]>(() => {
-    const active = this.filter();
-
-    return BUCKET_ORDER.filter((bucket) => active === 'all' || active === bucket)
+  protected readonly groups = computed<QueueGroup[]>(() =>
+    (['now', 'week'] as Bucket[])
       .map((bucket) => ({
         bucket,
         label: BUCKET_LABELS[bucket],
         items: ITEMS.filter((item) => item.bucket === bucket),
       }))
-      .filter((group) => group.items.length > 0);
-  });
-
-  protected readonly activity: readonly ActivityItem[] = [
-    { title: 'Marina Ortiz añadió una nota interna', reference: 'CASO-0130', time: 'Hoy, 09:14' },
-    { title: 'Documento disponible tras la revisión', reference: 'CASO-0130', time: 'Ayer, 08:20' },
-    { title: 'Cierre registrado por Concha Feito', reference: 'CASO-0104', time: '2 sep, 12:05' },
-  ];
-
-  protected setFilter(scope: Scope): void {
-    this.filter.set(scope);
-  }
+      .filter((group) => group.items.length > 0),
+  );
 }
