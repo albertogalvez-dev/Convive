@@ -1,14 +1,14 @@
 @use 'tokens' as *;
 
 .dashboard {
-  max-width: 44rem;
+  max-width: 74rem;
   margin: 0 auto;
 }
 
-/* Heading: one summary sentence answers "what do I do now". ------------- */
+/* Heading ------------------------------------------------------------------ */
 
 .page-heading {
-  margin-bottom: 2rem;
+  margin-bottom: 1.6rem;
 }
 .today {
   margin: 0 0 0.35rem;
@@ -19,15 +19,15 @@
   text-transform: uppercase;
 }
 h1 {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.55rem;
   color: $ink-900;
-  font-size: clamp(1.9rem, 4vw, 2.4rem);
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
   letter-spacing: -0.04em;
 }
 .summary {
   margin: 0;
   color: $ink-500;
-  font-size: 1rem;
+  font-size: 0.98rem;
   line-height: 1.6;
 }
 .summary strong {
@@ -38,20 +38,37 @@ h1 {
   color: $danger-ink;
 }
 
-/* One list, grouped by when it is due. No tabs, no cards inside cards. -- */
+/* Board: list on the left, the selected item in context on the right.
+   One column keeps the priority order readable; the right pane uses the
+   width to let the professional act without leaving the screen. */
 
-.group + .group {
-  margin-top: 1.75rem;
+.board {
+  display: grid;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Queue ----------------------------------------------------------------- */
+
+.queue {
+  border: 1px solid $line;
+  border-radius: $radius-md;
+  background: $surface;
+  overflow: hidden;
 }
 .group-label {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-  margin: 0 0 0.6rem;
+  margin: 0;
+  padding: 0.7rem 1rem 0.55rem;
+  background: $surface-sunk;
+  border-bottom: 1px solid $line-faint;
   color: $ink-500;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 .group-label span {
@@ -59,53 +76,60 @@ h1 {
   font-weight: 750;
   font-variant-numeric: tabular-nums;
 }
-
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border: 1px solid $line;
-  border-radius: $radius-md;
-  background: $surface;
-  overflow: hidden;
-}
-li + li {
+.group-label:not(:first-child) {
   border-top: 1px solid $line-faint;
 }
 
-/* Every row is identical: bold action, one muted line, a plain due date.
-   Colour appears once, on the date, and only when it is overdue. */
 .row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1rem 1.15rem;
-  text-decoration: none;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: none;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.row + .row {
+  border-top: 1px solid $line-faint;
 }
 .row:hover {
   background: $surface-sunk;
+}
+.row.overdue {
+  border-left-color: $danger;
+}
+.row.selected {
+  background: $accent-tint;
+}
+.row.selected.overdue {
+  border-left-color: $danger;
 }
 .row-body {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
 }
 .row-title {
   color: $ink-900;
-  font-size: 0.98rem;
+  font-size: 0.9rem;
   font-weight: 700;
+  line-height: 1.35;
 }
 .row-context {
   color: $ink-400;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
 }
 .row-due {
   flex: none;
   color: $ink-400;
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.76rem;
+  font-weight: 750;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -113,11 +137,106 @@ li + li {
   color: $danger-ink;
 }
 
-/* Activity is a link, not a section: the home stays on one question. --- */
+/* Detail --------------------------------------------------------------- */
+
+.detail {
+  position: sticky;
+  top: 1rem;
+  border: 1px solid $line;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+  padding: 1.6rem 1.7rem;
+}
+.detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.detail-kind {
+  border-radius: $radius-pill;
+  padding: 0.28rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: $ink-600;
+  background: $line-faint;
+}
+.detail-kind.assessment {
+  color: $accent-ink;
+  background: $accent-tint;
+}
+.detail-due {
+  color: $ink-400;
+  font-size: 0.82rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.detail-due.overdue {
+  color: $danger-ink;
+  font-weight: 800;
+}
+.detail h2 {
+  margin: 0 0 0.4rem;
+  color: $ink-900;
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+}
+.detail-case {
+  margin: 0 0 1.3rem;
+  color: $ink-400;
+  font-size: 0.86rem;
+}
+.reference {
+  color: $ink-300;
+  font-weight: 800;
+}
+.detail-body {
+  margin: 0 0 1rem;
+  color: $ink-800;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+.detail-source {
+  margin: 0 0 1.6rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid $line;
+  color: $ink-400;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+.primary {
+  border: 1px solid $ink-800;
+  border-radius: $radius-sm;
+  padding: 0.7rem 1.3rem;
+  background: $ink-800;
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.secondary {
+  color: $accent;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.secondary:hover {
+  text-decoration: underline;
+}
+
+/* Activity: a link, not a section. ----------------------------------------- */
 
 .activity-link {
   display: inline-block;
-  margin-top: 2rem;
+  margin-top: 1.6rem;
   color: $accent;
   font-size: 0.85rem;
   font-weight: 750;
@@ -128,20 +247,36 @@ li + li {
 }
 
 .row:focus-visible,
+.primary:focus-visible,
+.secondary:focus-visible,
 .activity-link:focus-visible {
   outline: $focus-ring;
   outline-offset: -3px;
 }
 
-@media (max-width: 40rem) {
+/* Mobile: no room for two panes — show the list, tapping a row opens the
+   case (navigation, handled elsewhere). The detail pane is hidden. */
+@media (max-width: 60rem) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+  .detail {
+    display: none;
+  }
   .row {
-    align-items: flex-start;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 0.95rem 1rem;
+    align-items: flex-start;
+    gap: 0.3rem;
+    padding: 1rem;
   }
   .row-due {
     order: -1;
+    font-size: 0.75rem;
+  }
+  .row-title {
+    font-size: 0.95rem;
+  }
+  .row-context {
     font-size: 0.8rem;
   }
 }

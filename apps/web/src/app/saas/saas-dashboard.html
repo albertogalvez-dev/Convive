@@ -13,27 +13,59 @@
       </p>
     </header>
 
-    <div class="queue">
-      @for (group of groups(); track group.bucket) {
-        <div class="group">
+    <div class="board">
+      <!-- Left: the ranked queue -->
+      <div class="queue" role="listbox" aria-label="Lo que necesita tu acción">
+        @for (group of groups; track group.bucket) {
           <p class="group-label">
             {{ group.label }} <span>{{ group.items.length }}</span>
           </p>
-          <ul>
-            @for (item of group.items; track item.reference + item.title) {
-              <li>
-                <a href="#" class="row">
-                  <span class="row-body">
-                    <span class="row-title">{{ item.title }}</span>
-                    <span class="row-context">{{ item.reference }} · {{ item.context }}</span>
-                  </span>
-                  <span class="row-due" [class.overdue]="item.overdue">{{ item.due }}</span>
-                </a>
-              </li>
-            }
-          </ul>
+          @for (item of group.items; track item.id) {
+            <button
+              type="button"
+              role="option"
+              class="row"
+              [class.overdue]="item.overdue"
+              [class.selected]="selectedId() === item.id"
+              [attr.aria-selected]="selectedId() === item.id"
+              (click)="select(item.id)"
+            >
+              <span class="row-body">
+                <span class="row-title">{{ item.title }}</span>
+                <span class="row-context">{{ item.reference }} · {{ item.context }}</span>
+              </span>
+              <span class="row-due" [class.overdue]="item.overdue">{{ item.due }}</span>
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Right: the selected item in context -->
+      @let item = selected();
+      <article class="detail" aria-live="polite">
+        <div class="detail-top">
+          <span class="detail-kind" [class]="'detail-kind ' + item.kind">
+            {{ item.kind === 'assessment' ? 'Comunicación' : 'Tarea del protocolo' }}
+          </span>
+          <span class="detail-due" [class.overdue]="item.overdue">{{ item.due }}</span>
         </div>
-      }
+
+        <h2>{{ item.title }}</h2>
+        <p class="detail-case">
+          <span class="reference">{{ item.reference }}</span> · {{ item.detail.caseName }}
+        </p>
+
+        <p class="detail-body">{{ item.detail.body }}</p>
+
+        @if (item.detail.source) {
+          <p class="detail-source">{{ item.detail.source }}</p>
+        }
+
+        <div class="detail-actions">
+          <button type="button" class="primary">{{ item.detail.action }}</button>
+          <a class="secondary" href="#">Abrir el caso completo</a>
+        </div>
+      </article>
     </div>
 
     <a class="activity-link" href="#">Ver la actividad reciente del centro &rarr;</a>
