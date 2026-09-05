@@ -1,7 +1,6 @@
 <app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
   <section class="dashboard">
     <header class="page-heading">
-      <p class="today">{{ today }}</p>
       <h1>Hola, Iker</h1>
       <p class="summary">
         @if (overdueCount) {
@@ -18,26 +17,26 @@
       <div class="queue" role="listbox" aria-label="Lo que necesita tu acción">
         @for (group of groups; track group.bucket) {
           <p class="group-label">
-            {{ group.label }} <span>{{ group.items.length }}</span>
+            {{ group.label }} <span>{{ group.rows.length }}</span>
           </p>
-          @for (item of group.items; track item.id) {
+          @for (row of group.rows; track row.item.id) {
             <button
               type="button"
               role="option"
               class="row"
-              [class.is-overdue]="item.deadline.state === 'overdue'"
-              [class.is-today]="item.deadline.state === 'today'"
-              [class.selected]="selectedId() === item.id"
-              [attr.aria-selected]="selectedId() === item.id"
-              (click)="select(item.id)"
+              [class.is-overdue]="row.deadline.state === 'overdue'"
+              [class.is-today]="row.deadline.state === 'today'"
+              [class.selected]="selectedId() === row.item.id"
+              [attr.aria-selected]="selectedId() === row.item.id"
+              (click)="select(row.item.id)"
             >
               <span class="row-body">
-                <span class="row-title">{{ item.title }}</span>
-                <span class="row-context">{{ item.reference }} · {{ item.context }}</span>
+                <span class="row-title">{{ row.item.title }}</span>
+                <span class="row-context">{{ row.item.reference }} · {{ row.item.context }}</span>
               </span>
               <span class="deadline">
-                <span class="deadline-status">{{ item.deadline.status }}</span>
-                <span class="deadline-when">{{ item.deadline.when }}</span>
+                <span class="deadline-status">{{ row.deadline.status }}</span>
+                <span class="deadline-when">{{ row.deadline.when }}</span>
               </span>
             </button>
           }
@@ -45,36 +44,36 @@
       </div>
 
       <!-- Right: the selected item in context -->
-      @let item = selected();
+      @let row = selected();
       <article
         class="detail"
         aria-live="polite"
-        [class.is-overdue]="item.deadline.state === 'overdue'"
-        [class.is-today]="item.deadline.state === 'today'"
+        [class.is-overdue]="row.deadline.state === 'overdue'"
+        [class.is-today]="row.deadline.state === 'today'"
       >
         <div class="detail-top">
-          <span class="detail-kind" [class.assessment]="item.kind === 'assessment'">
-            {{ item.kind === 'assessment' ? 'Comunicación' : 'Tarea del protocolo' }}
+          <span class="detail-kind" [class.assessment]="row.item.kind === 'assessment'">
+            {{ row.item.kind === 'assessment' ? 'Comunicación' : 'Tarea del protocolo' }}
           </span>
           <span class="deadline">
-            <span class="deadline-status">{{ item.deadline.status }}</span>
-            <span class="deadline-when">{{ item.deadline.when }}</span>
+            <span class="deadline-status">{{ row.deadline.status }}</span>
+            <span class="deadline-when">{{ row.deadline.when }}</span>
           </span>
         </div>
 
-        <h2>{{ item.title }}</h2>
+        <h2>{{ row.item.title }}</h2>
         <p class="detail-case">
-          <span class="reference">{{ item.reference }}</span> · {{ item.detail.caseName }}
+          <span class="reference">{{ row.item.reference }}</span> · {{ row.item.detail.caseName }}
         </p>
 
-        <p class="detail-body">{{ item.detail.body }}</p>
+        <p class="detail-body">{{ row.item.detail.body }}</p>
 
-        @if (item.detail.source) {
-          <p class="detail-source">{{ item.detail.source }}</p>
+        @if (row.item.detail.source) {
+          <p class="detail-source">{{ row.item.detail.source }}</p>
         }
 
         <div class="detail-actions">
-          <button type="button" class="primary">{{ item.detail.action }}</button>
+          <button type="button" class="primary">{{ row.item.detail.action }}</button>
           <a class="secondary" href="#">Abrir el caso completo</a>
         </div>
       </article>

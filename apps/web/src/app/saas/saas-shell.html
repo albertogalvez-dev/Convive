@@ -42,6 +42,12 @@
         </svg>
         <span>Casos</span>
       </a>
+      <a routerLink="/saas/calendario" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6h16v14H4zM4 10h16M9 4v4M15 4v4" />
+        </svg>
+        <span>Calendario</span>
+      </a>
       <a routerLink="/saas/avisos" routerLinkActive="active">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
@@ -86,6 +92,10 @@
         <img src="/convive-logo.svg" alt="Convive" width="142" height="47" />
         <button type="button">Cerrar sesión</button>
       </div>
+      <p class="mobile-clock">
+        <span class="clock-date">{{ clockDate() }}</span>
+        <span class="clock-time">{{ clockTime() }}</span>
+      </p>
       <nav aria-label="Navegación del centro">
         <a
           routerLink="/saas/panel"
@@ -104,6 +114,12 @@
         <a routerLink="/saas/caso" routerLinkActive="active">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h5l1.5 2H19v10H5V7Z" /></svg>
           <span>Casos</span>
+        </a>
+        <a routerLink="/saas/calendario" routerLinkActive="active">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16v14H4zM4 10h16M9 4v4M15 4v4" />
+          </svg>
+          <span>Agenda</span>
         </a>
         <a routerLink="/saas/avisos" routerLinkActive="active">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -128,6 +144,10 @@
 
     <div class="content-inner">
       <div class="topbar">
+        <p class="clock">
+          <span class="clock-date">{{ clockDate() }}</span>
+          <span class="clock-time">{{ clockTime() }}</span>
+        </p>
         <button class="notification-button" type="button" aria-label="Ver avisos">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />

@@ -195,8 +195,30 @@
 }
 .topbar {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+.clock {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 0;
+  color: #55688a;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.clock-date::first-letter {
+  text-transform: uppercase;
+}
+.clock-time {
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: #eef2f8;
+  color: #102b60;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 .notification-button {
   position: relative;
@@ -276,6 +298,23 @@ select:focus-visible {
     font: inherit;
     font-size: 0.8rem;
     font-weight: 750;
+  }
+  .mobile-clock {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: -0.35rem 0 0;
+    color: #55688a;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .mobile-clock .clock-time {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: #eef2f8;
+    color: #102b60;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
   }
   .mobile-header nav {
     width: 100%;
