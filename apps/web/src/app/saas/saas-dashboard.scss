@@ -5,38 +5,43 @@
   margin: 0 auto;
 }
 
-/* Heading ------------------------------------------------------------------ */
+/* Heading: greeting and a one-line status, tight together. --------------- */
 
 .page-heading {
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.5rem;
 }
 h1 {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.3rem;
   color: $ink-900;
-  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
   letter-spacing: -0.04em;
 }
 .summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
   margin: 0;
   color: $ink-500;
-  font-size: 0.98rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+}
+.summary .dot {
+  color: $ink-300;
 }
 .summary strong {
   color: $ink-800;
-  font-weight: 750;
+  font-weight: 800;
 }
 .summary strong.is-overdue {
   color: $danger-ink;
 }
 
-/* Board: ranked list on the left, the selected item in context on the
-   right. One column keeps the priority order readable; the right pane uses
-   the width to let the professional act without leaving the screen. */
+/* Board: a lean list on the left, the full item on the right. The list is
+   for scanning ("how urgent, roughly when"); the detail pane carries the
+   context, the exact time and the action. */
 
 .board {
   display: grid;
-  grid-template-columns: 25rem minmax(0, 1fr);
+  grid-template-columns: 27.5rem minmax(0, 1fr);
   gap: 1.25rem;
   align-items: start;
 }
@@ -72,13 +77,14 @@ h1 {
   border-top: 1px solid $line-faint;
 }
 
+/* One line per row: the action, and a single deadline chip. The case
+   reference lives in the detail pane, not here. */
 .row {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.85rem;
+  align-items: center;
+  gap: 1rem;
   width: 100%;
-  padding: 0.9rem 1rem;
+  padding: 0.85rem 1rem;
   border: 0;
   border-left: 3px solid transparent;
   background: none;
@@ -101,51 +107,31 @@ h1 {
 .row.selected {
   background: $accent-tint;
 }
-.row-body {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
 .row-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   color: $ink-900;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.row-context {
+.row-chip {
+  flex: none;
   color: $ink-400;
   font-size: 0.76rem;
-}
-
-/* Deadline: two lines everywhere — a coloured status word, then the exact
-   moment with its time. Never a bare relative string on its own. Colour is
-   driven by .is-overdue / .is-today on the row or the detail card. */
-.deadline {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  text-align: end;
-}
-.deadline-status {
-  font-size: 0.76rem;
-  font-weight: 800;
-  color: $ink-500;
-}
-.deadline-when {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: $ink-300;
+  font-weight: 750;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.is-overdue .deadline-status,
-.is-overdue .deadline-when {
+.row.is-overdue .row-chip {
   color: $danger-ink;
+  font-weight: 800;
 }
-.is-today .deadline-status {
+.row.is-today .row-chip {
   color: $warning-ink;
+  font-weight: 800;
 }
 
 /* Detail ---------------------------------------------------------------- */
@@ -178,11 +164,30 @@ h1 {
   color: $accent-ink;
   background: $accent-tint;
 }
-.detail .deadline-status {
-  font-size: 0.8rem;
+.detail-deadline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: end;
 }
-.detail .deadline-when {
+.detail-status {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: $ink-500;
+}
+.detail-when {
   font-size: 0.75rem;
+  font-weight: 600;
+  color: $ink-300;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.is-overdue .detail-status,
+.is-overdue .detail-when {
+  color: $danger-ink;
+}
+.is-today .detail-status {
+  color: $warning-ink;
 }
 .detail h2 {
   margin: 0 0 0.4rem;
@@ -194,10 +199,10 @@ h1 {
   margin: 0 0 1.3rem;
   color: $ink-400;
   font-size: 0.86rem;
+  line-height: 1.55;
 }
-.reference {
-  color: $ink-300;
-  font-weight: 800;
+.detail-ref {
+  font-size: 0.78rem;
 }
 .detail-body {
   margin: 0 0 1rem;
@@ -271,22 +276,9 @@ h1 {
     display: none;
   }
   .row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.35rem;
-    padding: 1rem;
-  }
-  .row .deadline {
-    order: -1;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 0.5rem;
-    text-align: start;
+    padding: 0.95rem 1rem;
   }
   .row-title {
     font-size: 0.95rem;
-  }
-  .row-context {
-    font-size: 0.8rem;
   }
 }

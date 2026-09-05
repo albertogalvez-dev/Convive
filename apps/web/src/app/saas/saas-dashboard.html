@@ -4,16 +4,17 @@
       <h1>Hola, Iker</h1>
       <p class="summary">
         @if (overdueCount) {
-          Tienes <strong class="is-overdue">{{ overdueCount }} fuera de plazo</strong> y
-          {{ todayCount - overdueCount }} más para hoy.
+          <strong class="is-overdue">{{ overdueCount }} fuera de plazo</strong>
+          <span class="dot" aria-hidden="true">·</span>
+          {{ todayCount - overdueCount }} más para hoy
         } @else {
-          {{ todayCount }} cosas para hoy. Nada fuera de plazo.
+          {{ todayCount }} para hoy · nada fuera de plazo
         }
       </p>
     </header>
 
     <div class="board">
-      <!-- Left: the ranked queue -->
+      <!-- Left: the ranked queue, one line per item -->
       <div class="queue" role="listbox" aria-label="Lo que necesita tu acción">
         @for (group of groups; track group.bucket) {
           <p class="group-label">
@@ -30,20 +31,14 @@
               [attr.aria-selected]="selectedId() === row.item.id"
               (click)="select(row.item.id)"
             >
-              <span class="row-body">
-                <span class="row-title">{{ row.item.title }}</span>
-                <span class="row-context">{{ row.item.reference }} · {{ row.item.context }}</span>
-              </span>
-              <span class="deadline">
-                <span class="deadline-status">{{ row.deadline.status }}</span>
-                <span class="deadline-when">{{ row.deadline.when }}</span>
-              </span>
+              <span class="row-title">{{ row.item.title }}</span>
+              <span class="row-chip">{{ row.deadline.chip }}</span>
             </button>
           }
         }
       </div>
 
-      <!-- Right: the selected item in context -->
+      <!-- Right: the selected item in full -->
       @let row = selected();
       <article
         class="detail"
@@ -55,15 +50,15 @@
           <span class="detail-kind" [class.assessment]="row.item.kind === 'assessment'">
             {{ row.item.kind === 'assessment' ? 'Comunicación' : 'Tarea del protocolo' }}
           </span>
-          <span class="deadline">
-            <span class="deadline-status">{{ row.deadline.status }}</span>
-            <span class="deadline-when">{{ row.deadline.when }}</span>
+          <span class="detail-deadline">
+            <span class="detail-status">{{ row.deadline.status }}</span>
+            <span class="detail-when">{{ row.deadline.when }}</span>
           </span>
         </div>
 
         <h2>{{ row.item.title }}</h2>
         <p class="detail-case">
-          <span class="reference">{{ row.item.reference }}</span> · {{ row.item.detail.caseName }}
+          <span class="detail-ref">{{ row.item.reference }}</span> · {{ row.item.detail.caseName }}
         </p>
 
         <p class="detail-body">{{ row.item.detail.body }}</p>

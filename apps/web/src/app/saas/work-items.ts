@@ -141,35 +141,62 @@ const DAY_MONTH_FMT = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 
 
 export interface DeadlineView {
   state: DeadlineState;
+  /** One compact token for the list row, e.g. "Vencido · 20 min", "Mar 8". */
+  chip: string;
+  /** The status word for the detail pane, e.g. "Fuera de plazo". */
   status: string;
+  /** The exact moment for the detail pane, e.g. "Venció ayer, 14:00". */
   when: string;
 }
 
-/** The status word and exact-moment line shown on the home queue. */
+function capitaliseWeekday(due: Date): string {
+  const weekday = WEEKDAY_FMT.format(due).replace('.', '');
+  return weekday.charAt(0).toUpperCase() + weekday.slice(1);
+}
+
+/**
+ * Turns a due date into what the home shows: a short chip on the list row and
+ * the full status + exact moment on the detail pane.
+ */
 export function describeDeadline(due: Date, now: Date): DeadlineView {
   const time = TIME_FMT.format(due);
   const dayGap = (startOfDay(due) - startOfDay(now)) / DAY_MS;
 
-  // Overdue on an earlier day: name the day, no noisy hour count.
+  // Overdue on an earlier day.
   if (dayGap <= -1) {
-    const day = dayGap === -1 ? 'ayer' : `el ${DAY_MONTH_FMT.format(due)}`;
-    return { state: 'overdue', status: 'Fuera de plazo', when: `Venció ${day}, ${time}` };
+    const day = dayGap === -1 ? 'ayer' : DAY_MONTH_FMT.format(due);
+    return {
+      state: 'overdue',
+      chip: `Vencido · ${day}`,
+      status: 'Fuera de plazo',
+      when: `Venció ${dayGap === -1 ? 'ayer' : `el ${day}`}, ${time}`,
+    };
   }
 
-  // Same day: the countdown or the time since is the useful part.
+  // Same day: the magnitude (overdue) or the time (still due) matters.
   if (dayGap === 0) {
     const past = due.getTime() < now.getTime();
+    if (past) {
+      return {
+        state: 'overdue',
+        chip: `Vencido · ${relativeWithinDay(due, now).replace('hace ', '')}`,
+        status: 'Fuera de plazo',
+        when: `Hoy, ${time} · ${relativeWithinDay(due, now)}`,
+      };
+    }
     return {
-      state: past ? 'overdue' : 'today',
-      status: past ? 'Fuera de plazo' : 'Vence hoy',
+      state: 'today',
+      chip: `Hoy · ${time}`,
+      status: 'Vence hoy',
       when: `Hoy, ${time} · ${relativeWithinDay(due, now)}`,
     };
   }
 
-  const weekday = WEEKDAY_FMT.format(due).replace('.', '');
+  // Upcoming: weekday + day is enough while scanning; the pane has the time.
   return {
     state: 'upcoming',
+    chip: `${capitaliseWeekday(due)} ${due.getDate()}`,
     status: `En ${dayGap} ${dayGap === 1 ? 'día' : 'días'}`,
-    when: `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${DAY_MONTH_FMT.format(due)}, ${time}`,
+    when: `${capitaliseWeekday(due)} ${DAY_MONTH_FMT.format(due)}, ${time}`,
   };
 }
