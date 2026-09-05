@@ -6,6 +6,15 @@ import { SaasShell } from './saas-shell';
 
 type Bucket = 'now' | 'week';
 type ItemKind = 'assessment' | 'task';
+type DeadlineState = 'overdue' | 'today' | 'upcoming';
+
+interface Deadline {
+  state: DeadlineState;
+  /** Short status: "Fuera de plazo", "Vence hoy", "En 2 días". */
+  status: string;
+  /** Exact moment with time: "Venció ayer, 14:00", "Hoy, 12:30". */
+  when: string;
+}
 
 interface QueueItem {
   id: string;
@@ -14,8 +23,7 @@ interface QueueItem {
   title: string;
   context: string;
   bucket: Bucket;
-  due: string;
-  overdue: boolean;
+  deadline: Deadline;
   detail: {
     caseName: string;
     body: string;
@@ -41,14 +49,13 @@ const ITEMS: readonly QueueItem[] = [
     reference: 'COM-0089',
     kind: 'assessment',
     title: 'Valorar una comunicación nueva',
-    context: 'Sin asignar · llegó hace 4 horas',
+    context: 'Sin asignar',
     bucket: 'now',
-    due: 'Hace 4 h',
-    overdue: true,
+    deadline: { state: 'overdue', status: 'Fuera de plazo', when: 'Venció hoy, 09:10 · hace 4 h' },
     detail: {
       caseName: 'Comunicación sin asignar',
       body: 'Una persona informa de que un grupo de mensajería ha compartido comentarios excluyentes sobre un compañero. No se ha registrado ninguna valoración todavía.',
-      source: 'Recibida el 5 de septiembre, 05:10',
+      source: 'Recibida el 5 de septiembre, 05:10 · la primera valoración debe hacerse en 4 h',
       action: 'Abrir y valorar',
     },
   },
@@ -59,12 +66,15 @@ const ITEMS: readonly QueueItem[] = [
     title: 'Comunicar a inspección educativa',
     context: 'Protocolo de Andalucía · paso 3',
     bucket: 'now',
-    due: 'Ayer',
-    overdue: true,
+    deadline: {
+      state: 'overdue',
+      status: 'Fuera de plazo',
+      when: 'Venció ayer, 14:00 · hace 1 día',
+    },
     detail: {
       caseName: 'Convivencia entre iguales — posible acoso',
       body: 'El protocolo aplicable marca la comunicación a inspección educativa como paso 3, con un plazo de 24 horas desde la activación del caso.',
-      source: 'Protocolo de Andalucía (BOJA 132/2011), paso 3',
+      source: 'Protocolo de Andalucía (BOJA 132/2011), paso 3 · plazo de 24 h',
       action: 'Registrar la comunicación',
     },
   },
@@ -75,8 +85,7 @@ const ITEMS: readonly QueueItem[] = [
     title: 'Reunión con las familias',
     context: 'Protocolo de Andalucía · paso 2',
     bucket: 'now',
-    due: 'Hoy, 12:30',
-    overdue: false,
+    deadline: { state: 'today', status: 'Vence hoy', when: 'Hoy, 12:30 · en 3 h' },
     detail: {
       caseName: 'Convivencia entre iguales — posible acoso',
       body: 'Reunión prevista con las familias del alumnado implicado. Queda registrar la fecha efectiva y un resumen no valorativo del encuentro.',
@@ -89,10 +98,9 @@ const ITEMS: readonly QueueItem[] = [
     reference: 'COM-0091',
     kind: 'assessment',
     title: 'Valorar una comunicación nueva',
-    context: 'Sin asignar · llegó hoy',
+    context: 'Sin asignar',
     bucket: 'week',
-    due: 'Lun 8 sep',
-    overdue: false,
+    deadline: { state: 'upcoming', status: 'En 3 días', when: 'Lun 8 sep, 09:00' },
     detail: {
       caseName: 'Comunicación sin asignar',
       body: 'Una persona informante comparte que han circulado mensajes que podrían estar aislando a un compañero. Pendiente de una primera lectura.',
@@ -107,8 +115,7 @@ const ITEMS: readonly QueueItem[] = [
     title: 'Revisar el cierre propuesto',
     context: 'Eres responsable del caso',
     bucket: 'week',
-    due: 'Mar 9 sep',
-    overdue: false,
+    deadline: { state: 'upcoming', status: 'En 4 días', when: 'Mar 9 sep, 10:00' },
     detail: {
       caseName: 'Discusión en clase con continuación digital',
       body: 'El profesorado colaborador ha propuesto el cierre del caso. Como responsable, revisa el resumen y confirma o devuelve la propuesta.',
@@ -122,8 +129,7 @@ const ITEMS: readonly QueueItem[] = [
     title: 'Seguimiento a dos semanas',
     context: 'Seguimiento que fijaste tú',
     bucket: 'week',
-    due: 'Jue 11 sep',
-    overdue: false,
+    deadline: { state: 'upcoming', status: 'En 6 días', when: 'Jue 11 sep, 09:00' },
     detail: {
       caseName: 'Acompañamiento tras un cambio de grupo',
       body: 'Seguimiento programado para comprobar cómo evoluciona la situación dos semanas después de la última actuación.',
@@ -152,7 +158,8 @@ function formatToday(): string {
 })
 export class SaasDashboard {
   protected readonly today = formatToday();
-  protected readonly overdueCount = ITEMS.filter((item) => item.overdue).length;
+  protected readonly overdueCount = ITEMS.filter((item) => item.deadline.state === 'overdue')
+    .length;
   protected readonly todayCount = ITEMS.filter((item) => item.bucket === 'now').length;
 
   protected readonly groups: readonly QueueGroup[] = (['now', 'week'] as Bucket[])

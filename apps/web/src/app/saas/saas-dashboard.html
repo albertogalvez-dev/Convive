@@ -5,7 +5,7 @@
       <h1>Hola, Iker</h1>
       <p class="summary">
         @if (overdueCount) {
-          Tienes <strong class="overdue">{{ overdueCount }} fuera de plazo</strong> y
+          Tienes <strong class="is-overdue">{{ overdueCount }} fuera de plazo</strong> y
           {{ todayCount - overdueCount }} más para hoy.
         } @else {
           {{ todayCount }} cosas para hoy. Nada fuera de plazo.
@@ -25,7 +25,8 @@
               type="button"
               role="option"
               class="row"
-              [class.overdue]="item.overdue"
+              [class.is-overdue]="item.deadline.state === 'overdue'"
+              [class.is-today]="item.deadline.state === 'today'"
               [class.selected]="selectedId() === item.id"
               [attr.aria-selected]="selectedId() === item.id"
               (click)="select(item.id)"
@@ -34,7 +35,10 @@
                 <span class="row-title">{{ item.title }}</span>
                 <span class="row-context">{{ item.reference }} · {{ item.context }}</span>
               </span>
-              <span class="row-due" [class.overdue]="item.overdue">{{ item.due }}</span>
+              <span class="deadline">
+                <span class="deadline-status">{{ item.deadline.status }}</span>
+                <span class="deadline-when">{{ item.deadline.when }}</span>
+              </span>
             </button>
           }
         }
@@ -42,12 +46,20 @@
 
       <!-- Right: the selected item in context -->
       @let item = selected();
-      <article class="detail" aria-live="polite">
+      <article
+        class="detail"
+        aria-live="polite"
+        [class.is-overdue]="item.deadline.state === 'overdue'"
+        [class.is-today]="item.deadline.state === 'today'"
+      >
         <div class="detail-top">
-          <span class="detail-kind" [class]="'detail-kind ' + item.kind">
+          <span class="detail-kind" [class.assessment]="item.kind === 'assessment'">
             {{ item.kind === 'assessment' ? 'Comunicación' : 'Tarea del protocolo' }}
           </span>
-          <span class="detail-due" [class.overdue]="item.overdue">{{ item.due }}</span>
+          <span class="deadline">
+            <span class="deadline-status">{{ item.deadline.status }}</span>
+            <span class="deadline-when">{{ item.deadline.when }}</span>
+          </span>
         </div>
 
         <h2>{{ item.title }}</h2>
