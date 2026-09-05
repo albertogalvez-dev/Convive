@@ -1,12 +1,16 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /**
- * SaaS 2.0 — reporter journey (issues #516 / #517 / #518, expectations
- * R-1..R-4, R-9, R-14, C-12). Public, mobile-first. Real screen for owner
- * review; the copy is the charter's own drafted text (§13). Fictional data.
+ * SaaS 2.0 — reporter journey (issues #516 / #517 / #518).
+ *
+ * Follows the delivered public reporting flow: five steps with a progress
+ * header, the same wording, the same option-card controls. The SaaS additions
+ * are the standing non-emergency notice (R-2), the optional contact step (R-8),
+ * the revoked-link response (R-14) and the centre poster (C-12).
  */
 
-type ReportingView = 'entry' | 'confirmation' | 'revoked' | 'poster';
+type Screen = 'form' | 'result' | 'revoked' | 'poster';
 
 @Component({
   selector: 'app-saas-reporting',
@@ -15,15 +19,36 @@ type ReportingView = 'entry' | 'confirmation' | 'revoked' | 'poster';
   styleUrl: './saas-reporting.scss',
 })
 export class SaasReporting {
-  protected readonly view = signal<ReportingView>('entry');
-  protected readonly views: readonly { key: ReportingView; label: string }[] = [
-    { key: 'entry', label: 'Entrada · #518' },
-    { key: 'confirmation', label: 'Confirmación · #518' },
-    { key: 'revoked', label: 'Enlace revocado · #516' },
-    { key: 'poster', label: 'Cartel QR · #517' },
-  ];
+  protected readonly screen: Screen =
+    (inject(ActivatedRoute).snapshot.data['screen'] as Screen) ?? 'form';
+  protected readonly step = signal(1);
+  protected readonly totalSteps = 5;
 
-  protected setView(key: ReportingView): void {
-    this.view.set(key);
+  protected readonly context = signal<string[]>([]);
+  protected readonly recurrence = signal<string>('');
+  protected readonly wantsUpdates = signal<boolean>(false);
+
+  protected readonly progress = computed(() => (this.step() / this.totalSteps) * 100);
+
+  protected next(): void {
+    if (this.step() < this.totalSteps) {
+      this.step.update((value) => value + 1);
+    } else {
+      this.step.set(this.totalSteps);
+    }
+  }
+
+  protected back(): void {
+    this.step.update((value) => Math.max(1, value - 1));
+  }
+
+  protected toggleContext(value: string): void {
+    this.context.update((current) =>
+      current.includes(value) ? current.filter((entry) => entry !== value) : [...current, value],
+    );
+  }
+
+  protected isContext(value: string): boolean {
+    return this.context().includes(value);
   }
 }

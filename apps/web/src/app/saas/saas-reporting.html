@@ -1,148 +1,297 @@
-<div class="review-bar">
-  <span class="ribbon-tag">Propuesta · DR-1</span>
-  <span
-    >#516-#518 — recorrido de quien reporta. Móvil primero. El texto es el ya redactado en el
-    charter (§13).</span
-  >
-  <span class="view-switch">
-    @for (option of views; track option.key) {
-      <button type="button" [class.active]="view() === option.key" (click)="setView(option.key)">
-        {{ option.label }}
-      </button>
-    }
-  </span>
-</div>
+<main class="report-page">
+  <section class="report-flow">
+    @switch (screen) {
+      @case ('form') {
+        <header class="report-header">
+          <img src="/convive-logo.svg" alt="Convive" width="132" height="43" />
+          <div class="progress" role="group" aria-label="Progreso">
+            <span class="progress-copy">Paso {{ step() }} de {{ totalSteps }}</span>
+            <span class="progress-track"
+              ><span class="progress-fill" [style.width.%]="progress()"></span
+            ></span>
+          </div>
+        </header>
 
-<div class="frame">
-  @switch (view()) {
-    @case ('entry') {
-      <div class="phone">
-        <div class="safety-notice">
-          <strong>Convive no es un canal de emergencia.</strong> Si hay peligro inmediato, llama al
+        <p class="emergency-notice">
+          Convive no es un canal de emergencia. Si hay peligro inmediato, llama al
           <strong>112</strong>.
-        </div>
-        <p class="reassure">
-          Estás en un lugar seguro para contar lo que te preocupa. No hace falta que digas quién
-          eres.
         </p>
 
-        <label class="q">
-          <span class="q-title">Cuéntanos qué está pasando</span>
-          <span class="q-hint">
-            Puedes escribirlo con tus palabras, no hace falta que sepas cómo se llama lo que ha
-            pasado.
-          </span>
-          <textarea rows="4" placeholder="Escribe aquí…"></textarea>
-        </label>
-
-        <div class="optional">
-          <span class="q-title">¿Tienes algo que enseñarnos? <em>opcional</em></span>
-          <p>Foto, audio o documento.</p>
-        </div>
-        <div class="optional">
-          <span class="q-title">¿Quieres contarnos algo más? <em>opcional</em></span>
-          <p>Tipo de situación, fecha, referencias a personas.</p>
-        </div>
-        <div class="optional">
-          <span class="q-title">¿Quieres que te avisemos si hay novedades? <em>opcional</em></span>
-          <p>Un correo electrónico. Nunca es obligatorio y nunca se usa para identificarte.</p>
+        <div class="organisation-context">
+          <span class="organisation-label">Centro</span>
+          <p class="organisation-name">IES Aula Abierta</p>
         </div>
 
-        <button type="button" class="primary">Enviar</button>
-      </div>
-    }
+        <form novalidate (ngSubmit)="$event.preventDefault()">
+          @switch (step()) {
+            @case (1) {
+              <div class="step">
+                <h1>¿Qué ha ocurrido?</h1>
+                <textarea rows="10" maxlength="5000" placeholder="Escribe aquí…"></textarea>
+                <div class="field-meta"><span>0 / 5000 caracteres</span></div>
+                <div class="actions actions-end">
+                  <button type="button" class="primary" (click)="next()">
+                    Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            }
+            @case (2) {
+              <div class="step">
+                <h1>¿Dónde ocurrió?</h1>
+                <fieldset class="context-options">
+                  <legend class="visually-hidden">¿Dónde ocurrió?</legend>
+                  <p class="field-purpose">
+                    Orientación necesita saber si ocurre en el centro, por internet o en los dos
+                    sitios, porque el protocolo es distinto. Si no lo tienes claro, elige la última
+                    opción.
+                  </p>
+                  <label>
+                    <input
+                      type="checkbox"
+                      [checked]="isContext('in_person')"
+                      (change)="toggleContext('in_person')"
+                    />
+                    <span>En persona</span>
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      [checked]="isContext('digital')"
+                      (change)="toggleContext('digital')"
+                    />
+                    <span>Online</span>
+                  </label>
+                  <label class="unknown-option">
+                    <input
+                      type="checkbox"
+                      [checked]="isContext('unknown')"
+                      (change)="toggleContext('unknown')"
+                    />
+                    <span>Prefiero no decirlo</span>
+                  </label>
+                </fieldset>
+                <div class="actions">
+                  <button type="button" class="secondary" (click)="back()">Atrás</button>
+                  <button type="button" class="primary" (click)="next()">
+                    Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            }
+            @case (3) {
+              <div class="step">
+                <h1>Cuéntanos un poco más, si quieres</h1>
+                <p class="step-introduction">
+                  Estas preguntas son opcionales. Puedes dejarlas en blanco y el aviso llegará
+                  igual.
+                </p>
+                <fieldset class="context-options optional-taxonomy">
+                  <legend>¿Ha ocurrido más de una vez?</legend>
+                  <p class="field-purpose">
+                    Ayuda a orientación a saber si es algo puntual o algo que se repite. Puedes no
+                    contestarlo.
+                  </p>
+                  <label
+                    ><input
+                      type="radio"
+                      name="recurrence"
+                      value="single"
+                      (change)="recurrence.set('single')"
+                    /><span>Una vez</span></label
+                  >
+                  <label
+                    ><input
+                      type="radio"
+                      name="recurrence"
+                      value="repeated"
+                      (change)="recurrence.set('repeated')"
+                    /><span>Varias veces</span></label
+                  >
+                  <label
+                    ><input
+                      type="radio"
+                      name="recurrence"
+                      value="ongoing"
+                      (change)="recurrence.set('ongoing')"
+                    /><span>Sigue ocurriendo</span></label
+                  >
+                  <label class="unknown-option"
+                    ><input
+                      type="radio"
+                      name="recurrence"
+                      value="unknown"
+                      (change)="recurrence.set('unknown')"
+                    /><span>No lo sé / prefiero no indicarlo</span></label
+                  >
+                </fieldset>
+                <div class="actions">
+                  <button type="button" class="secondary" (click)="back()">Atrás</button>
+                  <button type="button" class="primary" (click)="next()">
+                    Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            }
+            @case (4) {
+              <div class="step">
+                <h1>¿Quieres que te avisemos si hay novedades?</h1>
+                <p class="step-introduction">
+                  Es opcional y nunca sirve para identificarte. Si lo dejas en blanco, tu aviso
+                  llega exactamente igual.
+                </p>
+                <fieldset class="context-options">
+                  <legend class="visually-hidden">Quieres que te avisemos</legend>
+                  <label>
+                    <input
+                      type="radio"
+                      name="updates"
+                      [checked]="wantsUpdates()"
+                      (change)="wantsUpdates.set(true)"
+                    />
+                    <span>Sí, dejo un correo</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="updates"
+                      [checked]="!wantsUpdates()"
+                      (change)="wantsUpdates.set(false)"
+                    />
+                    <span>No, gracias</span>
+                  </label>
+                </fieldset>
 
-    @case ('confirmation') {
-      <div class="phone">
-        <svg class="tick" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <rect
-            x="2"
-            y="2"
-            width="60"
-            height="60"
-            rx="16"
-            fill="#e6f4ec"
-            stroke="#1c7a51"
-            stroke-width="3"
-          />
-          <path
-            d="M18 33l9 9 19-20"
-            stroke="#1c7a51"
-            stroke-width="5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <p class="conf">
-          Tu mensaje ha llegado al centro y alguien lo va a leer. Este es tu código para volver a
-          consultar el estado o añadir más información más adelante:
-        </p>
-        <p class="code">7F3K-9QRT</p>
-        <p class="conf">
-          Puedes hacerle una foto a esta pantalla, guardarla o imprimirla: es la única forma de
-          volver a entrar, porque no hemos creado ninguna cuenta. Guárdalo en un sitio donde lo
-          vayas a encontrar: si lo pierdes, no podemos dártelo de nuevo por email ni por ningún otro
-          medio.
-        </p>
-        <div class="conf-actions">
-          <button type="button" class="ghost">Hacer foto</button>
-          <button type="button" class="ghost">Imprimir</button>
-        </div>
-      </div>
-    }
+                @if (wantsUpdates()) {
+                  <label class="email-field">
+                    <span>Tu correo</span>
+                    <input type="email" placeholder="nombre@correo.com" />
+                    <small>
+                      Solo lo usamos para decirte que hay una novedad. Nunca escribimos qué ha
+                      pasado, ni nombres, ni enlaces que salten el código de acceso. Puedes pedir
+                      que lo borremos cuando quieras.
+                    </small>
+                  </label>
+                }
 
-    @case ('revoked') {
-      <div class="phone centered">
-        <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M9 15l6-6M8 12l-2 2a3 3 0 0 0 4 4l2-2M16 12l2-2a3 3 0 0 0-4-4l-2 2" />
-        </svg>
-        <h2>Este enlace ya no está activo</h2>
-        <p class="revoked-copy">
-          No podemos confirmarte a qué centro pertenecía este enlace, ni si alguna vez perteneció a
-          uno. Si conoces la dirección o el código QR actual del centro, pruébalo desde ahí.
-        </p>
-        <button type="button" class="ghost">Ir a convive.school</button>
-      </div>
-    }
+                <div class="actions">
+                  <button type="button" class="secondary" (click)="back()">Atrás</button>
+                  <button type="button" class="primary" (click)="next()">
+                    Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            }
+            @case (5) {
+              <div class="step">
+                <h1>Revisa antes de enviar</h1>
+                <dl class="review">
+                  <div>
+                    <dt>Qué ha ocurrido</dt>
+                    <dd>Lo que has escrito se enviará tal cual, sin cambios.</dd>
+                  </div>
+                  <div>
+                    <dt>Dónde ocurrió</dt>
+                    <dd>{{ context().length ? 'Seleccionado' : 'Sin indicar' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Avisos</dt>
+                    <dd>{{ wantsUpdates() ? 'Dejas un correo' : 'Sin correo' }}</dd>
+                  </div>
+                </dl>
+                <div class="actions">
+                  <button type="button" class="secondary" (click)="back()">Atrás</button>
+                  <button type="button" class="primary" (click)="next()">Enviar</button>
+                </div>
+              </div>
+            }
+          }
+        </form>
+      }
 
-    @case ('poster') {
-      <div class="poster-wrap">
-        <div>
-          <p class="poster-caption">
-            Cartel por defecto — generado automáticamente al crear el centro
+      @case ('result') {
+        <div class="result-card">
+          <p class="result-label">Recibido</p>
+          <h1>Tu mensaje ha llegado al centro</h1>
+          <p class="result-message">
+            Alguien lo va a leer. Este es tu código para volver a consultar el estado o añadir más
+            información más adelante.
           </p>
-          <div class="poster">
-            <img
-              class="poster-logo"
-              src="/convive-logo-reversed.svg"
-              alt="Convive"
-              width="130"
-              height="43"
-            />
-            <div class="qr" aria-hidden="true">QR</div>
-            <p class="poster-centre">IES Aula Abierta</p>
-            <p class="poster-url">convive.school/e/iesaulaabierta</p>
-            <p class="poster-emergency">
-              Este no es un canal de emergencia. Si hay peligro inmediato, llama al 112.
-            </p>
+          <p class="code">7F3K-9QRT</p>
+          <p class="result-message">
+            Puedes hacerle una foto a esta pantalla, guardarla o imprimirla: es la única forma de
+            volver a entrar, porque no hemos creado ninguna cuenta. Guárdalo en un sitio donde lo
+            vayas a encontrar: si lo pierdes, no podemos dártelo de nuevo por correo ni por ningún
+            otro medio.
+          </p>
+          <div class="actions actions-end">
+            <button type="button" class="secondary">Imprimir</button>
+            <button type="button" class="primary">Guardar el código</button>
           </div>
         </div>
-        <div class="raw-panel">
-          <p class="poster-caption">Solo QR + enlace — para hacer tu propio cartel</p>
-          <div class="raw-card">
-            <div class="qr small" aria-hidden="true">QR</div>
-            <p class="raw-url">convive.school/e/iesaulaabierta</p>
-            <label class="ack">
-              <input type="checkbox" />
-              <span>
-                Confirmo que mi cartel incluirá el enlace visible y el aviso de "no es un canal de
-                emergencia". Convive no puede garantizarlo fuera de su propia plantilla.
-              </span>
-            </label>
-            <button type="button" class="ghost" disabled>Descargar QR + enlace</button>
+      }
+
+      @case ('revoked') {
+        <div class="result-card status-card">
+          <p class="result-label">Enlace no disponible</p>
+          <h1>Este enlace ya no está activo</h1>
+          <p class="result-message">
+            No podemos confirmarte a qué centro pertenecía este enlace, ni si alguna vez perteneció
+            a uno. Si conoces la dirección o el código QR actual del centro, entra desde ahí.
+          </p>
+          <p class="result-help">
+            Si crees que deberías poder entrar, díselo a alguien del centro: ellos pueden darte el
+            enlace vigente.
+          </p>
+        </div>
+      }
+
+      @case ('poster') {
+        <div class="poster-layout">
+          <div>
+            <h2 class="poster-caption">Cartel del centro</h2>
+            <div class="poster">
+              <img
+                class="poster-logo"
+                src="/convive-logo-reversed.svg"
+                alt="Convive"
+                width="128"
+                height="42"
+              />
+              <div class="qr" aria-hidden="true">
+                <span></span>
+              </div>
+              <p class="poster-centre">IES Aula Abierta</p>
+              <p class="poster-url">conviveaula.com/r/aula-abierta</p>
+              <p class="poster-emergency">
+                Este no es un canal de emergencia. Si hay peligro inmediato, llama al 112.
+              </p>
+            </div>
+          </div>
+
+          <div class="poster-side">
+            <h2 class="poster-caption">Materiales</h2>
+            <div class="materials-card">
+              <p class="material-line"><strong>Cartel completo</strong> PDF listo para imprimir</p>
+              <button type="button" class="primary">Descargar cartel</button>
+
+              <hr />
+
+              <p class="material-line">
+                <strong>Solo el QR y el enlace</strong> Para carteles propios del centro
+              </p>
+              <label class="ack">
+                <input type="checkbox" />
+                <span>
+                  Mi cartel incluirá el enlace escrito y el aviso de que Convive no es un canal de
+                  emergencia.
+                </span>
+              </label>
+              <button type="button" class="secondary" disabled>Descargar QR y enlace</button>
+            </div>
           </div>
         </div>
-      </div>
+      }
     }
-  }
-</div>
+  </section>
+</main>

@@ -1,18 +1,6 @@
-<div class="review-bar">
-  <span class="ribbon-tag">Propuesta · DR-1</span>
-  <span>#512 — crear centro e identidad del centro (C-1 / C-3). Datos ficticios.</span>
-  <span class="view-switch">
-    @for (option of views; track option.key) {
-      <button type="button" [class.active]="view() === option.key" (click)="setView(option.key)">
-        {{ option.label }}
-      </button>
-    }
-  </span>
-</div>
-
 <div class="frame">
   <div class="card">
-    @switch (view()) {
+    @switch (view) {
       @case ('create') {
         <h1>Crea tu centro</h1>
         <p class="sub">Un único formulario, sin pasos. La identidad del centro se afina después.</p>

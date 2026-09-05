@@ -25,6 +25,7 @@ interface QueueItem {
 interface Metric {
   value: string;
   label: string;
+  attention?: boolean;
 }
 
 interface RolePanel {
@@ -76,8 +77,9 @@ const PANELS: readonly RolePanel[] = [
       },
     ],
     panorama: [
-      { value: '4', label: 'Casos activos tuyos' },
-      { value: '1', label: 'En seguimiento' },
+      { value: '4', label: 'Asignados' },
+      { value: '1', label: 'Fuera de plazo', attention: true },
+      { value: '2', label: 'Próximos' },
       { value: '12', label: 'Cerrados este curso' },
     ],
   },
@@ -125,9 +127,9 @@ const PANELS: readonly RolePanel[] = [
       },
     ],
     panorama: [
-      { value: '11', label: 'Casos activos' },
+      { value: '11', label: 'Asignados' },
+      { value: '2', label: 'Fuera de plazo', attention: true },
       { value: '3', label: 'Sin valorar' },
-      { value: '2', label: 'Reasignaciones pendientes' },
       { value: '47', label: 'Cerrados este curso' },
     ],
   },
@@ -142,8 +144,9 @@ const PANELS: readonly RolePanel[] = [
       'Dirección no evalúa comunicaciones ni recibe casos por defecto: solo ves lo que se te ha asignado de forma explícita. Un panel vacío aquí es lo correcto, no un fallo.',
     queue: [],
     panorama: [
-      { value: '0', label: 'Casos asignados a ti' },
-      { value: '9', label: 'Casos activos en el centro' },
+      { value: '0', label: 'Asignados' },
+      { value: '0', label: 'Fuera de plazo' },
+      { value: '9', label: 'Activos en el centro' },
       { value: '58', label: 'Cerrados este curso' },
     ],
   },

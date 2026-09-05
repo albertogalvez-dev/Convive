@@ -1,11 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /**
- * SaaS 2.0 — centre creation and identity (issue #512, expectations C-1 / C-3).
- * Real screen for owner review; fictional data. The view switcher is a review aid.
+ * SaaS 2.0 — centre creation and centre identity (issue #512, C-1 / C-3).
+ * Each view is its own route. Fictional data.
  */
 
-type CentreView = 'create' | 'identity';
+export type CentreView = 'create' | 'identity';
 
 @Component({
   selector: 'app-saas-centre',
@@ -14,13 +15,6 @@ type CentreView = 'create' | 'identity';
   styleUrl: './saas-centre.scss',
 })
 export class SaasCentre {
-  protected readonly view = signal<CentreView>('create');
-  protected readonly views: readonly { key: CentreView; label: string }[] = [
-    { key: 'create', label: 'Crear centro' },
-    { key: 'identity', label: 'Identidad del centro' },
-  ];
-
-  protected setView(key: CentreView): void {
-    this.view.set(key);
-  }
+  protected readonly view: CentreView =
+    (inject(ActivatedRoute).snapshot.data['view'] as CentreView) ?? 'create';
 }

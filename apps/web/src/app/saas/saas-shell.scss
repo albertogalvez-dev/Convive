@@ -4,29 +4,8 @@
   background: #f5f8fc;
 }
 
-.proposal-ribbon {
-  display: flex;
-  gap: 0.7rem;
-  align-items: center;
-  padding: 0.55rem 1.4rem;
-  color: #cdd9ec;
-  background: #102b60;
-  font-size: 0.78rem;
-}
-.ribbon-tag {
-  flex: none;
-  padding: 0.12rem 0.5rem;
-  border-radius: 0.3rem;
-  color: #04222e;
-  background: #199ed5;
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .portal {
-  min-height: calc(100vh - 2.4rem);
+  min-height: 100vh;
   display: grid;
   grid-template-columns: 16.5rem minmax(0, 1fr);
   transition: grid-template-columns 180ms ease;

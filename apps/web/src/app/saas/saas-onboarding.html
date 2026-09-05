@@ -1,17 +1,5 @@
-<div class="review-bar">
-  <span class="ribbon-tag">Propuesta · DR-1</span>
-  <span>#511 — registro, cuenta sin centro y ajustes (T-1 / T-12 / T-9). Datos ficticios.</span>
-  <span class="view-switch">
-    @for (option of views; track option.key) {
-      <button type="button" [class.active]="view() === option.key" (click)="setView(option.key)">
-        {{ option.label }}
-      </button>
-    }
-  </span>
-</div>
-
 <div class="frame">
-  @switch (view()) {
+  @switch (view) {
     @case ('signup') {
       <div class="card auth-card">
         <img class="logo" src="/convive-logo.svg" alt="Convive" width="150" height="49" />

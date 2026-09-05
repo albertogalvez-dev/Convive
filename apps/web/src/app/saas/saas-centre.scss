@@ -6,50 +6,6 @@
     radial-gradient(circle at 6% 96%, #eaf8fc 0, transparent 30rem), #f5f8fc;
 }
 
-.review-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  flex-wrap: wrap;
-  padding: 0.55rem 1.4rem;
-  color: #cdd9ec;
-  background: #102b60;
-  font-size: 0.78rem;
-}
-.ribbon-tag {
-  padding: 0.12rem 0.5rem;
-  border-radius: 0.3rem;
-  color: #04222e;
-  background: #199ed5;
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.view-switch {
-  margin-left: auto;
-  display: flex;
-  gap: 0.2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0.4rem;
-  padding: 0.15rem;
-}
-.view-switch button {
-  border: 0;
-  border-radius: 0.3rem;
-  padding: 0.25rem 0.7rem;
-  color: #cdd9ec;
-  background: transparent;
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.view-switch button.active {
-  color: #102b60;
-  background: #fff;
-}
-
 .frame {
   display: flex;
   justify-content: center;
@@ -224,9 +180,5 @@ h1 {
 @media (max-width: 34rem) {
   .two-col {
     grid-template-columns: 1fr;
-  }
-  .view-switch {
-    margin-left: 0;
-    width: 100%;
   }
 }

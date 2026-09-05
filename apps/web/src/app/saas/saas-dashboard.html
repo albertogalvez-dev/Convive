@@ -1,7 +1,6 @@
 @let current = panel();
 
 <app-saas-shell
-  ribbon="#508 — panel principal. Pantalla real en Angular con el sistema de diseño de Convive. Datos ficticios."
   [personName]="current.fullName"
   [centreName]="current.centre"
   [unread]="current.unreadNotifications"
@@ -9,106 +8,63 @@
   [activeRole]="activeKey()"
   (roleChange)="selectRole($event)"
 >
-  <p class="eyebrow">
-    <svg viewBox="0 0 24 12" aria-hidden="true">
-      <path
-        d="M2 3c4 6 16 6 20 0"
-        stroke="#199ed5"
-        stroke-width="2.4"
-        stroke-linecap="round"
-        fill="none"
-      />
-    </svg>
-    Resumen del centro
-  </p>
-  <h1>Hola, {{ current.firstName }}</h1>
-  <p class="scope-note">{{ current.scopeNote }}</p>
-
-  <div class="section-head">
-    <h2>
-      Necesitas actuar
-      @if (current.queue.length) {
-        <span class="section-count">{{ current.queue.length }}</span>
-      }
-    </h2>
-    <span class="live-indicator"><i aria-hidden="true"></i> En vivo</span>
-  </div>
-
-  @if (current.queue.length) {
-    <ul class="queue">
-      @for (item of current.queue; track item.reference) {
-        <li class="queue-item" [attr.data-urgency]="item.urgency">
-          <span class="item-icon" aria-hidden="true">
-            @switch (item.kind) {
-              @case ('task') {
-                <svg viewBox="0 0 24 24">
-                  <rect x="4" y="4.5" width="16" height="15" rx="2" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
-              }
-              @case ('assessment') {
-                <svg viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="6.5" />
-                  <path d="M20 20l-4.2-4.2" />
-                </svg>
-              }
-              @default {
-                <svg viewBox="0 0 24 24">
-                  <rect x="3.5" y="5" width="17" height="14" rx="2" />
-                  <path d="M4 6.5l8 6 8-6" />
-                </svg>
-              }
-            }
-          </span>
-          <span class="item-body">
-            <span class="item-title">{{ item.title }}</span>
-            <span class="item-context"
-              ><span class="item-ref">{{ item.reference }}</span> · {{ item.context }}</span
-            >
-          </span>
-          <span class="item-due" [attr.data-urgency]="item.urgency">{{ item.due }}</span>
-          <svg class="item-chevron" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 6l6 6-6 6" />
-          </svg>
-        </li>
-      }
-    </ul>
-  } @else {
-    <div class="queue-empty">
-      <svg class="empty-crest" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-        <rect
-          x="2"
-          y="2"
-          width="60"
-          height="60"
-          rx="16"
-          fill="#e6f4ec"
-          stroke="#1c7a51"
-          stroke-width="3"
-        />
-        <path
-          d="M18 33l9 9 19-20"
-          stroke="#1c7a51"
-          stroke-width="5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-      <p class="empty-title">Todo al día</p>
-      <p class="empty-copy">
-        No tienes ninguna acción pendiente ahora mismo. Si se te asigna un caso o una tarea,
-        aparecerá aquí al instante.
-      </p>
+  <section class="dashboard">
+    <div class="dashboard-heading">
+      <p class="eyebrow">Resumen del centro</p>
+      <h1>Hola, {{ current.firstName }}</h1>
+      <p class="scope-note">{{ current.scopeNote }}</p>
     </div>
-  }
 
-  <section class="panorama">
-    <h3>Panorama general</h3>
-    <div class="panorama-row">
+    <section class="operational-summary" aria-label="Resumen del trabajo asignado">
       @for (metric of current.panorama; track metric.label) {
-        <div class="metric">
-          <span class="metric-value">{{ metric.value }}</span>
-          <span class="metric-label">{{ metric.label }}</span>
+        <div class="metric" [class.attention]="metric.attention">
+          <span>{{ metric.label }}</span>
+          <strong>{{ metric.value }}</strong>
+        </div>
+      }
+    </section>
+
+    <div class="card-heading">
+      <div>
+        <p class="eyebrow">Necesitas actuar</p>
+        <h2>
+          @if (current.queue.length) {
+            {{ current.queue.length }} {{ current.queue.length === 1 ? 'acción' : 'acciones' }}
+            pendientes
+          } @else {
+            Sin acciones pendientes
+          }
+        </h2>
+      </div>
+      @if (current.queue.length) {
+        <a href="#">Ver todas</a>
+      }
+    </div>
+
+    <div class="queue-card">
+      @if (current.queue.length) {
+        <ul>
+          @for (item of current.queue; track item.reference) {
+            <li>
+              <a href="#">
+                <span class="item-copy">
+                  <span class="item-title">{{ item.title }}</span>
+                  <span>{{ item.reference }} &middot; {{ item.context }}</span>
+                </span>
+                <span class="due" [class]="'due ' + item.urgency">{{ item.due }}</span>
+                <span class="arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="state empty">
+          <span aria-hidden="true">&#10003;</span>
+          <h3>Todo al día</h3>
+          <p>
+            No tienes ninguna acción pendiente ahora mismo. Si se te asigna un caso o una tarea,
+            aparecerá aquí.
+          </p>
         </div>
       }
     </div>

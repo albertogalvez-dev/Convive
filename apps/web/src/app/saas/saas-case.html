@@ -1,105 +1,97 @@
-<app-saas-shell
-  ribbon="#527 — espacio de trabajo del caso. Cabecera fija + próximos pasos + una sola historia filtrable, nunca pestañas (P-5). Datos ficticios."
-  personName="Iker Bilbao"
-  centreName="IES Aula Abierta"
->
-  <a href="#" class="back">&larr; Volver a casos</a>
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="case">
+    <a class="back" href="#">&lsaquo; Volver a casos</a>
 
-  <header class="case-header">
-    <div class="case-title">
-      <p class="eyebrow">Caso · CASO-0130</p>
-      <h1>Convivencia entre iguales — posible acoso</h1>
-    </div>
-    <span class="state-chip">Activo · en gestión</span>
-  </header>
-  <div class="case-meta">
-    <span>Responsable: <strong>Iker Bilbao</strong></span>
-    <span>Colaboran: <strong>Marina Ortiz</strong></span>
-    <span>Abierto: <strong>28 de agosto de 2026</strong></span>
-  </div>
-  <div class="people-refs">
-    <span class="ref-chip">Alumno A (2.º A)</span>
-    <span class="ref-chip">Alumno B (2.º A)</span>
-  </div>
-  <p class="guidance-line">
-    Guía aplicable: <a href="#">Protocolo de Andalucía (revisado 12/08/2026) — ver</a>
-  </p>
+    <header class="case-heading">
+      <div>
+        <p class="eyebrow">Caso CASO-0130</p>
+        <h1>Seguimiento del caso</h1>
+        <p class="case-subtitle">
+          IES Aula Abierta &middot; Convivencia entre iguales &middot; Presencial
+        </p>
+      </div>
+      <div class="case-chips">
+        <span class="role">Responsable</span>
+        <span class="status active">Activo</span>
+      </div>
+    </header>
 
-  <section class="steps">
-    <h2>Próximos pasos</h2>
-    <ul>
-      @for (step of steps; track step.title) {
-        <li [attr.data-urgency]="step.urgency">
-          <span class="step-body">
-            <span class="step-title">{{ step.title }}</span>
-            <span class="step-source">{{ step.source }}</span>
-          </span>
-          <span class="step-due" [attr.data-urgency]="step.urgency">{{ step.due }}</span>
-        </li>
-      }
-    </ul>
-  </section>
+    <section class="operational-summary" aria-label="Resumen del caso">
+      <div class="metric"><span>Tareas pendientes</span><strong>3</strong></div>
+      <div class="metric attention"><span>Fuera de plazo</span><strong>1</strong></div>
+      <div class="metric"><span>Personas vinculadas</span><strong>2</strong></div>
+      <div class="metric"><span>Documentos</span><strong>1</strong></div>
+    </section>
 
-  <div class="story-filters" role="tablist" aria-label="Filtrar la historia del caso">
-    @for (option of filters; track option.key) {
-      <button
-        type="button"
-        role="tab"
-        [attr.aria-selected]="filter() === option.key"
-        [class.active]="filter() === option.key"
-        (click)="setFilter(option.key)"
-      >
-        {{ option.label }}
-      </button>
-    }
-  </div>
-
-  <ol class="story">
-    @for (entry of story(); track $index) {
-      <li class="entry" [attr.data-kind]="entry.kind">
-        <span class="entry-icon" aria-hidden="true">
-          @switch (entry.kind) {
-            @case ('task') {
-              <svg viewBox="0 0 24 24">
-                <rect x="4" y="4.5" width="16" height="15" rx="2" />
-                <path d="M9 12l2 2 4-4" />
-              </svg>
-            }
-            @case ('communication') {
-              <svg viewBox="0 0 24 24">
-                <rect x="3.5" y="5" width="17" height="14" rx="2" />
-                <path d="M4 6.5l8 6 8-6" />
-              </svg>
-            }
-            @case ('discussion') {
-              <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 3V5Z" /></svg>
-            }
-            @case ('evidence') {
-              <svg viewBox="0 0 24 24">
-                <path d="M8 4h6l4 4v12H8V4Z" />
-                <path d="M14 4v4h4" />
-              </svg>
-            }
-            @default {
-              <svg viewBox="0 0 24 24">
-                <path d="M4 5h16v14H4z" />
-                <path d="M8 9h8M8 13h5" />
-              </svg>
-            }
-          }
-        </span>
-        <div class="entry-body">
-          <div class="entry-head">
-            <span class="entry-actor">{{ entry.actor }}</span>
-            <span class="entry-tag">{{ entry.tag }}</span>
-            <span class="entry-time">{{ entry.time }}</span>
-          </div>
-          <p class="entry-text">{{ entry.body }}</p>
-          @if (entry.reporterVisible) {
-            <span class="reporter-visible">Visible para quien reportó</span>
-          }
+    <section class="panel steps-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Próximas acciones</p>
+          <h2>Tareas</h2>
         </div>
-      </li>
-    }
-  </ol>
+        <a href="#">Añadir tarea</a>
+      </div>
+      <ul class="task-list">
+        @for (step of steps; track step.title) {
+          <li [class.overdue]="step.urgency === 'overdue'">
+            <div class="task-topline">
+              <span class="task-title">{{ step.title }}</span>
+              <span class="task-status" [class]="'task-status ' + step.urgency">{{
+                step.due
+              }}</span>
+            </div>
+            <p class="task-meta">
+              Responsable: {{ step.owner }} &middot; Objetivo: {{ step.target }}
+            </p>
+            @if (step.source) {
+              <div class="source">
+                <span class="authority">{{ step.source.authority }}</span>
+                <a href="#">{{ step.source.title }}</a>
+                <small>{{ step.source.reference }}</small>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="panel story-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Historia del caso</p>
+          <h2>Todo lo que ha pasado</h2>
+        </div>
+      </div>
+
+      <div class="story-filters" role="tablist" aria-label="Filtrar la historia">
+        @for (option of filters; track option.key) {
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="filter() === option.key"
+            [class.active]="filter() === option.key"
+            (click)="setFilter(option.key)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+
+      <ol class="story">
+        @for (entry of story(); track $index) {
+          <li>
+            <div class="entry-topline">
+              <span class="entry-actor">{{ entry.actor }}</span>
+              <span class="stage">{{ entry.tag }}</span>
+              <time>{{ entry.time }}</time>
+            </div>
+            <p class="entry-text">{{ entry.body }}</p>
+            @if (entry.reporterVisible) {
+              <span class="reporter-visible">Visible para quien comunicó</span>
+            }
+          </li>
+        }
+      </ol>
+    </section>
+  </section>
 </app-saas-shell>

@@ -1,12 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /**
- * SaaS 2.0 — account onboarding (issue #511, expectations T-1 / T-12 / T-9).
- * Sign-up, the pre-centre empty state, and account settings. Real screen for
- * owner review; fictional data. The view switcher is a review aid.
+ * SaaS 2.0 — account screens (issue #511, expectations T-1 / T-12 / T-9).
+ * Sign-up, the account before any centre, and account settings. Each view is
+ * its own route. Fictional data.
  */
 
-type OnboardingView = 'signup' | 'empty' | 'settings';
+export type OnboardingView = 'signup' | 'empty' | 'settings';
 
 @Component({
   selector: 'app-saas-onboarding',
@@ -15,14 +16,6 @@ type OnboardingView = 'signup' | 'empty' | 'settings';
   styleUrl: './saas-onboarding.scss',
 })
 export class SaasOnboarding {
-  protected readonly view = signal<OnboardingView>('signup');
-  protected readonly views: readonly { key: OnboardingView; label: string }[] = [
-    { key: 'signup', label: 'Registro' },
-    { key: 'empty', label: 'Cuenta sin centro' },
-    { key: 'settings', label: 'Ajustes de cuenta' },
-  ];
-
-  protected setView(key: OnboardingView): void {
-    this.view.set(key);
-  }
+  protected readonly view: OnboardingView =
+    (inject(ActivatedRoute).snapshot.data['view'] as OnboardingView) ?? 'signup';
 }

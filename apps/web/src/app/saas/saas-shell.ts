@@ -8,9 +8,9 @@ export interface DemoRoleOption {
 }
 
 /**
- * Shared shell for the SaaS 2.0 professional-side review screens (#508, #513,
- * #526, #527). Real design system; fictional content. The demo role picker is a
- * review aid and emits (roleChange); it is not part of the real product.
+ * Shared professional-area shell for the SaaS 2.0 screens (#508, #513, #526,
+ * #527). Mirrors the delivered professional portal shell: sticky collapsible
+ * sidebar on desktop, header navigation on mobile.
  */
 @Component({
   selector: 'app-saas-shell',
@@ -20,7 +20,6 @@ export interface DemoRoleOption {
   styleUrl: './saas-shell.scss',
 })
 export class SaasShell {
-  readonly ribbon = input.required<string>();
   readonly personName = input.required<string>();
   readonly centreName = input.required<string>();
   readonly unread = input<number>(0);

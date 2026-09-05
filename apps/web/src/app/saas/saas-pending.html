@@ -1,65 +1,111 @@
-<app-saas-shell
-  ribbon="#526 — pendientes y avisos. Pantalla propia con filtro/orden/agrupación (P-2). El panel de #508 solo muestra una vista corta. Datos ficticios."
-  personName="Iker Bilbao"
-  centreName="IES Aula Abierta"
-  [unread]="3"
->
-  <div class="toolbar">
-    <h1>Pendientes</h1>
-    <div class="controls">
-      <button type="button" class="chip active">Agrupar por caso</button>
-      <button type="button" class="chip">Agrupar por tipo</button>
-      <button type="button" class="chip">Orden: vencimiento</button>
-      <button type="button" class="chip">Filtrar</button>
-    </div>
-  </div>
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="cases">
+    <header class="cases-heading">
+      <div>
+        <p class="eyebrow">Trabajo asignado</p>
+        <h1>Pendientes</h1>
+      </div>
+      <a class="overview-export" href="#">Descargar resumen PDF</a>
+    </header>
 
-  @for (group of groups; track group.heading) {
-    <p class="group-heading">{{ group.heading }}</p>
-    <ul class="rows">
-      @for (item of group.items; track item.title) {
-        <li class="row" [attr.data-urgency]="item.urgency">
-          <span class="kind">{{ item.reference }}</span>
-          <span class="body">
-            <span class="title">{{ item.title }}</span>
-            <span class="context">{{ item.context }}</span>
-          </span>
-          <span class="due" [attr.data-urgency]="item.urgency">{{ item.due }}</span>
-          <button type="button" class="open">Abrir</button>
-        </li>
+    <section class="operational-summary" aria-label="Resumen operativo">
+      @for (option of views; track option.key) {
+        <button
+          type="button"
+          [class.selected]="view() === option.key"
+          [class.attention]="option.attention"
+          (click)="selectView(option.key)"
+        >
+          <span>{{ option.label }}</span
+          ><strong>{{ option.count }}</strong>
+        </button>
       }
-    </ul>
-  }
+    </section>
 
-  <section class="notifications">
-    <h2>Sistema de avisos</h2>
-    <p class="notif-note">
-      Entrega en vivo dentro de la aplicación (no se puede desactivar del todo), más correo y
-      notificación web opcionales por tipo de evento — ambos disponibles desde el primer día. Fuera
-      de la aplicación, el aviso solo dice que hay algo que revisar: nunca contiene detalle del
-      caso, nombres ni un enlace que salte el canal seguro.
-    </p>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Evento</th>
-            <th>En la app</th>
-            <th>Correo</th>
-            <th>Web push</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (event of eventTypes; track event.label) {
-            <tr>
-              <td>{{ event.label }}</td>
-              <td class="always">{{ event.live }}</td>
-              <td>{{ event.email }}</td>
-              <td>{{ event.push }}</td>
-            </tr>
+    <form class="case-filters" (ngSubmit)="$event.preventDefault()" aria-label="Filtrar pendientes">
+      <label>
+        <span>Referencia</span>
+        <input type="search" maxlength="64" />
+      </label>
+      <label>
+        <span>Tipo</span>
+        <select>
+          <option>Todos</option>
+          <option>Tareas del protocolo</option>
+          <option>Comunicaciones sin valorar</option>
+          <option>Seguimientos</option>
+        </select>
+      </label>
+      <label>
+        <span>Agrupar por</span>
+        <select>
+          <option>Caso</option>
+          <option>Tipo</option>
+          <option>Vencimiento</option>
+        </select>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" />
+        <span>Solo fuera de plazo</span>
+      </label>
+      <button type="submit">Aplicar</button>
+    </form>
+
+    @for (group of groups(); track group.heading) {
+      <p class="group-heading">{{ group.heading }}</p>
+      <div class="cases-card">
+        <ul>
+          @for (item of group.items; track item.title) {
+            <li>
+              <a href="#">
+                <span class="case-copy">
+                  <span class="case-title">{{ item.title }}</span>
+                  <span>{{ item.context }}</span>
+                </span>
+                <span class="role">{{ item.kind }}</span>
+                <span class="due" [class]="'due ' + item.urgency">{{ item.due }}</span>
+                <span class="arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            </li>
           }
-        </tbody>
-      </table>
-    </div>
+        </ul>
+      </div>
+    }
+
+    <section class="notifications" aria-labelledby="notifications-title">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">Avisos</p>
+          <h2 id="notifications-title">Cómo te avisamos</h2>
+        </div>
+        <a href="#">Preferencias</a>
+      </div>
+      <div class="cases-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>En la aplicación</th>
+              <th>Correo</th>
+              <th>Web push</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of eventTypes; track event.label) {
+              <tr>
+                <td class="event">{{ event.label }}</td>
+                <td class="always">Siempre</td>
+                <td>{{ event.email }}</td>
+                <td>{{ event.push }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="notif-note">
+        Los avisos que salen de la aplicación solo dicen que hay algo que revisar: nunca el
+        contenido del caso, ni nombres, ni un enlace que salte el canal seguro.
+      </p>
+    </section>
   </section>
 </app-saas-shell>

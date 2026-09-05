@@ -1,56 +1,93 @@
 import { Routes } from '@angular/router';
 
 /**
- * SaaS 2.0 owner-review prototype routes. Each screen is a real component built
- * on the real design system, with fictional in-component data, for DR-1 review.
- * A shared index lists every screen so the owner can walk the whole set and
- * judge coherence.
+ * Convive SaaS 2.0 screens. Each screen is a real component on the shared
+ * design system with fictional in-component data, one URL per screen.
  */
 export const SAAS_REVIEW_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    title: 'Prototipos SaaS 2.0',
+    title: 'Convive SaaS 2.0',
     loadComponent: () => import('./saas-review-index').then((m) => m.SaasReviewIndex),
   },
   {
     path: 'panel',
-    title: 'Panel principal · #508',
+    title: 'Inicio profesional',
     loadComponent: () => import('./saas-dashboard').then((m) => m.SaasDashboard),
   },
   {
-    path: 'registro',
-    title: 'Registro y cuenta · #511',
-    loadComponent: () => import('./saas-onboarding').then((m) => m.SaasOnboarding),
-  },
-  {
-    path: 'centro',
-    title: 'Crear centro · #512',
-    loadComponent: () => import('./saas-centre').then((m) => m.SaasCentre),
-  },
-  {
-    path: 'miembros',
-    title: 'Miembros · #513',
-    loadComponent: () => import('./saas-members').then((m) => m.SaasMembers),
-  },
-  {
-    path: 'entrada',
-    title: 'Recorrido de quien reporta · #516-#518',
-    loadComponent: () => import('./saas-reporting').then((m) => m.SaasReporting),
-  },
-  {
     path: 'pendientes',
-    title: 'Pendientes y avisos · #526',
+    title: 'Pendientes',
     loadComponent: () => import('./saas-pending').then((m) => m.SaasPending),
   },
   {
     path: 'caso',
-    title: 'Espacio de trabajo del caso · #527',
+    title: 'Seguimiento del caso',
     loadComponent: () => import('./saas-case').then((m) => m.SaasCase),
   },
   {
-    path: 'export',
-    title: 'Exportación PDF · #543',
+    path: 'miembros',
+    title: 'Miembros',
+    loadComponent: () => import('./saas-members').then((m) => m.SaasMembers),
+  },
+  {
+    path: 'registro',
+    title: 'Crear cuenta',
+    data: { view: 'signup' },
+    loadComponent: () => import('./saas-onboarding').then((m) => m.SaasOnboarding),
+  },
+  {
+    path: 'cuenta',
+    title: 'Tu cuenta',
+    data: { view: 'empty' },
+    loadComponent: () => import('./saas-onboarding').then((m) => m.SaasOnboarding),
+  },
+  {
+    path: 'ajustes',
+    title: 'Ajustes de cuenta',
+    data: { view: 'settings' },
+    loadComponent: () => import('./saas-onboarding').then((m) => m.SaasOnboarding),
+  },
+  {
+    path: 'centro',
+    title: 'Crear centro',
+    data: { view: 'create' },
+    loadComponent: () => import('./saas-centre').then((m) => m.SaasCentre),
+  },
+  {
+    path: 'centro-identidad',
+    title: 'Identidad del centro',
+    data: { view: 'identity' },
+    loadComponent: () => import('./saas-centre').then((m) => m.SaasCentre),
+  },
+  {
+    path: 'entrada',
+    title: 'Comunicación',
+    data: { screen: 'form' },
+    loadComponent: () => import('./saas-reporting').then((m) => m.SaasReporting),
+  },
+  {
+    path: 'entrada-confirmacion',
+    title: 'Comunicación enviada',
+    data: { screen: 'result' },
+    loadComponent: () => import('./saas-reporting').then((m) => m.SaasReporting),
+  },
+  {
+    path: 'entrada-revocada',
+    title: 'Enlace no disponible',
+    data: { screen: 'revoked' },
+    loadComponent: () => import('./saas-reporting').then((m) => m.SaasReporting),
+  },
+  {
+    path: 'cartel',
+    title: 'Cartel del centro',
+    data: { screen: 'poster' },
+    loadComponent: () => import('./saas-reporting').then((m) => m.SaasReporting),
+  },
+  {
+    path: 'documento',
+    title: 'Ficha de caso',
     loadComponent: () => import('./saas-export').then((m) => m.SaasExport),
   },
 ];

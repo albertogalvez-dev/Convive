@@ -1,81 +1,144 @@
-<div class="review-bar">
-  <span class="ribbon-tag">Propuesta · DR-1</span>
-  <span
-    >#543 — exportación PDF (P-15). Sin marca de Convive. Elige la línea de trazabilidad. Datos
-    ficticios.</span
-  >
-</div>
-
 <div class="toolbar">
   <span class="control">
-    Logotipo del centro:
-    <button type="button" [class.active]="withLogo()" (click)="setLogo(true)">Con logo</button>
-    <button type="button" [class.active]="!withLogo()" (click)="setLogo(false)">Sin logo</button>
+    <span class="control-label">Logotipo del centro</span>
+    <button type="button" [class.active]="withLogo()" (click)="setLogo(true)">Con logotipo</button>
+    <button type="button" [class.active]="!withLogo()" (click)="setLogo(false)">
+      Sin logotipo
+    </button>
   </span>
   <span class="control">
-    Trazabilidad:
+    <span class="control-label">Línea de trazabilidad</span>
     <button type="button" [class.active]="trace() === 'footer'" (click)="setTrace('footer')">
-      A · Pie de página
+      Pie de página
     </button>
     <button type="button" [class.active]="trace() === 'corner'" (click)="setTrace('corner')">
-      B · Esquina superior
+      Junto al título
     </button>
   </span>
 </div>
 
 <div class="frame">
-  <article class="page" [class.no-logo]="!withLogo()">
-    @if (trace() === 'corner') {
-      <p class="trace-corner">IES Aula Abierta · Generado 05/09/2026</p>
-    }
-
+  <article class="page">
     <header class="doc-head">
       <div>
-        <p class="doc-kicker">Ficha de caso · CASO-0130</p>
-        <h1>Convivencia entre iguales — posible acoso</h1>
+        <p class="doc-kicker">Registro protegido</p>
+        <h1>Ficha de caso</h1>
+        <p class="description">
+          CASO-0130 &middot; Convivencia entre iguales &middot; IES Aula Abierta
+        </p>
+        @if (trace() === 'corner') {
+          <p class="trace-corner">Generado el 5 de septiembre de 2026 &middot; IES Aula Abierta</p>
+        }
       </div>
       @if (withLogo()) {
-        <span class="logo-slot" aria-hidden="true">Logo del centro</span>
+        <span class="centre-logo" aria-hidden="true">Logotipo<br />del centro</span>
       }
     </header>
 
-    <div class="grid">
-      <div class="pair"><span class="k">Centro</span><span class="v">IES Aula Abierta</span></div>
-      <div class="pair">
-        <span class="k">Estado</span><span class="v">Activo · en gestión</span>
-      </div>
-      <div class="pair"><span class="k">Responsable</span><span class="v">Iker Bilbao</span></div>
-      <div class="pair">
-        <span class="k">Abierto</span><span class="v">28 de agosto de 2026</span>
-      </div>
+    <div class="summary">
+      <div><span>Estado</span><strong>Activo · en gestión</strong></div>
+      <div><span>Responsable</span><strong>Iker Bilbao</strong></div>
+      <div><span>Abierto</span><strong>28 de agosto de 2026</strong></div>
+      <div><span>Ámbito</span><strong>Presencial</strong></div>
+      <div><span>Personas vinculadas</span><strong>2 referencias minimizadas</strong></div>
+      <div><span>Protocolo aplicable</span><strong>Andalucía · BOJA 132/2011</strong></div>
     </div>
 
-    <hr />
-    <h2>Pasos procedimentales</h2>
-    <div class="line">
-      <span>Comunicar a inspección educativa</span><span>Vencido — 04/09/2026</span>
-    </div>
-    <div class="line"><span>Reunión con las familias</span><span>05/09/2026</span></div>
-    <div class="line"><span>Seguimiento a dos semanas</span><span>19/09/2026</span></div>
+    <table class="metric-grid">
+      <tbody>
+        <tr>
+          <td><span>Tareas pendientes</span><strong>3</strong></td>
+          <td class="attention"><span>Fuera de plazo</span><strong>1</strong></td>
+          <td><span>Documentos</span><strong>1</strong></td>
+        </tr>
+      </tbody>
+    </table>
 
-    <hr />
-    <h2>Registro de comunicaciones</h2>
-    <div class="line">
-      <span>Contacto telefónico — familia del Alumno A</span><span>29/08/2026</span>
-    </div>
+    <h2>Tareas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Actuación</th>
+          <th>Responsable</th>
+          <th>Objetivo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Comunicar a inspección educativa</td>
+          <td>Iker Bilbao</td>
+          <td>04/09/2026</td>
+          <td>Fuera de plazo</td>
+        </tr>
+        <tr>
+          <td>Reunión con las familias</td>
+          <td>Iker Bilbao</td>
+          <td>05/09/2026</td>
+          <td>Pendiente</td>
+        </tr>
+        <tr>
+          <td>Seguimiento a dos semanas</td>
+          <td>Marina Ortiz</td>
+          <td>19/09/2026</td>
+          <td>Pendiente</td>
+        </tr>
+      </tbody>
+    </table>
 
-    <p class="page-number">1 / 1</p>
+    <h2>Comunicaciones registradas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Destinatario</th>
+          <th>Medio</th>
+          <th>Registrada por</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>29/08/2026</td>
+          <td>Familia · Alumno A</td>
+          <td>Teléfono</td>
+          <td>Iker Bilbao</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Registro de actividad</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Acción</th>
+          <th>Autor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>28/08/2026</td>
+          <td>Caso creado a partir de una comunicación</td>
+          <td>Iker Bilbao</td>
+        </tr>
+        <tr>
+          <td>28/08/2026</td>
+          <td>Profesional asignado</td>
+          <td>Iker Bilbao</td>
+        </tr>
+        <tr>
+          <td>30/08/2026</td>
+          <td>Nota interna añadida</td>
+          <td>Marina Ortiz</td>
+        </tr>
+      </tbody>
+    </table>
+
     @if (trace() === 'footer') {
       <p class="trace-footer">
-        Generado desde Convive el 05/09/2026 · IES Aula Abierta · Documento de trabajo del centro,
-        sin persistencia en Convive.
+        Generado el 5 de septiembre de 2026 &middot; IES Aula Abierta &middot; Documento de trabajo
+        del centro
       </p>
     }
   </article>
 </div>
-
-<p class="explainer">
-  Opción A: línea completa en el pie. Opción B: referencia breve en la esquina superior. Ninguna
-  incluye marca ni color de Convive; el documento se lee como propio del centro. El logotipo del
-  centro (si se subió en C-3) aparece arriba a la derecha; si no, el espacio queda en blanco.
-</p>
