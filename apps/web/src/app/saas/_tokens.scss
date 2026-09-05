@@ -1,0 +1,49 @@
+// Convive SaaS 2.0 — shared design tokens.
+//
+// The delivered professional area hard-codes these values in every component
+// stylesheet. Collecting them here keeps the SaaS screens consistent and makes
+// a later palette change a single edit.
+
+// Ink
+$ink-900: #102b60; // headings, figures
+$ink-800: #172b57; // body on light, primary buttons
+$ink-600: #40587d; // labels
+$ink-500: #55688a; // secondary copy
+$ink-400: #66789a; // supporting copy
+$ink-300: #8496b0; // metadata
+
+// Accent
+$accent: #176f9c; // links and eyebrows
+$accent-bright: #1aa2da; // rails and active indicators
+$accent-tint: #e9f5fa;
+$accent-tint-strong: #edf8fc;
+$accent-ink: #0b78a7;
+
+// Surfaces
+$surface: #fff;
+$surface-sunk: #f8fafd;
+$page: #f5f8fc;
+
+// Lines
+$line: #d4dfed;
+$line-soft: #e6ecf5;
+$line-faint: #eef2f8;
+$line-strong: #b8c9df;
+
+// Status
+$danger: #d52949;
+$danger-ink: #a3243c;
+$danger-tint: #fdecef;
+$warning: #e0a325;
+$warning-ink: #8b5b0b;
+$warning-tint: #fff5dd;
+$success-ink: #16775f;
+$success-tint: #eaf7f2;
+
+// Shape
+$radius-lg: 1rem;
+$radius-md: 0.85rem;
+$radius-sm: 0.6rem;
+$radius-pill: 999px;
+$shadow-card: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
+$focus-ring: 3px solid #8bd4f2;

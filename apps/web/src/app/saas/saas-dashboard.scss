@@ -1,19 +1,22 @@
+@use 'tokens' as *;
+
 .dashboard {
-  max-width: 62rem;
+  max-width: 60rem;
   margin: 0 auto;
 }
 
-/* ---- heading ---- */
-.dashboard-heading {
+/* Heading -------------------------------------------------------------- */
+
+.page-heading {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.6rem;
 }
 .eyebrow {
   margin: 0 0 0.4rem;
-  color: #176f9c;
+  color: $accent;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -21,146 +24,135 @@
 }
 h1 {
   margin: 0;
-  color: #102b60;
+  color: $ink-900;
   font-size: clamp(1.9rem, 4vw, 2.4rem);
   letter-spacing: -0.04em;
 }
-.today-date {
+.today {
   margin: 0;
-  text-transform: none;
-  color: #7086a5;
+  color: $ink-400;
   font-size: 0.85rem;
   font-weight: 700;
+  text-transform: none;
   white-space: nowrap;
 }
 
-/* ---- triage ---- */
-.triage {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
-  margin-bottom: 1.5rem;
-}
-.triage-card {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  overflow: hidden;
-  border: 1px solid #d5e0ed;
-  border-radius: 0.85rem;
-  padding: 0.95rem 1.1rem;
-  background: #fff;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color 120ms ease,
-    background 120ms ease;
-}
-.triage-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 0.28rem;
-}
-.triage-card.overdue::before {
-  background: #d52949;
-}
-.triage-card.today::before {
-  background: #e0a325;
-}
-.triage-card.week::before {
-  background: #1aa2da;
-}
-.triage-card strong {
-  color: #102b60;
-  font-size: 1.85rem;
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-.triage-card span {
-  text-transform: none;
-  color: #4d6287;
-  font-size: 0.86rem;
-  font-weight: 750;
-}
-.triage-card:hover {
-  border-color: #9fc4dc;
-  background: #fbfdff;
-}
-.triage-card.selected {
-  border-color: #75c5e3;
-  background: #edf8fc;
-}
-.triage-card.selected span {
-  color: #102b60;
-}
+/* Queue ---------------------------------------------------------------- */
 
-/* ---- queue ---- */
-.queue-card {
+.queue {
   overflow: hidden;
-  border: 1px solid #d4dfed;
-  border-radius: 1rem;
-  background: #fff;
-  box-shadow: 0 1.2rem 2.6rem rgba(32, 62, 111, 0.07);
+  border: 1px solid $line;
+  border-radius: $radius-lg;
+  background: $surface;
+  box-shadow: $shadow-card;
 }
-.card-heading {
+.queue-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem 1.4rem 1.1rem;
-  border-bottom: 1px solid #e1e7f0;
+  padding: 1.3rem 1.4rem 1.1rem;
 }
-.card-heading h2 {
+.queue-head h2 {
   margin: 0;
-  color: #102b60;
+  color: $ink-900;
   font-size: 1.2rem;
 }
-.card-heading a,
-.card-heading .clear {
-  border: 0;
-  padding: 0;
-  background: none;
-  color: #176f9c;
-  font: inherit;
+.queue-head a,
+.activity-head a {
+  color: $accent;
   font-size: 0.83rem;
   font-weight: 800;
   text-decoration: none;
-  cursor: pointer;
 }
 
-.group-label {
+/* Scope tabs: the counts double as the filter, so the figures earn their
+   place instead of restating the list below. */
+.scopes {
+  display: flex;
+  gap: 1.4rem;
+  padding: 0 1.4rem;
+  border-bottom: 1px solid $line-faint;
+  overflow-x: auto;
+}
+.scope {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0.2rem 0 0.75rem;
+  background: none;
+  color: $ink-400;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.scope-count {
+  min-width: 1.4rem;
+  border-radius: $radius-pill;
+  padding: 0.1rem 0.42rem;
+  background: $line-faint;
+  color: $ink-500;
+  font-size: 0.76rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.scope:hover {
+  color: $ink-800;
+}
+.scope.selected {
+  border-bottom-color: $accent-bright;
+  color: $ink-900;
+}
+.scope.overdue.selected {
+  border-bottom-color: $danger;
+}
+.scope.today.selected {
+  border-bottom-color: $warning;
+}
+.scope.overdue .scope-count {
+  background: $danger-tint;
+  color: $danger-ink;
+}
+.scope.today .scope-count {
+  background: $warning-tint;
+  color: $warning-ink;
+}
+
+/* Group separators, shown only when every bucket is listed together. */
+.group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin: 0;
-  padding: 0.6rem 1.4rem;
-  border-bottom: 1px solid #eef2f8;
-  background: #f8fafd;
-  color: #55688a;
+  padding: 0.65rem 1.4rem;
+  border-bottom: 1px solid $line-faint;
+  background: $surface-sunk;
+  color: $ink-500;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.group-label::before {
+.group::before {
   content: '';
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: #1aa2da;
+  background: $accent-bright;
 }
-.group-label.overdue::before {
-  background: #d52949;
+.group.overdue {
+  color: $danger-ink;
 }
-.group-label.today::before {
-  background: #e0a325;
+.group.overdue::before {
+  background: $danger;
 }
-.group-label.overdue {
-  color: #a3243c;
+.group.today::before {
+  background: $warning;
 }
 
 ul {
@@ -168,196 +160,158 @@ ul {
   padding: 0;
   list-style: none;
 }
-.queue-card li + li a {
-  border-top: 1px solid #eef2f8;
-}
-.queue-card li a {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+
+/* Rows: one strong line, one muted line, one deadline. The left rail carries
+   urgency, so the row needs no icon column. */
+.row {
+  display: flex;
   align-items: center;
-  gap: 0.95rem;
+  justify-content: space-between;
+  gap: 1.25rem;
   padding: 0.95rem 1.4rem;
+  border-inline-start: 3px solid transparent;
   text-decoration: none;
 }
-.queue-card li a:hover {
+.queue li + li .row {
+  border-top: 1px solid $line-faint;
+}
+.row:hover {
   background: #f7fbfd;
 }
-.kind {
-  display: grid;
-  place-items: center;
-  width: 2.1rem;
-  height: 2.1rem;
-  flex: none;
-  border-radius: 0.6rem;
-  color: #40587d;
-  background: #eef3f9;
+.row.overdue {
+  border-inline-start-color: $danger;
 }
-.kind svg {
-  width: 1.05rem;
-  height: 1.05rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.9;
+.row.today {
+  border-inline-start-color: $warning;
 }
-.kind.assessment {
-  color: #0b78a7;
-  background: #e6f4fb;
-}
-.kind.followup {
-  color: #4d6287;
-  background: #eef1f7;
-}
-.copy {
+.row-main {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.22rem;
+  gap: 0.25rem;
 }
-.copy strong {
-  color: #102b60;
-  font-size: 0.96rem;
+.row-title {
+  color: $ink-900;
+  font-size: 0.98rem;
   font-weight: 750;
 }
-.copy > span {
-  color: #66789a;
-  font-size: 0.8rem;
+.row-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: $ink-400;
+  font-size: 0.81rem;
+}
+.separator {
+  color: #c3cfe0;
 }
 .reference {
-  color: #8496b0;
-  font-size: 0.74rem;
+  color: $ink-300;
   font-weight: 800;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+  letter-spacing: 0.01em;
 }
-.due {
-  border-radius: 999px;
-  padding: 0.3rem 0.65rem;
-  font-size: 0.73rem;
-  font-weight: 800;
-  white-space: nowrap;
+.row-due {
+  flex: none;
+  color: $ink-500;
+  font-size: 0.82rem;
+  font-weight: 750;
   font-variant-numeric: tabular-nums;
-  color: #16775f;
-  background: #eaf7f2;
+  white-space: nowrap;
 }
-.due.overdue {
-  color: #a3243c;
-  background: #fdecef;
+.row.overdue .row-due {
+  color: $danger-ink;
+  font-weight: 800;
 }
-.due.today {
-  color: #8b5b0b;
-  background: #fff5dd;
+.row.today .row-due {
+  color: $warning-ink;
+  font-weight: 800;
 }
 
-.queue-empty {
+.empty {
+  margin: 0;
   padding: 2.6rem 1.4rem;
+  color: $ink-400;
+  font-size: 0.9rem;
   text-align: center;
 }
-.queue-empty p {
-  margin: 0;
-  color: #66789a;
-  font-size: 0.88rem;
-}
-.queue-empty strong {
-  display: block;
-  margin-bottom: 0.3rem;
-  color: #102b60;
-  font-size: 1rem;
-}
 
-/* ---- activity (deliberately quieter) ---- */
+/* Activity: deliberately quieter than the work above. ------------------- */
+
 .activity {
   margin-top: 2.2rem;
 }
-.activity-heading {
+.activity-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
-.activity-heading h2 {
+.activity-head h2 {
   margin: 0;
-  color: #55688a;
+  color: $ink-500;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.activity-heading a {
-  color: #176f9c;
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-decoration: none;
-}
 .activity li + li a {
-  border-top: 1px solid #e6ecf5;
+  border-top: 1px solid $line-soft;
 }
-.activity li a {
+.activity a {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.6rem;
   padding: 0.7rem 0;
   text-decoration: none;
 }
-.activity .copy {
-  flex-direction: row;
-  align-items: baseline;
-  gap: 0.55rem;
-}
-.activity .copy strong {
+.activity-title {
+  color: $ink-800;
   font-size: 0.88rem;
   font-weight: 700;
 }
-.activity .copy > span {
-  color: #8496b0;
-  font-size: 0.76rem;
-  font-weight: 800;
+.activity time {
+  margin-inline-start: auto;
+  color: $ink-300;
+  font-size: 0.78rem;
   white-space: nowrap;
 }
-.activity time {
-  color: #8496b0;
+.activity .reference {
   font-size: 0.76rem;
-  white-space: nowrap;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: $focus-ring;
+  outline-offset: -3px;
 }
 
 @media (max-width: 52rem) {
-  .dashboard-heading {
+  .page-heading {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
-  .triage {
-    grid-template-columns: 1fr;
-    gap: 0.55rem;
-  }
-  .triage-card {
-    padding: 0.8rem 1rem;
-  }
-  .triage-card strong {
-    font-size: 1.5rem;
-  }
-  .queue-card li a {
-    grid-template-columns: auto minmax(0, 1fr);
-    row-gap: 0.55rem;
-    padding: 0.9rem 1.1rem;
-  }
-  .reference,
-  .due {
-    grid-column: 2;
-    justify-self: start;
-  }
-  .due {
-    grid-row: 3;
-  }
-  .group-label,
-  .card-heading {
+  .queue-head,
+  .scopes,
+  .group,
+  .row {
     padding-inline: 1.1rem;
   }
-  .activity .copy {
+  .row {
+    align-items: flex-start;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.45rem;
+  }
+  .row-due {
+    order: -1;
+  }
+  .activity a {
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+  }
+  .activity time {
+    margin-inline-start: 0;
+    flex-basis: 100%;
   }
 }
