@@ -57,3 +57,4 @@ gap for someone to close conveniently.
 | [Real-email delivery and notification operations](email-delivery-operations.md) | Whether a pilot needs email at all, and what would have to be true before a single message left the system |
 | [Incident response and safeguarding escalation](incident-and-safeguarding-playbooks.md) | What happens when the software is working perfectly and someone is harmed anyway |
 | [Pilot onboarding, training and support](pilot-onboarding-and-support.md) | What a centre would need to know before depending on this, and what it must never be told |
+| [SaaS 2.0 real-data readiness gate](saas-2.0-readiness-gate.md) | The consolidated per-centre checklist #537/#538 evaluate, tying the documents above to the SaaS 2.0 product charter's multi-tenant model |
