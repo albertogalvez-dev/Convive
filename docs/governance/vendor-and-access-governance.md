@@ -8,6 +8,14 @@ arrangement exists, and no vendor below is approved for real data.**
 **Review trigger:** whenever a provider, region, subprocessor or administrative
 access path changes, and before any real-data pilot is evaluated.
 
+**This inventory covers the delivered fictional demo only.** Convive SaaS 2.0
+has its own, separate infrastructure inventory (isolated OVH VPS project,
+external EU object storage, external EU transactional email), decided in
+**ADR-0030** and `docs/product/saas-2.0-charter.md` §9.1/§4.4, and its own
+readiness gate in
+[saas-2.0-readiness-gate.md](saas-2.0-readiness-gate.md). Do not assume this
+document's table covers SaaS 2.0's providers.
+
 Read [the directory README](README.md) first. This document supplies the vendor
 facts that [the controller decisions](controller-and-processing-decisions.md)
 defer to at D-08.
