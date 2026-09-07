@@ -1,0 +1,111 @@
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="cases">
+    <header class="cases-heading">
+      <div>
+        <p class="eyebrow">Trabajo asignado</p>
+        <h1>Pendientes</h1>
+      </div>
+      <a class="overview-export" href="#">Descargar resumen PDF</a>
+    </header>
+
+    <section class="operational-summary" aria-label="Resumen operativo">
+      @for (option of views; track option.key) {
+        <button
+          type="button"
+          [class.selected]="view() === option.key"
+          [class.attention]="option.attention"
+          (click)="selectView(option.key)"
+        >
+          <span>{{ option.label }}</span
+          ><strong>{{ option.count }}</strong>
+        </button>
+      }
+    </section>
+
+    <form class="case-filters" (ngSubmit)="$event.preventDefault()" aria-label="Filtrar pendientes">
+      <label>
+        <span>Referencia</span>
+        <input type="search" maxlength="64" />
+      </label>
+      <label>
+        <span>Tipo</span>
+        <select>
+          <option>Todos</option>
+          <option>Tareas del protocolo</option>
+          <option>Comunicaciones sin valorar</option>
+          <option>Seguimientos</option>
+        </select>
+      </label>
+      <label>
+        <span>Agrupar por</span>
+        <select>
+          <option>Caso</option>
+          <option>Tipo</option>
+          <option>Vencimiento</option>
+        </select>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" />
+        <span>Solo fuera de plazo</span>
+      </label>
+      <button type="submit">Aplicar</button>
+    </form>
+
+    @for (group of groups(); track group.heading) {
+      <p class="group-heading">{{ group.heading }}</p>
+      <div class="cases-card">
+        <ul>
+          @for (item of group.items; track item.title) {
+            <li>
+              <a href="#">
+                <span class="case-copy">
+                  <span class="case-title">{{ item.title }}</span>
+                  <span>{{ item.context }}</span>
+                </span>
+                <span class="role">{{ item.kind }}</span>
+                <span class="due" [class]="'due ' + item.urgency">{{ item.due }}</span>
+                <span class="arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <section class="notifications" aria-labelledby="notifications-title">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">Avisos</p>
+          <h2 id="notifications-title">Cómo te avisamos</h2>
+        </div>
+        <a href="#">Preferencias</a>
+      </div>
+      <div class="cases-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>En la aplicación</th>
+              <th>Correo</th>
+              <th>Web push</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of eventTypes; track event.label) {
+              <tr>
+                <td class="event">{{ event.label }}</td>
+                <td class="always">Siempre</td>
+                <td>{{ event.email }}</td>
+                <td>{{ event.push }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="notif-note">
+        Los avisos que salen de la aplicación solo dicen que hay algo que revisar: nunca el
+        contenido del caso, ni nombres, ni un enlace que salte el canal seguro.
+      </p>
+    </section>
+  </section>
+</app-saas-shell>

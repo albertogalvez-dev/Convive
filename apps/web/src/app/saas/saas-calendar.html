@@ -1,0 +1,132 @@
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="calendar">
+    <header class="page-heading">
+      <h1>Mi agenda</h1>
+      <p class="summary">Tu trabajo con plazo y lo que apuntes tú. Solo tú ves esta agenda.</p>
+    </header>
+
+    <div class="board">
+      <!-- Month grid -->
+      <div class="month">
+        <div class="month-bar">
+          <button type="button" class="nav" (click)="shiftMonth(-1)" aria-label="Mes anterior">
+            &lsaquo;
+          </button>
+          <p class="month-label">{{ monthLabel() }}</p>
+          <button type="button" class="nav" (click)="shiftMonth(1)" aria-label="Mes siguiente">
+            &rsaquo;
+          </button>
+        </div>
+
+        <div class="weekday-row">
+          @for (day of weekdays; track day) {
+            <span>{{ day }}</span>
+          }
+        </div>
+
+        <div class="grid">
+          @for (week of weeks(); track $index) {
+            @for (cell of week; track cell.date.getTime()) {
+              <button
+                type="button"
+                class="cell"
+                [class.out]="!cell.inMonth"
+                [class.today]="cell.isToday"
+                [class.selected]="
+                  selectedLabel() &&
+                  cell.date.getDate() === selectedDate().getDate() &&
+                  cell.inMonth
+                "
+                (click)="selectDay(cell.date)"
+              >
+                <span class="cell-num">{{ cell.date.getDate() }}</span>
+                @if (cell.entries.length) {
+                  <span class="cell-entries">
+                    @for (entry of cell.entries.slice(0, 3); track $index) {
+                      <span class="dot" [class]="'dot ' + entry.kind"></span>
+                    }
+                    @if (cell.entries.length > 3) {
+                      <span class="more">+{{ cell.entries.length - 3 }}</span>
+                    }
+                  </span>
+                }
+              </button>
+            }
+          }
+        </div>
+
+        <p class="legend">
+          <span><span class="dot task"></span> Tarea del protocolo</span>
+          <span><span class="dot assessment"></span> Comunicación</span>
+          <span><span class="dot followup"></span> Seguimiento</span>
+          <span><span class="dot personal"></span> Tú lo apuntaste</span>
+        </p>
+      </div>
+
+      <!-- Selected day -->
+      <aside class="day">
+        <p class="day-label">{{ selectedLabel() }}</p>
+
+        @if (selectedEntries().length) {
+          <ul class="day-entries">
+            @for (entry of selectedEntries(); track $index) {
+              <li>
+                <span class="entry-time">{{ entry.time }}</span>
+                <span class="entry-body">
+                  <span class="entry-title">{{ entry.title }}</span>
+                  <span class="entry-tag" [class]="'entry-tag ' + entry.kind">
+                    @switch (entry.kind) {
+                      @case ('task') {
+                        Tarea · {{ entry.reference }}
+                      }
+                      @case ('assessment') {
+                        Comunicación · {{ entry.reference }}
+                      }
+                      @case ('followup') {
+                        Seguimiento · {{ entry.reference }}
+                      }
+                      @default {
+                        Personal
+                      }
+                    }
+                  </span>
+                </span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="day-empty">No tienes nada este día.</p>
+        }
+
+        <form class="add" (submit)="$event.preventDefault(); addEntry()">
+          <p class="add-title">Apuntar algo</p>
+          <div class="add-fields">
+            <input
+              type="date"
+              [value]="draftDate()"
+              (input)="onInput($event.target, draftDate.set)"
+              aria-label="Fecha"
+            />
+            <input
+              type="time"
+              [value]="draftTime()"
+              (input)="onInput($event.target, draftTime.set)"
+              aria-label="Hora"
+            />
+          </div>
+          <input
+            type="text"
+            class="add-text"
+            placeholder="¿Qué quieres recordar?"
+            [value]="draftTitle()"
+            (input)="onInput($event.target, draftTitle.set)"
+            aria-label="Descripción"
+          />
+          <button type="submit" class="add-submit" [disabled]="!canAdd()">
+            Añadir a mi agenda
+          </button>
+        </form>
+      </aside>
+    </div>
+  </section>
+</app-saas-shell>

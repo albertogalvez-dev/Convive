@@ -1,0 +1,90 @@
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="case">
+    <a class="back" href="#">&lsaquo; Volver a casos</a>
+
+    <header class="case-heading">
+      <div>
+        <p class="eyebrow">Caso CASO-0130</p>
+        <h1>Seguimiento del caso</h1>
+        <p class="case-subtitle">
+          IES Aula Abierta &middot; Convivencia entre iguales &middot; Presencial
+        </p>
+      </div>
+      <div class="case-chips">
+        <span class="role">Responsable</span>
+        <span class="status active">Activo</span>
+      </div>
+    </header>
+
+    <section class="operational-summary" aria-label="Resumen del caso">
+      <div class="metric"><span>Tareas pendientes</span><strong>3</strong></div>
+      <div class="metric attention"><span>Fuera de plazo</span><strong>1</strong></div>
+      <div class="metric"><span>Personas vinculadas</span><strong>2</strong></div>
+      <div class="metric"><span>Documentos</span><strong>1</strong></div>
+    </section>
+
+    <section class="panel steps-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Próximas acciones</p>
+          <h2>Tareas</h2>
+        </div>
+        <a href="#">Añadir tarea</a>
+      </div>
+      <ul class="task-list">
+        @for (step of steps; track step.title) {
+          <li [class.overdue]="step.urgency === 'overdue'">
+            <div class="task-topline">
+              <span class="task-title">{{ step.title }}</span>
+              <span class="task-status" [class]="'task-status ' + step.urgency">{{
+                step.due
+              }}</span>
+            </div>
+            <p class="task-meta">
+              Responsable: {{ step.owner }} &middot; Objetivo: {{ step.target }}
+            </p>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="panel story-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Historia del caso</p>
+          <h2>Todo lo que ha pasado</h2>
+        </div>
+      </div>
+
+      <div class="story-filters" role="tablist" aria-label="Filtrar la historia">
+        @for (option of filters; track option.key) {
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="filter() === option.key"
+            [class.active]="filter() === option.key"
+            (click)="setFilter(option.key)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+
+      <ol class="story">
+        @for (entry of story(); track $index) {
+          <li>
+            <div class="entry-topline">
+              <span class="entry-actor">{{ entry.actor }}</span>
+              <span class="stage">{{ entry.tag }}</span>
+              <time>{{ entry.time }}</time>
+            </div>
+            <p class="entry-text">{{ entry.body }}</p>
+            @if (entry.reporterVisible) {
+              <span class="reporter-visible">Visible para quien comunicó</span>
+            }
+          </li>
+        }
+      </ol>
+    </section>
+  </section>
+</app-saas-shell>

@@ -1,0 +1,166 @@
+.notifications {
+  max-width: 54rem;
+  margin: 0 auto;
+  color: #102b60;
+}
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: #0b83b9;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0 0 1.8rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+ul {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+li {
+  border: 1px solid #d6e1ee;
+  border-radius: 0.85rem;
+  background: #fff;
+}
+li.unread {
+  border-left: 5px solid #0b83b9;
+}
+li button {
+  width: 100%;
+  padding: 1rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+li strong {
+  font-size: 0.98rem;
+}
+li button span {
+  display: block;
+  margin-top: 0.35rem;
+  color: #5e708e;
+  font-size: 0.85rem;
+}
+
+.preferences {
+  margin-top: 2rem;
+  padding: 1.3rem;
+  border: 1px solid #d6e1ee;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+.preferences h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+}
+.preferences > p {
+  max-width: 44rem;
+  margin: 0 0 1.2rem;
+  color: #5e708e;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  border-bottom: 2px solid #b9cbe1;
+  color: #40587d;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-align: left;
+  text-transform: uppercase;
+}
+th:not(:first-child),
+td:not(:first-child) {
+  width: 7rem;
+  text-align: center;
+}
+td {
+  border-bottom: 1px solid #dce5f0;
+  color: #17366d;
+  font-size: 0.88rem;
+}
+th,
+td {
+  padding: 0.7rem 0.5rem;
+  vertical-align: middle;
+}
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+.required {
+  margin-left: 0.4rem;
+  border-radius: 999px;
+  padding: 0.14rem 0.5rem;
+  color: #40587d;
+  background: #eaf0f7;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.switch {
+  display: inline-block;
+  cursor: pointer;
+}
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.switch span {
+  display: block;
+  position: relative;
+  width: 2.4rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: #ccd8e6;
+  transition: background 140ms ease;
+}
+.switch span::after {
+  content: '';
+  position: absolute;
+  top: 0.17rem;
+  left: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 140ms ease;
+}
+.switch input:checked + span {
+  background: #199ed5;
+}
+.switch input:checked + span::after {
+  transform: translateX(1rem);
+}
+.switch input:focus-visible + span {
+  outline: 3px solid #8bd4f2;
+  outline-offset: 2px;
+}
+
+@media (max-width: 40rem) {
+  th:not(:first-child),
+  td:not(:first-child) {
+    width: 4.5rem;
+  }
+  th,
+  td {
+    padding: 0.6rem 0.3rem;
+    font-size: 0.8rem;
+  }
+}

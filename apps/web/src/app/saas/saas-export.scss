@@ -1,0 +1,226 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #eef2f7;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  padding: 1.2rem clamp(1rem, 5vw, 3rem);
+  background: #fff;
+  border-bottom: 1px solid #dce5f0;
+}
+.control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.control-label {
+  margin-right: 0.2rem;
+  color: #5d6f8e;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+.control button {
+  border: 1px solid #b8c9df;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.75rem;
+  color: #40587d;
+  background: #fff;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+.control button.active {
+  color: #fff;
+  background: #172b57;
+  border-color: #172b57;
+}
+
+.frame {
+  display: flex;
+  justify-content: center;
+  padding: 2.2rem 1rem 4rem;
+}
+
+/* The page below mirrors the generated PDF: same type scale, same palette,
+   same table and metric treatment as CasePdfRenderer, minus Convive branding. */
+.page {
+  width: 100%;
+  max-width: 46rem;
+  min-height: 60rem;
+  padding: 2.6rem 2.9rem 3.4rem;
+  background: #fff;
+  box-shadow: 0 1.4rem 3.2rem rgba(18, 36, 74, 0.16);
+  color: #102b60;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.doc-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.doc-kicker {
+  margin: 0;
+  color: #637493;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0.5rem 0 0.25rem;
+  color: #102b60;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+.description {
+  margin: 0;
+  color: #526b91;
+  font-size: 0.78rem;
+}
+.trace-corner {
+  margin: 0.55rem 0 0;
+  color: #8b99b1;
+  font-size: 0.6rem;
+}
+.centre-logo {
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  flex: none;
+  border: 1px dashed #c7d4e5;
+  border-radius: 0.45rem;
+  color: #9aa8bf;
+  font-size: 0.56rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+.summary div {
+  box-sizing: border-box;
+  width: calc(33.33% - 0.34rem);
+  min-height: 3.9rem;
+  border: 1px solid #d4dfed;
+  border-radius: 0.45rem;
+  padding: 0.62rem 0.7rem;
+  background: #f8fbfd;
+}
+.summary span,
+.metric-grid span {
+  display: block;
+  color: #637493;
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.summary strong {
+  display: block;
+  margin-top: 0.3rem;
+  color: #102b60;
+  font-size: 0.68rem;
+  font-weight: 700;
+  word-wrap: break-word;
+}
+
+.metric-grid {
+  width: 100%;
+  margin-top: 0.5rem;
+  border-collapse: separate;
+  border-spacing: 0.5rem 0;
+}
+.metric-grid td {
+  width: 33.33%;
+  border: 1px solid #d4dfed;
+  border-radius: 0.45rem;
+  padding: 0.9rem;
+  background: #f8fbfd;
+  vertical-align: top;
+}
+.metric-grid td:first-child {
+  padding-left: 0.9rem;
+}
+.metric-grid strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: #102b60;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.metric-grid .attention {
+  border-color: #f0cf8a;
+  background: #fff9eb;
+}
+
+h2 {
+  margin: 1.9rem 0 0.6rem;
+  color: #102b60;
+  font-size: 0.92rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  border-bottom: 2px solid #b9cbe1;
+  color: #40587d;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+td {
+  border-bottom: 1px solid #dce5f0;
+  color: #17366d;
+}
+th,
+td {
+  padding: 0.5rem 0.4rem;
+  vertical-align: top;
+}
+.metric-grid td {
+  border-bottom: 1px solid #d4dfed;
+}
+
+.trace-footer {
+  margin: 2.6rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e4ebf4;
+  color: #8b99b1;
+  font-size: 0.6rem;
+}
+
+@media (max-width: 42rem) {
+  .page {
+    padding: 1.5rem 1.2rem 2.4rem;
+    min-height: 0;
+  }
+  .summary div {
+    width: calc(50% - 0.25rem);
+  }
+  .metric-grid,
+  .metric-grid tbody,
+  .metric-grid tr,
+  .metric-grid td {
+    display: block;
+    width: 100%;
+  }
+  .metric-grid td {
+    margin-bottom: 0.5rem;
+  }
+}
