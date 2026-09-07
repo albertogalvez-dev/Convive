@@ -12,18 +12,19 @@
 
         <label class="field">
           <span>Provincia / comunidad autónoma</span>
-          <select>
-            <option>Andalucía — Sevilla</option>
-            <option>Comunidad de Madrid — Madrid</option>
-            <option>Illes Balears — Palma</option>
+          <select (change)="selectProvince($event)">
+            @for (option of guides; track option.province) {
+              <option [value]="option.province">{{ option.province }}</option>
+            }
           </select>
         </label>
-        <div class="territory-indicator">
+        <div class="territory-indicator" aria-live="polite">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
-          <span
-            >Este centro tendrá acceso a la guía de <strong>Andalucía</strong> (revisada
-            12/08/2026).</span
-          >
+          <span>
+            Este centro tendrá acceso a la guía de <strong>{{ guide().territory }}</strong> —
+            {{ guide().source }} (revisada {{ guide().reviewed }}). Esta referencia se fija aquí y
+            queda en los ajustes del centro; no se repite en cada caso.
+          </span>
         </div>
 
         <div class="two-col">
@@ -59,6 +60,21 @@
           <span>Nombre visible</span>
           <input type="text" value="IES Aula Abierta" />
         </label>
+
+        <div class="field">
+          <span class="label-row">Guía aplicable <em>según la ubicación</em></span>
+          <div class="territory-indicator">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+            <span>
+              <strong>{{ guide().territory }}</strong> — {{ guide().source }} (revisada
+              {{ guide().reviewed }}). <a href="#">Ver la fuente</a>
+            </span>
+          </div>
+          <p class="hint">
+            Se fijó al crear el centro, a partir de la provincia. Cambia solo si cambia la ubicación
+            del centro.
+          </p>
+        </div>
 
         <div class="field">
           <span class="label-row">Logotipo del centro <em>opcional</em></span>

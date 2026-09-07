@@ -104,6 +104,11 @@ h1 {
   stroke-linejoin: round;
   stroke-width: 2.4;
 }
+.territory-indicator a {
+  color: inherit;
+  font-weight: 750;
+  text-decoration: underline;
+}
 
 .logo-row {
   display: flex;
