@@ -1,0 +1,312 @@
+@use 'tokens' as *;
+
+.calendar {
+  max-width: 74rem;
+  margin: 0 auto;
+}
+
+.page-heading {
+  margin-bottom: 1.6rem;
+}
+h1 {
+  margin: 0 0 0.55rem;
+  color: $ink-900;
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  letter-spacing: -0.04em;
+}
+.summary {
+  margin: 0;
+  color: $ink-500;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 21rem;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Month grid ---------------------------------------------------------------- */
+
+.month {
+  border: 1px solid $line;
+  border-radius: $radius-md;
+  background: $surface;
+  padding: 1rem 1rem 1.2rem;
+}
+.month-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+.month-label {
+  margin: 0;
+  color: $ink-900;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.nav {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid $line;
+  border-radius: $radius-sm;
+  background: $surface;
+  color: $ink-500;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.nav:hover {
+  border-color: $line-strong;
+  color: $ink-800;
+}
+
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.35rem;
+}
+.weekday-row span {
+  padding: 0.3rem 0;
+  color: $ink-400;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+}
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  min-height: 4.4rem;
+  padding: 0.4rem 0.45rem;
+  border: 1px solid $line-faint;
+  border-radius: $radius-sm;
+  background: $surface;
+  font: inherit;
+  cursor: pointer;
+}
+.cell:hover {
+  border-color: $line-strong;
+}
+.cell.out {
+  background: $surface-sunk;
+}
+.cell.out .cell-num {
+  color: $ink-300;
+}
+.cell-num {
+  color: $ink-800;
+  font-size: 0.82rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.cell.today .cell-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: $ink-800;
+  color: #fff;
+}
+.cell.selected {
+  border-color: $accent-bright;
+  box-shadow: inset 0 0 0 1px $accent-bright;
+}
+.cell-entries {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+}
+.more {
+  color: $ink-400;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: $ink-300;
+}
+.dot.task {
+  background: $warning;
+}
+.dot.assessment {
+  background: $accent-bright;
+}
+.dot.followup {
+  background: #7a86a1;
+}
+.dot.personal {
+  background: #6a4fb0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin: 1rem 0 0;
+  color: $ink-500;
+  font-size: 0.74rem;
+}
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Selected day ------------------------------------------------------------ */
+
+.day {
+  position: sticky;
+  top: 1rem;
+  border: 1px solid $line;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+  padding: 1.3rem 1.4rem;
+}
+.day-label {
+  margin: 0 0 1rem;
+  color: $ink-900;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.day-label::first-letter {
+  text-transform: uppercase;
+}
+.day-entries {
+  margin: 0 0 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+.day-entries li {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid $line-faint;
+}
+.day-entries li:first-child {
+  border-top: 0;
+}
+.entry-time {
+  flex: none;
+  color: $ink-500;
+  font-size: 0.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.entry-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.entry-title {
+  color: $ink-900;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.entry-tag {
+  color: $ink-400;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+.entry-tag.personal {
+  color: #6a4fb0;
+}
+.day-empty {
+  margin: 0 0 1.4rem;
+  color: $ink-400;
+  font-size: 0.85rem;
+}
+
+.add {
+  padding-top: 1.2rem;
+  border-top: 1px solid $line-faint;
+}
+.add-title {
+  margin: 0 0 0.7rem;
+  color: $ink-500;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.add-fields {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.add input {
+  min-height: 2.5rem;
+  border: 1px solid $line-strong;
+  border-radius: $radius-sm;
+  padding: 0.4rem 0.6rem;
+  color: $ink-800;
+  background: $surface;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.add-fields input {
+  flex: 1;
+  min-width: 0;
+}
+.add-text {
+  width: 100%;
+  margin-bottom: 0.6rem;
+}
+.add-submit {
+  width: 100%;
+  min-height: 2.6rem;
+  border: 1px solid $ink-800;
+  border-radius: $radius-sm;
+  background: $ink-800;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.add-submit:disabled {
+  border-color: $line-strong;
+  background: $line-faint;
+  color: $ink-300;
+  cursor: default;
+}
+
+.cell:focus-visible,
+.nav:focus-visible,
+.add input:focus-visible,
+.add-submit:focus-visible {
+  outline: $focus-ring;
+  outline-offset: -2px;
+}
+
+@media (max-width: 62rem) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+  .day {
+    position: static;
+  }
+  .cell {
+    min-height: 3.6rem;
+  }
+}
