@@ -1,0 +1,79 @@
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="inicio">
+    <header class="inicio-heading">
+      <h1>Hola, Iker</h1>
+      <a class="heading-link" href="#">Ver la actividad del centro &rarr;</a>
+    </header>
+
+    <div class="board">
+      @for (column of columns(); track column.state) {
+        <section
+          class="column"
+          [class.is-overdue]="column.state === 'overdue'"
+          [class.is-today]="column.state === 'today'"
+        >
+          <p class="column-head">
+            {{ column.label }} <span>{{ column.rows.length }}</span>
+          </p>
+
+          <ul class="column-list">
+            @for (row of column.rows; track row.item.id) {
+              <li class="row">
+                <button
+                  type="button"
+                  class="row-tap"
+                  aria-haspopup="dialog"
+                  (click)="open(row.item.id)"
+                >
+                  <span class="row-meta">{{ row.item.reference }} · {{ row.item.context }}</span>
+                  <span class="row-title">{{ row.item.title }}</span>
+                  <span
+                    class="row-due"
+                    [class.overdue]="row.chip.state === 'overdue'"
+                    [class.today]="row.chip.state === 'today'"
+                    [class.upcoming]="row.chip.state === 'upcoming'"
+                    [class.ticking]="row.chip.ticking"
+                    >{{ row.chip.text }}</span
+                  >
+                </button>
+              </li>
+            } @empty {
+              <li class="row-empty">Nada por aquí</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </section>
+
+  @if (openRow(); as row) {
+    <div class="modal-backdrop" (click)="close()">
+      <div
+        #dialog
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        tabindex="-1"
+        (click)="$event.stopPropagation()"
+      >
+        <button type="button" class="modal-close" aria-label="Cerrar" (click)="close()">
+          &times;
+        </button>
+
+        <p class="modal-meta">{{ row.item.reference }} · {{ row.item.context }}</p>
+        <h2 id="modal-title">{{ row.item.title }}</h2>
+        <p class="modal-case">
+          {{ row.item.detail.caseName }}
+          <span class="modal-exact">{{ row.chip.exact }}</span>
+        </p>
+        <p class="modal-body">{{ row.item.detail.body }}</p>
+
+        <div class="modal-actions">
+          <button type="button" class="act">{{ row.item.detail.action }}</button>
+          <a class="act-link" href="#">Abrir el caso completo</a>
+        </div>
+      </div>
+    </div>
+  }
+</app-saas-shell>
