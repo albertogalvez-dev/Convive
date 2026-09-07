@@ -1,4 +1,4 @@
-FROM composer:2.10.2 AS composer
+FROM composer:2.10.3 AS composer
 
 FROM php:8.5.9-cli-bookworm AS development
 
