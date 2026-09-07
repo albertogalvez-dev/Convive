@@ -1,0 +1,60 @@
+<app-saas-shell personName="Iker Bilbao" centreName="IES Aula Abierta" [unread]="3">
+  <section class="notifications">
+    <p class="eyebrow">Tu espacio</p>
+    <h1>Avisos</h1>
+
+    <ul aria-label="Avisos disponibles">
+      @for (notice of notices; track notice.title) {
+        <li [class.unread]="notice.unread">
+          <button type="button">
+            <strong>{{ notice.title }}</strong>
+            <span>{{ notice.meta }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <section class="preferences" aria-labelledby="preferences-title">
+      <h2 id="preferences-title">Preferencias</h2>
+      <p>
+        Los avisos de asignación se mantienen siempre dentro de la aplicación para no perder de
+        vista el trabajo asignado. Fuera de la aplicación, un aviso solo dice que hay algo que
+        revisar.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Aviso</th>
+            <th>Correo</th>
+            <th>Web push</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (preference of preferences; track preference.label) {
+            <tr>
+              <td>
+                {{ preference.label }}
+                @if (preference.required) {
+                  <span class="required">obligatorio</span>
+                }
+              </td>
+              <td>
+                <label class="switch">
+                  <input type="checkbox" [checked]="preference.email" />
+                  <span></span>
+                </label>
+              </td>
+              <td>
+                <label class="switch">
+                  <input type="checkbox" [checked]="preference.push" />
+                  <span></span>
+                </label>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </section>
+</app-saas-shell>

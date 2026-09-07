@@ -1,0 +1,224 @@
+.members {
+  max-width: 66rem;
+  margin: 0 auto;
+  color: #102b60;
+}
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: #0b83b9;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0;
+  color: #102b60;
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  letter-spacing: -0.04em;
+}
+.intro {
+  max-width: 46rem;
+  margin: 0.7rem 0 0;
+  color: #5d6f8e;
+  line-height: 1.6;
+}
+
+.card {
+  margin-top: 1.2rem;
+  border: 1px solid #d6e1ee;
+  border-radius: 1rem;
+  padding: 1.3rem;
+  background: #fff;
+}
+.card h2 {
+  margin: 0 0 0.9rem;
+  color: #102b60;
+  font-size: 1.1rem;
+}
+.card-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+.card-heading h2 {
+  margin: 0;
+}
+.card-heading a {
+  color: #176f9c;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+}
+form label {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  gap: 0.32rem;
+  color: #4d6287;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+form input,
+form select {
+  min-height: 2.7rem;
+  border: 1px solid #b8c9df;
+  border-radius: 0.6rem;
+  padding: 0.45rem 0.65rem;
+  color: #102b60;
+  background: #fff;
+  font: inherit;
+}
+form button {
+  min-height: 2.7rem;
+  border: 1px solid #172b57;
+  border-radius: 0.6rem;
+  padding: 0 1.2rem;
+  color: #fff;
+  background: #172b57;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.hint {
+  margin: 0.9rem 0 0;
+  color: #60718d;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.member-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.member-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-top: 1px solid #e4ebf3;
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: none;
+  border-radius: 50%;
+  color: #0b78a7;
+  background: #e8f6fb;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+.who-copy {
+  min-width: 0;
+}
+.who-copy strong {
+  display: block;
+  overflow: hidden;
+  color: #102b60;
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.who-copy span {
+  display: block;
+  overflow: hidden;
+  color: #60718d;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.role,
+.status {
+  border-radius: 999px;
+  padding: 0.32rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.role {
+  color: #40587d;
+  background: #f0f4f9;
+}
+.status.active {
+  color: #16775f;
+  background: #eaf7f2;
+}
+.status.pending {
+  color: #8b5b0b;
+  background: #fff5dd;
+}
+.status.suspended {
+  color: #52627c;
+  background: #edf1f6;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+.actions button {
+  min-height: 2.3rem;
+  border: 1px solid #c8d5e6;
+  border-radius: 0.55rem;
+  padding: 0 0.75rem;
+  color: #23406e;
+  background: #fff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.actions button:hover:not(:disabled) {
+  border-color: #75c5e3;
+  background: #f2fafd;
+}
+.actions button.danger {
+  color: #a5233d;
+  border-color: #eccbd2;
+}
+.actions button:disabled {
+  color: #9aa8bf;
+  border-color: #e3e9f1;
+  background: #f7f9fc;
+  cursor: default;
+}
+
+@media (max-width: 62rem) {
+  .member-list li {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.7rem;
+  }
+  .meta,
+  .actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
