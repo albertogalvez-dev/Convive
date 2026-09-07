@@ -1,6 +1,6 @@
 # Convive SaaS 2.0 — Product Charter and Expectations Catalogue
 
-Version 1.0 · 3 September 2026 · Source of record for issue #503.
+Version 1.1 · 6 September 2026 · Source of record for issue #503.
 
 ---
 
@@ -91,7 +91,7 @@ the accountable operator, reviewed against the real-data gate (C-10, §4.2).
   optional verified reporter email for generic updates.
 - Safe, bounded, case-scoped evidence handling.
 - A reviewed professional dashboard, actionable queue and case workspace;
-  source-aware tasks; communications; follow-up; audit.
+  protocol-derived tasks; communications; follow-up; audit.
 - Applicable guidance for all 19 Spanish territorial jurisdictions (17
   autonomous communities plus Ceuta and Melilla), migrated from the delivered
   demo's already-verified sources (§13, 2026-09-03) with a currency review, not
@@ -342,9 +342,11 @@ fill space, and layouts justified by "the framework generates it" are non-goals
   relevant regulatory sources for a professional's territory and context.
   Informational only; discloses source, territory and review status; never a
   binding determination, legal advice or a universal deadline `[rule]`. *Practical
-  picture:* while assessing a case, the coordinator sees "Protocolo de Andalucía
-  2011 — sección acoso — revisado 2026-06" with a link to the source, not a
-  countdown telling her she has 48 hours. Placement and form decided in §6.4
+  picture (revised §13.1, 2026-09-06):* the territorial guide is bound and shown
+  **once, at centre creation** — "Este centro tendrá acceso a la guía de
+  Andalucía (revisado 2026-06)" — and stays reachable from centre settings; while
+  working a case the coordinator relies on the protocol's own steps and
+  deadlines, not a citation repeated on every case. Placement decided in §6.4
   (#531).
 - **Protocol** — a specific procedure defined by a regulatory source. Convive
   references it; it never selects, activates or executes a protocol automatically
@@ -598,7 +600,15 @@ legal determination, acts on none automatically (INV-5), and lets none imply it 
 handling an emergency (INV-9). A source that is unreviewed, superseded or
 unavailable is withdrawn or clearly marked pending review — never shown as
 current. Within these limits, deadlines and overdue indicators are shown wherever
-they help a professional manage the work. *(#527, #529, #530, #531, #532, #533)*
+they help a professional manage the work.
+
+**Presentation (revised §13.1, 2026-09-06).** For a protocol-derived deadline the
+source is bound at centre creation (the territorial guidance profile, C-1) and
+kept in the guidance registry and audit trail; it is not repeated as a citation
+on the working case, which a professional who already knows their territory does
+not need. A deadline an assigned professional sets is still shown as their
+explicit decision. Either way, Convive shows no deadline it cannot attribute to
+one of the two. *(#527, #529, #530, #531, #532, #533)*
 
 ### E. Data: fictional, minimal, not silently retained
 
@@ -1690,12 +1700,15 @@ INV-4, INV-5 · #527
   as tasks (for example: activate the protocol, meet the families, communicate to
   educational inspection, communicate to the juvenile prosecutor where there are
   indications of an offence), each with the timeframe the reviewed protocol
-  version states for it and a citation to that source (#530). It adds no step the
-  protocol does not have and does not decide whether the protocol applies (P-3).
+  version states for it, traceable to that source version in the guidance
+  registry and audit (#530) rather than cited on the task (§13.1, 2026-09-06). It
+  adds no step the protocol does not have and does not decide whether the
+  protocol applies (P-3).
 - **+** GIVEN a task with a due time, WHEN the workspace shows it, THEN the time
   remaining and, past the due time, the overdue state are visible; a due time
-  either comes from the protocol version (cited) or is set by an assigned
-  professional, and the origin is shown (INV-10).
+  either comes from the protocol version — bound at centre creation and traceable
+  in the registry, not cited on the task — or is set by an assigned professional
+  and shown as their explicit decision (INV-10, §13.1 2026-09-06).
 - **+** GIVEN a communication step is completed, WHEN it is marked done, THEN it
   links to its communication record (P-10).
 - **−** WHEN a task exists, THEN it is never completed automatically or from
@@ -1729,28 +1742,33 @@ INV-4, INV-5 · #527
   listens to or watches it directly (INV-13).
 
 **P-12 — Applicable guidance in context** · `[owner decision]` (placement decided
-§13, 2026-09-03; artifact at #531) + `[rule]` · INV-10, INV-4 · #531
+§13, 2026-09-03; **revised §13.1, 2026-09-06 — citation line removed from the
+working case**) + `[rule]` · INV-10, INV-4 · #531
 
-**Owner intent — a compact, always-present citation line, never a panel.**
-Reached after iterating a próximos-pasos integration (would bloat its brief),
-a fixed sidebar (risks reading as Convive "always advising"; fights for space on
-mobile) and a buried on-demand button (easy to miss the guidance exists at all).
-The synthesis: one compact, footnote-styled line near the header or
-próximos-pasos — *"Guía aplicable: Protocolo de [territorio] (revisado
-[fecha]) — ver"* — always present so it is never missed, but visually neutral
-(no urgent colour, no notification tied to it) so it never reads as Convive
-actively weighing in. Expands to full source content on click.
+**Owner intent — bound once at centre creation, not repeated on the case.**
+The first placement decision (§13, 2026-09-03) put a compact, always-present
+footnote citation line on the case workspace. It was reversed on 2026-09-06: a
+professional running a case already knows their territory and how the protocol
+works, so *"Guía aplicable: Protocolo de [territorio]…"* on every case reads as
+noise, not help. The territorial guidance profile is instead bound and disclosed
+**once, at centre creation** (C-1's coverage indicator), and stays reachable from
+centre settings. The working case shows no applicable-legislation citation, panel
+or footnote. Procedural steps still carry their deadlines and countdowns (P-9);
+the source behind each stays in the guidance registry and the audit trail (#529,
+#530, #532, #544), not on the screen.
 
-- **+** GIVEN a professional working a case, WHEN applicable guidance is shown,
-  THEN it discloses source, territory, version and review status, links to the
-  source, is drawn from the centre's territorial profile (any of the 19 verified
-  jurisdictions, §3.5), and appears as the compact citation line above, expanding
-  to full content on demand.
-- **+** GIVEN a protocol with stated timeframes, WHEN guidance shows them, THEN
-  each is attributed to its source, version and section, and framed as that
-  protocol's timeframe — not as Convive's own legal determination or a universal
-  rule.
-- **−** WHEN guidance is shown, THEN it is never presented as a binding
+- **+** GIVEN centre creation, WHEN the administrator sets the province, THEN the
+  centre is bound to that territorial guidance profile (any of the 19 verified
+  jurisdictions, §3.5) and its source, territory, version and review status are
+  shown once at that point (C-1) and thereafter in centre settings.
+- **+** GIVEN a protocol with stated timeframes, WHEN a case runs under it, THEN
+  its procedural steps and deadlines are shown (P-9), each traceable to that
+  protocol's source, version and section in the registry and audit — framed as
+  that protocol's timeframe, never as Convive's own legal determination or a
+  universal rule.
+- **−** WHEN a professional works a case, THEN Convive surfaces no
+  applicable-legislation citation line, panel or footnote on the case screen.
+- **−** WHEN guidance is shown anywhere, THEN it is never presented as a binding
   determination or legal advice, and it never selects a protocol or decides the
   case.
 
@@ -1944,7 +1962,9 @@ a named issue. Nothing ambiguous is left for an implementer to resolve by defaul
   versioned and territorial; it is never a binding determination, legal advice, or
   a deadline presented as universal legal fact or as Convive's own determination
   (INV-10, P-12). Deadlines and countdowns drawn from a reviewed protocol version
-  and attributed to it are shown (INV-10, P-9).
+  are shown; the version they come from is bound at centre creation and traceable
+  in the registry and audit, not cited on each task (INV-10, P-9, §13.1
+  2026-09-06).
 - **"Monitoring".** Convive never promises monitoring, a response time, or
   emergency handling (INV-9). Notifications say only that an update is available
   (INV-8).
@@ -2159,7 +2179,7 @@ expected, and any DR-1 artifact required before implementation.
 |---|---|---|---|---|
 | #529 | P-12 | INV-10 | source authority/version/territory/review-date/maintainer workflow/user-facing limits; **all 19 jurisdictions in scope** (§13, 2026-09-03), migrated not re-researched; no legal advice or universal deadlines | — |
 | #530 | P-12 | INV-10, INV-12 | source/version/territory/provenance/review-status preserved for all 19 migrated jurisdictions; changes reviewed + auditable; no free-text legal-rule editing by ordinary users | — |
-| #531 | P-12 | INV-10, INV-4 | compact footnote-styled citation line, never a panel (§13); discloses territory/source/review status; guidance ≠ binding determination; role + case boundaries preserved; accessible source links; territory routed from the centre's province (C-1) | applicable-guidance placement and form |
+| #531 | P-12 | INV-10, INV-4 | **no applicable-guidance citation on the working case (§13.1, 2026-09-06)**; territorial guidance profile bound and disclosed once at centre creation (C-1), reachable from centre settings; source/version/review-status kept in the registry (#530) and audit; guidance ≠ binding determination; role + case boundaries preserved | applicable-guidance placement — bound at centre creation, not on the case |
 | #532 | P-12 | INV-10 | primary official sources for all 19 jurisdictions, carried over from the demo's verified `WorkflowSourceVersion` data; version + review date recorded; currency re-checked, not re-researched; uncertainty + review triggers identified | — |
 | #533 | — | INV-10, INV-12 | authorised maintainer workflow; change review; version history; validation + rollback; no unreviewed source published as guidance | — |
 | #544 (CA-7) | P-12; C-1 | INV-10, INV-12 | migrate all 19 already-verified territorial profiles from the demo into the SaaS 2.0 registry (#530); per-jurisdiction currency review confirming each source is still in force; authority (binding/recommended/internal) preserved exactly, never upgraded by assumption | — |
@@ -2216,6 +2236,7 @@ expected, and any DR-1 artifact required before implementation.
 | 0.20 | 2026-09-03 | **P-5 owner intent** (11/12): case workspace = fixed header + fixed próximos-pasos strip + one filterable chronological story (never tabs), reached after iterating tabs vs. single-feed vs. hybrid designs against P-6's append-only history and P-1's urgency pattern. |
 | 0.21 | 2026-09-03 | **P-12 owner intent** (12/12) — **Bloque 3 complete.** Applicable guidance placed as a compact, always-present, footnote-styled citation line, never a fixed panel, expanding to full source on click; also corrected its lingering "Andalucía initially" wording to the 19-jurisdiction scope (§3.5). **The full owner decision walkthrough is now complete**: all of Bloque 1 (7 charter-level decisions), Bloque 2 (5 text-specifiable surfaces) and Bloque 3 (12 layout-heavy surfaces), plus the seven vision items from the initial owner brain-dump, are resolved and recorded in §13. |
 | 1.0 | 2026-09-03 | Final consistency pass: verified INV-1..18 contiguous, the `[owner decision]` set at 18 with no stale counts, no leftover pending/TBD markers anywhere in rule text, all 8 charter actions (CA-1..CA-8) done, all 24 walkthrough items closed. Promoted from draft (0.x) to **1.0**: the charter is a complete, fully-decided source of record ready for implementation to begin from. |
+| 1.1 | 2026-09-06 | **P-12 revised — applicable-guidance citation removed from the working case.** The always-present footnote citation line on the case workspace (0.21) is dropped: a professional running a case already knows their territory and how the protocol works, so *"Guía aplicable: Protocolo de [territorio]…"* on every case is noise. The territorial guidance profile is bound and disclosed **once, at centre creation** (C-1's coverage indicator, already specified) and stays reachable from centre settings; it is not surfaced on cases. Procedural steps keep their deadlines and countdowns (P-9); each deadline's source stays traceable in the guidance registry (#529, #530, #532, #544) and the audit trail. INV-10's substance is unchanged — no deadline is unattributed or presented as Convive's own determination — only where the attribution is shown moves. #531's deliverable changes from "citation line" to "bound at centre creation, no on-case citation"; #529/#530/#532/#544 (the guidance registry and its data) are unaffected. Applied in the `apps/web` SaaS 2.0 review screens (case workspace and case export) with #508 (PR #553). Sites: §2.2, §3.5, §5 INV-10, §6.4 P-9 and P-12, §7.1, §10 (#531), §13.1, §13.2. |
 
 ---
 
@@ -2277,6 +2298,8 @@ document, so context is never lost.
 
 | 2026-09-03 | **P-12 owner intent** (12/12 — Bloque 3 complete). Reached after iterating a próximos-pasos integration, a fixed sidebar and a buried button: a compact, always-present, footnote-styled citation line ("Guía aplicable: Protocolo de [territorio]...") near the header, visually neutral so it never reads as Convive actively advising, expanding to full source content on click. **The entire owner decision walkthrough (Bloque 1, 2 and 3) is now complete.** | P-12, §10 |
 
+| 2026-09-06 | **P-12 revised — applicable-guidance citation removed from the working case.** The always-present footnote citation line on the case workspace (decided 2026-09-03) is dropped. A professional running a case already knows their territory and how the protocol works; repeating *"Guía aplicable: Protocolo de [territorio]…"* on every case is noise. The territorial guidance profile is bound and disclosed **once, at centre creation** (C-1's coverage indicator, already specified) and stays reachable from centre settings — never surfaced on a case. Procedural steps keep their deadlines and countdowns (P-9); each deadline's source stays traceable in the guidance registry (#529, #530, #532, #544) and the audit trail. INV-10's substance is unchanged — no deadline is unattributed or presented as Convive's own determination — only *where* the attribution is shown moves. #531's deliverable changes from "citation line" to "bound at centre creation, no on-case citation"; #529/#530/#532/#544 (the guidance registry and its data) are unaffected. Applied in the `apps/web` SaaS 2.0 review screens (case workspace and case export) with #508 (PR #553). | §2.2, §3.5, §5 INV-10, §6.4 P-9/P-12, §7.1, §10 (#531), §11 v1.1, §13.2 |
+
 ### 13.2 Walkthrough tracker
 
 The owner walkthrough runs before the charter is merged and before AI agents build
@@ -2326,7 +2349,7 @@ below is open.
 | 9 | Dashboard / first screen (P-1) | ✅ intent captured — §13.1, 2026-09-03 |
 | 10 | Actionable queue (P-2) | ✅ intent captured — §13.1, 2026-09-03 |
 | 11 | Case workspace (P-5) | ✅ intent captured — §13.1, 2026-09-03 |
-| 12 | Guidance placement (P-12) | ✅ intent captured — §13.1, 2026-09-03 — **Bloque 3 complete, 12/12** |
+| 12 | Guidance placement (P-12) | ✅ intent captured — §13.1, 2026-09-03 — **Bloque 3 complete, 12/12** · **revised 2026-09-06** (citation line removed from the working case; guidance bound at centre creation) |
 
 **Vision items from the owner brain-dump (2026-09-03) — mapping status**
 
