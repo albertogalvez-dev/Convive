@@ -1213,22 +1213,36 @@ roles, membership administration, states and activation, public-entry
 configuration, sandbox data, isolation and closure.
 
 **C-1 — Controlled centre creation** · `[owner decision]` (form shape decided
-§13, 2026-09-03; artifact at #512) + `[rule]` · INV-2, INV-11 · #512
+§13, 2026-09-03; **revised §13.1, 2026-09-07 — paced one-question-per-screen
+flow instead of a single page**; artifact at #512) + `[rule]` · INV-2, INV-11 ·
+#512
 
-**Owner intent.** Minimalist single-page form (no wizard steps), same visual
-language as elsewhere (brand spacing/controls/restrained accent), but with more
-data collected than the bare minimum, within coherence:
+**Owner intent (revised 2026-09-07).** A paced flow, one question per screen —
+the same shape as the public reporting flow (`src/app/reporting`): centre name,
+then province/autonomous community, then educational level, then municipality,
+then optional logo, ending in a "centro creado" confirmation, with a segmented
+progress bar and Atrás/Continuar. The original decision (2026-09-03) asked for a
+single page with no wizard steps; walking the built screen the owner found the
+single page cramped against the same fields and preferred the reporting flow's
+calm one-thing-at-a-time rhythm for coherence. Same visual language as elsewhere
+(brand spacing/controls/restrained accent); more data collected than the bare
+minimum, within coherence:
 
 - **Required**: centre name; province/autonomous community (real functional
   weight — it routes the centre to its territorial guidance profile, P-12).
 - **Optional**: educational level/type (infantil, primaria, secundaria, FP,
   otro); municipality — future-proofing, no protocol differentiates by these
-  today.
-- **Not here** (stays in C-3, configured after creation): visual identity,
-  contact details, public-facing description, locale/timezone settings.
-- **Territorial coverage indicator**, next to the province/CCAA field: since all
-  19 Spanish jurisdictions are already verified and available (§3.5), this shows
-  the matching territorial profile and its review status — for example
+  today; centre logo (the C-3 asset, offered once at the end of the flow so the
+  administrator is not forced back into settings straight away — same single
+  scanned image, same rules, still editable in C-3, blank if skipped; revised
+  2026-09-07).
+- **Not here** (stays in C-3, configured after creation): contact details,
+  public-facing description, locale/timezone settings.
+- **Territorial coverage indicator**, shown once the province/CCAA is chosen
+  (revised 2026-09-07 — a dismissable popup, no default territory pre-selected,
+  not an always-on line): since all 19 Spanish jurisdictions are already
+  verified and available (§3.5), this shows the matching territorial profile and
+  its review status — for example
   *"Este centro tendrá acceso a la guía de [territorio] (revisado [fecha])"* —
   sourced, never implying more coverage than actually exists at that moment.
 
@@ -2237,6 +2251,7 @@ expected, and any DR-1 artifact required before implementation.
 | 0.21 | 2026-09-03 | **P-12 owner intent** (12/12) — **Bloque 3 complete.** Applicable guidance placed as a compact, always-present, footnote-styled citation line, never a fixed panel, expanding to full source on click; also corrected its lingering "Andalucía initially" wording to the 19-jurisdiction scope (§3.5). **The full owner decision walkthrough is now complete**: all of Bloque 1 (7 charter-level decisions), Bloque 2 (5 text-specifiable surfaces) and Bloque 3 (12 layout-heavy surfaces), plus the seven vision items from the initial owner brain-dump, are resolved and recorded in §13. |
 | 1.0 | 2026-09-03 | Final consistency pass: verified INV-1..18 contiguous, the `[owner decision]` set at 18 with no stale counts, no leftover pending/TBD markers anywhere in rule text, all 8 charter actions (CA-1..CA-8) done, all 24 walkthrough items closed. Promoted from draft (0.x) to **1.0**: the charter is a complete, fully-decided source of record ready for implementation to begin from. |
 | 1.1 | 2026-09-06 | **P-12 revised — applicable-guidance citation removed from the working case.** The always-present footnote citation line on the case workspace (0.21) is dropped: a professional running a case already knows their territory and how the protocol works, so *"Guía aplicable: Protocolo de [territorio]…"* on every case is noise. The territorial guidance profile is bound and disclosed **once, at centre creation** (C-1's coverage indicator, already specified) and stays reachable from centre settings; it is not surfaced on cases. Procedural steps keep their deadlines and countdowns (P-9); each deadline's source stays traceable in the guidance registry (#529, #530, #532, #544) and the audit trail. INV-10's substance is unchanged — no deadline is unattributed or presented as Convive's own determination — only where the attribution is shown moves. #531's deliverable changes from "citation line" to "bound at centre creation, no on-case citation"; #529/#530/#532/#544 (the guidance registry and its data) are unaffected. Applied in the `apps/web` SaaS 2.0 review screens (case workspace and case export) with #508 (PR #553). Sites: §2.2, §3.5, §5 INV-10, §6.4 P-9 and P-12, §7.1, §10 (#531), §13.1, §13.2. |
+| 1.2 | 2026-09-07 | **C-1 revised — paced centre creation instead of a single page.** The 0.15 intent ("minimalist single-page form, no wizard steps") is replaced by a paced one-question-per-screen flow modelled on the public reporting flow (`src/app/reporting`): name → province/CCAA → educational level → municipality → optional logo → confirmation, with a segmented progress bar and Atrás/Continuar. Walking the built screen the owner found a single page cramped against the same field set and preferred the reporting flow's calm one-thing-at-a-time rhythm, for coherence across surfaces. Data set unchanged, with two placement refinements: the C-3 centre logo is offered once at the end of this flow (same single scanned asset, still editable in C-3, blank if skipped); the territorial coverage indicator is a dismissable popup after the province is chosen, no default territory pre-selected, rather than an always-on line. INV-2/INV-11 and the `Sandbox`-only / no-affiliation / anti-enumeration rules are unchanged. Applied in the `apps/web` SaaS 2.0 review screens (`/saas/centro`, `/saas/centro-identidad`) with #512. Sites: §6.3 C-1, §10 (#512), §13.1, §13.2. |
 
 ---
 
@@ -2299,6 +2314,8 @@ document, so context is never lost.
 | 2026-09-03 | **P-12 owner intent** (12/12 — Bloque 3 complete). Reached after iterating a próximos-pasos integration, a fixed sidebar and a buried button: a compact, always-present, footnote-styled citation line ("Guía aplicable: Protocolo de [territorio]...") near the header, visually neutral so it never reads as Convive actively advising, expanding to full source content on click. **The entire owner decision walkthrough (Bloque 1, 2 and 3) is now complete.** | P-12, §10 |
 
 | 2026-09-06 | **P-12 revised — applicable-guidance citation removed from the working case.** The always-present footnote citation line on the case workspace (decided 2026-09-03) is dropped. A professional running a case already knows their territory and how the protocol works; repeating *"Guía aplicable: Protocolo de [territorio]…"* on every case is noise. The territorial guidance profile is bound and disclosed **once, at centre creation** (C-1's coverage indicator, already specified) and stays reachable from centre settings — never surfaced on a case. Procedural steps keep their deadlines and countdowns (P-9); each deadline's source stays traceable in the guidance registry (#529, #530, #532, #544) and the audit trail. INV-10's substance is unchanged — no deadline is unattributed or presented as Convive's own determination — only *where* the attribution is shown moves. #531's deliverable changes from "citation line" to "bound at centre creation, no on-case citation"; #529/#530/#532/#544 (the guidance registry and its data) are unaffected. Applied in the `apps/web` SaaS 2.0 review screens (case workspace and case export) with #508 (PR #553). | §2.2, §3.5, §5 INV-10, §6.4 P-9/P-12, §7.1, §10 (#531), §11 v1.1, §13.2 |
+
+| 2026-09-07 | **C-1 revised — paced centre creation instead of a single page.** The 2026-09-03 intent ("minimalist single-page form, no wizard steps") is replaced by a paced one-question-per-screen flow modelled on the public reporting flow (`src/app/reporting`): name → province/CCAA → educational level → municipality → optional logo → confirmation, with a segmented progress bar and Atrás/Continuar. Walking the built screen, the owner found a single page cramped against the same field set and preferred the reporting flow's one-thing-at-a-time rhythm for cross-surface coherence. Same data set as before, with two placement refinements: the C-3 centre logo is offered once at the end of this flow (still the same single scanned asset, still editable in C-3, blank if skipped) rather than only after creation; and the territorial coverage indicator is a dismissable popup shown after the province is chosen — no default territory pre-selected — rather than an always-on line beside the field. INV-2/INV-11 and the `Sandbox`-only, no-affiliation, anti-enumeration rules are unchanged. Applied in the `apps/web` SaaS 2.0 review screens (`/saas/centro`, `/saas/centro-identidad`) with #512. | C-1, §10 (#512), §11 v1.2, §13.2 |
 
 ### 13.2 Walkthrough tracker
 

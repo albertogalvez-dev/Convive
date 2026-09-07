@@ -1,0 +1,45 @@
+<div class="field">
+  <span class="cb-label" [class.label-row]="optional()">
+    {{ label() }}
+    @if (optional()) {
+      <em>opcional</em>
+    }
+  </span>
+
+  <div class="cb" [class.open]="open() && filtered().length">
+    <input
+      #input
+      type="text"
+      role="combobox"
+      autocomplete="off"
+      aria-autocomplete="list"
+      [attr.aria-expanded]="open() && filtered().length ? 'true' : 'false'"
+      [placeholder]="placeholder()"
+      [value]="text()"
+      (focus)="onFocus()"
+      (input)="onInput(input.value)"
+      (keydown)="onKey($event)"
+      (blur)="onBlur()"
+    />
+    <svg class="cb-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+
+    @if (open() && filtered().length) {
+      <ul class="cb-menu" role="listbox">
+        @for (option of filtered(); track option; let i = $index) {
+          <li>
+            <button
+              type="button"
+              role="option"
+              [class.active]="i === activeIndex()"
+              [class.selected]="option === value()"
+              [attr.aria-selected]="option === value()"
+              (mousedown)="pick(option)"
+            >
+              {{ option }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

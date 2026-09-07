@@ -1,111 +1,284 @@
-<div class="frame">
-  <div class="card">
-    @switch (view) {
-      @case ('create') {
-        <h1>Crea tu centro</h1>
-        <p class="sub">Un único formulario, sin pasos. La identidad del centro se afina después.</p>
+@switch (view) {
+  @case ('create') {
+    <!-- Onboarding: one question per screen, built on the same markup and
+         styles as the public reporting flow (src/app/reporting). Never the
+         professional panel. -->
+    <main class="report-page" [class.completed]="submitted()">
+      <section class="report-flow">
+        <header class="report-header">
+          <a class="home-link" routerLink="/saas" aria-label="Convive, inicio">
+            <img src="/convive-logo.svg" alt="" width="180" height="59" />
+          </a>
+          @if (!submitted()) {
+            <div class="header-actions">
+              <span class="desktop-label" aria-live="polite"
+                >Paso {{ step() }} de {{ totalSteps }}</span
+              >
+            </div>
+          }
+        </header>
 
-        <label class="field">
-          <span>Nombre del centro</span>
-          <input type="text" placeholder="IES Aula Abierta" />
-        </label>
+        @if (!submitted()) {
+          <div class="progress">
+            <span class="progress-label mobile-label" aria-live="polite"
+              >Paso {{ step() }} de {{ totalSteps }}</span
+            >
+            <ol aria-label="Progreso del alta del centro">
+              @for (s of stepList; track s) {
+                <li>
+                  <button
+                    type="button"
+                    [class.reached]="s <= step()"
+                    [disabled]="s >= step()"
+                    [attr.aria-current]="s === step() ? 'step' : null"
+                    [attr.aria-label]="'Ir al paso ' + s"
+                    (click)="goToStep(s)"
+                  ></button>
+                </li>
+              }
+            </ol>
+          </div>
+        }
 
-        <label class="field">
-          <span>Provincia / comunidad autónoma</span>
-          <select>
-            <option>Andalucía — Sevilla</option>
-            <option>Comunidad de Madrid — Madrid</option>
-            <option>Illes Balears — Palma</option>
-          </select>
-        </label>
-        <div class="territory-indicator">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
-          <span
-            >Este centro tendrá acceso a la guía de <strong>Andalucía</strong> (revisada
-            12/08/2026).</span
-          >
-        </div>
+        @if (submitted()) {
+          <div class="completed-result">
+            <div class="result">
+              <div class="heading">
+                <span aria-hidden="true">✓</span>
+                <h1>Centro creado</h1>
+              </div>
 
-        <div class="two-col">
-          <label class="field">
-            <span class="label-row">Etapa educativa <em>opcional</em></span>
-            <select>
-              <option>Secundaria</option>
-              <option>Infantil</option>
-              <option>Primaria</option>
-              <option>FP</option>
-              <option>Otra</option>
-            </select>
-          </label>
-          <label class="field">
-            <span class="label-row">Municipio <em>opcional</em></span>
-            <input type="text" placeholder="Sevilla" />
-          </label>
-        </div>
+              <div class="perforation" aria-hidden="true"></div>
 
-        <button type="button" class="primary">Crear centro</button>
-
-        <p class="not-here">
-          <strong>No se pide aquí:</strong> logotipo, datos de contacto, descripción pública, idioma
-          y zona horaria. Todo eso se configura después, en la identidad del centro.
-        </p>
-      }
-
-      @case ('identity') {
-        <h1>Identidad del centro</h1>
-        <p class="sub">IES Aula Abierta · configuración</p>
-
-        <label class="field">
-          <span>Nombre visible</span>
-          <input type="text" value="IES Aula Abierta" />
-        </label>
-
-        <div class="field">
-          <span class="label-row">Logotipo del centro <em>opcional</em></span>
-          <div class="logo-row">
-            <span class="logo-slot" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M4 20V9l8-5 8 5v11" />
-                <path d="M9 20v-6h6v6" />
-              </svg>
-            </span>
-            <div>
-              <button type="button" class="link">Subir imagen</button>
-              <p class="hint">
-                Un único archivo de imagen. Pasa el mismo escaneo antivírico (ClamAV) que cualquier
-                adjunto. Si no se sube, el espacio queda en blanco en todos los sitios siguientes.
-              </p>
+              <section class="access">
+                <h2>{{ nombre() || 'Tu centro' }}</h2>
+                <p class="result-body">
+                  Está listo en modo de prueba. Desde el panel puedes ajustar su identidad, invitar
+                  a más personas y publicar la entrada de comunicación.
+                </p>
+                <div class="actions">
+                  <a class="primary" routerLink="/saas/panel">
+                    Ir al panel <span class="continue-arrow" aria-hidden="true">→</span>
+                  </a>
+                  <a class="secondary" routerLink="/saas/centro-identidad">Ajustar la identidad</a>
+                </div>
+              </section>
             </div>
           </div>
-          <ul class="reuse-list">
-            <li>Entrada pública de reporte (C-12)</li>
-            <li>Todos los PDF exportados (P-15)</li>
-          </ul>
+        } @else {
+          <form novalidate (ngSubmit)="$event.preventDefault()">
+            @switch (step()) {
+              @case (1) {
+                <div class="step">
+                  <h1>¿Cómo se llama el centro?</h1>
+                  <label class="field">
+                    <span>Nombre del centro</span>
+                    <input
+                      type="text"
+                      autocomplete="off"
+                      placeholder="IES Aula Abierta"
+                      [value]="nombre()"
+                      (input)="nombre.set($any($event.target).value)"
+                    />
+                  </label>
+                  <div class="actions actions-end">
+                    <button type="button" class="primary" (click)="next()">
+                      Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @case (2) {
+                <div class="step">
+                  <h1>¿En qué comunidad autónoma está?</h1>
+                  <p class="step-introduction">
+                    Determina la guía de protocolos que verá el centro.
+                  </p>
+                  <app-saas-combobox
+                    label="Comunidad autónoma"
+                    placeholder="Empieza a escribir…"
+                    [options]="ccaaNames"
+                    [strict]="true"
+                    [value]="ccaa()"
+                    (valueChange)="onCcaaChange($event)"
+                  />
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="back()">Atrás</button>
+                    <button type="button" class="primary" (click)="next()">
+                      Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @case (3) {
+                <div class="step">
+                  <h1>¿Qué etapas educativas imparte?</h1>
+                  <p class="step-introduction">Marca todas las que correspondan.</p>
+                  <fieldset class="context-options">
+                    <legend class="visually-hidden">Etapas educativas</legend>
+                    @for (etapa of etapas; track etapa) {
+                      <label>
+                        <input
+                          type="checkbox"
+                          [checked]="hasEtapa(etapa)"
+                          (change)="toggleEtapa(etapa)"
+                        />
+                        <span>{{ etapa }}</span>
+                      </label>
+                    }
+                  </fieldset>
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="back()">Atrás</button>
+                    <button type="button" class="primary" (click)="next()">
+                      Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @case (4) {
+                <div class="step">
+                  <h1>¿En qué municipio?</h1>
+                  <app-saas-combobox
+                    label="Municipio"
+                    placeholder="Empieza a escribir…"
+                    [options]="municipios"
+                    [value]="municipio()"
+                    (valueChange)="municipio.set($event)"
+                  />
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="back()">Atrás</button>
+                    <button type="button" class="primary" (click)="next()">
+                      Continuar <span class="continue-arrow" aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @case (5) {
+                <div class="step">
+                  <h1>Añade el logotipo del centro</h1>
+                  <p class="step-introduction">
+                    Opcional. Se usa en la entrada pública de comunicación y en los PDF exportados.
+                    Si no lo subes, el espacio queda en blanco.
+                  </p>
+                  <div class="logo-row">
+                    <span class="logo-slot" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M4 20V9l8-5 8 5v11" />
+                        <path d="M9 20v-6h6v6" />
+                      </svg>
+                    </span>
+                    <div>
+                      <button type="button" class="link">Subir imagen</button>
+                      <p class="field-purpose">Hasta 5 MB.</p>
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <button type="button" class="secondary" (click)="back()">Atrás</button>
+                    <button type="button" class="primary" (click)="next()">Crear centro</button>
+                  </div>
+                </div>
+              }
+            }
+          </form>
+        }
+      </section>
+
+      @if (popup(); as guide) {
+        <button
+          type="button"
+          class="guide-backdrop"
+          aria-label="Cerrar"
+          (click)="dismissPopup()"
+        ></button>
+        <div class="guide-popup" role="status">
+          <button
+            type="button"
+            class="guide-popup-close"
+            aria-label="Cerrar"
+            (click)="dismissPopup()"
+          >
+            &times;
+          </button>
+          <p class="guide-popup-title">Guía aplicable</p>
+          <p class="guide-popup-text">
+            <a [href]="guide.officialUrl" target="_blank" rel="noopener noreferrer">{{
+              guide.source
+            }}</a>
+          </p>
+          <p class="guide-popup-meta">Revisada {{ guide.reviewed }}</p>
+          <p class="guide-popup-timer">Se cierra en {{ popupSeconds() }} s</p>
         </div>
-
-        <div class="two-col">
-          <label class="field">
-            <span>Idioma</span>
-            <select>
-              <option>Español</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Zona horaria</span>
-            <select>
-              <option>Europe/Madrid</option>
-            </select>
-          </label>
-        </div>
-
-        <button type="button" class="primary">Guardar cambios</button>
-
-        <p class="not-here">
-          <strong>Este logotipo es del centro, no de Convive:</strong> no reabre la regla de "sin
-          logotipo" de P-15, que siempre se refirió a la marca de Convive. No puede usarse para
-          afirmar una afiliación institucional que el centro no tiene.
-        </p>
       }
-    }
-  </div>
-</div>
+    </main>
+  }
+
+  @case ('identity') {
+    <!-- After the centre exists: its administrator configures it from inside
+         the professional panel. -->
+    <app-saas-shell personName="Marina Ortiz" centreName="IES Aula Abierta">
+      <section class="centre">
+        <div class="panel">
+          <h1>Identidad del centro</h1>
+          <p class="perm-note">Solo la administración del centro puede cambiar estos datos.</p>
+
+          <label class="field">
+            <span>Nombre visible</span>
+            <input type="text" value="IES Aula Abierta" />
+          </label>
+
+          <div class="field">
+            <span class="label-row">Guía aplicable <em>según la ubicación</em></span>
+            <p class="law-line">
+              <a [href]="centreGuide.officialUrl" target="_blank" rel="noopener noreferrer">{{
+                centreGuide.source
+              }}</a>
+              · revisada {{ centreGuide.reviewed }}
+            </p>
+            <p class="hint">Se fijó al crear el centro. Cambia solo si cambia su ubicación.</p>
+          </div>
+
+          <div class="field">
+            <span class="label-row">Logotipo del centro <em>opcional</em></span>
+            <div class="logo-row">
+              <span class="logo-slot" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 20V9l8-5 8 5v11" />
+                  <path d="M9 20v-6h6v6" />
+                </svg>
+              </span>
+              <div>
+                <button type="button" class="link">Subir imagen</button>
+                <p class="hint">Hasta 5 MB. Si no se sube, el espacio queda en blanco.</p>
+              </div>
+            </div>
+            <ul class="reuse-list">
+              <li>Entrada pública de comunicación</li>
+              <li>PDF exportados</li>
+            </ul>
+          </div>
+
+          <div class="two-col">
+            <label class="field">
+              <span>Idioma</span>
+              <select>
+                <option>Español</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Zona horaria</span>
+              <select>
+                <option>Europe/Madrid</option>
+              </select>
+            </label>
+          </div>
+
+          <button type="button" class="primary">Guardar cambios</button>
+        </div>
+      </section>
+    </app-saas-shell>
+  }
+}
