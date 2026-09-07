@@ -1,6 +1,6 @@
 FROM composer:2.10.2 AS composer
 
-FROM php:8.5.9-cli-bookworm AS development
+FROM php:8.5.10-cli-bookworm AS development
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends $PHPIZE_DEPS libicu-dev libpq-dev unzip \
