@@ -131,7 +131,11 @@ services:
     cap_drop: ["ALL"]
     # The upstream entrypoint must initialize the newly mounted, private data
     # directory before it drops to the postgres user.
-    cap_add: ["CHOWN", "SETGID", "SETUID"]
+    # The upstream entrypoint must traverse and normalize the existing private
+    # PostgreSQL data directory before it drops to the postgres user. These
+    # file-only capabilities are required for a clean restart; networking and
+    # administrative capabilities remain removed.
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]
     security_opt: ["no-new-privileges:true"]
     restart: unless-stopped
     networks: [data]
