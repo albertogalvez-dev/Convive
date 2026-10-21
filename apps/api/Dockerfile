@@ -1,16 +1,19 @@
 FROM composer:2.10.2 AS composer
 
-FROM php:8.5.9-cli-bookworm AS development
+FROM php:8.5.12-cli-bookworm AS development
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends $PHPIZE_DEPS libicu-dev libpq-dev unzip \
     && curl -fsSL --retry 8 --retry-all-errors --retry-delay 5 --max-time 120 \
-        -o /tmp/redis.tgz https://pecl.php.net/get/redis-6.3.0.tgz \
-    && echo "0d5141f634bd1db6c1ddcda053d25ecf2c4fc1c395430d534fd3f8d51dd7f0b5  /tmp/redis.tgz" | sha256sum -c - \
-    && pecl install /tmp/redis.tgz \
-    && rm -f /tmp/redis.tgz \
-    && docker-php-ext-enable redis \
+        -o /tmp/phpredis.tar.gz https://github.com/phpredis/phpredis/archive/refs/tags/6.3.0.tar.gz \
+    && echo "cb8f81df1a275599e4f8ddcfec7e1f65ed1953e6f5673649149fd680ebff4cad  /tmp/phpredis.tar.gz" | sha256sum -c - \
+    && docker-php-source extract \
+    && mkdir -p /usr/src/php/ext/redis \
+    && tar -xzf /tmp/phpredis.tar.gz --strip-components=1 -C /usr/src/php/ext/redis \
+    && rm -f /tmp/phpredis.tar.gz \
+    && docker-php-ext-install -j "$(nproc)" redis \
     && docker-php-ext-install intl pdo_pgsql \
+    && docker-php-source delete \
     && apt-get purge --yes --auto-remove $PHPIZE_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
