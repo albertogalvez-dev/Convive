@@ -59,11 +59,27 @@ be lazy-loaded where it is not required for first render. Do not consume this
 headroom by raising a budget without an evidence-backed, separately reviewed
 exception.
 
+### Exception: Angular builder 22.2 initial-chunk accounting (issue #575)
+
+`@angular/build` 22.1.3 reported only `main` and `styles` as initial
+(**33.80 kB** raw in CI run 35845219011) and listed the shared framework chunks
+as lazy, although `main` imports them statically and `index.html`
+modulepreloads them. `@angular/build` 22.2.3, required to remove the critical
+`piscina` advisory, counts those same chunks as initial: **378.99 kB** raw
+(**109.09 kB** estimated transfer). The chunk sizes are unchanged between the
+two builders (for example 194.35 kB → 193.06 kB and 93.11 kB → 94.17 kB), so
+this is an accounting correction, not new eager code.
+
+The initial budget is therefore set to a 400 kB warning and 450 kB error
+boundary, measured against the corrected figure. Reducing the eager shared
+chunks back towards the 150 kB target is tracked as separate work; do not
+consume the remaining headroom with new eager dependencies.
+
 ## Enforced budgets
 
 | Risk | Measurement | Budget | Gate |
 | --- | --- | --- | --- |
-| Slow initial web payload | Angular production initial bundle | warning at 150 kB; error at 175 kB | Frontend build |
+| Slow initial web payload | Angular production initial bundle | warning at 400 kB; error at 450 kB (see exception above) | Frontend build |
 | API/proxy regression | five requests each to health and the fictional public profile | median <= 250 ms; every sample <= 750 ms | Isolated Chromium E2E |
 | Public-reporting readiness | navigation until the fictional organisation name is visible | <= 3,000 ms | Isolated Chromium E2E |
 | Professional-dashboard readiness | login navigation until the dashboard heading is visible | <= 3,000 ms | Isolated Chromium E2E |
