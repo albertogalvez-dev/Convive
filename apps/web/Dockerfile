@@ -1,4 +1,4 @@
-FROM node:24.15.0-bookworm AS development
+FROM node:26.12.1-bookworm AS development
 
 WORKDIR /app
 
